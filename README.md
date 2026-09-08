@@ -1,8 +1,8 @@
 # seguimiento-y-medicion
 
 # INTEGRANTES:
-- Franco Velazco - Scrum Master
-- Adriel Alonso - Product Builder
-- Alejandro Ruid Andreola - Product Builder
-- Giuliana Betitol - Product Builder
-- Ignacio Sanchez - Product Builder
+- Franco Valentin Velazco - Scrum Master
+- Adriel Alonso Gonzalez - Product Builder
+- Alejandro Ruiz Andreola - Product Builder
+- Giuliana Betitol Rivadeo - Product Builder
+- Juan Ignacio Sanchez - Product Builder
