@@ -1,4 +1,4 @@
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 **Software Metrics & Estimation** es una aplicación para administrar proyectos de software, 
 permitiendo su estimación, planificación, seguimiento y medición de calidad, aplicando 
@@ -42,7 +42,7 @@ con reportes exportables.
 El proyecto se organiza en Sprints (Sprint 0 a Sprint 4), gestionados mediante GitHub Projects, 
 con roles Scrum adaptados a la cátedra:
 
-# INTEGRANTES:
+### INTEGRANTES:
 - Franco Valentin Velazco - Scrum Master
 - Adriel Alonso Gonzalez - Product Builder
 - Alejandro Ruiz Andreola - Product Builder
