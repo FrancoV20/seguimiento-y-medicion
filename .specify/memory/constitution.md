@@ -1,50 +1,76 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: Technology & Quality Constraints expanded with mandatory PostgreSQL persistence
+- Added sections: VI. PostgreSQL Persistence
+- Removed sections: none
+- Reason: establish PostgreSQL as the mandatory persistence technology and require concrete
+	implementations for every storage interface before system integration.
+- Deferred items: none.
+-->
+
+# Seguimiento y Medición Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Value-Driven Product Scope
+The project MUST deliver end-to-end software project management capabilities: backlog, sprint planning, effort tracking, defect management, estimation, and measurement dashboards. Every feature MUST map to a user or team need and MUST be traceable to a clear project outcome, not to isolated implementation preferences.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Rationale: The project exists to support software delivery decisions with evidence. Scope creep and undocumented features reduce trust in the estimates and measures produced by the system.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Quality by Construction
+The application MUST prioritize maintainability, readability, modularity, and explicit business rules. Go code MUST be organized around bounded responsibilities, clear interfaces, and predictable data flow; shared logic MUST be extracted when reused across modules instead of duplicated.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+Rationale: This project combines planning, metrics, and operational workflows. Quality is not a later review step; it is the default condition under which business logic remains understandable and testable.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test-First and Evidence-Driven Delivery
+All user-visible behavior MUST be specified before implementation, and the team MUST follow a RED → GREEN → REFACTOR cycle. Acceptance scenarios MUST be expressed with Given–When–Then language, and tests MUST verify behavior before code is considered complete.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Rationale: The project explicitly adopts SDD, BDD, and TDD as governing practices. Without executable evidence, estimation and tracking features cannot be trusted.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Agile, Collaborative Execution
+The team MUST operate in short, inspectable delivery cycles aligned to Scrum practices, with sprint goals, backlog prioritization, and explicit ownership of responsibilities. Work MUST be visible in progress, reviewed before completion, and adjusted using team feedback rather than individual assumptions.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Rationale: The product spans planning, execution, and measurement. Regular inspection and shared accountability are required to keep the team aligned on project value and delivery risk.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Measurement and Continuous Improvement
+The system MUST expose metrics that support decision making: velocity, effort variance, defect trends, sprint progress, and project health indicators. The team MUST review these metrics during sprint execution and use them to improve estimation quality, team flow, and delivery predictability.
+
+Rationale: The project is not only about managing software work; it is also about learning from that work and improving the team's engineering performance over time.
+
+### VI. PostgreSQL Persistence
+La persistencia del sistema MUST implementarse con PostgreSQL. Toda interfaz de almacenamiento
+definida en una feature, incluyendo `ProjectStore`, MUST contar con una implementación concreta
+contra PostgreSQL, con sus pruebas de integración correspondientes, antes de integrarse al sistema.
+
+Rationale: Centralizar la persistencia en PostgreSQL evita divergencias entre implementaciones,
+garantiza que las reglas de almacenamiento se verifiquen contra el motor real y establece un
+criterio común para integrar nuevas features.
+
+## Technology & Quality Constraints
+
+The project MUST be implemented primarily in Go, with the business rules and planning logic treated as first-class, testable domain behavior. The architecture MUST support backlog management, sprint execution, estimation workflows, defect tracking, and reporting without mixing unrelated concerns into a single layer.
+
+All system persistence MUST use PostgreSQL. Storage interfaces introduced by features MUST NOT
+be integrated as abstractions alone; each MUST be accompanied by a concrete PostgreSQL adapter
+and integration tests against PostgreSQL before the feature is considered integrated.
+
+The team MUST follow Scrum as the operating model and use specification-driven and behavior-driven development as the default path from requirement to code. AI tools MAY support analysis, code generation, documentation, and review only when they improve clarity, correctness, and traceability without replacing product judgment or test evidence.
+
+The team MUST preserve explicit acceptance criteria, story relationships, and measurable outcomes in code, tests, and documentation. Any change to technology, process, or delivery standards MUST be documented as a governance update before it becomes the new normal.
+
+## Development Workflow & Quality Gates
+
+1. Every feature or bug fix MUST begin with a clear requirement, acceptance criteria, and user-visible behavior statement.
+2. Tests MUST be written or updated before implementation for the affected behavior, and a failing state MUST be observed before the fix is considered complete.
+3. Implementation MUST proceed in small, reviewable increments with frequent validation against the relevant tests.
+4. Pull requests and merge decisions MUST verify conformance with the constitution, including scope discipline, test coverage, and requirement traceability.
+5. Sprint review and retrospective outcomes MUST be used to refine backlog priorities, estimation practices, and quality standards.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This constitution supersedes informal process assumptions and acts as the governing standard for product, engineering, and delivery decisions in this project. Compliance is mandatory for all work performed under this repository and any related project artifacts.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendments MUST be recorded in the project constitution, include a clear rationale for the change, and be reviewed by the team before adoption. Versioning MUST follow semantic versioning: MAJOR for breaking or incompatible governance changes, MINOR for new principles or materially expanded guidance, and PATCH for clarifications and non-semantic refinements. The team MUST review compliance at sprint boundaries and treat unresolved deviations as corrective action items.
+
+**Version**: 1.1.0 | **Ratified**: 2026-09-29 | **Last Amended**: 2026-10-01
