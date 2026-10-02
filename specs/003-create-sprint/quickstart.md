@@ -5,10 +5,12 @@
 - Go 1.22 o posterior instalado.
 - Docker Desktop instalado y en ejecución.
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
+- Herramienta `golang-migrate/migrate` instalada.
 - Repositorio ubicado en su raíz.
 - Paquete `src/sprint`, `PostgreSQLSprintStore`, integración con el modelo de backlog de HU-02
    y `go.mod` creados según el plan.
-- Variables de conexión PostgreSQL configuradas según el adaptador de pruebas.
+- Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:
+   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
 
 ## Run the tests
 
@@ -16,6 +18,14 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 
 ```powershell
 docker compose up -d postgres
+```
+
+Aplicar las migraciones pendientes en orden numérico. La migración 003 depende de que las
+migraciones 001, que crea los proyectos, y 002, que crea las historias del backlog, ya estén
+aplicadas porque los Sprints referencian historias existentes:
+
+```powershell
+migrate -path db/migrations -database "$DATABASE_URL" up
 ```
 
 Luego ejecutar las pruebas:

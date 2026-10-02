@@ -14,8 +14,9 @@
 
 - [ ] T001 Inicializar el módulo Go en `go.mod` con Go 1.22 o posterior y el módulo del repositorio
 - [ ] T002 Agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` como dependencias de persistencia en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Configurar PostgreSQL 16, la base `seguimiento`, el volumen, el puerto 5432 y el healthcheck en `docker-compose.yml`
+- [ ] T003 [P] Configurar PostgreSQL 16, la base `seguimiento_y_medicion`, el volumen, el puerto 5432 y el healthcheck en `docker-compose.yml`
 - [ ] T004 [P] Crear la migración SQL inicial en `db/migrations/001_create_projects.sql` para proyectos, integrantes y la relación entre ambos
+- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` y documentar en `specs/001-create-project/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -23,11 +24,11 @@
 
 **Purpose**: Crear el modelo, errores y contratos compartidos que bloquean ambas historias.
 
-- [ ] T005 [P] Definir `Project`, `Member` y `ProjectCreationRequest` en `src/project/model.go`, incluyendo estado inicial `Activo`, fechas de calendario y la regla `endDate >= startDate`
-- [ ] T006 [P] Definir errores de validación explícitos para nombre vacío, integrantes ausentes, integrante inexistente, integrante duplicado y período inválido en `src/project/errors.go`
-- [ ] T007 Definir la interfaz `ProjectStore` y sus operaciones `Create(project)` y `MemberExists(id)` en `src/project/store.go`
-- [ ] T008 Implementar `PostgreSQLProjectStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para persistir proyecto, estado, fechas e integrantes en `src/project/postgres_store.go`
-- [ ] T009 [P] Crear el store controlado para pruebas unitarias en `src/project/test_store.go`, sin reemplazar las pruebas de integración contra PostgreSQL
+- [ ] T006 [P] Definir `Project`, `Member` y `ProjectCreationRequest` en `src/project/model.go`, incluyendo estado inicial `Activo`, fechas de calendario y la regla `endDate >= startDate`
+- [ ] T007 [P] Definir errores de validación explícitos para nombre vacío, integrantes ausentes, integrante inexistente, integrante duplicado y período inválido en `src/project/errors.go`
+- [ ] T008 Definir la interfaz `ProjectStore` y sus operaciones `Create(project)` y `MemberExists(id)` en `src/project/store.go`
+- [ ] T009 Implementar `PostgreSQLProjectStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para persistir proyecto, estado, fechas e integrantes en `src/project/postgres_store.go`
+- [ ] T010 [P] Crear el store controlado para pruebas unitarias en `src/project/test_store.go`, sin reemplazar las pruebas de integración contra PostgreSQL
 
 **Checkpoint**: La base Go, el esquema PostgreSQL, el contrato de almacenamiento y el adaptador concreto están listos para implementar los casos de uso.
 
@@ -41,17 +42,17 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
-- [ ] T011 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
-- [ ] T012 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
-- [ ] T013 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
+- [ ] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
+- [ ] T012 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
+- [ ] T013 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
+- [ ] T014 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implementar el caso de uso `CreateProject` en `src/project/service.go`, validando nombre no vacío, al menos un integrante, integrantes existentes, duplicados rechazados explícitamente y fechas obligatorias antes de persistir
-- [ ] T015 [US1] Implementar el resultado de creación en `src/project/model.go`, devolviendo confirmación solo después de que `ProjectStore.Create` confirme la persistencia y alerta/error sin éxito cuando falle
-- [ ] T016 [US1] Completar la integración de `PostgreSQLProjectStore` en `src/project/postgres_store.go`, usando una transacción `database/sql` para evitar proyectos o relaciones parciales
-- [ ] T017 [US1] Habilitar la prueba de integración de PostgreSQL con variables de conexión y limpieza de datos en `src/project/postgres_store_integration_test.go`
+- [ ] T015 [US1] Implementar el caso de uso `CreateProject` en `src/project/service.go`, validando nombre no vacío, al menos un integrante, integrantes existentes, duplicados rechazados explícitamente y fechas obligatorias antes de persistir
+- [ ] T016 [US1] Implementar el resultado de creación en `src/project/model.go`, devolviendo confirmación solo después de que `ProjectStore.Create` confirme la persistencia y alerta/error sin éxito cuando falle
+- [ ] T017 [US1] Completar la integración de `PostgreSQLProjectStore` en `src/project/postgres_store.go`, usando una transacción `database/sql` para evitar proyectos o relaciones parciales
+- [ ] T018 [US1] Habilitar la prueba de integración de PostgreSQL con variables de conexión y limpieza de datos en `src/project/postgres_store_integration_test.go`
 
 **Checkpoint**: US1 permite crear un proyecto válido, persistirlo en PostgreSQL y verificarlo de forma independiente con `go test ./...`.
 
@@ -65,13 +66,13 @@
 
 ### Tests for User Story 2
 
-- [ ] T018 [P] [US2] Escribir la prueba unitaria de fecha de finalización anterior a la inicial en `src/project/service_test.go`, verificando error temporal y store sin mutación
-- [ ] T019 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/project_bdd_test.go`
+- [ ] T019 [P] [US2] Escribir la prueba unitaria de fecha de finalización anterior a la inicial en `src/project/service_test.go`, verificando error temporal y store sin mutación
+- [ ] T020 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/project_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Completar la validación de calendario en `src/project/service.go` para aceptar `endDate == startDate` y rechazar únicamente `endDate < startDate` con el error explícito correspondiente
-- [ ] T021 [US2] Verificar en `src/project/service_test.go` y `test/project_bdd_test.go` que una fecha inválida conserva los datos corregibles, no registra proyectos y no muestra éxito
+- [ ] T021 [US2] Completar la validación de calendario en `src/project/service.go` para aceptar `endDate == startDate` y rechazar únicamente `endDate < startDate` con el error explícito correspondiente
+- [ ] T022 [US2] Verificar en `src/project/service_test.go` y `test/project_bdd_test.go` que una fecha inválida conserva los datos corregibles, no registra proyectos y no muestra éxito
 
 **Checkpoint**: US2 rechaza períodos inválidos de forma independiente sin alterar el comportamiento válido de US1.
 
@@ -81,11 +82,11 @@
 
 **Purpose**: Validación final, documentación y calidad transversal.
 
-- [ ] T022 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/001-create-project/quickstart.md`
-- [ ] T023 [P] Revisar que los errores de `src/project` no expongan detalles internos de PostgreSQL a la capa de presentación
-- [ ] T024 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T025 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T026 Revisar trazabilidad de FR-001 a FR-009 y SC-001 a SC-004 en `specs/001-create-project/tasks.md`
+- [ ] T023 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/001-create-project/quickstart.md`
+- [ ] T024 [P] Revisar que los errores de `src/project` no expongan detalles internos de PostgreSQL a la capa de presentación
+- [ ] T025 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [ ] T026 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
+- [ ] T027 Revisar trazabilidad de FR-001 a FR-009 y SC-001 a SC-004 en `specs/001-create-project/tasks.md`
 
 ---
 
@@ -93,10 +94,10 @@
 
 ### Phase Dependencies
 
-- **Setup (Phase 1)**: T001 debe preceder T002; T003 y T004 pueden ejecutarse en paralelo con T001.
-- **Foundational (Phase 2)**: Depende de Setup; T005-T007 habilitan el servicio y T008 requiere T007 y T004.
+- **Setup (Phase 1)**: T001 debe preceder T002; T003 y T004 pueden ejecutarse en paralelo con T001; T005 requiere la migración T004.
+- **Foundational (Phase 2)**: Depende de Setup; T006-T008 habilitan el servicio y T009 requiere T004 y T008.
 - **User Story 1 (Phase 3)**: Depende de toda la Phase 2; es el MVP.
-- **User Story 2 (Phase 4)**: Depende de T014/T020 del servicio, pero sus pruebas pueden escribirse en paralelo con las de US1.
+- **User Story 2 (Phase 4)**: Depende de la implementación `CreateProject` de T015; sus pruebas pueden escribirse en paralelo con las de US1.
 - **Polish (Phase 5)**: Depende de las historias que se decida entregar.
 
 ### User Story Dependencies

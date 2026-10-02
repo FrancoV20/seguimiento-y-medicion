@@ -5,9 +5,11 @@
 - Go 1.22 o posterior instalado.
 - Docker Desktop instalado y en ejecución.
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
+- Herramienta `golang-migrate/migrate` instalada.
 - Repositorio ubicado en su raíz.
 - Paquete `src/project`, adaptador `PostgreSQLProjectStore` y `go.mod` creados según el plan.
-- Variables de conexión PostgreSQL configuradas según el adaptador de pruebas.
+- Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:
+   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
 
 ## Run the tests
 
@@ -17,7 +19,14 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 docker compose up -d postgres
 ```
 
-Luego ejecutar las pruebas:
+Aplicar las migraciones en orden numérico:
+
+```powershell
+migrate -path db/migrations -database "$DATABASE_URL" up
+```
+
+Las migraciones deben ejecutarse siempre en orden numérico para preservar la estructura de la
+base de datos. Luego ejecutar las pruebas:
 
 ```powershell
 go test ./...
