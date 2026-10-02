@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: seguimiento-y-medicion-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sym_user
+      POSTGRES_PASSWORD: sym_pass
+      POSTGRES_DB: seguimiento_y_medicion
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sym_user -d seguimiento_y_medicion"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
