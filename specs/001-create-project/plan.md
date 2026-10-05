@@ -16,7 +16,7 @@ ningún proyecto se registra cuando falla una validación o la persistencia.
 
 ## Technical Context
 
-**Language/Version**: Go 1.22 o posterior, fijado en `go.mod` durante la inicialización
+**Language/Version**: Go 1.27.1, fijado en `go.mod` durante la inicialización
 
 **Primary Dependencies**: Biblioteca estándar de Go, `github.com/jackc/pgx/v5` y su adaptador
 `github.com/jackc/pgx/v5/stdlib` para registrar pgx mediante `database/sql`

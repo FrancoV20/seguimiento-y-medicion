@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- Go 1.27.1 o posterior instalado.
+- Go 1.27.1 instalado en Windows desde [go1.27.1.windows-amd64.msi](https://go.dev/dl/go1.27.1.windows-amd64.msi); verificar con `go version`.
 - Docker Desktop instalado y en ejecución.
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
-- Herramienta `golang-migrate/migrate` instalada.
+- Herramienta `golang-migrate/migrate` instalada; seguir la instalación de Windows documentada en [README.md](../../README.md).
 - Repositorio ubicado en su raíz.
 - Paquete `src/project`, adaptador `PostgreSQLProjectStore` y `go.mod` creados según el plan.
 - Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:

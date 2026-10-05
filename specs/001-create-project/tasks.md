@@ -12,7 +12,7 @@
 
 **Purpose**: Inicializar Go, dependencias y PostgreSQL local para desarrollo e integración.
 
-- [ ] T001 Inicializar el módulo Go en `go.mod` con Go 1.22 o posterior y el módulo del repositorio
+- [ ] T001 Inicializar el módulo Go en `go.mod` con Go 1.27.1 y el módulo del repositorio
 - [ ] T002 Agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` como dependencias de persistencia en `go.mod` y actualizar `go.sum`
 - [ ] T003 [P] Configurar PostgreSQL 16, la base `seguimiento_y_medicion`, el volumen, el puerto 5432 y el healthcheck en `docker-compose.yml`
 - [ ] T004 [P] Crear la migración SQL inicial en `db/migrations/001_create_projects.sql` para proyectos, integrantes y la relación entre ambos

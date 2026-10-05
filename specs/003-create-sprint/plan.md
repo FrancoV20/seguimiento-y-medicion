@@ -15,7 +15,7 @@ Todas las validaciones se resolverán antes de mutar el proyecto para evitar aso
 
 ## Technical Context
 
-**Language/Version**: Go 1.22 o posterior, fijado en `go.mod` durante la inicialización
+**Language/Version**: Go 1.27.1, fijado en `go.mod` durante la inicialización
 
 **Primary Dependencies**: Biblioteca estándar de Go, `github.com/jackc/pgx/v5` y
 `github.com/jackc/pgx/v5/stdlib` para registrar pgx mediante `database/sql`, más tipos de backlog

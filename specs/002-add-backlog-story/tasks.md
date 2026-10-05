@@ -12,7 +12,7 @@
 
 **Purpose**: Preparar módulo Go, dependencias PostgreSQL y esquema del backlog.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.22 o posterior
+- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
 - [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
 - [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion` para desarrollo e integración
 - [ ] T004 [P] Crear la migración SQL `db/migrations/002_create_backlog_stories.sql` para historias, criterios de aceptación, relación con proyectos y campos de estimación; depende de que `001_create_projects.sql` ya esté aplicada
