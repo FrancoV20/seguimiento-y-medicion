@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Go 1.22 o posterior instalado.
+- Go 1.27.1 o posterior instalado.
 - Docker Desktop instalado y en ejecución.
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
 - Herramienta `golang-migrate/migrate` instalada.
