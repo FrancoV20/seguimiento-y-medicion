@@ -66,6 +66,8 @@ Todos deben seguir este orden desde la raíz del repositorio:
   Después abrir una nueva terminal de PowerShell y verificar:
 
   ```powershell
+  Test-Path "C:\Program Files\Go\bin\go.exe"
+  $env:Path += ";C:\Program Files\Go\bin"
   go version
   ```
 
