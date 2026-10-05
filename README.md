@@ -79,6 +79,13 @@ Todos deben seguir este orden desde la raíz del repositorio:
   migrate -version
   ```
 
+  Si muestra `dev`, es válido para esta instalación desde `@latest`: indica que el binario
+  funciona, aunque no esté mostrando un número de release. También puede verificarse con:
+
+  ```powershell
+  migrate -help
+  ```
+
   La segunda línea agrega la carpeta de herramientas de Go al `PATH` de la terminal actual.
   Para dejarlo permanente en Windows, agregá `$(go env GOPATH)\bin` a la variable de entorno
   `Path` del usuario y abrí una nueva terminal.
