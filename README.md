@@ -70,6 +70,13 @@ Todos deben seguir este orden desde la raíz del repositorio:
   $env:Path += ";C:\Program Files\Go\bin"
   go version
   ```
+  
+2.5. Descargar las dependencias ya declaradas en `go.mod` (no hace falta volver a
+  agregarlas, eso ya está hecho — solo bajarlas a tu máquina):
+
+```powershell
+  go mod download
+```
 
 3. Instalar `golang-migrate` desde PowerShell si no está instalado:
 
@@ -94,6 +101,8 @@ Todos deben seguir este orden desde la raíz del repositorio:
 
   ```powershell
   docker compose up -d
+  $env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+  migrate -path db/migrations -database "$DATABASE_URL" up
   ```
 
 5. Aplicar las migraciones pendientes en orden numérico. Revisen el `quickstart.md` de su
@@ -101,6 +110,15 @@ Todos deben seguir este orden desde la raíz del repositorio:
 
 6. Abrir `specs/00X-nombre-de-su-historia/tasks.md` y ejecutar las tareas en orden. Las pruebas
   deben escribirse antes del código, siguiendo el ciclo TDD solicitado.
+
+⚠️ **Importante:** antes de programar o correr tests, siempre asegurate de tener
+PostgreSQL levantado:
+```powershell
+docker compose up -d
+ ```
+Podés chequear si ya está corriendo con `docker compose ps`. Docker Desktop **no**
+arranca los contenedores solo al prender la compu — hay que levantarlo a mano cada
+sesión de trabajo, salvo que lo configures para que inicie automático.
 
 7. Crear una rama propia antes de modificar archivos:
 
