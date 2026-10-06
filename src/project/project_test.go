@@ -17,7 +17,7 @@ func TestNuevoProyecto_RechazaCamposObligatoriosVacios(t *testing.T) {
 		{
 			nombre:         "rechaza nombre vacío",
 			nombreProyecto: "",
-			integrantes:    []string{"Ana"},
+			integrantes:    []string{"Gabriel"},
 		},
 		{
 			nombre:         "rechaza integrantes ausentes",
