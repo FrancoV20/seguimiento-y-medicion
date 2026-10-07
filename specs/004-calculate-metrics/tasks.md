@@ -24,13 +24,13 @@
 
 **Purpose**: Crear modelos, aritmética, validaciones y persistencia compartidos por las historias.
 
-- [ ] T006 [P] Definir `SprintData`, `CompletedStory`, `SprintMetrics` y `CalculationError` en `src/metrics/model.go`
-- [ ] T007 [P] Definir errores explícitos para Sprint no finalizado, Story Points inválidos, horas reales negativas, esfuerzo no disponible y persistencia en `src/metrics/errors.go`
-- [ ] T008 Implementar operaciones decimales y redondeo matemático a dos posiciones en `src/metrics/calculation.go`, evitando división por cero
-- [ ] T009 Definir `MetricsStore` con `LoadSprintData(sprintID)` y `SaveMetrics(metrics)` en `src/metrics/store.go`
-- [ ] T010 Implementar `PostgreSQLMetricsStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/metrics/postgres_metrics_store.go`
-- [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/metrics/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir la validación de cierre de Sprint y el listado de historias afectadas en `src/metrics/closure_validation.go`
+- [x] T006 [P] Definir `SprintData`, `CompletedStory`, `SprintMetrics` y `CalculationError` en `src/metrics/model.go`
+- [x] T007 [P] Definir errores explícitos para Sprint no finalizado, Story Points inválidos, horas reales negativas, esfuerzo no disponible y persistencia en `src/metrics/errors.go`
+- [x] T008 Implementar operaciones decimales y redondeo matemático a dos posiciones en `src/metrics/calculation.go`, evitando división por cero
+- [x] T009 Definir `MetricsStore` con `LoadSprintData(sprintID)` y `SaveMetrics(metrics)` en `src/metrics/store.go`
+- [x] T010 Implementar `PostgreSQLMetricsStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/metrics/postgres_metrics_store.go`
+- [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/metrics/test_store.go`, sin sustituir la integración PostgreSQL
+- [x] T012 [P] Definir la validación de cierre de Sprint y el listado de historias afectadas en `src/metrics/closure_validation.go`
 
 **Checkpoint**: El modelo, cálculo, validación de cierre, contrato y adaptador PostgreSQL están listos para las historias.
 
