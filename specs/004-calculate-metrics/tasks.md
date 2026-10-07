@@ -44,11 +44,11 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Terminada` en `src/metrics/service_test.go`
-- [ ] T014 [P] [US1] Escribir pruebas unitarias de totales de horas y fórmula `((real - estimado) / estimado) * 100` en `src/metrics/service_test.go`
-- [ ] T015 [P] [US1] Escribir pruebas unitarias de desviación positiva, negativa y redondeo a dos decimales en `src/metrics/calculation_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de integración de carga y persistencia de métricas en PostgreSQL en `src/metrics/postgres_metrics_store_integration_test.go`
-- [ ] T017 [P] [US1] Escribir el escenario BDD de cálculo de desviación y velocidad en `test/metrics_bdd_test.go`
+- [x] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Terminada` en `src/metrics/service_test.go`
+- [x] T014 [P] [US1] Escribir pruebas unitarias de totales de horas y fórmula `((real - estimado) / estimado) * 100` en `src/metrics/service_test.go`
+- [x] T015 [P] [US1] Escribir pruebas unitarias de desviación positiva, negativa y redondeo a dos decimales en `src/metrics/calculation_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de integración de carga y persistencia de métricas en PostgreSQL en `src/metrics/postgres_metrics_store_integration_test.go`
+- [x] T017 [P] [US1] Escribir el escenario BDD de cálculo de desviación y velocidad en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 1
 
