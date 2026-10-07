@@ -61,6 +61,106 @@ func TestMetricsBDD_SprintVelocityAndEffortDeviation(t *testing.T) {
 	})
 }
 
+func TestMetricsBDD_SprintWithoutEstimatedEffort(t *testing.T) {
+	t.Run("Escenario 2: Sprint sin esfuerzo estimado", func(t *testing.T) {
+		t.Run("Given un Sprint finalizado sin horas estimadas", func(t *testing.T) {
+			store := &metrics.TestMetricsStore{
+				SprintData: metrics.SprintData{
+					ID:     "bdd-sprint-no-estimate",
+					Status: "Finalizado",
+					Stories: []metrics.CompletedStory{
+						{
+							ID:             "bdd-no-estimate-1",
+							Status:         "Terminada",
+							StoryPoints:    bddIntPointer(5),
+							EstimatedHours: nil,
+							ActualHours:    bddRat(t, "7"),
+						},
+						{
+							ID:             "bdd-no-estimate-2",
+							Status:         "Terminada",
+							StoryPoints:    bddIntPointer(3),
+							EstimatedHours: nil,
+							ActualHours:    bddRat(t, "4"),
+						},
+					},
+				},
+			}
+
+			t.Run("When el sistema calcula la desviación", func(t *testing.T) {
+				got, err := metrics.NewService(store).CalculateMetrics("bdd-sprint-no-estimate")
+
+				t.Run("Then indica No disponible sin error de división por cero", func(t *testing.T) {
+					if err != nil {
+						t.Fatalf("CalculateMetrics() error = %v", err)
+					}
+					if got.DeviationPercentage != "No disponible" {
+						t.Errorf("desviación = %q, want %q", got.DeviationPercentage, "No disponible")
+					}
+				})
+			})
+		})
+	})
+}
+
+func TestMetricsBDD_PartialEffortCalculation(t *testing.T) {
+	t.Run("Escenario 3: cálculo parcial de desviación por datos incompletos", func(t *testing.T) {
+		t.Run("Given un Sprint con datos completos solo en una de tres historias", func(t *testing.T) {
+			store := &metrics.TestMetricsStore{
+				SprintData: metrics.SprintData{
+					ID:     "bdd-sprint-partial",
+					Status: "Finalizado",
+					Stories: []metrics.CompletedStory{
+						{
+							ID:             "bdd-complete",
+							Status:         "Terminada",
+							StoryPoints:    bddIntPointer(5),
+							EstimatedHours: bddRat(t, "8"),
+							ActualHours:    bddRat(t, "10"),
+						},
+						{
+							ID:             "bdd-missing-estimate",
+							Status:         "Terminada",
+							StoryPoints:    bddIntPointer(3),
+							EstimatedHours: nil,
+							ActualHours:    bddRat(t, "7"),
+						},
+						{
+							ID:             "bdd-missing-actual",
+							Status:         "Terminada",
+							StoryPoints:    bddIntPointer(2),
+							EstimatedHours: bddRat(t, "6"),
+							ActualHours:    nil,
+						},
+					},
+				},
+			}
+
+			t.Run("When el sistema calcula la desviación con historias completas", func(t *testing.T) {
+				got, err := metrics.NewService(store).CalculateMetrics("bdd-sprint-partial")
+
+				t.Run("Then informa el conteo exacto del cálculo parcial", func(t *testing.T) {
+					if err != nil {
+						t.Fatalf("CalculateMetrics() error = %v", err)
+					}
+					if !got.IsPartial {
+						t.Error("IsPartial = false, want true")
+					}
+					if got.CalculationUsedCount != 1 {
+						t.Errorf("historias utilizadas = %d, want 1", got.CalculationUsedCount)
+					}
+					if got.CalculationTotalCount != 3 {
+						t.Errorf("historias totales = %d, want 3", got.CalculationTotalCount)
+					}
+					if got.Warning != "Cálculo parcial: basado en 1 de 3 historias" {
+						t.Errorf("alerta = %q, want %q", got.Warning, "Cálculo parcial: basado en 1 de 3 historias")
+					}
+				})
+			})
+		})
+	})
+}
+
 func bddIntPointer(value int) *int {
 	return &value
 }

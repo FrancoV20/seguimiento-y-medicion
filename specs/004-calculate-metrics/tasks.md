@@ -70,10 +70,10 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir prueba unitaria de esfuerzo estimado total cero o ausente con desviación `No disponible` en `src/metrics/service_test.go`
-- [ ] T024 [P] [US2] Escribir prueba unitaria de cálculo parcial usando únicamente historias con horas estimadas y reales completas en `src/metrics/service_test.go`
-- [ ] T025 [P] [US2] Escribir prueba del formato exacto `Cálculo parcial: basado en X de Y historias` en `src/metrics/service_test.go`
-- [ ] T026 [P] [US2] Escribir el escenario BDD de ausencia y cálculo parcial en `test/metrics_bdd_test.go`
+- [x] T023 [P] [US2] Escribir prueba unitaria de esfuerzo estimado total cero o ausente con desviación `No disponible` en `src/metrics/service_test.go`
+- [x] T024 [P] [US2] Escribir prueba unitaria de cálculo parcial usando únicamente historias con horas estimadas y reales completas en `src/metrics/service_test.go`
+- [x] T025 [P] [US2] Escribir prueba del formato exacto `Cálculo parcial: basado en X de Y historias` en `src/metrics/service_test.go`
+- [x] T026 [P] [US2] Escribir el escenario BDD de ausencia y cálculo parcial en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 2
 

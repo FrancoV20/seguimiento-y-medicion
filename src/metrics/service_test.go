@@ -80,6 +80,90 @@ func TestCalculateMetricsTotalsAndPersistsCompletedStoryEffort(t *testing.T) {
 	}
 }
 
+func TestCalculateMetricsWithoutEstimatedEffortReturnsUnavailable(t *testing.T) {
+	store := &TestMetricsStore{
+		SprintData: SprintData{
+			ID:     "sprint-no-estimate",
+			Status: "Finalizado",
+			Stories: []CompletedStory{
+				{
+					ID:             "completed-without-estimate",
+					Status:         "Terminada",
+					StoryPoints:    intPointer(5),
+					EstimatedHours: nil,
+					ActualHours:    serviceTestRat(t, "7"),
+				},
+				{
+					ID:             "completed-zero-estimate",
+					Status:         "Terminada",
+					StoryPoints:    intPointer(3),
+					EstimatedHours: serviceTestRat(t, "0"),
+					ActualHours:    serviceTestRat(t, "4"),
+				},
+			},
+		},
+	}
+
+	got, err := NewService(store).CalculateMetrics("sprint-no-estimate")
+	if err != nil {
+		t.Fatalf("CalculateMetrics() error = %v", err)
+	}
+	if got.DeviationPercentage != "No disponible" {
+		t.Errorf("DeviationPercentage = %q, want %q", got.DeviationPercentage, "No disponible")
+	}
+}
+
+func TestCalculateMetricsPartialEffortUsesOnlyCompleteStories(t *testing.T) {
+	store := &TestMetricsStore{
+		SprintData: SprintData{
+			ID:     "sprint-partial",
+			Status: "Finalizado",
+			Stories: []CompletedStory{
+				{
+					ID:             "complete",
+					Status:         "Terminada",
+					StoryPoints:    intPointer(5),
+					EstimatedHours: serviceTestRat(t, "8"),
+					ActualHours:    serviceTestRat(t, "10"),
+				},
+				{
+					ID:             "missing-estimate",
+					Status:         "Terminada",
+					StoryPoints:    intPointer(3),
+					EstimatedHours: nil,
+					ActualHours:    serviceTestRat(t, "7"),
+				},
+				{
+					ID:             "missing-actual",
+					Status:         "Terminada",
+					StoryPoints:    intPointer(2),
+					EstimatedHours: serviceTestRat(t, "6"),
+					ActualHours:    nil,
+				},
+			},
+		},
+	}
+
+	got, err := NewService(store).CalculateMetrics("sprint-partial")
+	if err != nil {
+		t.Fatalf("CalculateMetrics() error = %v", err)
+	}
+	if !got.IsPartial {
+		t.Error("IsPartial = false, want true")
+	}
+	if got.CalculationUsedCount != 1 {
+		t.Errorf("CalculationUsedCount = %d, want 1", got.CalculationUsedCount)
+	}
+	if got.CalculationTotalCount != 3 {
+		t.Errorf("CalculationTotalCount = %d, want 3", got.CalculationTotalCount)
+	}
+	assertRatEqual(t, "EstimatedHoursTotal", got.EstimatedHoursTotal, "8")
+	assertRatEqual(t, "ActualHoursTotal", got.ActualHoursTotal, "10")
+	if got.Warning != "Cálculo parcial: basado en 1 de 3 historias" {
+		t.Errorf("Warning = %q, want %q", got.Warning, "Cálculo parcial: basado en 1 de 3 historias")
+	}
+}
+
 func intPointer(value int) *int {
 	return &value
 }
