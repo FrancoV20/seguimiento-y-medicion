@@ -16,6 +16,9 @@ func NuevoProyecto(nombre string, integrantes []string, fechaInicio, fechaFin ti
 	if nombre == "" {
 		return Proyecto{}, errors.New("el nombre del proyecto no puede estar vacío")
 	}
+	if len(integrantes) == 0 {
+		return Proyecto{}, errors.New("la lista de integrantes es obligatoria")
+	}
 
 	return Proyecto{
 		Nombre:      nombre,
