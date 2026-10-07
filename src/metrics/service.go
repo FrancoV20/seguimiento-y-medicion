@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"fmt"
-	"math/big"
 )
 
 type Service struct {
@@ -26,36 +25,9 @@ func (s *Service) CalculateMetrics(sprintID string) (SprintMetrics, error) {
 		return SprintMetrics{}, fmt.Errorf("%w: %s", ErrSprintNotFinished, sprint.ID)
 	}
 
-	metrics := SprintMetrics{
-		SprintID:            sprint.ID,
-		EstimatedHoursTotal: new(big.Rat),
-		ActualHoursTotal:    new(big.Rat),
-		DeviationPercentage: "No disponible",
-	}
-
-	for _, story := range sprint.Stories {
-		if story.Status != "Terminada" {
-			continue
-		}
-
-		metrics.CalculationTotalCount++
-		if story.StoryPoints == nil {
-			return SprintMetrics{}, CalculationError{
-				StoryID: story.ID,
-				Field:   "storyPoints",
-				Message: ErrInvalidStoryPoints.Error(),
-				Cause:   ErrInvalidStoryPoints,
-			}
-		}
-		metrics.Velocity += *story.StoryPoints
-
-		if story.EstimatedHours == nil || story.ActualHours == nil {
-			continue
-		}
-
-		metrics.CalculationUsedCount++
-		metrics.EstimatedHoursTotal.Add(metrics.EstimatedHoursTotal, story.EstimatedHours)
-		metrics.ActualHoursTotal.Add(metrics.ActualHoursTotal, story.ActualHours)
+	metrics, err := calculateSprintMetrics(sprint)
+	if err != nil {
+		return SprintMetrics{}, fmt.Errorf("calculate metrics for sprint %q: %w", sprint.ID, err)
 	}
 
 	deviation, err := CalculateDeviation(metrics.EstimatedHoursTotal, metrics.ActualHoursTotal)

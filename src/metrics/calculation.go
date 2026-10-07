@@ -1,9 +1,57 @@
 package metrics
 
-import "math/big"
+import (
+	"fmt"
+	"math/big"
+)
+
+func calculateSprintMetrics(sprint SprintData) (SprintMetrics, error) {
+	metrics := SprintMetrics{
+		SprintID:            sprint.ID,
+		EstimatedHoursTotal: new(big.Rat),
+		ActualHoursTotal:    new(big.Rat),
+		DeviationPercentage: "No disponible",
+	}
+
+	for _, story := range sprint.Stories {
+		if story.Status != "Terminada" {
+			continue
+		}
+
+		metrics.CalculationTotalCount++
+		if story.StoryPoints == nil {
+			return SprintMetrics{}, CalculationError{
+				StoryID: story.ID,
+				Field:   "storyPoints",
+				Message: ErrInvalidStoryPoints.Error(),
+				Cause:   ErrInvalidStoryPoints,
+			}
+		}
+		metrics.Velocity += *story.StoryPoints
+
+		if story.EstimatedHours == nil || story.ActualHours == nil {
+			continue
+		}
+
+		metrics.CalculationUsedCount++
+		metrics.EstimatedHoursTotal.Add(metrics.EstimatedHoursTotal, story.EstimatedHours)
+		metrics.ActualHoursTotal.Add(metrics.ActualHoursTotal, story.ActualHours)
+	}
+
+	if metrics.CalculationUsedCount < metrics.CalculationTotalCount {
+		metrics.IsPartial = true
+		metrics.Warning = fmt.Sprintf(
+			"Cálculo parcial: basado en %d de %d historias",
+			metrics.CalculationUsedCount,
+			metrics.CalculationTotalCount,
+		)
+	}
+
+	return metrics, nil
+}
 
 func CalculateDeviation(estimated, actual *big.Rat) (string, error) {
-	if estimated == nil || actual == nil || estimated.Sign() == 0 {
+	if estimated == nil || actual == nil || estimated.Sign() <= 0 {
 		return "No disponible", nil
 	}
 

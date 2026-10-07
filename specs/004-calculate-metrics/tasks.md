@@ -77,10 +77,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implementar en `src/metrics/calculation.go` la selección de historias completas y los conteos `calculationUsedCount`/`calculationTotalCount`
-- [ ] T028 [US2] Implementar en `src/metrics/service.go` la alerta exacta `Cálculo parcial: basado en X de Y historias` cuando `X < Y`
-- [ ] T029 [US2] Implementar en `src/metrics/calculation.go` el resultado `No disponible` cuando el esfuerzo estimado total sea cero o no exista, sin división
-- [ ] T030 [US2] Verificar en `src/metrics/service_test.go` que velocidad y métricas disponibles continúan calculándose aunque la desviación sea `No disponible`
+- [x] T027 [US2] Implementar en `src/metrics/calculation.go` la selección de historias completas y los conteos `calculationUsedCount`/`calculationTotalCount`
+- [x] T028 [US2] Implementar en `src/metrics/service.go` la alerta exacta `Cálculo parcial: basado en X de Y historias` cuando `X < Y`
+- [x] T029 [US2] Implementar en `src/metrics/calculation.go` el resultado `No disponible` cuando el esfuerzo estimado total sea cero o no exista, sin división
+- [x] T030 [US2] Verificar en `src/metrics/service_test.go` que velocidad y métricas disponibles continúan calculándose aunque la desviación sea `No disponible`
 
 **Checkpoint**: US2 informa ausencia de base y cálculo parcial sin valores inválidos ni métricas inventadas.
 
