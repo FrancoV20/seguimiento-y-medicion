@@ -52,11 +52,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Implementar `CalculateMetrics` en `src/metrics/service.go`, cargando el Sprint finalizado y sus historias desde `MetricsStore`
-- [ ] T019 [US1] Implementar en `src/metrics/calculation.go` la velocidad, totales de horas, desviación firmada y redondeo matemático a dos decimales
-- [ ] T020 [US1] Implementar en `src/metrics/service.go` la persistencia del resultado mediante `MetricsStore.SaveMetrics` solo después de un cálculo válido
-- [ ] T021 [US1] Completar `PostgreSQLMetricsStore` en `src/metrics/postgres_metrics_store.go` para cargar fuentes y guardar el snapshot dentro de una transacción
-- [ ] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de Sprint finalizado y limpieza en `src/metrics/postgres_metrics_store_integration_test.go`
+- [x] T018 [US1] Implementar `CalculateMetrics` en `src/metrics/service.go`, cargando el Sprint finalizado y sus historias desde `MetricsStore`
+- [x] T019 [US1] Implementar en `src/metrics/calculation.go` la velocidad, totales de horas, desviación firmada y redondeo matemático a dos decimales
+- [x] T020 [US1] Implementar en `src/metrics/service.go` la persistencia del resultado mediante `MetricsStore.SaveMetrics` solo después de un cálculo válido
+- [x] T021 [US1] Completar `PostgreSQLMetricsStore` en `src/metrics/postgres_metrics_store.go` para cargar fuentes y guardar el snapshot dentro de una transacción
+- [x] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de Sprint finalizado y limpieza en `src/metrics/postgres_metrics_store_integration_test.go`
 
 **Checkpoint**: US1 calcula y persiste métricas completas reproducibles, y permite consultar velocidad y desviación de forma independiente.
 
