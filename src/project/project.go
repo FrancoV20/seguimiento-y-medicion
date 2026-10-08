@@ -5,25 +5,25 @@ import (
 	"time"
 )
 
-type Proyecto struct {
-	Nombre      string
-	Integrantes []string
-	FechaInicio time.Time
-	FechaFin    time.Time
+type Project struct {
+	Name      string
+	Members   []string
+	StartDate time.Time
+	EndDate   time.Time
 }
 
-func NuevoProyecto(nombre string, integrantes []string, fechaInicio, fechaFin time.Time) (Proyecto, error) {
-	if nombre == "" {
-		return Proyecto{}, errors.New("el nombre del proyecto no puede estar vacío")
+func NewProject(name string, members []string, startDate, endDate time.Time) (Project, error) {
+	if name == "" {
+		return Project{}, errors.New("project name cannot be empty")
 	}
-	if len(integrantes) == 0 {
-		return Proyecto{}, errors.New("la lista de integrantes es obligatoria")
+	if len(members) == 0 {
+		return Project{}, errors.New("the member list is required")
 	}
 
-	return Proyecto{
-		Nombre:      nombre,
-		Integrantes: integrantes,
-		FechaInicio: fechaInicio,
-		FechaFin:    fechaFin,
+	return Project{
+		Name:      name,
+		Members:   members,
+		StartDate: startDate,
+		EndDate:   endDate,
 	}, nil
 }

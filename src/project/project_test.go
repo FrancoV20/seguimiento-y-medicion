@@ -5,36 +5,36 @@ import (
 	"time"
 )
 
-func TestNuevoProyecto_RechazaCamposObligatoriosVacios(t *testing.T) {
-	fechaInicio := time.Date(2026, time.October, 6, 0, 0, 0, 0, time.UTC)
-	fechaFin := fechaInicio.AddDate(0, 0, 14)
+func TestNewProject_RejectsMissingRequiredFields(t *testing.T) {
+	startDate := time.Date(2026, time.October, 6, 0, 0, 0, 0, time.UTC)
+	endDate := startDate.AddDate(0, 0, 14)
 
-	pruebas := []struct {
-		nombre         string
-		nombreProyecto string
-		integrantes    []string
+	tests := []struct {
+		name        string
+		projectName string
+		members     []string
 	}{
 		{
-			nombre:         "rechaza nombre vacío",
-			nombreProyecto: "",
-			integrantes:    []string{"Gabriel"},
+			name:        "rejects empty project name",
+			projectName: "",
+			members:     []string{"Gabriel"},
 		},
 		{
-			nombre:         "rechaza integrantes ausentes",
-			nombreProyecto: "Proyecto académico",
-			integrantes:    nil,
+			name:        "rejects missing members",
+			projectName: "Academic project",
+			members:     nil,
 		},
 	}
 
-	for _, prueba := range pruebas {
-		t.Run(prueba.nombre, func(t *testing.T) {
-			// Given / Arrange: se prepara un proyecto con un campo obligatorio inválido.
-			// When / Act: se intenta crear el proyecto.
-			_, err := NuevoProyecto(prueba.nombreProyecto, prueba.integrantes, fechaInicio, fechaFin)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// Given / Arrange: a project has a missing required field.
+			// When / Act: attempt to create the project.
+			_, err := NewProject(test.projectName, test.members, startDate, endDate)
 
-			// Then / Assert: la creación debe rechazarse con un error explícito.
+			// Then / Assert: creation must fail with an explicit error.
 			if err == nil {
-				t.Fatal("se esperaba un error al faltar un campo obligatorio")
+				t.Fatal("expected an error for a missing required field")
 			}
 		})
 	}
