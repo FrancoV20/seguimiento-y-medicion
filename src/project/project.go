@@ -19,6 +19,9 @@ func NewProject(name string, members []string, startDate, endDate time.Time) (Pr
 	if len(members) == 0 {
 		return Project{}, errors.New("the member list is required")
 	}
+	if endDate.Before(startDate) {
+		return Project{}, errors.New("end date cannot be before start date")
+	}
 
 	return Project{
 		Name:      name,

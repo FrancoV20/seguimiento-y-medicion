@@ -39,3 +39,21 @@ func TestNewProject_RejectsMissingRequiredFields(t *testing.T) {
 		})
 	}
 }
+func TestNewProject_RejectsInvalidDates(t *testing.T) {
+	name := "Sentinel Project"
+	members := []string{"Juan Ignacio", "Franco"}
+
+	t.Run("rejects end date before start date", func(t *testing.T) {
+		// Arrange
+		startDate := time.Now()
+		endDate := startDate.AddDate(0, -1, 0) // 1 month BEFORE start
+
+		// Act
+		_, err := NewProject(name, members, startDate, endDate)
+
+		// Assert
+		if err == nil {
+			t.Fatal("expected an error when end date is before start date")
+		}
+	})
+}
