@@ -10,6 +10,7 @@ type Project struct {
 	Members   []string
 	StartDate time.Time
 	EndDate   time.Time
+	Status    string
 }
 
 func NewProject(name string, members []string, startDate, endDate time.Time) (Project, error) {
@@ -28,5 +29,6 @@ func NewProject(name string, members []string, startDate, endDate time.Time) (Pr
 		Members:   members,
 		StartDate: startDate,
 		EndDate:   endDate,
+		Status:    "Active",
 	}, nil
 }

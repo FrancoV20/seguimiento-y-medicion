@@ -57,3 +57,25 @@ func TestNewProject_RejectsInvalidDates(t *testing.T) {
 		}
 	})
 }
+
+func TestNewProject_SuccessInitialState(t *testing.T) {
+	// Arrange: Datos 100% válidos
+	name := "Sentinel Project"
+	members := []string{"Juan Ignacio", "Franco"}
+	startDate := time.Now()
+	endDate := startDate.AddDate(0, 1, 0) // 1 mes DESPUÉS (válido)
+
+	// Act
+	p, err := NewProject(name, members, startDate, endDate)
+
+	// Assert: No debe haber error
+	if err != nil {
+		t.Fatalf("did not expect an error for a valid project, got: %v", err)
+	}
+
+	// T006: El proyecto debe nacer con estado "Active"
+	expectedStatus := "Active"
+	if p.Status != expectedStatus {
+		t.Errorf("expected initial status %q, got %q", expectedStatus, p.Status)
+	}
+}
