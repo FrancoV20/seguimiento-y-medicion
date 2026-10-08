@@ -1,10 +1,10 @@
 package backlog
-
+ 
 import (
 	"errors"
 	"testing"
 )
-
+ 
 func validRequest() CreateStoryRequest {
 	return CreateStoryRequest{
 		ProjectID:          1,
@@ -15,14 +15,14 @@ func validRequest() CreateStoryRequest {
 		StoryPoints:        intPtr(5),
 	}
 }
-
+ 
 // T012: alta válida, asociación al proyecto y estado Pendiente.
 func TestCreateStory_AltaValidaQuedaPendienteYAsociadaAlProyecto(t *testing.T) {
 	store := NewInMemoryBacklogStore(1)
 	service := NewBacklogService(store)
-
+ 
 	result, err := service.CreateStory(validRequest())
-
+ 
 	if err != nil {
 		t.Fatalf("no se esperaba error, se obtuvo: %v", err)
 	}
@@ -46,15 +46,15 @@ func TestCreateStory_AltaValidaQuedaPendienteYAsociadaAlProyecto(t *testing.T) {
 		t.Errorf("con Story Points no debe haber alerta, se obtuvo %q", result.Warning)
 	}
 }
-
+ 
 // T013: sin Story Points se permite el alta, con alerta y ausencia explícita.
 func TestCreateStory_SinStoryPointsSeCreaConAlerta(t *testing.T) {
 	store := NewInMemoryBacklogStore(1)
 	req := validRequest()
 	req.StoryPoints = nil
-
+ 
 	result, err := NewBacklogService(store).CreateStory(req)
-
+ 
 	if err != nil {
 		t.Fatalf("no se esperaba error, se obtuvo: %v", err)
 	}
@@ -65,14 +65,14 @@ func TestCreateStory_SinStoryPointsSeCreaConAlerta(t *testing.T) {
 		t.Errorf("se esperaba la alerta %q, se obtuvo %q", WarnEstimationPending, result.Warning)
 	}
 }
-
+ 
 func TestCreateStory_StoryPointsInvalidosNoMutanElBacklog(t *testing.T) {
 	store := NewInMemoryBacklogStore(1)
 	req := validRequest()
 	req.StoryPoints = intPtr(4)
-
+ 
 	_, err := NewBacklogService(store).CreateStory(req)
-
+ 
 	if !errors.Is(err, ErrInvalidStoryPoints) {
 		t.Errorf("se esperaba ErrInvalidStoryPoints, se obtuvo: %v", err)
 	}
@@ -80,14 +80,14 @@ func TestCreateStory_StoryPointsInvalidosNoMutanElBacklog(t *testing.T) {
 		t.Errorf("no debe llamarse al store ante un error de validación")
 	}
 }
-
+ 
 func TestCreateStory_ProyectoInactivoOInexistenteSeRechaza(t *testing.T) {
 	store := NewInMemoryBacklogStore(1)
 	req := validRequest()
 	req.ProjectID = 99
-
+ 
 	_, err := NewBacklogService(store).CreateStory(req)
-
+ 
 	if !errors.Is(err, ErrProjectNotActive) {
 		t.Errorf("se esperaba ErrProjectNotActive, se obtuvo: %v", err)
 	}
@@ -95,7 +95,7 @@ func TestCreateStory_ProyectoInactivoOInexistenteSeRechaza(t *testing.T) {
 		t.Errorf("no debe agregarse ninguna historia")
 	}
 }
-
+ 
 func TestCreateStory_CamposObligatoriosVaciosSeRechazan(t *testing.T) {
 	casos := []struct {
 		nombre    string
@@ -111,9 +111,9 @@ func TestCreateStory_CamposObligatoriosVaciosSeRechazan(t *testing.T) {
 			store := NewInMemoryBacklogStore(1)
 			req := validRequest()
 			c.modificar(&req)
-
+ 
 			_, err := NewBacklogService(store).CreateStory(req)
-
+ 
 			if !errors.Is(err, c.esperado) {
 				t.Errorf("se esperaba %v, se obtuvo: %v", c.esperado, err)
 			}
@@ -123,17 +123,61 @@ func TestCreateStory_CamposObligatoriosVaciosSeRechazan(t *testing.T) {
 		})
 	}
 }
-
+ 
 func TestCreateStory_FallaDePersistenciaNoInformaExito(t *testing.T) {
 	store := NewInMemoryBacklogStore(1)
 	store.FailOnCreate = true
-
+ 
 	result, err := NewBacklogService(store).CreateStory(validRequest())
-
+ 
 	if !errors.Is(err, ErrPersistence) {
 		t.Errorf("se esperaba ErrPersistence, se obtuvo: %v", err)
 	}
 	if result != nil {
 		t.Errorf("ante una falla de persistencia no debe devolverse resultado exitoso")
+	}
+}
+ 
+// T022: criterios ausentes, colección vacía o solo con espacios.
+func TestCreateStory_SinCriteriosValidosSeRechaza(t *testing.T) {
+	casos := []struct {
+		nombre    string
+		criterios []string
+	}{
+		{"criterios ausentes", nil},
+		{"colección vacía", []string{}},
+		{"criterios solo con espacios", []string{"   ", "\t", ""}},
+	}
+	for _, c := range casos {
+		t.Run(c.nombre, func(t *testing.T) {
+			store := NewInMemoryBacklogStore(1)
+			req := validRequest()
+			req.AcceptanceCriteria = c.criterios
+ 
+			result, err := NewBacklogService(store).CreateStory(req)
+ 
+			if !errors.Is(err, ErrAcceptanceCriteriaRequired) {
+				t.Errorf("se esperaba ErrAcceptanceCriteriaRequired, se obtuvo: %v", err)
+			}
+			if result != nil {
+				t.Errorf("la historia no debe informarse como creada")
+			}
+		})
+	}
+}
+ 
+// T023: un error de criterios no llama al store ni deja persistencia parcial.
+func TestCreateStory_ErrorDeCriteriosNoMutaElBacklog(t *testing.T) {
+	store := NewInMemoryBacklogStore(1)
+	req := validRequest()
+	req.AcceptanceCriteria = []string{"  "}
+ 
+	_, _ = NewBacklogService(store).CreateStory(req)
+ 
+	if store.CreateCalls != 0 {
+		t.Errorf("no debe llamarse al store, se llamó %d veces", store.CreateCalls)
+	}
+	if len(store.Stories) != 0 {
+		t.Errorf("no debe quedar ninguna historia persistida, hay %d", len(store.Stories))
 	}
 }
