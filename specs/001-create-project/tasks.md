@@ -12,11 +12,11 @@
 
 **Purpose**: Inicializar Go, dependencias y PostgreSQL local para desarrollo e integración.
 
-- [ ] T001 Inicializar el módulo Go en `go.mod` con Go 1.27.1 y el módulo del repositorio
-- [ ] T002 Agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` como dependencias de persistencia en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Configurar PostgreSQL 16, la base `seguimiento_y_medicion`, el volumen, el puerto 5432 y el healthcheck en `docker-compose.yml`
-- [ ] T004 [P] Crear la migración SQL inicial en `db/migrations/001_create_projects.sql` para proyectos, integrantes y la relación entre ambos
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` y documentar en `specs/001-create-project/quickstart.md` la aplicación de migraciones en orden numérico
+- [X] T001 Inicializar el módulo Go en `go.mod` con Go 1.27.1 y el módulo del repositorio
+- [X] T002 Agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` como dependencias de persistencia en `go.mod` y actualizar `go.sum`
+- [X] T003 [P] Configurar PostgreSQL 16, la base `seguimiento_y_medicion`, el volumen, el puerto 5432 y el healthcheck en `docker-compose.yml`
+- [X] T004 [P] Crear la migración SQL inicial en `db/migrations/001_create_projects.sql` para proyectos, integrantes y la relación entre ambos
+- [X] T005 Instalar la herramienta `github.com/golang-migrate/migrate` y documentar en `specs/001-create-project/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -24,7 +24,7 @@
 
 **Purpose**: Crear el modelo, errores y contratos compartidos que bloquean ambas historias.
 
-- [ ] T006 [P] Definir `Project`, `Member` y `ProjectCreationRequest` en `src/project/model.go`, incluyendo estado inicial `Activo`, fechas de calendario y la regla `endDate >= startDate`
+- [X] T006 [P] Definir `Project`, `Member` y `ProjectCreationRequest` en `src/project/model.go`, incluyendo estado inicial `Activo`, fechas de calendario y la regla `endDate >= startDate`
 - [ ] T007 [P] Definir errores de validación explícitos para nombre vacío, integrantes ausentes, integrante inexistente, integrante duplicado y período inválido en `src/project/errors.go`
 - [ ] T008 Definir la interfaz `ProjectStore` y sus operaciones `Create(project)` y `MemberExists(id)` en `src/project/store.go`
 - [ ] T009 Implementar `PostgreSQLProjectStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para persistir proyecto, estado, fechas e integrantes en `src/project/postgres_store.go`

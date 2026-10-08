@@ -5,14 +5,6 @@ import (
 	"time"
 )
 
-type Project struct {
-	Name      string
-	Members   []string
-	StartDate time.Time
-	EndDate   time.Time
-	Status    string
-}
-
 func NewProject(name string, members []string, startDate, endDate time.Time) (Project, error) {
 	if name == "" {
 		return Project{}, errors.New("project name cannot be empty")
