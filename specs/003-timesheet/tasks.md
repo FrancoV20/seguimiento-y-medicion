@@ -1,6 +1,6 @@
 # Tasks: Registrar horas trabajadas
 
-**Input**: Design documents from `specs/005-log-effort/`
+**Input**: Design documents from `specs/003-timesheet/`
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, quickstart.md
 
@@ -16,7 +16,7 @@
 - [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
 - [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
 - [ ] T004 [P] Crear las migraciones SQL `db/migrations/005_create_effort_logs.up.sql` y `db/migrations/005_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `003_create_sprints` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/005-log-effort/quickstart.md` la aplicación de migraciones en orden numérico
+- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-timesheet/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -139,12 +139,12 @@
 
 **Purpose**: Validación final, documentación, integración con HU-07 y trazabilidad.
 
-- [ ] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/005-log-effort/quickstart.md`
+- [ ] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-timesheet/quickstart.md`
 - [ ] T049 [P] Revisar que los errores de validación y PostgreSQL no expongan detalles internos en `src/effort/errors.go`
 - [ ] T050 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T051 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
 - [ ] T052 Coordinar con el responsable de HU-07 que `actualHours` de cada historia se lee como la suma de `effort_logs.hours` y que la migración 005 se aplica antes de sus pruebas de integración
-- [ ] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/005-log-effort/tasks.md`
+- [ ] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/003-timesheet/tasks.md`
 
 ---
 

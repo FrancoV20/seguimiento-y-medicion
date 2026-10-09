@@ -1,6 +1,6 @@
 # Feature Specification: Registrar horas trabajadas
 
-**Feature Branch**: `005-log-effort`
+**Feature Branch**: `003-timesheet`
 
 **Created**: 2026-10-09
 

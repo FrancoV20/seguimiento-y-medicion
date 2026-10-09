@@ -1,6 +1,6 @@
 # Implementation Plan: Registrar horas trabajadas
 
-**Branch**: `005-log-effort` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
+**Branch**: `003-timesheet` | **Date**: 2026-10-09 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from [spec.md](spec.md)
 
@@ -64,7 +64,7 @@ edición o eliminación de registros, reportes ni cálculo de métricas (HU-07)
 ### Documentation (this feature)
 
 ```text
-specs/005-log-effort/
+specs/003-timesheet/
 ├── plan.md
 ├── research.md
 ├── data-model.md
