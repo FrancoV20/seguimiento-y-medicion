@@ -12,11 +12,11 @@
 
 **Purpose**: Preparar Go, dependencias PostgreSQL/Docker y esquema de Sprints.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
-- [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear la migración SQL `db/migrations/004_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
+- [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
+- [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
+- [x] T004 [P] Crear la migración SQL `db/migrations/004_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
+- [x] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
