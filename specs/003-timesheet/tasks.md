@@ -30,7 +30,7 @@
 - [x] T009 Definir `EffortStore` con `StoryAcceptsEffort`, `MemberBelongsToStoryProject`, `SaveEntry` y `AccumulatedHours` en `src/effort/store.go`
 - [ ] T010 Implementar `PostgreSQLEffortStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/effort/postgres_effort_store.go`
 - [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/effort/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir la validación de campos con acumulación de todos los errores en `src/effort/validation.go`
+- [x] T012 [P] Definir la validación de campos con acumulación de todos los errores en `src/effort/validation.go`
 
 **Checkpoint**: El modelo, la aritmética, la validación, el contrato y el adaptador PostgreSQL están listos para las historias.
 
