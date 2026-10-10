@@ -19,17 +19,17 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 docker compose up -d postgres
 ```
 
-Aplicar las migraciones pendientes en orden numérico. La migración 005 depende de que las
+Aplicar las migraciones pendientes en orden numérico. La migración 003 depende de que las
 migraciones 001, que crea los proyectos e integrantes, 002, que crea las historias del backlog,
-y 003, que crea los Sprints, ya estén aplicadas porque los registros de esfuerzo referencian
+y 004, que crea los Sprints, ya estén aplicadas porque los registros de esfuerzo referencian
 historias e integrantes existentes y solo se aceptan en historias de un Sprint activo:
 
 ```powershell
-migrate -path db/migrations -database "$DATABASE_URL" up
+migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Las pruebas de integración de HU-07 (migración 004) leen la tabla `effort_logs`, por lo que la
-migración 005 debe estar aplicada antes de ejecutarlas.
+Las pruebas de integración de HU-07 (migración 007) leen la tabla `effort_logs`, por lo que la
+migración 003 debe estar aplicada antes de ejecutarlas.
 
 Luego ejecutar las pruebas:
 

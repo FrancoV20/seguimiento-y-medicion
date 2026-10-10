@@ -12,10 +12,10 @@
 
 **Purpose**: Preparar Go, PostgreSQL/Docker y esquema de registros de esfuerzo.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
-- [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear las migraciones SQL `db/migrations/005_create_effort_logs.up.sql` y `db/migrations/005_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `003_create_sprints` ya estén aplicadas
+- [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
+- [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
+- [ ] T004 [P] Crear las migraciones SQL `db/migrations/003_create_effort_logs.up.sql` y `db/migrations/003_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `004_create_sprint` ya estén aplicadas
 - [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-timesheet/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
@@ -24,9 +24,9 @@
 
 **Purpose**: Crear modelos, aritmética de horas, validaciones y persistencia compartidos por las historias.
 
-- [ ] T006 [P] Definir `EffortEntry`, `LogEffortRequest`, `LogEffortResult` y `AccumulatedEffort` en `src/effort/model.go`
-- [ ] T007 [P] Definir errores explícitos y mensajes exactos para horas inválidas, actividad vacía, fecha requerida, integrante no válido, historia sin Sprint activo y persistencia en `src/effort/errors.go`
-- [ ] T008 [P] Implementar el tipo `Hours` en centésimas de hora con interpretación de entrada, rango `(0, 24]`, máximo dos decimales y suma exacta en `src/effort/hours.go`
+- [x] T006 [P] Definir `EffortEntry`, `LogEffortRequest`, `LogEffortResult` y `AccumulatedEffort` en `src/effort/model.go`
+- [x] T007 [P] Definir errores explícitos y mensajes exactos para horas inválidas, actividad vacía, fecha requerida, integrante no válido, historia sin Sprint activo y persistencia en `src/effort/errors.go`
+- [x] T008 [P] Implementar el tipo `Hours` en centésimas de hora con interpretación de entrada, rango `(0, 24]`, máximo dos decimales y suma exacta en `src/effort/hours.go`
 - [ ] T009 Definir `EffortStore` con `StoryAcceptsEffort`, `MemberBelongsToStoryProject`, `SaveEntry` y `AccumulatedHours` en `src/effort/store.go`
 - [ ] T010 Implementar `PostgreSQLEffortStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/effort/postgres_effort_store.go`
 - [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/effort/test_store.go`, sin sustituir la integración PostgreSQL
@@ -70,15 +70,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir pruebas en tabla de `Hours` con -1, 0, 24, 24,01, 25, 0,5, 1,555, vacío y texto no numérico en `src/effort/hours_test.go`
+- [x] T023 [P] [US2] Escribir pruebas en tabla de `Hours` con -1, 0, 24, 24,01, 25, 0,5, 1,555, vacío y texto no numérico en `src/effort/hours_test.go`
 - [ ] T024 [P] [US2] Escribir prueba unitaria de que una carga con horas inválidas no invoca `SaveEntry` ni cambia el acumulado en `src/effort/service_test.go`
 - [ ] T025 [P] [US2] Escribir el escenario BDD "Carga de horas inválida" en `test/effort_bdd_test.go`
 - [ ] T026 [P] [US2] Escribir prueba de integración de que la restricción `CHECK` rechaza horas fuera de rango escritas directamente en `src/effort/postgres_effort_store_integration_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implementar en `src/effort/hours.go` la validación del rango `(0, 24]`, el máximo de dos decimales y el rechazo de valores no numéricos
-- [ ] T028 [US2] Implementar en `src/effort/errors.go` el mensaje exacto "El valor de horas no es válido"
+- [x] T027 [US2] Implementar en `src/effort/hours.go` la validación del rango `(0, 24]`, el máximo de dos decimales y el rechazo de valores no numéricos
+- [x] T028 [US2] Implementar en `src/effort/errors.go` el mensaje exacto "El valor de horas no es válido"
 - [ ] T029 [US2] Integrar en `src/effort/validation.go` y `src/effort/service.go` la validación de horas antes de guardar
 - [ ] T030 [US2] Verificar en `src/effort/service_test.go` que el acumulado de la historia es idéntico antes y después de una carga rechazada
 
