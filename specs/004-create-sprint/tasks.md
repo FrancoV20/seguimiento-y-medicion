@@ -1,6 +1,6 @@
 # Tasks: Crear y asignar Sprint
 
-**Input**: Design documents from `specs/003-create-sprint/`
+**Input**: Design documents from `specs/004-create-sprint/`
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, quickstart.md
 
@@ -15,8 +15,8 @@
 - [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
 - [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
 - [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear la migración SQL `db/migrations/003_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
+- [ ] T004 [P] Crear la migración SQL `db/migrations/004_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
+- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -111,11 +111,11 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-create-sprint/quickstart.md`
+- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
 - [ ] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
 - [ ] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/003-create-sprint/tasks.md`
+- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
 
 ---
 
