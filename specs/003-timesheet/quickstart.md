@@ -28,8 +28,15 @@ historias e integrantes existentes y solo se aceptan en historias de un Sprint a
 migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Las pruebas de integración de HU-07 (migración 007) leen la tabla `effort_logs`, por lo que la
-migración 003 debe estar aplicada antes de ejecutarlas.
+Las pruebas de integración de HU-07 leen la tabla `effort_logs`, por lo que la migración 003
+debe estar aplicada antes de ejecutarlas.
+
+Si tu base ya tenía aplicada la 004 antes de que existiera la 003, `migrate` no aplica la 003
+por sí solo. En ese caso hay que recrear la base local y volver a aplicar todo en orden:
+
+    docker compose down -v
+    docker compose up -d postgres
+    migrate -path db/migrations -database $env:DATABASE_URL up
 
 Luego ejecutar las pruebas:
 
