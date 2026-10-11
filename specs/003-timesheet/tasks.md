@@ -47,7 +47,7 @@
 - [ ] T013 [P] [US1] Escribir prueba unitaria de registro de 4 horas que suma 4 horas al acumulado de la historia en `src/effort/service_test.go`
 - [ ] T014 [P] [US1] Escribir prueba unitaria de registros sucesivos (4 h y 2,5 h) que acumulan 6,5 h sin sobrescribir en `src/effort/service_test.go`
 - [ ] T015 [P] [US1] Escribir prueba unitaria de rechazo cuando la historia no está asignada a un Sprint activo en `src/effort/service_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de integración de guardado y acumulado con historia en Sprint activo en `src/effort/postgres_effort_store_integration_test.go`
+- [X] T016 [P] [US1] Escribir la prueba de integración de guardado y acumulado con historia en Sprint activo en `src/effort/postgres_effort_store_integration_test.go`
 - [ ] T017 [P] [US1] Escribir el escenario BDD "Carga de esfuerzo diario" en `test/effort_bdd_test.go`
 
 ### Implementation for User Story 1
