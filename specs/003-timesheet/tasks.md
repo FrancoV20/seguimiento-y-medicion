@@ -52,8 +52,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Implementar `LogEffort` en `src/effort/service.go`, cargando el contexto de la historia desde `EffortStore` y usando un reloj inyectable
-- [ ] T019 [US1] Implementar en `src/effort/service.go` el resultado con registro creado, `accumulatedHours` y `successMessage` solo después de persistir
+- [x] T018 [US1] Implementar `LogEffort` en `src/effort/service.go`, cargando el contexto de la historia desde `EffortStore` y usando un reloj inyectable
+- [x] T019 [US1] Implementar en `src/effort/service.go` el resultado con registro creado, `accumulatedHours` y `successMessage` solo después de persistir
 - [x] T020 [US1] Implementar `SaveEntry` en `src/effort/postgres_effort_store.go`, insertando el registro y calculando el acumulado en una misma transacción
 - [x] T021 [US1] Implementar `StoryAcceptsEffort` y `AccumulatedHours` en `src/effort/postgres_effort_store.go`, verificando que el Sprint de la historia esté `Activo`
 - [x] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto, integrante, historia y Sprint activo, y limpieza en `src/effort/postgres_effort_store_integration_test.go`
