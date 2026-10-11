@@ -44,19 +44,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir prueba unitaria de registro de 4 horas que suma 4 horas al acumulado de la historia en `src/effort/service_test.go`
-- [ ] T014 [P] [US1] Escribir prueba unitaria de registros sucesivos (4 h y 2,5 h) que acumulan 6,5 h sin sobrescribir en `src/effort/service_test.go`
-- [ ] T015 [P] [US1] Escribir prueba unitaria de rechazo cuando la historia no está asignada a un Sprint activo en `src/effort/service_test.go`
+- [X] T013 [P] [US1] Escribir prueba unitaria de registro de 4 horas que suma 4 horas al acumulado de la historia en `src/effort/service_test.go`
+- [x] T014 [P] [US1] Escribir prueba unitaria de registros sucesivos (4 h y 2,5 h) que acumulan 6,5 h sin sobrescribir en `src/effort/service_test.go`
+- [x] T015 [P] [US1] Escribir prueba unitaria de rechazo cuando la historia no está asignada a un Sprint activo en `src/effort/service_test.go`
 - [X] T016 [P] [US1] Escribir la prueba de integración de guardado y acumulado con historia en Sprint activo en `src/effort/postgres_effort_store_integration_test.go`
-- [ ] T017 [P] [US1] Escribir el escenario BDD "Carga de esfuerzo diario" en `test/effort_bdd_test.go`
+- [x] T017 [P] [US1] Escribir el escenario BDD "Carga de esfuerzo diario" en `test/effort_bdd_test.go`
 
 ### Implementation for User Story 1
 
 - [ ] T018 [US1] Implementar `LogEffort` en `src/effort/service.go`, cargando el contexto de la historia desde `EffortStore` y usando un reloj inyectable
 - [ ] T019 [US1] Implementar en `src/effort/service.go` el resultado con registro creado, `accumulatedHours` y `successMessage` solo después de persistir
-- [ ] T020 [US1] Implementar `SaveEntry` en `src/effort/postgres_effort_store.go`, insertando el registro y calculando el acumulado en una misma transacción
-- [ ] T021 [US1] Implementar `StoryAcceptsEffort` y `AccumulatedHours` en `src/effort/postgres_effort_store.go`, verificando que el Sprint de la historia esté `Activo`
-- [ ] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto, integrante, historia y Sprint activo, y limpieza en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T020 [US1] Implementar `SaveEntry` en `src/effort/postgres_effort_store.go`, insertando el registro y calculando el acumulado en una misma transacción
+- [x] T021 [US1] Implementar `StoryAcceptsEffort` y `AccumulatedHours` en `src/effort/postgres_effort_store.go`, verificando que el Sprint de la historia esté `Activo`
+- [x] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto, integrante, historia y Sprint activo, y limpieza en `src/effort/postgres_effort_store_integration_test.go`
 
 **Checkpoint**: US1 registra esfuerzo y acumula horas de forma reproducible, y permite consultar el acumulado de una historia de forma independiente.
 
