@@ -94,20 +94,20 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas unitarias de actividad vacía y solo espacios en `src/effort/service_test.go`
-- [ ] T032 [P] [US3] Escribir pruebas unitarias de fecha omitida y fecha posterior a la actual con reloj inyectado en `src/effort/service_test.go`
-- [ ] T033 [P] [US3] Escribir pruebas unitarias de integrante omitido, inexistente y ajeno al proyecto de la historia en `src/effort/service_test.go`
-- [ ] T034 [P] [US3] Escribir prueba unitaria de varios campos inválidos con todos los errores informados juntos en `src/effort/service_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD "Actividad realizada vacía", "Fecha de carga faltante" e "Integrante no especificado" en `test/effort_bdd_test.go`
-- [ ] T036 [P] [US3] Escribir prueba de integración de `MemberBelongsToStoryProject` con integrante del proyecto y ajeno en `src/effort/postgres_effort_store_integration_test.go`
+- [X] T031 [P] [US3] Escribir pruebas unitarias de actividad vacía y solo espacios en `src/effort/service_test.go`
+- [X] T032 [P] [US3] Escribir pruebas unitarias de fecha omitida y fecha posterior a la actual con reloj inyectado en `src/effort/service_test.go`
+- [X] T033 [P] [US3] Escribir pruebas unitarias de integrante omitido, inexistente y ajeno al proyecto de la historia en `src/effort/service_test.go`
+- [X] T034 [P] [US3] Escribir prueba unitaria de varios campos inválidos con todos los errores informados juntos en `src/effort/service_test.go`
+- [X] T035 [P] [US3] Escribir los escenarios BDD "Actividad realizada vacía", "Fecha de carga faltante" e "Integrante no especificado" en `test/effort_bdd_test.go`
+- [x] T036 [P] [US3] Escribir prueba de integración de `MemberBelongsToStoryProject` con integrante del proyecto y ajeno en `src/effort/postgres_effort_store_integration_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Implementar en `src/effort/validation.go` la normalización de la actividad y el rechazo de actividad vacía
-- [ ] T038 [US3] Implementar en `src/effort/validation.go` la fecha obligatoria y el rechazo de fechas futuras
-- [ ] T039 [US3] Implementar `MemberBelongsToStoryProject` en `src/effort/postgres_effort_store.go` y su uso en la validación del integrante
-- [ ] T040 [US3] Implementar en `src/effort/errors.go` los mensajes exactos de actividad obligatoria, fecha requerida e integrante responsable
-- [ ] T041 [US3] Verificar en `src/effort/service_test.go` y `test/effort_bdd_test.go` que ninguna validación fallida persiste registros ni modifica el acumulado
+- [x] T037 [US3] Implementar en `src/effort/validation.go` la normalización de la actividad y el rechazo de actividad vacía
+- [x] T038 [US3] Implementar en `src/effort/validation.go` la fecha obligatoria y el rechazo de fechas futuras
+- [X] T039 [US3] Implementar `MemberBelongsToStoryProject` en `src/effort/postgres_effort_store.go` y su uso en la validación del integrante
+- [x] T040 [US3] Implementar en `src/effort/errors.go` los mensajes exactos de actividad obligatoria, fecha requerida e integrante responsable
+- [X] T041 [US3] Verificar en `src/effort/service_test.go` y `test/effort_bdd_test.go` que ninguna validación fallida persiste registros ni modifica el acumulado
 
 **Checkpoint**: US3 exige los campos obligatorios, informa todos los errores y no deja registros parciales.
 

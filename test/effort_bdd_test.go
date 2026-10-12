@@ -126,3 +126,92 @@ func TestScenarioInvalidHours(t *testing.T) {
 		})
 	}
 }
+
+// messageFor devuelve el mensaje de error asociado a un campo, o "" si no hay.
+func messageFor(result effort.LogEffortResult, field string) string {
+	for _, fe := range result.ValidationErrors {
+		if fe.Field == field {
+			return fe.Err.Error()
+		}
+	}
+	return ""
+}
+
+// thenNothingWasSaved verifica que la carga fue rechazada y no dejó registros.
+func thenNothingWasSaved(t *testing.T, result effort.LogEffortResult, store *effort.TestStore) {
+	t.Helper()
+	if result.Succeeded() || result.SuccessMessage != "" {
+		t.Fatalf("la carga debía ser rechazada, sin mensaje de éxito: %+v", result)
+	}
+	if n := len(store.Entries()); n != 0 {
+		t.Errorf("no debía guardarse ningún registro, hay %d", n)
+	}
+		if total, _ := store.AccumulatedHours(context.Background(), "HU-03"); total != 0 {
+		t.Errorf("el acumulado de la historia no debía cambiar (0), fue %d", total)
+	}
+}
+
+// Escenario: Actividad realizada vacía.
+//
+//	Given un Product Builder que intenta registrar esfuerzo en una historia asignada
+//	When deja el campo "Actividad realizada" vacío y presiona guardar
+//	Then el sistema impide el registro y muestra que la descripción de la actividad es obligatoria
+func TestScenarioEmptyActivity(t *testing.T) {
+	// Given
+	service, store := givenActiveSprintStory()
+
+	// When
+	result := service.LogEffort(context.Background(), request("", "4"))
+
+	// Then
+	thenNothingWasSaved(t, result, store)
+	if got := messageFor(result, effort.FieldActivity); got != "La descripción de la actividad es obligatoria" {
+		t.Errorf("mensaje = %q", got)
+	}
+}
+
+// Escenario: Fecha de carga faltante.
+//
+//	Given un Product Builder que intenta registrar el esfuerzo
+//	When omite ingresar la "Fecha" y presiona guardar
+//	Then el sistema rechaza la carga y muestra que la fecha es requerida
+func TestScenarioMissingDate(t *testing.T) {
+	// Given
+	service, store := givenActiveSprintStory()
+	req := request("Desarrollo de endpoint en Go", "4")
+
+	// When
+	req.WorkDate = time.Time{}
+	result := service.LogEffort(context.Background(), req)
+
+	// Then
+	thenNothingWasSaved(t, result, store)
+	if got := messageFor(result, effort.FieldDate); got != "La fecha es requerida" {
+		t.Errorf("mensaje = %q", got)
+	}
+}
+
+// Escenario: Integrante no especificado.
+//
+//	Given que se está intentando registrar el esfuerzo de una tarea
+//	When no se asocia un "Integrante" válido al registro de horas
+//	Then el sistema bloquea la acción indicando que se debe especificar el integrante responsable
+func TestScenarioMemberNotSpecified(t *testing.T) {
+	for _, member := range []string{"", "M999"} {
+		t.Run("integrante '"+member+"'", func(t *testing.T) {
+			// Given
+			service, store := givenActiveSprintStory()
+			req := request("Desarrollo de endpoint en Go", "4")
+
+			// When
+			req.MemberID = member
+			result := service.LogEffort(context.Background(), req)
+
+			// Then
+			thenNothingWasSaved(t, result, store)
+			if got := messageFor(result, effort.FieldMember); got != "Se debe especificar el integrante responsable" {
+				t.Errorf("mensaje = %q", got)
+			}
+		})
+	}
+}

@@ -37,6 +37,18 @@ func (s *Service) LogEffort(ctx context.Context, req LogEffortRequest) LogEffort
 		errs = append(errs, FieldError{Field: FieldStory, Err: ErrStoryNotInSprint})
 	}
 
+	// El integrante se comprueba contra el proyecto de la historia, así que solo tiene
+	// sentido si la historia es válida y el integrante no fue omitido (FR-009).
+	if accepts && !hasFieldError(errs, FieldMember) {
+		belongs, err := s.store.MemberBelongsToStoryProject(ctx, req.MemberID, req.StoryID)
+		if err != nil {
+			return LogEffortResult{StorageError: ErrStorage}
+		}
+		if !belongs {
+			errs = append(errs, FieldError{Field: FieldMember, Err: ErrMemberRequired})
+		}
+	}
+
 	if len(errs) > 0 {
 		return LogEffortResult{ValidationErrors: errs}
 	}
@@ -58,4 +70,14 @@ func (s *Service) LogEffort(ctx context.Context, req LogEffortRequest) LogEffort
 		AccumulatedHours: total,
 		SuccessMessage:   SuccessMessage,
 	}
+}
+
+// hasFieldError indica si ya hay un error de validación para ese campo.
+func hasFieldError(errs []FieldError, field string) bool {
+	for _, e := range errs {
+		if e.Field == field {
+			return true
+		}
+	}
+	return false
 }

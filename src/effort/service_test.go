@@ -180,3 +180,125 @@ func TestLogEffortAcceptsBoundaryHours(t *testing.T) {
 		})
 	}
 }
+
+// assertRejected verifica que la carga fue rechazada por un único campo con el mensaje exacto,
+// sin mensaje de éxito y sin haber guardado nada (T041).
+func assertRejected(t *testing.T, result LogEffortResult, store *TestStore, field string, want error, wantMessage string) {
+	t.Helper()
+	if result.Succeeded() || result.SuccessMessage != "" {
+		t.Fatalf("la carga debía ser rechazada, sin mensaje de éxito: %+v", result)
+	}
+	got := errorFor(result.ValidationErrors, field)
+	if !errors.Is(got, want) {
+		t.Fatalf("se esperaba %v en %q, se obtuvo %v", want, field, result.ValidationErrors)
+	}
+	if got.Error() != wantMessage {
+		t.Errorf("mensaje = %q, se esperaba %q", got.Error(), wantMessage)
+	}
+	if store.SaveCalls != 0 || len(store.Entries()) != 0 {
+		t.Errorf("no debía guardarse nada (SaveCalls=%d, registros=%d)", store.SaveCalls, len(store.Entries()))
+	}
+	if total, _ := store.AccumulatedHours(context.Background(), "S1"); total != 0 {
+		t.Errorf("el acumulado de la historia no debía cambiar (0), fue %d", total)
+	}
+}
+
+// T031: actividad vacía o solo espacios.
+func TestLogEffortRejectsEmptyActivity(t *testing.T) {
+	for _, activity := range []string{"", "   ", "\t\n "} {
+		t.Run("actividad vacía", func(t *testing.T) {
+			service, store := newTestService(t)
+			req := validRequest()
+			req.Activity = activity
+			result := service.LogEffort(context.Background(), req)
+			assertRejected(t, result, store, FieldActivity, ErrActivityRequired,
+				"La descripción de la actividad es obligatoria")
+		})
+	}
+}
+
+// T032: fecha omitida y fecha posterior a la actual, con reloj inyectado.
+func TestLogEffortRejectsMissingOrFutureDate(t *testing.T) {
+	cases := []struct {
+		name        string
+		date        time.Time
+		want        error
+		wantMessage string
+	}{
+		{"fecha omitida", time.Time{}, ErrDateRequired, "La fecha es requerida"},
+		{"fecha de mañana", time.Date(2026, time.October, 11, 0, 0, 0, 0, time.UTC), ErrDateInFuture,
+			"La fecha no puede ser posterior a la fecha actual"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			service, store := newTestService(t)
+			req := validRequest()
+			req.WorkDate = c.date
+			result := service.LogEffort(context.Background(), req)
+			assertRejected(t, result, store, FieldDate, c.want, c.wantMessage)
+		})
+	}
+}
+
+// T032: el resultado depende del reloj inyectado, no de la hora real.
+func TestLogEffortUsesInjectedClock(t *testing.T) {
+	store := NewTestStore()
+	store.AddStory("S1", "P1", true)
+	store.AddMember("M1", "P1")
+	later := time.Date(2026, time.October, 12, 9, 0, 0, 0, time.UTC)
+	service := NewService(store, func() time.Time { return later })
+
+	req := validRequest()
+	req.WorkDate = time.Date(2026, time.October, 11, 0, 0, 0, 0, time.UTC) // futura para fixedNow, pasada para later
+	if result := service.LogEffort(context.Background(), req); !result.Succeeded() {
+		t.Errorf("con el reloj en el 12 de octubre, el 11 debía ser válido: %+v", result)
+	}
+}
+
+// T033: integrante omitido, inexistente o ajeno al proyecto de la historia.
+func TestLogEffortRejectsInvalidMember(t *testing.T) {
+	cases := []struct {
+		name     string
+		memberID string
+	}{
+		{"integrante omitido", ""},
+		{"integrante en blanco", "   "},
+		{"integrante inexistente", "M999"},
+		{"integrante de otro proyecto", "M2"},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			service, store := newTestService(t)
+			store.AddMember("M2", "P2") // existe, pero no pertenece a P1
+			req := validRequest()
+			req.MemberID = c.memberID
+			result := service.LogEffort(context.Background(), req)
+			assertRejected(t, result, store, FieldMember, ErrMemberRequired,
+				"Se debe especificar el integrante responsable")
+		})
+	}
+}
+
+// T034: varios campos inválidos a la vez se informan todos juntos y no se guarda nada.
+func TestLogEffortReportsAllInvalidFieldsTogether(t *testing.T) {
+	service, store := newTestService(t)
+	req := LogEffortRequest{StoryID: "S1", Hours: "0"} // horas, actividad, fecha e integrante inválidos
+
+	result := service.LogEffort(context.Background(), req)
+
+	if result.Succeeded() || result.SuccessMessage != "" {
+		t.Fatalf("la carga debía ser rechazada: %+v", result)
+	}
+	want := []string{FieldHours, FieldActivity, FieldDate, FieldMember}
+	if len(result.ValidationErrors) != len(want) {
+		t.Fatalf("se esperaban %d errores juntos, se obtuvo %v", len(want), result.ValidationErrors)
+	}
+	for i, field := range want {
+		if result.ValidationErrors[i].Field != field {
+			t.Errorf("error %d: campo %q, se esperaba %q", i, result.ValidationErrors[i].Field, field)
+		}
+	}
+	if store.SaveCalls != 0 || len(store.Entries()) != 0 {
+		t.Errorf("no debía guardarse nada (SaveCalls=%d, registros=%d)", store.SaveCalls, len(store.Entries()))
+	}
+}
