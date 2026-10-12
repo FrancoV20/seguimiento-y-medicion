@@ -302,3 +302,61 @@ func TestLogEffortReportsAllInvalidFieldsTogether(t *testing.T) {
 		t.Errorf("no debía guardarse nada (SaveCalls=%d, registros=%d)", store.SaveCalls, len(store.Entries()))
 	}
 }
+
+// errDB simula un error interno de la base de datos con detalles que nunca deben llegar al usuario.
+var errDB = errors.New("pq: connection refused to 10.0.0.5:5432 (detalle interno)")
+
+// T042 y T047: una falla del almacenamiento informa que la operación no pudo completarse,
+// sin mensaje de éxito, sin registro y sin cambiar el acumulado.
+func TestLogEffortReportsStorageFailureWithoutFalseSuccess(t *testing.T) {
+	cases := []struct {
+		name       string
+		breakStore func(*TestStore)
+	}{
+		{"falla al guardar", func(s *TestStore) { s.SaveErr = errDB }},
+		{"falla al consultar el contexto", func(s *TestStore) { s.QueryErr = errDB }},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			service, store := newTestService(t)
+			ctx := context.Background()
+
+			// Given: la historia ya tiene 4 horas acumuladas.
+			if r := service.LogEffort(ctx, validRequest()); !r.Succeeded() {
+				t.Fatalf("la carga previa debía registrarse: %+v", r)
+			}
+
+			// When: se registra una carga válida, pero el almacenamiento falla.
+			c.breakStore(store)
+			second := validRequest()
+			second.Activity = "Revisión de código"
+			result := service.LogEffort(ctx, second)
+			store.SaveErr, store.QueryErr = nil, nil // se repara la base para poder consultar
+
+			// Then: error genérico, sin éxito, sin registro y sin detalles internos.
+			if result.Succeeded() || result.SuccessMessage != "" || result.Entry != nil {
+				t.Fatalf("no debía haber éxito ni registro: %+v", result)
+			}
+			if len(result.ValidationErrors) != 0 {
+				t.Errorf("una falla de almacenamiento no es un error de validación: %v", result.ValidationErrors)
+			}
+			if !errors.Is(result.StorageError, ErrStorage) {
+				t.Fatalf("se esperaba ErrStorage, se obtuvo %v", result.StorageError)
+			}
+			if result.StorageError.Error() != "La operación no pudo completarse" {
+				t.Errorf("mensaje = %q", result.StorageError.Error())
+			}
+			if errors.Is(result.StorageError, errDB) {
+				t.Errorf("el error interno de la base no debe quedar expuesto")
+			}
+
+			// And: el acumulado y los registros siguen igual.
+			if total, _ := store.AccumulatedHours(ctx, "S1"); total != 400 {
+				t.Errorf("el acumulado debía seguir en 400, fue %d", total)
+			}
+			if len(store.Entries()) != 1 {
+				t.Errorf("debía seguir habiendo 1 registro, hay %d", len(store.Entries()))
+			}
+		})
+	}
+}

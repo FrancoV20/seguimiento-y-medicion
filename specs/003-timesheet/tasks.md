@@ -121,15 +121,15 @@
 
 ### Tests for User Story 4
 
-- [ ] T042 [P] [US4] Escribir prueba unitaria con un store que falla al guardar: mensaje de no completado, sin `successMessage` y sin cambios en el acumulado en `src/effort/service_test.go`
-- [ ] T043 [P] [US4] Escribir prueba de integración de falla transaccional (contexto cancelado o violación forzada) que no deja registros parciales en `src/effort/postgres_effort_store_integration_test.go`
-- [ ] T044 [P] [US4] Escribir el escenario BDD "Error al guardar el registro de esfuerzo" en `test/effort_bdd_test.go`
+- [x] T042 [P] [US4] Escribir prueba unitaria con un store que falla al guardar: mensaje de no completado, sin `successMessage` y sin cambios en el acumulado en `src/effort/service_test.go`
+- [x] T043 [P] [US4] Escribir prueba de integración de falla transaccional (contexto cancelado o violación forzada) que no deja registros parciales en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T044 [P] [US4] Escribir el escenario BDD "Error al guardar el registro de esfuerzo" en `test/effort_bdd_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T045 [US4] Implementar en `src/effort/service.go` el mapeo de errores de almacenamiento a un `storageError` genérico "La operación no pudo completarse"
-- [ ] T046 [US4] Implementar en `src/effort/postgres_effort_store.go` el `ROLLBACK` ante cualquier error de `SaveEntry`
-- [ ] T047 [US4] Verificar en `src/effort/service_test.go` que un resultado con `storageError` nunca incluye `successMessage` ni registro
+- [x] T045 [US4] Implementar en `src/effort/service.go` el mapeo de errores de almacenamiento a un `storageError` genérico "La operación no pudo completarse"
+- [x] T046 [US4] Implementar en `src/effort/postgres_effort_store.go` el `ROLLBACK` ante cualquier error de `SaveEntry`
+- [x] T047 [US4] Verificar en `src/effort/service_test.go` que un resultado con `storageError` nunca incluye `successMessage` ni registro
 
 **Checkpoint**: US4 informa fallas sin falso éxito ni datos parciales.
 

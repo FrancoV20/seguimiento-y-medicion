@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
@@ -213,5 +214,36 @@ func TestScenarioMemberNotSpecified(t *testing.T) {
 				t.Errorf("mensaje = %q", got)
 			}
 		})
+	}
+}
+
+// Escenario: Error al guardar el registro de esfuerzo.
+//
+//	Given un Product Builder que completó todos los campos obligatorios correctamente
+//	When ocurre un error al intentar guardar el registro en la base de datos
+//	Then el sistema informa que la operación no pudo completarse
+//	And no muestra un mensaje de éxito
+//	And el esfuerzo real acumulado de la historia no cambia
+func TestScenarioStorageFailure(t *testing.T) {
+	// Given
+	service, store := givenActiveSprintStory()
+	ctx := context.Background()
+	store.SaveErr = errors.New("connection refused to 10.0.0.5:5432")
+
+	// When
+	result := service.LogEffort(ctx, request("Desarrollo de endpoint en Go", "4"))
+	store.SaveErr = nil // se repara la base para poder consultar
+
+	// Then
+	if result.StorageError == nil || result.StorageError.Error() != "La operación no pudo completarse" {
+		t.Fatalf("se esperaba el mensaje \"La operación no pudo completarse\", resultado: %+v", result)
+	}
+
+	// And
+	if result.Succeeded() || result.SuccessMessage != "" || result.Entry != nil {
+		t.Errorf("no debía haber mensaje de éxito ni registro: %+v", result)
+	}
+	if accumulated, _ := store.AccumulatedHours(ctx, "HU-03"); accumulated != 0 {
+		t.Errorf("el acumulado debía seguir en 0, fue %d", accumulated)
 	}
 }
