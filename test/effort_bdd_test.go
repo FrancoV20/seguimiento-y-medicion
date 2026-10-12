@@ -84,3 +84,45 @@ func TestScenarioEffortAddsToPreviousHours(t *testing.T) {
 		t.Errorf("debían conservarse los 2 registros, hay %d", n)
 	}
 }
+
+// Escenario: Carga de horas inválida.
+//
+//	Given un Product Builder con una historia en el Sprint activo que ya tiene 4 horas
+//	When intenta registrar -1, 0 o 25 horas
+//	Then el sistema rechaza la carga con el mensaje "El valor de horas no es válido"
+//	And el esfuerzo real acumulado de la historia no cambia
+func TestScenarioInvalidHours(t *testing.T) {
+	for _, hours := range []string{"-1", "0", "25"} {
+		t.Run("horas "+hours, func(t *testing.T) {
+			// Given
+			service, store := givenActiveSprintStory()
+			ctx := context.Background()
+			if r := service.LogEffort(ctx, request("Desarrollo de endpoint en Go", "4")); !r.Succeeded() {
+				t.Fatalf("la carga previa debía registrarse: %+v", r)
+			}
+
+			// When
+			result := service.LogEffort(ctx, request("Pruebas", hours))
+
+			// Then
+			if result.Succeeded() || result.SuccessMessage != "" {
+				t.Fatalf("la carga debía ser rechazada: %+v", result)
+			}
+			var message string
+			for _, fe := range result.ValidationErrors {
+				if fe.Field == effort.FieldHours {
+					message = fe.Err.Error()
+				}
+			}
+			if message != "El valor de horas no es válido" {
+				t.Errorf("mensaje = %q, se esperaba %q", message, "El valor de horas no es válido")
+			}
+
+			// And
+			accumulated, _ := store.AccumulatedHours(ctx, "HU-03")
+			if accumulated != 400 {
+				t.Errorf("el acumulado debía seguir en 400, fue %d", accumulated)
+			}
+		})
+	}
+}

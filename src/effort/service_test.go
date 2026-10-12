@@ -114,3 +114,69 @@ func TestLogEffortRejectsStoryWithoutActiveSprint(t *testing.T) {
 		})
 	}
 }
+
+func TestLogEffortRejectsInvalidHoursWithoutChangingState(t *testing.T) {
+	invalid := []string{"-1", "0", "25", "24,01", "1,555", "", "abc"}
+	for _, hours := range invalid {
+		t.Run("horas "+hours, func(t *testing.T) {
+			service, store := newTestService(t)
+			ctx := context.Background()
+
+			// Given: la historia ya tiene 4 horas acumuladas.
+			if r := service.LogEffort(ctx, validRequest()); !r.Succeeded() {
+				t.Fatalf("la carga previa debía registrarse: %+v", r)
+			}
+			before, _ := store.AccumulatedHours(ctx, "S1")
+
+			// When: se intenta registrar horas inválidas.
+			req := validRequest()
+			req.Hours = hours
+			result := service.LogEffort(ctx, req)
+
+			// Then: se rechaza con el mensaje exacto y no cambia nada.
+			if result.Succeeded() || result.SuccessMessage != "" {
+				t.Fatalf("la carga debía ser rechazada, sin mensaje de éxito: %+v", result)
+			}
+			got := errorFor(result.ValidationErrors, FieldHours)
+			if !errors.Is(got, ErrInvalidHours) {
+				t.Fatalf("se esperaba ErrInvalidHours en %q, se obtuvo %v", FieldHours, result.ValidationErrors)
+			}
+			if got.Error() != "El valor de horas no es válido" {
+				t.Errorf("mensaje = %q", got.Error())
+			}
+			if store.SaveCalls != 1 {
+				t.Errorf("SaveEntry solo debía llamarse por la carga previa, se llamó %d veces", store.SaveCalls)
+			}
+			after, _ := store.AccumulatedHours(ctx, "S1")
+			if after != before {
+				t.Errorf("el acumulado cambió: antes %d, después %d", before, after)
+			}
+			if len(store.Entries()) != 1 {
+				t.Errorf("debía seguir habiendo 1 registro, hay %d", len(store.Entries()))
+			}
+		})
+	}
+}
+
+// Los límites válidos: 24 horas exactas y menos de una hora se aceptan.
+func TestLogEffortAcceptsBoundaryHours(t *testing.T) {
+	cases := []struct {
+		hours string
+		want  Hours
+	}{
+		{"24", 2400},
+		{"0,5", 50},
+		{"0.25", 25},
+	}
+	for _, c := range cases {
+		t.Run("horas "+c.hours, func(t *testing.T) {
+			service, _ := newTestService(t)
+			req := validRequest()
+			req.Hours = c.hours
+			result := service.LogEffort(context.Background(), req)
+			if !result.Succeeded() || result.AccumulatedHours != c.want {
+				t.Errorf("se esperaba éxito con acumulado %d, resultado: %+v", c.want, result)
+			}
+		})
+	}
+}

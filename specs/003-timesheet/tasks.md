@@ -71,16 +71,16 @@
 ### Tests for User Story 2
 
 - [x] T023 [P] [US2] Escribir pruebas en tabla de `Hours` con -1, 0, 24, 24,01, 25, 0,5, 1,555, vacío y texto no numérico en `src/effort/hours_test.go`
-- [ ] T024 [P] [US2] Escribir prueba unitaria de que una carga con horas inválidas no invoca `SaveEntry` ni cambia el acumulado en `src/effort/service_test.go`
-- [ ] T025 [P] [US2] Escribir el escenario BDD "Carga de horas inválida" en `test/effort_bdd_test.go`
-- [ ] T026 [P] [US2] Escribir prueba de integración de que la restricción `CHECK` rechaza horas fuera de rango escritas directamente en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T024 [P] [US2] Escribir prueba unitaria de que una carga con horas inválidas no invoca `SaveEntry` ni cambia el acumulado en `src/effort/service_test.go`
+- [x] T025 [P] [US2] Escribir el escenario BDD "Carga de horas inválida" en `test/effort_bdd_test.go`
+- [x] T026 [P] [US2] Escribir prueba de integración de que la restricción `CHECK` rechaza horas fuera de rango escritas directamente en `src/effort/postgres_effort_store_integration_test.go`
 
 ### Implementation for User Story 2
 
 - [x] T027 [US2] Implementar en `src/effort/hours.go` la validación del rango `(0, 24]`, el máximo de dos decimales y el rechazo de valores no numéricos
 - [x] T028 [US2] Implementar en `src/effort/errors.go` el mensaje exacto "El valor de horas no es válido"
-- [ ] T029 [US2] Integrar en `src/effort/validation.go` y `src/effort/service.go` la validación de horas antes de guardar
-- [ ] T030 [US2] Verificar en `src/effort/service_test.go` que el acumulado de la historia es idéntico antes y después de una carga rechazada
+- [x] T029 [US2] Integrar en `src/effort/validation.go` y `src/effort/service.go` la validación de horas antes de guardar
+- [x] T030 [US2] Verificar en `src/effort/service_test.go` que el acumulado de la historia es idéntico antes y después de una carga rechazada
 
 **Checkpoint**: US2 rechaza horas inválidas con el mensaje correcto y sin mutaciones.
 
