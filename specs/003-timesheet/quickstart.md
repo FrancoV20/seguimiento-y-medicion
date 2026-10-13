@@ -52,10 +52,12 @@ escenarios BDD y la integración de `PostgreSQLEffortStore` contra PostgreSQL.
 Las pruebas deben cubrir como mínimo:
 
 1. Carga de esfuerzo diario:
-   - una historia asignada a un Sprint activo recibe 4 horas con fecha actual y actividad
+   - una historia asignada a un Sprint activo recibe 4 horas (valor ejemplo) con fecha actual y actividad
      "Desarrollo de endpoint en Go";
    - el esfuerzo real acumulado aumenta exactamente 4 horas;
    - varios registros sobre la misma historia se acumulan sin sobrescribirse.
+   - cualquier cantidad válida (mayor que 0 y hasta 24, con hasta dos decimales) se suma; el 4
+     es solo el valor concreto usado en el ejemplo.
 2. Horas inválidas:
    - horas negativas, iguales a cero y mayores a 24 se rechazan;
    - 24 y 0,5 se aceptan; 24,01 y valores con más de dos decimales se rechazan;

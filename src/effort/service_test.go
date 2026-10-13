@@ -167,6 +167,10 @@ func TestLogEffortAcceptsBoundaryHours(t *testing.T) {
 		{"24", 2400},
 		{"0,5", 50},
 		{"0.25", 25},
+		{"1", 100},
+		{"7,75", 775},
+		{"8", 800},
+		{"23,99", 2399},
 	}
 	for _, c := range cases {
 		t.Run("horas "+c.hours, func(t *testing.T) {
