@@ -24,7 +24,7 @@
 
 **Purpose**: Crear el modelo, errores, store y transacciones compartidos por las tres historias.
 
-- [ ] T006 [P] Definir `Project`, `Sprint`, `UserStory` y `SprintCreationRequest` en `src/sprint/model.go`, incluyendo estado `Activo`, Goal obligatorio e identificador no editable
+- [x] T006 [P] Definir `Project`, `Sprint`, `UserStory` y `SprintCreationRequest` en `src/sprint/model.go`, incluyendo estado `Activo`, Goal obligatorio e identificador no editable
 - [ ] T007 [P] Definir errores explícitos para proyecto inexistente, Goal vacío, fechas inválidas, historia no disponible, conflicto de Sprint activo y persistencia en `src/sprint/errors.go`
 - [ ] T008 Definir `SprintStore` con operaciones `CreateSprint`, `AssignStories` y `RemoveStory` en `src/sprint/store.go`
 - [ ] T009 Implementar la generación secuencial `Sprint 1`, `Sprint 2` y sucesivos con protección transaccional en `src/sprint/sequence.go`
