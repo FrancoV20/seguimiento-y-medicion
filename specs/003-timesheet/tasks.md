@@ -139,12 +139,12 @@
 
 **Purpose**: Validación final, documentación, integración con HU-07 y trazabilidad.
 
-- [ ] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-timesheet/quickstart.md`
-- [ ] T049 [P] Revisar que los errores de validación y PostgreSQL no expongan detalles internos en `src/effort/errors.go`
-- [ ] T050 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T051 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T052 Coordinar con el responsable de HU-07 que `actualHours` de cada historia se lee como la suma de `effort_logs.hours` y que la migración 005 se aplica antes de sus pruebas de integración
-- [ ] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/003-timesheet/tasks.md`
+- [x] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-timesheet/quickstart.md`
+- [x] T049 [P] Revisar que los errores de validación y PostgreSQL no expongan detalles internos en `src/effort/errors.go`
+- [x] T050 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T051 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
+- [x] T052 Coordinar con el responsable de HU-07 que `actualHours` de cada historia se lee como la suma de `effort_logs.hours` y que la migración 003 se aplica antes de sus pruebas de integración
+- [x] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/003-timesheet/tasks.md`
 
 ---
 
@@ -239,3 +239,30 @@ T044: Escenario BDD en test/effort_bdd_test.go
 - Las pruebas deben verificar comportamiento real y observar un estado fallido antes de implementar.
 - PostgreSQL debe ejecutarse con Docker; la aplicación Go y las pruebas se ejecutan localmente.
 - Los nombres de tablas y columnas de las migraciones 001, 002 y 003 deben verificarse en los archivos reales antes de escribir T004 y T010.
+
+## Trazabilidad
+
+| Requisito | Pruebas |
+|---|---|
+| FR-001 | TestLogEffortRegistersHoursAndAccumulates, TestScenarioDailyEffortLog, TestPostgresSaveEntryAccumulates |
+| FR-002 | TestLogEffortSuccessiveEntriesAccumulate, TestScenarioEffortAddsToPreviousHours |
+| FR-003 | TestLogEffortSuccessiveEntriesAccumulate, TestPostgresSaveEntryAccumulates |
+| FR-004 | TestParseHoursValid, TestParseHoursInvalid, TestLogEffortAcceptsBoundaryHours, TestPostgresCheckConstraintRejectsOutOfRangeHours |
+| FR-005 | TestInvalidHoursMessage, TestLogEffortRejectsInvalidHoursWithoutChangingState, TestScenarioInvalidHours |
+| FR-006 | TestValidateInputActivity, TestLogEffortRejectsEmptyActivity, TestScenarioEmptyActivity |
+| FR-007 | TestValidateInputDate, TestLogEffortRejectsMissingOrFutureDate, TestScenarioMissingDate |
+| FR-008 | TestValidateInputDate, TestLogEffortRejectsMissingOrFutureDate, TestLogEffortUsesInjectedClock |
+| FR-009 | TestLogEffortRejectsInvalidMember, TestScenarioMemberNotSpecified, TestPostgresMemberBelongsToStoryProject |
+| FR-010 | TestValidateInputAccumulatesAllErrors, TestLogEffortReportsAllInvalidFieldsTogether |
+| FR-011 | TestLogEffortRejectsStoryWithoutActiveSprint, TestPostgresStoryAcceptsEffort |
+| FR-012 | TestLogEffortReportsStorageFailureWithoutFalseSuccess, TestScenarioStorageFailure, TestPostgresSaveEntryFailureLeavesNoPartialData |
+| FR-013 | TestLogEffortReportsStorageFailureWithoutFalseSuccess (no expone el error interno), revisión de errors.go (T049) |
+| FR-014 | EffortStore.AccumulatedHours, TestPostgresSaveEntryAccumulates; coordinación con HU-07 (T052) |
+| FR-015 | TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible |
+| SC-001 | TestScenarioDailyEffortLog, TestLogEffortSuccessiveEntriesAccumulate |
+| SC-002 | TestLogEffortRejectsInvalidHoursWithoutChangingState, TestScenarioInvalidHours |
+| SC-003 | TestLogEffortRejectsEmptyActivity, TestLogEffortRejectsMissingOrFutureDate, TestLogEffortRejectsInvalidMember |
+| SC-004 | TestLogEffortReportsStorageFailureWithoutFalseSuccess, TestPostgresSaveEntryFailureLeavesNoPartialData |
+| SC-005 | Verificación de tiempo en TestPostgresSaveEntryAccumulates |
+| SC-006 | TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible |
+| SC-007 | No aplica en esta historia: requiere una interfaz de usuario, que está fuera de alcance (plan.md y spec.md) |

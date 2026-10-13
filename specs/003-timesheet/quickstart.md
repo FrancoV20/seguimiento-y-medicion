@@ -47,6 +47,32 @@ go test ./...
 El comando debe finalizar correctamente y ejecutar las pruebas unitarias de esfuerzo, los
 escenarios BDD y la integración de `PostgreSQLEffortStore` contra PostgreSQL.
 
+## Arranque y apagado de PostgreSQL
+
+Variables de conexión:
+
+| Variable | Dónde se define | Para qué sirve |
+|---|---|---|
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | `docker-compose.yml` (por defecto `sym_user`, `sym_pass`, `seguimiento_y_medicion`) y, si hace falta, el `docker-compose.override.yml` personal de cada integrante (no se sube al repositorio) | Crean el usuario y la base la primera vez que arranca el contenedor |
+| `DATABASE_URL` | Variable de entorno de la terminal | La usan `migrate` y las pruebas de integración |
+
+Formato de `DATABASE_URL`:
+
+    postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable
+
+`PUERTO` es el que publica el contenedor: 5432 por defecto, aunque el override de cada
+integrante puede usar otro (por ejemplo 5433). Ver la sección "Base de datos" del README.
+
+Comandos:
+
+    docker compose up -d postgres    # arrancar
+    docker compose ps                # verificar que está levantado
+    docker compose stop              # apagar conservando los datos
+    docker compose down              # quitar el contenedor, conserva los datos
+    docker compose down -v           # quitar también la base local (borra los datos)
+
+Si `DATABASE_URL` no está definida, las pruebas de integración se omiten (`SKIP`) en lugar de fallar.
+
 ## Required validation scenarios
 
 Las pruebas deben cubrir como mínimo:

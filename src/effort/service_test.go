@@ -364,3 +364,33 @@ func TestLogEffortReportsStorageFailureWithoutFalseSuccess(t *testing.T) {
 		})
 	}
 }
+// FR-015 y SC-006: el acumulado es la suma de los registros guardados y es reproducible.
+func TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible(t *testing.T) {
+	service, store := newTestService(t)
+	ctx := context.Background()
+
+	for _, hours := range []string{"4", "2,5", "0,05", "1,25"} {
+		req := validRequest()
+		req.Hours = hours
+		if r := service.LogEffort(ctx, req); !r.Succeeded() {
+			t.Fatalf("la carga de %s horas debía registrarse: %+v", hours, r)
+		}
+	}
+
+	var sum Hours
+	for _, e := range store.Entries() {
+		sum = sum.Add(e.Hours)
+	}
+	first, _ := store.AccumulatedHours(ctx, "S1")
+	second, _ := store.AccumulatedHours(ctx, "S1")
+
+	if first != sum {
+		t.Errorf("el acumulado (%d) debe ser la suma de los registros (%d)", first, sum)
+	}
+	if first != second {
+		t.Errorf("consultar dos veces debe dar lo mismo: %d y %d", first, second)
+	}
+	if first != 780 {
+		t.Errorf("el acumulado debía ser 7,8 horas (780), fue %d", first)
+	}
+}

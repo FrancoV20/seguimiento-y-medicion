@@ -161,6 +161,7 @@ func TestPostgresSaveEntryAccumulates(t *testing.T) {
 
 	save := func(activity string, hours Hours) (EffortEntry, Hours) {
 		t.Helper()
+		start := time.Now() 
 		entry, total, err := store.SaveEntry(ctx, EffortEntry{
 			StoryID:  idStr(f.activeStory),
 			MemberID: idStr(f.member),
@@ -168,6 +169,9 @@ func TestPostgresSaveEntryAccumulates(t *testing.T) {
 			Activity: activity,
 			Hours:    hours,
 		})
+		if elapsed := time.Since(start); elapsed > 2*time.Second {
+			t.Errorf("SC-005: guardar y devolver el acumulado tardó %v, debía tardar menos de 2 s", elapsed)
+		}
 		if err != nil {
 			t.Fatalf("SaveEntry falló: %v", err)
 		}
