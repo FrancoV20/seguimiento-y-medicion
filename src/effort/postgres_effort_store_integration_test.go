@@ -161,7 +161,7 @@ func TestPostgresSaveEntryAccumulates(t *testing.T) {
 
 	save := func(activity string, hours Hours) (EffortEntry, Hours) {
 		t.Helper()
-		start := time.Now() 
+		start := time.Now()
 		entry, total, err := store.SaveEntry(ctx, EffortEntry{
 			StoryID:  idStr(f.activeStory),
 			MemberID: idStr(f.member),

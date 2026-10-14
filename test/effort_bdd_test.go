@@ -147,7 +147,7 @@ func thenNothingWasSaved(t *testing.T, result effort.LogEffortResult, store *eff
 	if n := len(store.Entries()); n != 0 {
 		t.Errorf("no debía guardarse ningún registro, hay %d", n)
 	}
-		if total, _ := store.AccumulatedHours(context.Background(), "HU-03"); total != 0 {
+	if total, _ := store.AccumulatedHours(context.Background(), "HU-03"); total != 0 {
 		t.Errorf("el acumulado de la historia no debía cambiar (0), fue %d", total)
 	}
 }

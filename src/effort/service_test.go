@@ -364,6 +364,7 @@ func TestLogEffortReportsStorageFailureWithoutFalseSuccess(t *testing.T) {
 		})
 	}
 }
+
 // FR-015 y SC-006: el acumulado es la suma de los registros guardados y es reproducible.
 func TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible(t *testing.T) {
 	service, store := newTestService(t)
