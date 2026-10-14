@@ -15,7 +15,7 @@
 - [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
 - [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
 - [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [x] T004 [P] Crear las migraciones SQL `db/migrations/003_create_effort_logs.up.sql` y `db/migrations/003_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `004_create_sprint` ya estén aplicadas
+- [x] T004 [P] Crear las migraciones SQL `db/migrations/003_create_effort_logs.up.sql` y `db/migrations/003_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `004_create_sprints` ya estén aplicadas
 - [x] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-timesheet/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
