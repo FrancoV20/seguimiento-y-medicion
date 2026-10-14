@@ -94,9 +94,9 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas unitarias de horas reales negativas y Story Points inválidos en `src/metrics/closure_validation_test.go`
-- [ ] T032 [P] [US3] Escribir prueba de múltiples historias inválidas y motivos completos en `src/metrics/closure_validation_test.go`
-- [ ] T033 [P] [US3] Escribir el escenario BDD de bloqueo de cierre en `test/metrics_bdd_test.go`
+- [x] T031 [P] [US3] Escribir pruebas unitarias de horas reales negativas y Story Points inválidos en `src/metrics/closure_validation_test.go`
+- [x] T032 [P] [US3] Escribir prueba de múltiples historias inválidas y motivos completos en `src/metrics/closure_validation_test.go`
+- [x] T033 [P] [US3] Escribir el escenario BDD de bloqueo de cierre en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 3
 

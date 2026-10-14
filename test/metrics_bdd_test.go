@@ -2,6 +2,7 @@ package test
 
 import (
 	"math/big"
+	"strings"
 	"testing"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
@@ -154,6 +155,50 @@ func TestMetricsBDD_PartialEffortCalculation(t *testing.T) {
 					}
 					if got.Warning != "Cálculo parcial: basado en 1 de 3 historias" {
 						t.Errorf("alerta = %q, want %q", got.Warning, "Cálculo parcial: basado en 1 de 3 historias")
+					}
+				})
+			})
+		})
+	})
+}
+
+func TestMetricsBDD_SprintClosureBlockedByInvalidStoryData(t *testing.T) {
+	t.Run("Escenario 4: bloqueo del cierre de Sprint por datos inválidos", func(t *testing.T) {
+		t.Run("Given un Sprint con horas reales negativas y Story Points inválidos", func(t *testing.T) {
+			sprint := metrics.SprintData{
+				ID:     "bdd-sprint-invalid",
+				Status: "Activo",
+				Stories: []metrics.CompletedStory{
+					{
+						ID:          "bdd-negative-hours",
+						Status:      "Terminada",
+						StoryPoints: bddIntPointer(3),
+						ActualHours: bddRat(t, "-1"),
+					},
+					{
+						ID:          "bdd-invalid-points",
+						Status:      "Terminada",
+						StoryPoints: bddIntPointer(4),
+						ActualHours: bddRat(t, "2"),
+					},
+				},
+			}
+
+			t.Run("When el Scrum Master intenta cerrar el Sprint", func(t *testing.T) {
+				err := metrics.ValidateSprintClosure(sprint)
+
+				t.Run("Then el cierre queda bloqueado e identifica historias y motivos", func(t *testing.T) {
+					if err == nil {
+						t.Fatal("ValidateSprintClosure() error = nil, want closure blocked")
+					}
+
+					for _, want := range []string{
+						"Historia bdd-negative-hours: horas reales negativas",
+						"Historia bdd-invalid-points: Story Points inválidos",
+					} {
+						if !strings.Contains(err.Error(), want) {
+							t.Errorf("closure error %q does not contain %q", err, want)
+						}
 					}
 				})
 			})
