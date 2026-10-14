@@ -24,6 +24,9 @@ func (s *Service) CalculateMetrics(sprintID string) (SprintMetrics, error) {
 	if sprint.Status != "Finalizado" {
 		return SprintMetrics{}, fmt.Errorf("%w: %s", ErrSprintNotFinished, sprint.ID)
 	}
+	if err := ValidateSprintClosure(sprint); err != nil {
+		return SprintMetrics{}, err
+	}
 
 	metrics, err := calculateSprintMetrics(sprint)
 	if err != nil {

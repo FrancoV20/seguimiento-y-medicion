@@ -100,9 +100,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Implementar `ValidateSprintClosure` en `src/metrics/closure_validation.go`, devolviendo todos los errores por historia y campo
-- [ ] T035 [US3] Integrar la validación de cierre en `src/metrics/service.go` antes de cambiar el Sprint a `Finalizado` o calcular métricas definitivas
-- [ ] T036 [US3] Implementar en `src/metrics/errors.go` mensajes que identifiquen historias con horas reales negativas o Story Points inválidos y soliciten corrección
+- [x] T034 [US3] Implementar `ValidateSprintClosure` en `src/metrics/closure_validation.go`, devolviendo todos los errores por historia y campo
+- [x] T035 [US3] Integrar la validación de cierre en `src/metrics/service.go` antes de cambiar el Sprint a `Finalizado` o calcular métricas definitivas
+- [x] T036 [US3] Implementar en `src/metrics/errors.go` mensajes que identifiquen historias con horas reales negativas o Story Points inválidos y soliciten corrección
 - [ ] T037 [US3] Verificar en `src/metrics/closure_validation_test.go` y `test/metrics_bdd_test.go` que el cierre bloqueado no persiste estado final ni métricas definitivas
 
 **Checkpoint**: US3 bloquea el cierre con datos inválidos y deja el Sprint corregible sin mutaciones parciales.
