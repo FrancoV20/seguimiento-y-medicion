@@ -8,18 +8,18 @@ import (
 func TestCalculateMetricsVelocityUsesOnlyCompletedStories(t *testing.T) {
 	store := &TestMetricsStore{
 		SprintData: SprintData{
-			ID:     "sprint-1",
+			ID:     1,
 			Status: "Finalizado",
 			Stories: []CompletedStory{
-				{ID: "completed-1", Status: "Terminada", StoryPoints: intPointer(5)},
-				{ID: "completed-2", Status: "Terminada", StoryPoints: intPointer(3)},
-				{ID: "in-progress", Status: "En progreso", StoryPoints: intPointer(13)},
-				{ID: "pending", Status: "Pendiente", StoryPoints: intPointer(8)},
+				{ID: 1, Status: "Hecho", StoryPoints: intPointer(5)},
+				{ID: 2, Status: "Hecho", StoryPoints: intPointer(3)},
+				{ID: 3, Status: "En progreso", StoryPoints: intPointer(13)},
+				{ID: 4, Status: "Pendiente", StoryPoints: intPointer(8)},
 			},
 		},
 	}
 
-	got, err := NewService(store).CalculateMetrics("sprint-1")
+	got, err := NewService(store).CalculateMetrics(1)
 	if err != nil {
 		t.Fatalf("CalculateMetrics() error = %v", err)
 	}
@@ -31,25 +31,25 @@ func TestCalculateMetricsVelocityUsesOnlyCompletedStories(t *testing.T) {
 func TestCalculateMetricsTotalsAndPersistsCompletedStoryEffort(t *testing.T) {
 	store := &TestMetricsStore{
 		SprintData: SprintData{
-			ID:     "sprint-2",
+			ID:     2,
 			Status: "Finalizado",
 			Stories: []CompletedStory{
 				{
-					ID:             "completed-1",
-					Status:         "Terminada",
+					ID:             11,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(3),
 					EstimatedHours: serviceTestRat(t, "8"),
 					ActualHours:    serviceTestRat(t, "10"),
 				},
 				{
-					ID:             "completed-2",
-					Status:         "Terminada",
+					ID:             12,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(5),
 					EstimatedHours: serviceTestRat(t, "12"),
 					ActualHours:    serviceTestRat(t, "15"),
 				},
 				{
-					ID:             "in-progress",
+					ID:             13,
 					Status:         "En progreso",
 					StoryPoints:    intPointer(21),
 					EstimatedHours: serviceTestRat(t, "100"),
@@ -59,7 +59,7 @@ func TestCalculateMetricsTotalsAndPersistsCompletedStoryEffort(t *testing.T) {
 		},
 	}
 
-	got, err := NewService(store).CalculateMetrics("sprint-2")
+	got, err := NewService(store).CalculateMetrics(2)
 	if err != nil {
 		t.Fatalf("CalculateMetrics() error = %v", err)
 	}
@@ -75,27 +75,27 @@ func TestCalculateMetricsTotalsAndPersistsCompletedStoryEffort(t *testing.T) {
 	if len(store.SavedMetrics) != 1 {
 		t.Fatalf("saved metrics count = %d, want 1", len(store.SavedMetrics))
 	}
-	if store.SavedMetrics[0].SprintID != "sprint-2" {
-		t.Errorf("saved SprintID = %q, want %q", store.SavedMetrics[0].SprintID, "sprint-2")
+	if store.SavedMetrics[0].SprintID != 2 {
+		t.Errorf("saved SprintID = %d, want %d", store.SavedMetrics[0].SprintID, 2)
 	}
 }
 
 func TestCalculateMetricsWithoutEstimatedEffortReturnsUnavailable(t *testing.T) {
 	store := &TestMetricsStore{
 		SprintData: SprintData{
-			ID:     "sprint-no-estimate",
+			ID:     3,
 			Status: "Finalizado",
 			Stories: []CompletedStory{
 				{
-					ID:             "completed-without-estimate",
-					Status:         "Terminada",
+					ID:             21,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(5),
 					EstimatedHours: nil,
 					ActualHours:    serviceTestRat(t, "7"),
 				},
 				{
-					ID:             "completed-zero-estimate",
-					Status:         "Terminada",
+					ID:             22,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(3),
 					EstimatedHours: serviceTestRat(t, "0"),
 					ActualHours:    serviceTestRat(t, "4"),
@@ -104,7 +104,7 @@ func TestCalculateMetricsWithoutEstimatedEffortReturnsUnavailable(t *testing.T) 
 		},
 	}
 
-	got, err := NewService(store).CalculateMetrics("sprint-no-estimate")
+	got, err := NewService(store).CalculateMetrics(3)
 	if err != nil {
 		t.Fatalf("CalculateMetrics() error = %v", err)
 	}
@@ -116,26 +116,26 @@ func TestCalculateMetricsWithoutEstimatedEffortReturnsUnavailable(t *testing.T) 
 func TestCalculateMetricsPartialEffortUsesOnlyCompleteStories(t *testing.T) {
 	store := &TestMetricsStore{
 		SprintData: SprintData{
-			ID:     "sprint-partial",
+			ID:     4,
 			Status: "Finalizado",
 			Stories: []CompletedStory{
 				{
-					ID:             "complete",
-					Status:         "Terminada",
+					ID:             31,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(5),
 					EstimatedHours: serviceTestRat(t, "8"),
 					ActualHours:    serviceTestRat(t, "10"),
 				},
 				{
-					ID:             "missing-estimate",
-					Status:         "Terminada",
+					ID:             32,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(3),
 					EstimatedHours: nil,
 					ActualHours:    serviceTestRat(t, "7"),
 				},
 				{
-					ID:             "missing-actual",
-					Status:         "Terminada",
+					ID:             33,
+					Status:         "Hecho",
 					StoryPoints:    intPointer(2),
 					EstimatedHours: serviceTestRat(t, "6"),
 					ActualHours:    nil,
@@ -144,7 +144,7 @@ func TestCalculateMetricsPartialEffortUsesOnlyCompleteStories(t *testing.T) {
 		},
 	}
 
-	got, err := NewService(store).CalculateMetrics("sprint-partial")
+	got, err := NewService(store).CalculateMetrics(4)
 	if err != nil {
 		t.Fatalf("CalculateMetrics() error = %v", err)
 	}

@@ -3,6 +3,8 @@ package metrics
 import (
 	"fmt"
 	"math/big"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 )
 
 func calculateSprintMetrics(sprint SprintData) (SprintMetrics, error) {
@@ -14,7 +16,7 @@ func calculateSprintMetrics(sprint SprintData) (SprintMetrics, error) {
 	}
 
 	for _, story := range sprint.Stories {
-		if story.Status != "Terminada" {
+		if story.Status != backlog.StoryStatus("Hecho") {
 			continue
 		}
 

@@ -13,25 +13,25 @@ func TestMetricsBDD_SprintVelocityAndEffortDeviation(t *testing.T) {
 		t.Run("Given un Sprint finalizado con historias completas y pendientes", func(t *testing.T) {
 			store := &metrics.TestMetricsStore{
 				SprintData: metrics.SprintData{
-					ID:     "bdd-sprint-1",
+					ID:     1,
 					Status: "Finalizado",
 					Stories: []metrics.CompletedStory{
 						{
-							ID:             "bdd-story-1",
-							Status:         "Terminada",
+							ID:             101,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(5),
 							EstimatedHours: bddRat(t, "8"),
 							ActualHours:    bddRat(t, "10"),
 						},
 						{
-							ID:             "bdd-story-2",
-							Status:         "Terminada",
+							ID:             102,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(3),
 							EstimatedHours: bddRat(t, "12"),
 							ActualHours:    bddRat(t, "15"),
 						},
 						{
-							ID:             "bdd-story-pending",
+							ID:             103,
 							Status:         "Pendiente",
 							StoryPoints:    bddIntPointer(13),
 							EstimatedHours: bddRat(t, "100"),
@@ -42,7 +42,7 @@ func TestMetricsBDD_SprintVelocityAndEffortDeviation(t *testing.T) {
 			}
 
 			t.Run("When el sistema calcula las métricas", func(t *testing.T) {
-				got, err := metrics.NewService(store).CalculateMetrics("bdd-sprint-1")
+				got, err := metrics.NewService(store).CalculateMetrics(1)
 
 				t.Run("Then muestra velocidad y desviación calculadas", func(t *testing.T) {
 					if err != nil {
@@ -67,19 +67,19 @@ func TestMetricsBDD_SprintWithoutEstimatedEffort(t *testing.T) {
 		t.Run("Given un Sprint finalizado sin horas estimadas", func(t *testing.T) {
 			store := &metrics.TestMetricsStore{
 				SprintData: metrics.SprintData{
-					ID:     "bdd-sprint-no-estimate",
+					ID:     2,
 					Status: "Finalizado",
 					Stories: []metrics.CompletedStory{
 						{
-							ID:             "bdd-no-estimate-1",
-							Status:         "Terminada",
+							ID:             201,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(5),
 							EstimatedHours: nil,
 							ActualHours:    bddRat(t, "7"),
 						},
 						{
-							ID:             "bdd-no-estimate-2",
-							Status:         "Terminada",
+							ID:             202,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(3),
 							EstimatedHours: nil,
 							ActualHours:    bddRat(t, "4"),
@@ -89,7 +89,7 @@ func TestMetricsBDD_SprintWithoutEstimatedEffort(t *testing.T) {
 			}
 
 			t.Run("When el sistema calcula la desviación", func(t *testing.T) {
-				got, err := metrics.NewService(store).CalculateMetrics("bdd-sprint-no-estimate")
+				got, err := metrics.NewService(store).CalculateMetrics(2)
 
 				t.Run("Then indica No disponible sin error de división por cero", func(t *testing.T) {
 					if err != nil {
@@ -109,26 +109,26 @@ func TestMetricsBDD_PartialEffortCalculation(t *testing.T) {
 		t.Run("Given un Sprint con datos completos solo en una de tres historias", func(t *testing.T) {
 			store := &metrics.TestMetricsStore{
 				SprintData: metrics.SprintData{
-					ID:     "bdd-sprint-partial",
+					ID:     3,
 					Status: "Finalizado",
 					Stories: []metrics.CompletedStory{
 						{
-							ID:             "bdd-complete",
-							Status:         "Terminada",
+							ID:             301,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(5),
 							EstimatedHours: bddRat(t, "8"),
 							ActualHours:    bddRat(t, "10"),
 						},
 						{
-							ID:             "bdd-missing-estimate",
-							Status:         "Terminada",
+							ID:             302,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(3),
 							EstimatedHours: nil,
 							ActualHours:    bddRat(t, "7"),
 						},
 						{
-							ID:             "bdd-missing-actual",
-							Status:         "Terminada",
+							ID:             303,
+							Status:         "Hecho",
 							StoryPoints:    bddIntPointer(2),
 							EstimatedHours: bddRat(t, "6"),
 							ActualHours:    nil,
@@ -138,7 +138,7 @@ func TestMetricsBDD_PartialEffortCalculation(t *testing.T) {
 			}
 
 			t.Run("When el sistema calcula la desviación con historias completas", func(t *testing.T) {
-				got, err := metrics.NewService(store).CalculateMetrics("bdd-sprint-partial")
+				got, err := metrics.NewService(store).CalculateMetrics(3)
 
 				t.Run("Then informa el conteo exacto del cálculo parcial", func(t *testing.T) {
 					if err != nil {
@@ -166,18 +166,18 @@ func TestMetricsBDD_SprintClosureBlockedByInvalidStoryData(t *testing.T) {
 	t.Run("Escenario 4: bloqueo del cierre de Sprint por datos inválidos", func(t *testing.T) {
 		t.Run("Given un Sprint con horas reales negativas y Story Points inválidos", func(t *testing.T) {
 			sprint := metrics.SprintData{
-				ID:     "bdd-sprint-invalid",
+				ID:     4,
 				Status: "Activo",
 				Stories: []metrics.CompletedStory{
 					{
-						ID:          "bdd-negative-hours",
-						Status:      "Terminada",
+						ID:          401,
+						Status:      "Hecho",
 						StoryPoints: bddIntPointer(3),
 						ActualHours: bddRat(t, "-1"),
 					},
 					{
-						ID:          "bdd-invalid-points",
-						Status:      "Terminada",
+						ID:          402,
+						Status:      "Hecho",
 						StoryPoints: bddIntPointer(4),
 						ActualHours: bddRat(t, "2"),
 					},
@@ -193,8 +193,8 @@ func TestMetricsBDD_SprintClosureBlockedByInvalidStoryData(t *testing.T) {
 					}
 
 					for _, want := range []string{
-						"Historia bdd-negative-hours: horas reales negativas",
-						"Historia bdd-invalid-points: Story Points inválidos",
+						"Historia 401: horas reales negativas",
+						"Historia 402: Story Points inválidos",
 					} {
 						if !strings.Contains(err.Error(), want) {
 							t.Errorf("closure error %q does not contain %q", err, want)

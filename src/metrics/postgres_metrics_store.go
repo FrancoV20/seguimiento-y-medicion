@@ -14,7 +14,7 @@ func NewPostgreSQLMetricsStore(db *sql.DB) *PostgreSQLMetricsStore {
 	return &PostgreSQLMetricsStore{db: db}
 }
 
-func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID string) (SprintData, error) {
+func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID int64) (SprintData, error) {
 	if s == nil || s.db == nil {
 		return SprintData{}, fmt.Errorf("PostgreSQL database connection is required")
 	}
@@ -26,19 +26,41 @@ func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID string) (SprintData, er
 		WHERE id = $1`,
 		sprintID).Scan(&sprint.ID, &sprint.Status)
 	if err != nil {
-		return SprintData{}, fmt.Errorf("load sprint %q: %w", sprintID, err)
+		return SprintData{}, fmt.Errorf("load sprint %d: %w", sprintID, err)
 	}
 
-	rows, err := s.db.Query(`
-		SELECT bs.id, bs.status, bs.story_points,
-		       bs.estimated_hours::text, bs.actual_hours::text
+	var hasEstimatedHours bool
+	if err := s.db.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1
+			FROM information_schema.columns
+			WHERE table_schema = current_schema()
+			  AND table_name = 'user_stories'
+			  AND column_name = 'estimated_hours'
+		)`).Scan(&hasEstimatedHours); err != nil {
+		return SprintData{}, fmt.Errorf("check estimated-hours column: %w", err)
+	}
+
+	estimatedHoursColumn := "NULL::text"
+	if hasEstimatedHours {
+		estimatedHoursColumn = "us.estimated_hours::text"
+	}
+
+	query := fmt.Sprintf(`
+		SELECT us.id, us.status, us.story_points,
+		       %s AS estimated_hours, SUM(el.hours)::text AS actual_hours
 		FROM sprint_stories AS ss
-		JOIN backlog_stories AS bs ON bs.id = ss.story_id
+		JOIN user_stories AS us ON us.id = ss.story_id
+		LEFT JOIN effort_logs AS el ON el.story_id = us.id
 		WHERE ss.sprint_id = $1
-		ORDER BY bs.id`,
-		sprintID)
+		GROUP BY us.id, us.status, us.story_points, %s
+		ORDER BY us.id`,
+		estimatedHoursColumn,
+		estimatedHoursColumn,
+	)
+	rows, err := s.db.Query(query, sprintID)
 	if err != nil {
-		return SprintData{}, fmt.Errorf("load stories for sprint %q: %w", sprintID, err)
+		return SprintData{}, fmt.Errorf("load stories for sprint %d: %w", sprintID, err)
 	}
 	defer rows.Close()
 
@@ -56,7 +78,7 @@ func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID string) (SprintData, er
 			&estimatedText,
 			&actualText,
 		); err != nil {
-			return SprintData{}, fmt.Errorf("scan story for sprint %q: %w", sprintID, err)
+			return SprintData{}, fmt.Errorf("scan story for sprint %d: %w", sprintID, err)
 		}
 
 		if storyPoints.Valid {
@@ -66,14 +88,14 @@ func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID string) (SprintData, er
 		if estimatedText.Valid {
 			value, ok := new(big.Rat).SetString(estimatedText.String)
 			if !ok {
-				return SprintData{}, fmt.Errorf("parse estimated hours for story %q: invalid decimal %q", story.ID, estimatedText.String)
+				return SprintData{}, fmt.Errorf("parse estimated hours for story %d: invalid decimal %q", story.ID, estimatedText.String)
 			}
 			story.EstimatedHours = value
 		}
 		if actualText.Valid {
 			value, ok := new(big.Rat).SetString(actualText.String)
 			if !ok {
-				return SprintData{}, fmt.Errorf("parse actual hours for story %q: invalid decimal %q", story.ID, actualText.String)
+				return SprintData{}, fmt.Errorf("parse actual hours for story %d: invalid decimal %q", story.ID, actualText.String)
 			}
 			story.ActualHours = value
 		}
@@ -81,7 +103,7 @@ func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID string) (SprintData, er
 		sprint.Stories = append(sprint.Stories, story)
 	}
 	if err := rows.Err(); err != nil {
-		return SprintData{}, fmt.Errorf("iterate stories for sprint %q: %w", sprintID, err)
+		return SprintData{}, fmt.Errorf("iterate stories for sprint %d: %w", sprintID, err)
 	}
 
 	return sprint, nil

@@ -10,16 +10,16 @@ func ValidateSprintClosure(sprint SprintData) error {
 	var reasons []string
 
 	for _, story := range sprint.Stories {
-		if story.Status != "Terminada" {
+		if story.Status != backlog.StoryStatus("Hecho") {
 			continue
 		}
 
 		if story.ActualHours != nil && story.ActualHours.Sign() < 0 {
-			reasons = append(reasons, fmt.Sprintf("Historia %s: %s", story.ID, ErrNegativeActualHours))
+			reasons = append(reasons, fmt.Sprintf("Historia %d: %s", story.ID, ErrNegativeActualHours))
 		}
 
 		if story.StoryPoints == nil || backlog.ValidateStoryPoints(story.StoryPoints) != nil {
-			reasons = append(reasons, fmt.Sprintf("Historia %s: %s", story.ID, ErrInvalidStoryPoints))
+			reasons = append(reasons, fmt.Sprintf("Historia %d: %s", story.ID, ErrInvalidStoryPoints))
 		}
 	}
 

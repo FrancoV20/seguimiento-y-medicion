@@ -3,24 +3,26 @@ package metrics
 import (
 	"fmt"
 	"math/big"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 )
 
 type SprintData struct {
-	ID      string
+	ID      int64
 	Status  string
 	Stories []CompletedStory
 }
 
 type CompletedStory struct {
-	ID             string
-	Status         string
+	ID             int64
+	Status         backlog.StoryStatus
 	StoryPoints    *int
 	EstimatedHours *big.Rat
 	ActualHours    *big.Rat
 }
 
 type SprintMetrics struct {
-	SprintID              string
+	SprintID              int64
 	Velocity              int
 	EstimatedHoursTotal   *big.Rat
 	ActualHoursTotal      *big.Rat
@@ -32,7 +34,7 @@ type SprintMetrics struct {
 }
 
 type CalculationError struct {
-	StoryID string
+	StoryID int64
 	Field   string
 	Message string
 	Cause   error
@@ -40,10 +42,10 @@ type CalculationError struct {
 
 func (e CalculationError) Error() string {
 	if e.Cause != nil {
-		return fmt.Sprintf("%s: %s: %v", e.StoryID, e.Message, e.Cause)
+		return fmt.Sprintf("%d: %s: %v", e.StoryID, e.Message, e.Cause)
 	}
-	if e.StoryID != "" {
-		return fmt.Sprintf("%s: %s", e.StoryID, e.Message)
+	if e.StoryID != 0 {
+		return fmt.Sprintf("%d: %s", e.StoryID, e.Message)
 	}
 	return e.Message
 }

@@ -2,11 +2,9 @@ package metrics
 
 import (
 	"database/sql"
-	"fmt"
 	"math/big"
 	"os"
 	"testing"
-	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -27,49 +25,88 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 		t.Skipf("PostgreSQL integration database is unavailable: %v", err)
 	}
 
-	fixtureID := fmt.Sprintf("metrics_it_%d", time.Now().UnixNano())
-	projectID := fixtureID + "_project"
-	sprintID := fixtureID + "_sprint"
-	storyID := fixtureID + "_story"
+	var hasEstimatedHours bool
+	if err := db.QueryRow(`
+		SELECT EXISTS (
+			SELECT 1
+			FROM information_schema.columns
+			WHERE table_schema = current_schema()
+			  AND table_name = 'user_stories'
+			  AND column_name = 'estimated_hours'
+		)`).Scan(&hasEstimatedHours); err != nil {
+		t.Fatalf("check estimated-hours column: %v", err)
+	}
 
-	_, err = db.Exec(`
-		INSERT INTO projects (id, name, start_date, end_date)
-		VALUES ($1, $2, CURRENT_DATE, CURRENT_DATE)`,
-		projectID, "Metrics integration test")
-	if err != nil {
+	var projectID, memberID, sprintID, storyID int64
+	if err := db.QueryRow(`
+		INSERT INTO projects (name, start_date, end_date)
+		VALUES ('Metrics integration test', CURRENT_DATE, CURRENT_DATE)
+		RETURNING id`).Scan(&projectID); err != nil {
 		t.Fatalf("insert project fixture: %v", err)
 	}
-	defer func() {
-		if _, err := db.Exec(`DELETE FROM projects WHERE id = $1`, projectID); err != nil {
-			t.Errorf("delete project fixture: %v", err)
-		}
-	}()
-
-	_, err = db.Exec(`
-		INSERT INTO sprints (id, project_id, number, display_id, status)
-		VALUES ($1, $2, 1, $3, 'Finalizado')`,
-		sprintID, projectID, "Integration "+fixtureID)
-	if err != nil {
+	if err := db.QueryRow(`
+		INSERT INTO members (display_name)
+		VALUES ('Metrics integration member')
+		RETURNING id`).Scan(&memberID); err != nil {
+		t.Fatalf("insert member fixture: %v", err)
+	}
+	if err := db.QueryRow(`
+		INSERT INTO sprints (status)
+		VALUES ('Finalizado')
+		RETURNING id`).Scan(&sprintID); err != nil {
 		t.Fatalf("insert sprint fixture: %v", err)
 	}
-
-	_, err = db.Exec(`
-		INSERT INTO backlog_stories (
-			id, project_id, title, story_points, estimated_hours, actual_hours, status
+	if err := db.QueryRow(`
+		INSERT INTO user_stories (
+			project_id, title, description, priority, story_points, status
 		)
-		VALUES ($1, $2, $3, 5, 8.00, 10.00, 'Terminada')`,
-		storyID, projectID, "Metrics integration story")
-	if err != nil {
+		VALUES ($1, 'Metrics integration story', 'Test story', 'Media', 5, 'Hecho')
+		RETURNING id`,
+		projectID).Scan(&storyID); err != nil {
 		t.Fatalf("insert story fixture: %v", err)
 	}
 
-	_, err = db.Exec(`
+	if hasEstimatedHours {
+		if _, err := db.Exec(`UPDATE user_stories SET estimated_hours = 8.00 WHERE id = $1`, storyID); err != nil {
+			t.Fatalf("set estimated-hours fixture: %v", err)
+		}
+	}
+	if _, err := db.Exec(`
+		INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
+		VALUES ($1, $2, CURRENT_DATE, 'Metrics integration work', 10.00)`,
+		storyID, memberID); err != nil {
+		t.Fatalf("insert effort-log fixture: %v", err)
+	}
+	if _, err := db.Exec(`
 		INSERT INTO sprint_stories (sprint_id, story_id)
 		VALUES ($1, $2)`,
-		sprintID, storyID)
-	if err != nil {
+		sprintID, storyID); err != nil {
 		t.Fatalf("associate story with sprint fixture: %v", err)
 	}
+
+	t.Cleanup(func() {
+		if _, err := db.Exec(`DELETE FROM sprint_metrics WHERE sprint_id = $1`, sprintID); err != nil {
+			t.Errorf("delete sprint-metrics fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM sprint_stories WHERE sprint_id = $1`, sprintID); err != nil {
+			t.Errorf("delete sprint-story fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM sprints WHERE id = $1`, sprintID); err != nil {
+			t.Errorf("delete sprint fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM effort_logs WHERE story_id = $1`, storyID); err != nil {
+			t.Errorf("delete effort-log fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM user_stories WHERE id = $1`, storyID); err != nil {
+			t.Errorf("delete story fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM projects WHERE id = $1`, projectID); err != nil {
+			t.Errorf("delete project fixture: %v", err)
+		}
+		if _, err := db.Exec(`DELETE FROM members WHERE id = $1`, memberID); err != nil {
+			t.Errorf("delete member fixture: %v", err)
+		}
+	})
 
 	store := NewPostgreSQLMetricsStore(db)
 	loaded, err := store.LoadSprintData(sprintID)
@@ -77,7 +114,7 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 		t.Fatalf("LoadSprintData() error = %v", err)
 	}
 	if loaded.ID != sprintID {
-		t.Errorf("loaded sprint ID = %q, want %q", loaded.ID, sprintID)
+		t.Errorf("loaded sprint ID = %d, want %d", loaded.ID, sprintID)
 	}
 	if loaded.Status != "Finalizado" {
 		t.Errorf("loaded sprint status = %q, want %q", loaded.Status, "Finalizado")
@@ -86,7 +123,20 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 		t.Fatalf("loaded stories count = %d, want 1", len(loaded.Stories))
 	}
 	if loaded.Stories[0].ID != storyID {
-		t.Errorf("loaded story ID = %q, want %q", loaded.Stories[0].ID, storyID)
+		t.Errorf("loaded story ID = %d, want %d", loaded.Stories[0].ID, storyID)
+	}
+	if loaded.Stories[0].Status != "Hecho" {
+		t.Errorf("loaded story status = %q, want %q", loaded.Stories[0].Status, "Hecho")
+	}
+	if loaded.Stories[0].ActualHours == nil || loaded.Stories[0].ActualHours.Cmp(big.NewRat(10, 1)) != 0 {
+		t.Errorf("loaded accumulated actual hours = %v, want 10", loaded.Stories[0].ActualHours)
+	}
+	if hasEstimatedHours {
+		if loaded.Stories[0].EstimatedHours == nil || loaded.Stories[0].EstimatedHours.Cmp(big.NewRat(8, 1)) != 0 {
+			t.Errorf("loaded estimated hours = %v, want 8", loaded.Stories[0].EstimatedHours)
+		}
+	} else if loaded.Stories[0].EstimatedHours != nil {
+		t.Errorf("loaded estimated hours = %v, want nil when schema has no estimated_hours column", loaded.Stories[0].EstimatedHours)
 	}
 
 	metrics := SprintMetrics{

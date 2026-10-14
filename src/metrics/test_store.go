@@ -7,7 +7,7 @@ type TestMetricsStore struct {
 	SavedMetrics []SprintMetrics
 }
 
-func (s *TestMetricsStore) LoadSprintData(sprintID string) (SprintData, error) {
+func (s *TestMetricsStore) LoadSprintData(sprintID int64) (SprintData, error) {
 	if s.LoadError != nil {
 		return SprintData{}, s.LoadError
 	}
