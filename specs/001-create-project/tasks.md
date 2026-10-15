@@ -66,7 +66,7 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Escribir la prueba unitaria de fecha de finalización anterior a la inicial en `src/project/service_test.go`, verificando error temporal y store sin mutación
+- [X] T019 [P] [US2] Escribir la prueba unitaria de fecha de finalización anterior a la inicial en `src/project/service_test.go`, verificando error temporal y store sin mutación
 - [ ] T020 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/project_bdd_test.go`
 
 ### Implementation for User Story 2

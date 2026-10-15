@@ -133,4 +133,30 @@ func TestProjectService_CreateProject_ValidationErrors(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("rejects end date before start date", func(t *testing.T) {
+		// Given / Arrange: a valid member and a project period ending one day early.
+		store := &TestProjectStore{Members: map[int]bool{1: true}}
+		service := NewProjectService(store)
+		req := ProjectCreationRequest{
+			Name:      "Sentinel Project",
+			Members:   []string{"1"},
+			StartDate: time.Now(),
+			EndDate:   time.Now().Add(-24 * time.Hour),
+		}
+
+		// When / Act: project creation is attempted.
+		result, err := service.CreateProject(req)
+
+		// Then / Assert: the period error is returned without creating a project.
+		if !errors.Is(err, ErrInvalidPeriod) {
+			t.Errorf("expected error %v, got %v", ErrInvalidPeriod, err)
+		}
+		if result != nil {
+			t.Errorf("expected nil result, got %#v", result)
+		}
+		if len(store.Projects) != 0 {
+			t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+		}
+	})
 }
