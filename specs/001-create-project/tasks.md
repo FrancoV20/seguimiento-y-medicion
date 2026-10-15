@@ -86,7 +86,7 @@
 - [X] T024 [P] Revisar que los errores de `src/project` no expongan detalles internos de PostgreSQL a la capa de presentación
 - [X] T025 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [X] T026 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T027 Revisar trazabilidad de FR-001 a FR-009 y SC-001 a SC-004 en `specs/001-create-project/tasks.md`
+- [X] T027 Revisar trazabilidad de FR-001 a FR-009 y SC-001 a SC-004 en `specs/001-create-project/tasks.md`
 
 ---
 
