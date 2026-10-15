@@ -1,6 +1,9 @@
 package project
 
-import "strconv"
+import (
+	"fmt"
+	"strconv"
+)
 
 type ProjectService struct {
 	store ProjectStore
@@ -35,7 +38,7 @@ func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Proje
 	for _, memberID := range memberIDs {
 		exists, err := service.store.MemberExists(memberID)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("validate project member: %w", err)
 		}
 		if !exists {
 			return nil, ErrMemberNotFound
@@ -50,7 +53,7 @@ func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Proje
 
 	project := &createdProject
 	if err := service.store.Create(project); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("persist project: %w", err)
 	}
 
 	return &ProjectCreationResult{
