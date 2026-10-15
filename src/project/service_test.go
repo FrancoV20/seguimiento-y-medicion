@@ -2,6 +2,7 @@ package project
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -144,6 +145,8 @@ func TestProjectService_CreateProject_ValidationErrors(t *testing.T) {
 			StartDate: time.Now(),
 			EndDate:   time.Now().Add(-24 * time.Hour),
 		}
+		originalReq := req
+		originalReq.Members = append([]string(nil), req.Members...)
 
 		// When / Act: project creation is attempted.
 		result, err := service.CreateProject(req)
@@ -157,6 +160,9 @@ func TestProjectService_CreateProject_ValidationErrors(t *testing.T) {
 		}
 		if len(store.Projects) != 0 {
 			t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+		}
+		if !reflect.DeepEqual(req, originalReq) {
+			t.Errorf("expected request data to remain unchanged, got %#v", req)
 		}
 	})
 }

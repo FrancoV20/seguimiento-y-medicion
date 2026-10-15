@@ -71,8 +71,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T021 [US2] Completar la validación de calendario en `src/project/service.go` para aceptar `endDate == startDate` y rechazar únicamente `endDate < startDate` con el error explícito correspondiente
-- [ ] T022 [US2] Verificar en `src/project/service_test.go` y `test/project_bdd_test.go` que una fecha inválida conserva los datos corregibles, no registra proyectos y no muestra éxito
+- [X] T021 [US2] Completar la validación de calendario en `src/project/service.go` para aceptar `endDate == startDate` y rechazar únicamente `endDate < startDate` con el error explícito correspondiente
+- [X] T022 [US2] Verificar en `src/project/service_test.go` y `test/project_bdd_test.go` que una fecha inválida conserva los datos corregibles, no registra proyectos y no muestra éxito
 
 **Checkpoint**: US2 rechaza períodos inválidos de forma independiente sin alterar el comportamiento válido de US1.
 

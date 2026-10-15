@@ -2,6 +2,7 @@ package test
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -56,6 +57,8 @@ func TestProjectCreation_InvalidDates_BDD(t *testing.T) {
 		StartDate: startDate,
 		EndDate:   startDate.Add(-24 * time.Hour),
 	}
+	originalRequest := request
+	originalRequest.Members = append([]string(nil), request.Members...)
 
 	// When: the service attempts to create the project.
 	service := project.NewProjectService(store)
@@ -70,5 +73,8 @@ func TestProjectCreation_InvalidDates_BDD(t *testing.T) {
 	}
 	if len(store.Projects) != 0 {
 		t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+	}
+	if !reflect.DeepEqual(request, originalRequest) {
+		t.Errorf("expected request data to remain unchanged, got %#v", request)
 	}
 }
