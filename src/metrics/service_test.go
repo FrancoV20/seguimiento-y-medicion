@@ -1,7 +1,9 @@
 package metrics
 
 import (
+	"errors"
 	"math/big"
+	"strings"
 	"testing"
 )
 
@@ -113,6 +115,26 @@ func TestCalculateMetricsWithoutEstimatedEffortReturnsUnavailable(t *testing.T) 
 	}
 }
 
+func TestCalculateMetricsWithoutCompletedStoriesReturnsZeroAndUnavailable(t *testing.T) {
+	store := &TestMetricsStore{
+		SprintData: SprintData{
+			ID:     6,
+			Status: "Finalizado",
+		},
+	}
+
+	got, err := NewService(store).CalculateMetrics(6)
+	if err != nil {
+		t.Fatalf("CalculateMetrics() error = %v", err)
+	}
+	if got.Velocity != 0 {
+		t.Errorf("Velocity = %d, want 0", got.Velocity)
+	}
+	if got.DeviationPercentage != "No disponible" {
+		t.Errorf("DeviationPercentage = %q, want %q", got.DeviationPercentage, "No disponible")
+	}
+}
+
 func TestCalculateMetricsPartialEffortUsesOnlyCompleteStories(t *testing.T) {
 	store := &TestMetricsStore{
 		SprintData: SprintData{
@@ -162,6 +184,59 @@ func TestCalculateMetricsPartialEffortUsesOnlyCompleteStories(t *testing.T) {
 	if got.Warning != "Cálculo parcial: basado en 1 de 3 historias" {
 		t.Errorf("Warning = %q, want %q", got.Warning, "Cálculo parcial: basado en 1 de 3 historias")
 	}
+}
+
+func TestCalculateMetricsStoreErrorsDoNotExposeInternalDetails(t *testing.T) {
+	internalErr := errors.New("SQLSTATE 08006: connection string password=secret")
+	validSprint := SprintData{
+		ID:     5,
+		Status: "Finalizado",
+		Stories: []CompletedStory{
+			{
+				ID:             51,
+				Status:         "Hecho",
+				StoryPoints:    intPointer(3),
+				EstimatedHours: big.NewRat(8, 1),
+				ActualHours:    big.NewRat(10, 1),
+			},
+		},
+	}
+
+	t.Run("load failure", func(t *testing.T) {
+		store := &TestMetricsStore{LoadError: internalErr}
+
+		_, err := NewService(store).CalculateMetrics(validSprint.ID)
+		if err == nil {
+			t.Fatal("CalculateMetrics() error = nil, want load error")
+		}
+		if strings.Contains(err.Error(), internalErr.Error()) {
+			t.Errorf("CalculateMetrics() exposed internal error details: %q", err)
+		}
+		if !errors.Is(err, internalErr) {
+			t.Errorf("errors.Is(err, internalErr) = false, want true")
+		}
+		if !errors.Is(err, ErrSprintLoad) {
+			t.Errorf("errors.Is(err, ErrSprintLoad) = false, want true")
+		}
+	})
+
+	t.Run("save failure", func(t *testing.T) {
+		store := &TestMetricsStore{SprintData: validSprint, SaveError: internalErr}
+
+		_, err := NewService(store).CalculateMetrics(validSprint.ID)
+		if err == nil {
+			t.Fatal("CalculateMetrics() error = nil, want persistence error")
+		}
+		if strings.Contains(err.Error(), internalErr.Error()) {
+			t.Errorf("CalculateMetrics() exposed internal error details: %q", err)
+		}
+		if !errors.Is(err, internalErr) {
+			t.Errorf("errors.Is(err, internalErr) = false, want true")
+		}
+		if !errors.Is(err, ErrMetricsPersistence) {
+			t.Errorf("errors.Is(err, ErrMetricsPersistence) = false, want true")
+		}
+	})
 }
 
 func intPointer(value int) *int {

@@ -113,11 +113,25 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T038 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-calculate-metrics/quickstart.md`
-- [ ] T039 [P] Revisar que errores de cálculo y PostgreSQL no expongan detalles internos en `src/metrics/errors.go`
-- [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T041 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T042 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/004-calculate-metrics/tasks.md`
+- [x] T038 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/007-calculate-metrics/quickstart.md`
+- [x] T039 [P] Revisar que errores de cálculo y PostgreSQL no expongan detalles internos en `src/metrics/errors.go`
+- [x] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T041 Ejecutar `go test ./...` y completar los escenarios unitarios y BDD del `quickstart.md`; la integración PostgreSQL requiere las tablas de HU-04
+- [x] T042 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/007-calculate-metrics/tasks.md`
+
+### Requirements traceability
+
+| Requirement | Implementation and verification |
+|---|---|
+| FR-001–FR-009 | T018–T022; `service_test.go`, `calculation_test.go`, `metrics_bdd_test.go` |
+| FR-010–FR-011 | T023–T030; partial-data unit and BDD scenarios |
+| FR-012–FR-013 | T031–T037; closure validation unit tests, service mock test, and BDD scenario |
+| FR-014–FR-015 | T018–T030; empty-sprint/no-estimate behavior and deterministic calculation logic |
+| SC-001–SC-003 | T013–T030; formula, velocity, rounding, and unavailable-deviation tests |
+| SC-004 | No usability study is included in this repository's automated test suite; requires stakeholder validation |
+| SC-005 | The target of less than 2 seconds has no dedicated performance benchmark; not empirically certified by `go test` |
+| SC-006 | T023–T030; exact partial-calculation warning and count tests |
+| SC-007 | T031–T037; invalid-data blocking and no-persistence mock tests |
 
 ---
 

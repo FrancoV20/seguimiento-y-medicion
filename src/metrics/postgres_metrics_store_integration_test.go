@@ -25,6 +25,17 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 		t.Skipf("PostgreSQL integration database is unavailable: %v", err)
 	}
 
+	var missingTables string
+	if err := db.QueryRow(`
+		SELECT COALESCE(string_agg(required.name, ', '), '')
+		FROM unnest(ARRAY['sprints', 'sprint_stories', 'sprint_metrics']::text[]) AS required(name)
+		WHERE to_regclass('public.' || required.name) IS NULL`).Scan(&missingTables); err != nil {
+		t.Fatalf("check Sprint schema prerequisites: %v", err)
+	}
+	if missingTables != "" {
+		t.Skipf("Sprint integration schema is unavailable; missing tables: %s", missingTables)
+	}
+
 	var hasEstimatedHours bool
 	if err := db.QueryRow(`
 		SELECT EXISTS (

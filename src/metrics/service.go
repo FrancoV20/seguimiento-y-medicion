@@ -19,7 +19,11 @@ func (s *Service) CalculateMetrics(sprintID int64) (SprintMetrics, error) {
 
 	sprint, err := s.store.LoadSprintData(sprintID)
 	if err != nil {
-		return SprintMetrics{}, fmt.Errorf("load sprint %d: %w", sprintID, err)
+		return SprintMetrics{}, fmt.Errorf(
+			"load sprint %d: %w",
+			sprintID,
+			metricsStoreError{operation: storeOperationLoad, cause: err},
+		)
 	}
 	if sprint.Status != "Finalizado" {
 		return SprintMetrics{}, fmt.Errorf("%w: %d", ErrSprintNotFinished, sprint.ID)
@@ -40,7 +44,7 @@ func (s *Service) CalculateMetrics(sprintID int64) (SprintMetrics, error) {
 	metrics.DeviationPercentage = deviation
 
 	if err := s.store.SaveMetrics(metrics); err != nil {
-		return SprintMetrics{}, fmt.Errorf("%w: %w", ErrMetricsPersistence, err)
+		return SprintMetrics{}, metricsStoreError{operation: storeOperationSave, cause: err}
 	}
 
 	return metrics, nil
