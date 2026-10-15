@@ -1,6 +1,7 @@
 package test
 
 import (
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -40,5 +41,34 @@ func TestProjectCreation_BDD(t *testing.T) {
 	}
 	if !strings.Contains(result.Message, "Proyecto creado exitosamente") {
 		t.Errorf("expected success message, got %q", result.Message)
+	}
+}
+
+func TestProjectCreation_InvalidDates_BDD(t *testing.T) {
+	// Given: a valid member and a request whose end date is one day before its start date.
+	store := &project.TestProjectStore{
+		Members: map[int]bool{1: true},
+	}
+	startDate := time.Now()
+	request := project.ProjectCreationRequest{
+		Name:      "Invalid Dates Project",
+		Members:   []string{"1"},
+		StartDate: startDate,
+		EndDate:   startDate.Add(-24 * time.Hour),
+	}
+
+	// When: the service attempts to create the project.
+	service := project.NewProjectService(store)
+	result, err := service.CreateProject(request)
+
+	// Then: the period error is returned and nothing is persisted.
+	if !errors.Is(err, project.ErrInvalidPeriod) {
+		t.Errorf("expected error %v, got %v", project.ErrInvalidPeriod, err)
+	}
+	if result != nil {
+		t.Errorf("expected nil result, got %#v", result)
+	}
+	if len(store.Projects) != 0 {
+		t.Errorf("expected no projects in the store, got %d", len(store.Projects))
 	}
 }
