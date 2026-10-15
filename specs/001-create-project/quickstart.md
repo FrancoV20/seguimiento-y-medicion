@@ -75,3 +75,12 @@ Las pruebas deben cubrir como mínimo:
 Para cada escenario, conservar el caso de prueba y su resultado en la revisión del cambio.
 Las pruebas deben ejecutar la validación real del proyecto y del período, sin reemplazarla con
 mocks o métodos exclusivos de test.
+
+## Base de Datos Local (PostgreSQL)
+
+Para el desarrollo e integración, utilizamos un contenedor Docker con PostgreSQL 16.
+
+**Variables de conexión requeridas (PowerShell):**
+```powershell
+# Reemplazar <USUARIO> y <PASSWORD> con las credenciales definidas en tu .env local
+$env:DATABASE_URL="postgres://<USUARIO>:<PASSWORD>@localhost:5433/seguimiento_y_medicion?sslmode=disable"
