@@ -22,3 +22,8 @@ type ProjectCreationRequest struct {
 	StartDate time.Time
 	EndDate   time.Time
 }
+
+type ProjectCreationResult struct {
+	Project *Project
+	Message string
+}

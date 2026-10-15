@@ -1,6 +1,7 @@
 package test
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -22,19 +23,22 @@ func TestProjectCreation_BDD(t *testing.T) {
 
 	// When: the service creates the project from the request.
 	service := project.NewProjectService(store)
-	createdProject, err := service.CreateProject(request)
+	result, err := service.CreateProject(request)
 
 	// Then: creation succeeds and returns an active project with an ID.
 	if err != nil {
 		t.Fatalf("expected project creation to succeed, got error: %v", err)
 	}
-	if createdProject == nil {
-		t.Fatal("expected a created project, got nil")
+	if result == nil || result.Project == nil {
+		t.Fatal("expected a project creation result, got nil")
 	}
-	if createdProject.ID <= 0 {
-		t.Errorf("expected project ID to be greater than 0, got %d", createdProject.ID)
+	if result.Project.ID <= 0 {
+		t.Errorf("expected project ID to be greater than 0, got %d", result.Project.ID)
 	}
-	if createdProject.Status != "Active" {
-		t.Errorf("expected project status %q, got %q", "Active", createdProject.Status)
+	if result.Project.Status != "Active" {
+		t.Errorf("expected project status %q, got %q", "Active", result.Project.Status)
+	}
+	if !strings.Contains(result.Message, "Proyecto creado exitosamente") {
+		t.Errorf("expected success message, got %q", result.Message)
 	}
 }

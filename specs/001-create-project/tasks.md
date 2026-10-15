@@ -50,7 +50,7 @@
 ### Implementation for User Story 1
 
 - [X] T015 [US1] Implementar el caso de uso `CreateProject` en `src/project/service.go`, validando nombre no vacío, al menos un integrante, integrantes existentes, duplicados rechazados explícitamente y fechas obligatorias antes de persistir
-- [ ] T016 [US1] Implementar el resultado de creación en `src/project/model.go`, devolviendo confirmación solo después de que `ProjectStore.Create` confirme la persistencia y alerta/error sin éxito cuando falle
+- [X] T016 [US1] Implementar el resultado de creación en `src/project/model.go`, devolviendo confirmación solo después de que `ProjectStore.Create` confirme la persistencia y alerta/error sin éxito cuando falle
 - [ ] T017 [US1] Completar la integración de `PostgreSQLProjectStore` en `src/project/postgres_store.go`, usando una transacción `database/sql` para evitar proyectos o relaciones parciales
 - [ ] T018 [US1] Habilitar la prueba de integración de PostgreSQL con variables de conexión y limpieza de datos en `src/project/postgres_store_integration_test.go`
 

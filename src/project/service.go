@@ -10,7 +10,7 @@ func NewProjectService(store ProjectStore) *ProjectService {
 	return &ProjectService{store: store}
 }
 
-func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Project, error) {
+func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*ProjectCreationResult, error) {
 	if req.Name == "" {
 		return nil, ErrEmptyName
 	}
@@ -53,5 +53,8 @@ func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Proje
 		return nil, err
 	}
 
-	return project, nil
+	return &ProjectCreationResult{
+		Project: project,
+		Message: "Proyecto creado exitosamente",
+	}, nil
 }
