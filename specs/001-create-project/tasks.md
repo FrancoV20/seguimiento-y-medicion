@@ -45,11 +45,11 @@
 - [X] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
 - [X] T012 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
 - [X] T013 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
-- [ ] T014 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
+- [X] T014 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar el caso de uso `CreateProject` en `src/project/service.go`, validando nombre no vacío, al menos un integrante, integrantes existentes, duplicados rechazados explícitamente y fechas obligatorias antes de persistir
+- [X] T015 [US1] Implementar el caso de uso `CreateProject` en `src/project/service.go`, validando nombre no vacío, al menos un integrante, integrantes existentes, duplicados rechazados explícitamente y fechas obligatorias antes de persistir
 - [ ] T016 [US1] Implementar el resultado de creación en `src/project/model.go`, devolviendo confirmación solo después de que `ProjectStore.Create` confirme la persistencia y alerta/error sin éxito cuando falle
 - [ ] T017 [US1] Completar la integración de `PostgreSQLProjectStore` en `src/project/postgres_store.go`, usando una transacción `database/sql` para evitar proyectos o relaciones parciales
 - [ ] T018 [US1] Habilitar la prueba de integración de PostgreSQL con variables de conexión y limpieza de datos en `src/project/postgres_store_integration_test.go`
