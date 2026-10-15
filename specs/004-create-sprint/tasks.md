@@ -44,12 +44,12 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir prueba unitaria de creación con tres historias pendientes, estado `En Sprint` e identificador automático en `src/sprint/service_test.go`
-- [ ] T014 [P] [US1] Escribir pruebas unitarias de Goal vacío e identificador no editable en `src/sprint/service_test.go`
-- [ ] T015 [P] [US1] Escribir prueba unitaria de conflicto cuando una historia ya pertenece a otro Sprint activo en `src/sprint/service_test.go`
-- [ ] T016 [P] [US1] Escribir prueba unitaria del movimiento quitar-primero/asignar-después en `src/sprint/service_test.go`
-- [ ] T017 [P] [US1] Escribir prueba de integración PostgreSQL para Sprint, tres asociaciones, estados y secuencia en `src/sprint/postgres_sprint_store_integration_test.go`
-- [ ] T018 [P] [US1] Escribir escenarios BDD de creación, conflicto, movimiento, identificador automático y Goal obligatorio en `test/sprint_bdd_test.go`
+- [x] T013 [P] [US1] Escribir prueba unitaria de creación con tres historias pendientes, estado `En Sprint` e identificador automático en `src/sprint/service_test.go`
+- [x] T014 [P] [US1] Escribir pruebas unitarias de Goal vacío e identificador no editable en `src/sprint/service_test.go`
+- [x] T015 [P] [US1] Escribir prueba unitaria de conflicto cuando una historia ya pertenece a otro Sprint activo en `src/sprint/service_test.go`
+- [x] T016 [P] [US1] Escribir prueba unitaria del movimiento quitar-primero/asignar-después en `src/sprint/service_test.go`
+- [x] T017 [P] [US1] Escribir prueba de integración PostgreSQL para Sprint, tres asociaciones, estados y secuencia en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T018 [P] [US1] Escribir escenarios BDD de creación, conflicto, movimiento, identificador automático y Goal obligatorio en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 1
 

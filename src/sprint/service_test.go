@@ -1,178 +1,140 @@
 package sprint
 
 import (
-    "testing"
-    "time"
+	"errors"
+	"reflect"
+	"testing"
+	"time"
 )
 
 func TestCreateSprint_AssignsThreePendingStoriesAndGeneratesDisplayID(t *testing.T) {
-    start := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+	req := validCreationRequest([]int64{101, 102, 103})
+	project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+	stories := []UserStory{
+		{ID: 101, ProjectID: 1, Status: Pendiente},
+		{ID: 102, ProjectID: 1, Status: Pendiente},
+		{ID: 103, ProjectID: 1, Status: Pendiente},
+	}
 
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "Entregar la versión beta",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{101, 102, 103},
-    }
-
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
-    stories := []UserStory{
-        {ID: 101, ProjectID: 1, Status: Pendiente},
-        {ID: 102, ProjectID: 1, Status: Pendiente},
-        {ID: 103, ProjectID: 1, Status: Pendiente},
-    }
-
-    result, err := CreateSprint(req, project, stories)
-    if err != nil {
-        t.Fatalf("CreateSprint() returned unexpected error: %v", err)
-    }
-
-    if result.Sprint.DisplayID != "Sprint 1" {
-        t.Fatalf("DisplayID = %q, want %q", result.Sprint.DisplayID, "Sprint 1")
-    }
-
-    if result.Sprint.Status != "Activo" {
-        t.Fatalf("Status = %q, want %q", result.Sprint.Status, "Activo")
-    }
-
-    if len(result.Sprint.StoryIDs) != 3 {
-        t.Fatalf("len(StoryIDs) = %d, want 3", len(result.Sprint.StoryIDs))
-    }
-
-    for _, storyID := range result.Sprint.StoryIDs {
-        if storyID == 0 {
-            t.Fatal("StoryIDs contained a zero value")
-        }
-    }
+	result, err := CreateSprint(req, project, stories)
+	if err != nil {
+		t.Fatalf("CreateSprint() devolvió un error inesperado: %v", err)
+	}
+	if result.Sprint.DisplayID != "Sprint 1" {
+		t.Errorf("DisplayID = %q, se esperaba %q", result.Sprint.DisplayID, "Sprint 1")
+	}
+	if result.Sprint.Status != SprintActive {
+		t.Errorf("estado = %q, se esperaba %q", result.Sprint.Status, SprintActive)
+	}
+	if result.Sprint.Goal != req.Goal {
+		t.Errorf("Goal = %q, se esperaba %q", result.Sprint.Goal, req.Goal)
+	}
+	if !reflect.DeepEqual(result.Sprint.StoryIDs, req.StoryIDs) {
+		t.Errorf("StoryIDs = %v, se esperaban %v", result.Sprint.StoryIDs, req.StoryIDs)
+	}
+	for _, story := range stories {
+		if story.Status != EnSprint {
+			t.Errorf("estado de historia %d = %q, se esperaba %q", story.ID, story.Status, EnSprint)
+		}
+		if story.ActiveSprintID != result.Sprint.ID {
+			t.Errorf("Sprint activo de historia %d = %d, se esperaba %d", story.ID, story.ActiveSprintID, result.Sprint.ID)
+		}
+	}
 }
 
-func TestCreateSprint_RejectsEmptyGoal(t *testing.T) {
-    start := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+func TestCreateSprint_RejectsEmptyOrWhitespaceGoal(t *testing.T) {
+	tests := []struct {
+		name string
+		goal string
+	}{
+		{name: "vacío", goal: ""},
+		{name: "solo espacios", goal: "   \t\n"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := validCreationRequest([]int64{101})
+			req.Goal = tt.goal
+			project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+			stories := []UserStory{{ID: 101, ProjectID: 1, Status: Pendiente}}
 
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "   ",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{101},
-    }
-
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
-    stories := []UserStory{{ID: 101, ProjectID: 1, Status: Pendiente}}
-
-    _, err := CreateSprint(req, project, stories)
-    if err == nil {
-        t.Fatal("CreateSprint() expected error for empty goal, got nil")
-    }
+			_, err := CreateSprint(req, project, stories)
+			if !errors.Is(err, ErrGoalRequired) {
+				t.Fatalf("CreateSprint() error = %v, se esperaba ErrGoalRequired", err)
+			}
+		})
+	}
 }
 
-func TestCreateSprint_RejectsInactiveStoryAlreadyAssignedToAnotherActiveSprint(t *testing.T) {
-    start := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
-
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "Ajustar backlog",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{201},
-    }
-
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
-    stories := []UserStory{{
-        ID:          201,
-        ProjectID:   1,
-        Status:      EnSprint,
-        ActiveSprintID: 99,
-    }}
-
-    _, err := CreateSprint(req, project, stories)
-    if err == nil {
-        t.Fatal("CreateSprint() expected error for conflicting active sprint assignment")
-    }
+func TestSprintCreationRequestDoesNotExposeGeneratedIdentifier(t *testing.T) {
+	requestType := reflect.TypeOf(SprintCreationRequest{})
+	for _, forbiddenField := range []string{"ID", "Number", "DisplayID"} {
+		if _, exists := requestType.FieldByName(forbiddenField); exists {
+			t.Errorf("SprintCreationRequest expone el campo generado %q", forbiddenField)
+		}
+	}
 }
 
-func TestCreateSprint_RequiresEndDateAfterStartDate(t *testing.T) {
-    start := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+func TestCreateSprint_RejectsStoryAssignedToAnotherActiveSprint(t *testing.T) {
+	req := validCreationRequest([]int64{201})
+	project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+	stories := []UserStory{{
+		ID:             201,
+		ProjectID:      1,
+		Status:         EnSprint,
+		ActiveSprintID: 99,
+	}}
 
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "Revisar alcance",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{301},
-    }
-
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
-    stories := []UserStory{{ID: 301, ProjectID: 1, Status: Pendiente}}
-
-    _, err := CreateSprint(req, project, stories)
-    if err == nil {
-        t.Fatal("CreateSprint() expected error when endDate <= startDate")
-    }
+	_, err := CreateSprint(req, project, stories)
+	if !errors.Is(err, ErrActiveSprintConflict) {
+		t.Fatalf("CreateSprint() error = %v, se esperaba ErrActiveSprintConflict", err)
+	}
+	if stories[0].Status != EnSprint || stories[0].ActiveSprintID != 99 {
+		t.Fatalf("el rechazo alteró la asignación existente: %+v", stories[0])
+	}
 }
 
-func TestCreateSprint_AllowsEmptyStorySelectionWithWarning(t *testing.T) {
-    start := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+func TestCreateSprint_AllowsStoryMoveOnlyAfterRemovingCurrentAssignment(t *testing.T) {
+	project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+	story := UserStory{ID: 401, ProjectID: 1, Status: EnSprint, ActiveSprintID: 11}
+	before := story
 
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "Planificar sprint sin historias",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{},
-    }
+	_, err := CreateSprint(validCreationRequest([]int64{story.ID}), project, []UserStory{story})
+	if !errors.Is(err, ErrActiveSprintConflict) {
+		t.Fatalf("asignación directa = %v, se esperaba ErrActiveSprintConflict", err)
+	}
+	if story != before {
+		t.Fatalf("la asignación directa modificó la historia: antes=%+v después=%+v", before, story)
+	}
 
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+	if err := RemoveStoryFromSprint(&story, 11); err != nil {
+		t.Fatalf("RemoveStoryFromSprint() devolvió error: %v", err)
+	}
+	if story.Status != Pendiente || story.ActiveSprintID != 0 {
+		t.Fatalf("la historia no volvió a Pendiente al quitarla: %+v", story)
+	}
 
-    result, err := CreateSprint(req, project, nil)
-    if err != nil {
-        t.Fatalf("CreateSprint() unexpected error for empty story selection: %v", err)
-    }
-
-    if result.Warning == "" {
-        t.Fatal("result.Warning was empty for valid sprint with no stories")
-    }
-
-    if len(result.Sprint.StoryIDs) != 0 {
-        t.Fatalf("len(StoryIDs) = %d, want 0", len(result.Sprint.StoryIDs))
-    }
+	storiesAfterRemoval := []UserStory{story}
+	result, err := CreateSprint(validCreationRequest([]int64{story.ID}), project, storiesAfterRemoval)
+	if err != nil {
+		t.Fatalf("la creación después de quitar la historia falló: %v", err)
+	}
+	if !reflect.DeepEqual(result.Sprint.StoryIDs, []int64{story.ID}) {
+		t.Errorf("StoryIDs = %v, se esperaba [%d]", result.Sprint.StoryIDs, story.ID)
+	}
+	if storiesAfterRemoval[0].Status != EnSprint {
+		t.Errorf("estado después de reasignar = %q, se esperaba %q", storiesAfterRemoval[0].Status, EnSprint)
+	}
+	if storiesAfterRemoval[0].ActiveSprintID != result.Sprint.ID {
+		t.Errorf("Sprint activo después de reasignar = %d, se esperaba %d", storiesAfterRemoval[0].ActiveSprintID, result.Sprint.ID)
+	}
 }
 
-func TestCreateSprint_RemoveThenAssignAllowsStoryMove(t *testing.T) {
-    start := time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC)
-    end := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
-
-    project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
-    story := UserStory{ID: 401, ProjectID: 1, Status: EnSprint, ActiveSprintID: 11}
-
-    if err := RemoveStoryFromSprint(&story, 11); err != nil {
-        t.Fatalf("RemoveStoryFromSprint() unexpected error: %v", err)
-    }
-
-    if story.Status != Pendiente {
-        t.Fatalf("story.Status = %q, want %q", story.Status, Pendiente)
-    }
-
-    req := SprintCreationRequest{
-        ProjectID: 1,
-        Goal:      "Asignar a otro sprint",
-        StartDate: start,
-        EndDate:   end,
-        StoryIDs:  []int64{401},
-    }
-
-    result, err := CreateSprint(req, project, []UserStory{story})
-    if err != nil {
-        t.Fatalf("CreateSprint() after remove then assign returned error: %v", err)
-    }
-
-    if result.Sprint.DisplayID != "Sprint 1" {
-        t.Fatalf("DisplayID = %q, want %q", result.Sprint.DisplayID, "Sprint 1")
-    }
+func validCreationRequest(storyIDs []int64) SprintCreationRequest {
+	return SprintCreationRequest{
+		ProjectID: 1,
+		Goal:      "Entregar la versión beta",
+		StartDate: time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC),
+		StoryIDs:  storyIDs,
+	}
 }
