@@ -1,19 +1,18 @@
 package project
 
 import (
-	"errors"
 	"time"
 )
 
 func NewProject(name string, members []string, startDate, endDate time.Time) (Project, error) {
 	if name == "" {
-		return Project{}, errors.New("project name cannot be empty")
+		return Project{}, ErrEmptyName
 	}
 	if len(members) == 0 {
-		return Project{}, errors.New("the member list is required")
+		return Project{}, ErrMissingMembers
 	}
 	if endDate.Before(startDate) {
-		return Project{}, errors.New("end date cannot be before start date")
+		return Project{}, ErrInvalidPeriod
 	}
 
 	return Project{
