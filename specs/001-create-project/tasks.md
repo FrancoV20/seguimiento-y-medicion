@@ -27,8 +27,8 @@
 - [X] T006 [P] Definir `Project`, `Member` y `ProjectCreationRequest` en `src/project/model.go`, incluyendo estado inicial `Activo`, fechas de calendario y la regla `endDate >= startDate`
 - [X] T007 [P] Definir errores de validación explícitos para nombre vacío, integrantes ausentes, integrante inexistente, integrante duplicado y período inválido en `src/project/errors.go`
 - [X] T008 Definir la interfaz `ProjectStore` y sus operaciones `Create(project)` y `MemberExists(id)` en `src/project/store.go`
-- [ ] T009 Implementar `PostgreSQLProjectStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para persistir proyecto, estado, fechas e integrantes en `src/project/postgres_store.go`
-- [ ] T010 [P] Crear el store controlado para pruebas unitarias en `src/project/test_store.go`, sin reemplazar las pruebas de integración contra PostgreSQL
+- [X] T009 Implementar `PostgreSQLProjectStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para persistir proyecto, estado, fechas e integrantes en `src/project/postgres_store.go`
+- [X] T010 [P] Crear el store controlado para pruebas unitarias en `src/project/test_store.go`, sin reemplazar las pruebas de integración contra PostgreSQL
 
 **Checkpoint**: La base Go, el esquema PostgreSQL, el contrato de almacenamiento y el adaptador concreto están listos para implementar los casos de uso.
 
