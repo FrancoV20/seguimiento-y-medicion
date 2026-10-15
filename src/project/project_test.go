@@ -1,0 +1,85 @@
+package project
+
+import (
+	"errors"
+	"testing"
+	"time"
+)
+
+func TestNewProject_RejectsMissingRequiredFields(t *testing.T) {
+	startDate := time.Date(2026, time.October, 6, 0, 0, 0, 0, time.UTC)
+	endDate := startDate.AddDate(0, 0, 14)
+
+	tests := []struct {
+		name          string
+		projectName   string
+		members       []string
+		expectedError error
+	}{
+		{
+			name:          "rejects empty project name",
+			projectName:   "",
+			members:       []string{"Gabriel"},
+			expectedError: ErrEmptyName,
+		},
+		{
+			name:          "rejects missing members",
+			projectName:   "Academic project",
+			members:       nil,
+			expectedError: ErrMissingMembers,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// Given / Arrange: a project has a missing required field.
+			// When / Act: attempt to create the project.
+			_, err := NewProject(test.projectName, test.members, startDate, endDate)
+
+			// Then / Assert: creation must fail with an explicit error.
+			if !errors.Is(err, test.expectedError) {
+				t.Fatalf("expected error %v, got %v", test.expectedError, err)
+			}
+		})
+	}
+}
+func TestNewProject_RejectsInvalidDates(t *testing.T) {
+	name := "Sentinel Project"
+	members := []string{"Juan Ignacio", "Franco"}
+
+	t.Run("rejects end date before start date", func(t *testing.T) {
+		// Arrange
+		startDate := time.Now()
+		endDate := startDate.AddDate(0, -1, 0) // 1 month BEFORE start
+
+		// Act
+		_, err := NewProject(name, members, startDate, endDate)
+
+		// Assert
+		if !errors.Is(err, ErrInvalidPeriod) {
+			t.Fatalf("expected error %v, got %v", ErrInvalidPeriod, err)
+		}
+	})
+}
+
+func TestNewProject_SuccessInitialState(t *testing.T) {
+	// Arrange: Datos 100% válidos
+	name := "Sentinel Project"
+	members := []string{"Juan Ignacio", "Franco"}
+	startDate := time.Now()
+	endDate := startDate.AddDate(0, 1, 0) // 1 mes DESPUÉS (válido)
+
+	// Act
+	p, err := NewProject(name, members, startDate, endDate)
+
+	// Assert: No debe haber error
+	if err != nil {
+		t.Fatalf("did not expect an error for a valid project, got: %v", err)
+	}
+
+	// T006: El proyecto debe nacer con estado "Active"
+	expectedStatus := "Active"
+	if p.Status != expectedStatus {
+		t.Errorf("expected initial status %q, got %q", expectedStatus, p.Status)
+	}
+}

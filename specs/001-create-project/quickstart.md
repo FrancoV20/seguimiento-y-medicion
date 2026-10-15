@@ -5,11 +5,10 @@
 - Go 1.27.1 instalado en Windows desde [go1.27.1.windows-amd64.msi](https://go.dev/dl/go1.27.1.windows-amd64.msi); verificar con `go version`.
 - Docker Desktop instalado y en ejecución.
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
-- Herramienta `golang-migrate/migrate` instalada; seguir la instalación de Windows documentada en [README.md](../../README.md).
+- Herramienta CLI de migraciones instalada y ejecutando: `go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest`
 - Repositorio ubicado en su raíz.
 - Paquete `src/project`, adaptador `PostgreSQLProjectStore` y `go.mod` creados según el plan.
-- Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:
-   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada en PowerShell. Por ejemplo (reemplace `<TU_PASSWORD>` por su clave local y note el puerto 5433):
 
 ## Run the tests
 
@@ -22,7 +21,7 @@ docker compose up -d postgres
 Aplicar las migraciones en orden numérico:
 
 ```powershell
-migrate -path db/migrations -database "$DATABASE_URL" up
+migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
 Las migraciones deben ejecutarse siempre en orden numérico para preservar la estructura de la
@@ -76,3 +75,12 @@ Las pruebas deben cubrir como mínimo:
 Para cada escenario, conservar el caso de prueba y su resultado en la revisión del cambio.
 Las pruebas deben ejecutar la validación real del proyecto y del período, sin reemplazarla con
 mocks o métodos exclusivos de test.
+
+## Base de Datos Local (PostgreSQL)
+
+Para el desarrollo e integración, utilizamos un contenedor Docker con PostgreSQL 16.
+
+**Variables de conexión requeridas (PowerShell):**
+```powershell
+# Reemplazar <USUARIO> y <PASSWORD> con las credenciales definidas en tu .env local
+$env:DATABASE_URL="postgres://<USUARIO>:<PASSWORD>@localhost:5433/seguimiento_y_medicion?sslmode=disable"
