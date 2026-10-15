@@ -274,6 +274,6 @@ migrate -path db/migrations -database $env:DATABASE_URL up
   y volvé a aplicarla.
 - Si `migrate` queda en estado "dirty", avisen al equipo antes de usar `force`.
 - Orden y dueños de las migraciones: `001` proyectos e integrantes (HU-01), `002` historias del
-  backlog (HU-02), `003` Sprints (HU-04), `004` métricas (HU-07), `005` esfuerzo (HU-03).
+  backlog (HU-02), `004` Sprints (HU-04), `007` métricas (HU-07), `003` esfuerzo (HU-03).
 - No subas a ningún archivo del repositorio (README, specs, `docker-compose.yml`) tu clave
   personal. Va solo en tu `docker-compose.override.yml`, que está en el `.gitignore`.
