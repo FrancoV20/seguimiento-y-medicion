@@ -91,6 +91,78 @@ func TestClosureValidationErrorFormatsMultipleReasons(t *testing.T) {
 	}
 }
 
+func TestCalculateMetricsWithInvalidSprintDoesNotPersistOrChangeStatus(t *testing.T) {
+	tests := []struct {
+		name        string
+		story       CompletedStory
+		wantMessage string
+	}{
+		{
+			name: "negative actual hours",
+			story: CompletedStory{
+				ID:             5,
+				Status:         "Hecho",
+				StoryPoints:    closureTestIntPointer(3),
+				EstimatedHours: closureTestRat(t, "8"),
+				ActualHours:    closureTestRat(t, "-1"),
+			},
+			wantMessage: ErrNegativeActualHours.Error(),
+		},
+		{
+			name: "invalid story points",
+			story: CompletedStory{
+				ID:             6,
+				Status:         "Hecho",
+				StoryPoints:    closureTestIntPointer(4),
+				EstimatedHours: closureTestRat(t, "8"),
+				ActualHours:    closureTestRat(t, "2"),
+			},
+			wantMessage: ErrInvalidStoryPoints.Error(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			store := &closureValidationStoreMock{
+				sprint: SprintData{
+					ID:      3,
+					Status:  "Finalizado",
+					Stories: []CompletedStory{tt.story},
+				},
+			}
+			originalStatus := store.sprint.Status
+
+			_, err := NewService(store).CalculateMetrics(store.sprint.ID)
+			if err == nil {
+				t.Fatal("CalculateMetrics() error = nil, want closure validation error")
+			}
+			if !strings.Contains(err.Error(), tt.wantMessage) {
+				t.Errorf("CalculateMetrics() error = %q, want it to contain %q", err, tt.wantMessage)
+			}
+			if store.saveMetricsCalls != 0 {
+				t.Errorf("SaveMetrics() called %d times, want 0", store.saveMetricsCalls)
+			}
+			if store.sprint.Status != originalStatus {
+				t.Errorf("Sprint status = %q, want unchanged status %q", store.sprint.Status, originalStatus)
+			}
+		})
+	}
+}
+
+type closureValidationStoreMock struct {
+	sprint           SprintData
+	saveMetricsCalls int
+}
+
+func (s *closureValidationStoreMock) LoadSprintData(int64) (SprintData, error) {
+	return s.sprint, nil
+}
+
+func (s *closureValidationStoreMock) SaveMetrics(SprintMetrics) error {
+	s.saveMetricsCalls++
+	return nil
+}
+
 func closureTestIntPointer(value int) *int {
 	return &value
 }
