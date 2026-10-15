@@ -95,6 +95,19 @@
 
 ---
 
+## Phase 6: Horas estimadas (FR-014, solicitado por HU-07)
+
+**Purpose**: Registrar horas estimadas opcionales para que HU-07 calcule la desviación de esfuerzo.
+
+- [ ] T033 [P] Escribir pruebas unitarias de horas estimadas válidas, ausentes e inválidas en `src/backlog/estimated_hours_test.go`
+- [ ] T034 [P] Escribir pruebas de integración de horas estimadas persistidas y `NULL` en `src/backlog/postgres_estimated_hours_integration_test.go`
+- [ ] T035 Agregar la columna `estimated_hours NUMERIC(6,2) CHECK (estimated_hours > 0)` en `db/migrations/002_create_backlog_stories.up.sql`
+- [ ] T036 Agregar `EstimatedHours` opcional en `src/backlog/model.go` y `ErrInvalidEstimatedHours` en `src/backlog/errors.go`
+- [ ] T037 Validar el rango de horas estimadas en `src/backlog/service.go` antes de llamar al store
+- [ ] T038 Persistir `estimated_hours` en la transacción de `src/backlog/postgres_backlog_store.go`
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
