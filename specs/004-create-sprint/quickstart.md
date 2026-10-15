@@ -10,7 +10,24 @@
 - Paquete `src/sprint`, `PostgreSQLSprintStore`, integración con el modelo de backlog de HU-02
    y `go.mod` creados según el plan.
 - Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:
-   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+   `postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable`.
+   El puerto `5433` es el del `docker-compose.yml` por defecto; si tu `docker-compose.override.yml`
+   usa otro usuario, clave o puerto, ajustá la URL (ver "Base de datos" en el [README.md](../../README.md)).
+
+## Instalar golang-migrate
+
+Si `migrate -version` no responde en tu terminal, instalarlo desde PowerShell:
+
+```powershell
+go install -tags "postgres" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+$env:Path += ";$(go env GOPATH)\bin"
+migrate -version
+```
+
+Si muestra `dev`, es válido: el binario funciona aunque no informe un número de release.
+La segunda línea agrega la carpeta de herramientas de Go al `PATH` solo de la terminal actual;
+para dejarlo permanente, agregar `$(go env GOPATH)\bin` a la variable de entorno `Path` del
+usuario y abrir una nueva terminal.
 
 ## Run the tests
 
@@ -20,15 +37,46 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 docker compose up -d postgres
 ```
 
-Aplicar las migraciones pendientes en orden numérico. La migración 003 depende de que las
-migraciones 001, que crea los proyectos, y 002, que crea las historias del backlog, ya estén
-aplicadas porque los Sprints referencian historias existentes:
+## Aplicar las migraciones
 
-```powershell
-migrate -path db/migrations -database "$DATABASE_URL" up
-```
+Las migraciones se aplican siempre en orden numérico. La migración de Sprints
+(`004_create_sprints`) depende de que la `001_create_projects`, que crea los proyectos, y la
+`002_create_backlog_stories`, que crea las historias del backlog, ya estén aplicadas, porque los
+Sprints referencian proyectos e historias existentes. Si alguna falta en tu rama, traerla desde la
+rama de su dueño siguiendo la sección C del [README.md](../../README.md).
 
-Luego ejecutar las pruebas:
+Cada migración tiene un par de archivos en `db/migrations/`: `NNN_nombre.up.sql` (aplica) y
+`NNN_nombre.down.sql` (revierte).
+
+1. Definir la URL de conexión (dura mientras la ventana de PowerShell esté abierta):
+
+   ```powershell
+   $env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+   ```
+
+2. Ver qué versión está aplicada (`no migration` significa base vacía):
+
+   ```powershell
+   migrate -path db/migrations -database $env:DATABASE_URL version
+   ```
+
+3. Aplicar todas las migraciones pendientes, en orden numérico:
+
+   ```powershell
+   migrate -path db/migrations -database $env:DATABASE_URL up
+   ```
+
+4. Para revertir la última migración (por ejemplo, si cambió el archivo de un compañero):
+
+   ```powershell
+   migrate -path db/migrations -database $env:DATABASE_URL down 1
+   ```
+
+Si `migrate` queda en estado "dirty", avisar al equipo antes de usar `force`.
+
+## Ejecutar las pruebas
+
+Con las migraciones aplicadas, ejecutar:
 
 ```powershell
 go test ./...

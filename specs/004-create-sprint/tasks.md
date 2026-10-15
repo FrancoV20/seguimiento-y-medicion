@@ -1,6 +1,6 @@
 # Tasks: Crear y asignar Sprint
 
-**Input**: Design documents from `specs/003-create-sprint/`
+**Input**: Design documents from `specs/004-create-sprint/`
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, quickstart.md
 
@@ -12,11 +12,11 @@
 
 **Purpose**: Preparar Go, dependencias PostgreSQL/Docker y esquema de Sprints.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
-- [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear la migración SQL `db/migrations/003_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
+- [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
+- [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
+- [x] T004 [P] Crear la migración SQL `db/migrations/004_create_sprints.sql` para Sprints, asociaciones, estados e identificador secuencial por proyecto; depende de que las migraciones `001_create_projects.sql` y `002_create_backlog_stories.sql` ya estén aplicadas
+- [x] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-create-sprint/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -24,13 +24,13 @@
 
 **Purpose**: Crear el modelo, errores, store y transacciones compartidos por las tres historias.
 
-- [ ] T006 [P] Definir `Project`, `Sprint`, `UserStory` y `SprintCreationRequest` en `src/sprint/model.go`, incluyendo estado `Activo`, Goal obligatorio e identificador no editable
-- [ ] T007 [P] Definir errores explícitos para proyecto inexistente, Goal vacío, fechas inválidas, historia no disponible, conflicto de Sprint activo y persistencia en `src/sprint/errors.go`
-- [ ] T008 Definir `SprintStore` con operaciones `CreateSprint`, `AssignStories` y `RemoveStory` en `src/sprint/store.go`
-- [ ] T009 Implementar la generación secuencial `Sprint 1`, `Sprint 2` y sucesivos con protección transaccional en `src/sprint/sequence.go`
-- [ ] T010 Implementar `PostgreSQLSprintStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para Sprint, asociaciones y estados en `src/sprint/postgres_sprint_store.go`
-- [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/sprint/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir helpers de historias `Pendiente`, `En Sprint` y asociación exclusiva en `src/sprint/story_assignment.go`
+- [x] T006 [P] Definir `Project`, `Sprint`, `UserStory` y `SprintCreationRequest` en `src/sprint/model.go`, incluyendo estado `Activo`, Goal obligatorio e identificador no editable
+- [x] T007 [P] Definir errores explícitos para proyecto inexistente, Goal vacío, fechas inválidas, historia no disponible, conflicto de Sprint activo y persistencia en `src/sprint/errors.go`
+- [x] T008 Definir `SprintStore` con operaciones `CreateSprint`, `AssignStories` y `RemoveStory` en `src/sprint/store.go`
+- [x] T009 Implementar la generación secuencial `Sprint 1`, `Sprint 2` y sucesivos con protección transaccional en `src/sprint/sequence.go`
+- [x] T010 Implementar `PostgreSQLSprintStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para Sprint, asociaciones y estados en `src/sprint/postgres_sprint_store.go`
+- [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/sprint/test_store.go`, sin sustituir la integración PostgreSQL
+- [x] T012 [P] Definir helpers de historias `Pendiente`, `En Sprint` y asociación exclusiva en `src/sprint/story_assignment.go`
 
 **Checkpoint**: El modelo, la secuencia, las transiciones y el adaptador PostgreSQL están listos para los casos de uso.
 
@@ -111,11 +111,11 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-create-sprint/quickstart.md`
+- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
 - [ ] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
 - [ ] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/003-create-sprint/tasks.md`
+- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
 
 ---
 
