@@ -42,9 +42,9 @@
 
 ### Tests for User Story 1
 
-- [ ] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
-- [ ] T012 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
+- [X] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
+- [X] T012 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
+- [X] T013 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
 - [ ] T014 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
 
 ### Implementation for User Story 1
