@@ -166,3 +166,84 @@ func TestProjectService_CreateProject_ValidationErrors(t *testing.T) {
 		}
 	})
 }
+
+func TestProjectService_CreateProject_RejectsZeroDates(t *testing.T) {
+	validDate := time.Date(2026, time.October, 15, 0, 0, 0, 0, time.UTC)
+	tests := []struct {
+		name      string
+		startDate time.Time
+		endDate   time.Time
+	}{
+		{
+			name:      "rejects zero start date",
+			startDate: time.Time{},
+			endDate:   validDate,
+		},
+		{
+			name:      "rejects zero end date",
+			startDate: validDate,
+			endDate:   time.Time{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			// Given / Arrange: all fields are valid except one zero date.
+			store := &TestProjectStore{Members: map[int]bool{1: true}}
+			service := NewProjectService(store)
+			req := ProjectCreationRequest{
+				Name:      "Sentinel Project",
+				Members:   []string{"1"},
+				StartDate: test.startDate,
+				EndDate:   test.endDate,
+			}
+
+			// When / Act: project creation is attempted.
+			result, err := service.CreateProject(req)
+
+			// Then / Assert: the missing date is rejected without persistence.
+			if err == nil {
+				t.Fatal("expected an error for a zero date")
+			}
+			if result != nil {
+				t.Errorf("expected nil result, got %#v", result)
+			}
+			if len(store.Projects) != 0 {
+				t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+			}
+		})
+	}
+}
+
+func TestProjectService_CreateProject_StoreCreateFailure(t *testing.T) {
+	// Given / Arrange: a valid request and a store configured to fail creation.
+	store := &TestProjectStore{
+		Members:          map[int]bool{1: true},
+		ShouldFailCreate: true,
+	}
+	service := NewProjectService(store)
+	startDate := time.Date(2026, time.October, 15, 0, 0, 0, 0, time.UTC)
+	req := ProjectCreationRequest{
+		Name:      "Sentinel Project",
+		Members:   []string{"1"},
+		StartDate: startDate,
+		EndDate:   startDate.AddDate(0, 0, 1),
+	}
+
+	// When / Act: project creation reaches the failing store.
+	result, err := service.CreateProject(req)
+
+	// Then / Assert: the error is returned without a success result or persistence.
+	if err == nil {
+		t.Fatal("expected an error when the store fails to create the project")
+	}
+	if result != nil {
+		if strings.Contains(result.Message, "Proyecto creado exitosamente") {
+			t.Errorf("did not expect a success message, got %q", result.Message)
+		}
+		t.Errorf("expected nil result, got %#v", result)
+	}
+	if len(store.Projects) != 0 {
+		t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+	}
+}

@@ -151,3 +151,23 @@ T019: Escenario BDD de fechas inválidas en test/project_bdd_test.go
 - Todas las tareas siguen el formato `- [ ] T### [P?] [US?] descripción con ruta`.
 - Las pruebas deben verificar comportamiento real y observar un estado fallido antes de implementar.
 - PostgreSQL debe ejecutarse con Docker; la aplicación Go y las pruebas se ejecutan localmente.
+
+## Scope and Requirements Traceability
+
+**Scope note**: FR-001, SC-003 y SC-004 se difieren a la fase de Frontend/QA; quedan fuera del alcance backend de este sprint.
+
+| ID | Requirement | Task IDs | Traceability notes |
+|---|---|---|---|
+| FR-001 | Acceder al formulario desde Gestión de Proyectos | Deferred | Diferido a Frontend/QA. |
+| FR-002 | Solicitar nombre, integrantes y fechas | T006, T011, T015 | El modelo/request y el servicio cubren los datos de entrada del backend. |
+| FR-003 | Validar campos obligatorios antes del registro | T012, T015 | Incluye nombre, integrantes y fechas obligatorias. |
+| FR-004 | Aceptar fecha final igual o posterior a la inicial | T011, T019, T021, T022 | Pruebas de igualdad e invalidez, más validación del período. |
+| FR-005 | Registrar un proyecto con sus datos | T013, T015, T017, T018 | Servicio, store y prueba de integración PostgreSQL. |
+| FR-006 | Confirmar el registro exitoso | T014, T016 | Escenario BDD y resultado formal de creación. |
+| FR-007 | Rechazar períodos inválidos con error temporal | T019, T020, T021, T022 | Pruebas unitarias/BDD e implementación del rechazo. |
+| FR-008 | Conservar datos ingresados cuando falla la validación | T022 | Las pruebas comparan la request antes y después del error. |
+| FR-009 | No registrar tras fallas de validación o persistencia | T012, T016, T017, T022 | Validación sin persistencia y persistencia transaccional sin éxito ante error. |
+| SC-001 | Registrar proyectos válidos y confirmar éxito | T011, T013, T014, T015, T016, T017, T018 | Cobertura del camino feliz en unit, BDD e integración. |
+| SC-002 | Rechazar fechas inválidas sin registrar y mostrar error | T019, T020, T021, T022 | Cobertura unitaria y BDD del período inválido. |
+| SC-003 | Completar el formulario en menos de 2 minutos | Deferred | Diferido a Frontend/QA. |
+| SC-004 | 90% de usuarios de prueba completa al primer intento | Deferred | Diferido a Frontend/QA. |
