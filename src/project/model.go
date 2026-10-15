@@ -3,6 +3,7 @@ package project
 import "time"
 
 type Project struct {
+	ID        int
 	Name      string
 	Members   []string
 	StartDate time.Time
