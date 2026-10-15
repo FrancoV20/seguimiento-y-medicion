@@ -25,12 +25,12 @@
 **Purpose**: Crear el modelo, errores, store y transacciones compartidos por las tres historias.
 
 - [x] T006 [P] Definir `Project`, `Sprint`, `UserStory` y `SprintCreationRequest` en `src/sprint/model.go`, incluyendo estado `Activo`, Goal obligatorio e identificador no editable
-- [ ] T007 [P] Definir errores explícitos para proyecto inexistente, Goal vacío, fechas inválidas, historia no disponible, conflicto de Sprint activo y persistencia en `src/sprint/errors.go`
-- [ ] T008 Definir `SprintStore` con operaciones `CreateSprint`, `AssignStories` y `RemoveStory` en `src/sprint/store.go`
-- [ ] T009 Implementar la generación secuencial `Sprint 1`, `Sprint 2` y sucesivos con protección transaccional en `src/sprint/sequence.go`
-- [ ] T010 Implementar `PostgreSQLSprintStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para Sprint, asociaciones y estados en `src/sprint/postgres_sprint_store.go`
-- [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/sprint/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir helpers de historias `Pendiente`, `En Sprint` y asociación exclusiva en `src/sprint/story_assignment.go`
+- [x] T007 [P] Definir errores explícitos para proyecto inexistente, Goal vacío, fechas inválidas, historia no disponible, conflicto de Sprint activo y persistencia en `src/sprint/errors.go`
+- [x] T008 Definir `SprintStore` con operaciones `CreateSprint`, `AssignStories` y `RemoveStory` en `src/sprint/store.go`
+- [x] T009 Implementar la generación secuencial `Sprint 1`, `Sprint 2` y sucesivos con protección transaccional en `src/sprint/sequence.go`
+- [x] T010 Implementar `PostgreSQLSprintStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones para Sprint, asociaciones y estados en `src/sprint/postgres_sprint_store.go`
+- [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/sprint/test_store.go`, sin sustituir la integración PostgreSQL
+- [x] T012 [P] Definir helpers de historias `Pendiente`, `En Sprint` y asociación exclusiva en `src/sprint/story_assignment.go`
 
 **Checkpoint**: El modelo, la secuencia, las transiciones y el adaptador PostgreSQL están listos para los casos de uso.
 
