@@ -19,7 +19,7 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open PostgreSQL connection: %v", err)
 	}
-	defer db.Close()
+	t.Cleanup(func() { db.Close() })
 
 	if err := db.Ping(); err != nil {
 		t.Skipf("PostgreSQL integration database is unavailable: %v", err)
@@ -28,7 +28,7 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 	var missingTables string
 	if err := db.QueryRow(`
 		SELECT COALESCE(string_agg(required.name, ', '), '')
-		FROM unnest(ARRAY['sprints', 'sprint_stories', 'sprint_metrics']::text[]) AS required(name)
+		FROM unnest(ARRAY['sprints', 'sprint_story_assignments', 'sprint_metrics']::text[]) AS required(name)
 		WHERE to_regclass('public.' || required.name) IS NULL`).Scan(&missingTables); err != nil {
 		t.Fatalf("check Sprint schema prerequisites: %v", err)
 	}
@@ -62,18 +62,19 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 		t.Fatalf("insert member fixture: %v", err)
 	}
 	if err := db.QueryRow(`
-		INSERT INTO sprints (status)
-		VALUES ('Finalizado')
-		RETURNING id`).Scan(&sprintID); err != nil {
+		INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		VALUES ($1, 1, 'Sprint de prueba', CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day', 'Finalizado')
+		RETURNING id`, projectID).Scan(&sprintID); err != nil {
 		t.Fatalf("insert sprint fixture: %v", err)
 	}
+
 	if err := db.QueryRow(`
 		INSERT INTO user_stories (
-			project_id, title, description, priority, story_points, status
+			project_id, active_sprint_id, title, description, priority, story_points, status
 		)
-		VALUES ($1, 'Metrics integration story', 'Test story', 'Media', 5, 'Hecho')
+		VALUES ($1, $2, 'Metrics integration story', 'Test story', 'Media', 5, 'Hecho')
 		RETURNING id`,
-		projectID).Scan(&storyID); err != nil {
+		projectID, sprintID).Scan(&storyID); err != nil {
 		t.Fatalf("insert story fixture: %v", err)
 	}
 
@@ -82,24 +83,26 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 			t.Fatalf("set estimated-hours fixture: %v", err)
 		}
 	}
+
+	if _, err := db.Exec(`
+		INSERT INTO sprint_story_assignments (sprint_id, story_id)
+		VALUES ($1, $2)`,
+		sprintID, storyID); err != nil {
+		t.Fatalf("associate story with sprint fixture: %v", err)
+	}
+
 	if _, err := db.Exec(`
 		INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
 		VALUES ($1, $2, CURRENT_DATE, 'Metrics integration work', 10.00)`,
 		storyID, memberID); err != nil {
 		t.Fatalf("insert effort-log fixture: %v", err)
 	}
-	if _, err := db.Exec(`
-		INSERT INTO sprint_stories (sprint_id, story_id)
-		VALUES ($1, $2)`,
-		sprintID, storyID); err != nil {
-		t.Fatalf("associate story with sprint fixture: %v", err)
-	}
 
 	t.Cleanup(func() {
 		if _, err := db.Exec(`DELETE FROM sprint_metrics WHERE sprint_id = $1`, sprintID); err != nil {
 			t.Errorf("delete sprint-metrics fixture: %v", err)
 		}
-		if _, err := db.Exec(`DELETE FROM sprint_stories WHERE sprint_id = $1`, sprintID); err != nil {
+		if _, err := db.Exec(`DELETE FROM sprint_story_assignments WHERE sprint_id = $1`, sprintID); err != nil {
 			t.Errorf("delete sprint-story fixture: %v", err)
 		}
 		if _, err := db.Exec(`DELETE FROM sprints WHERE id = $1`, sprintID); err != nil {

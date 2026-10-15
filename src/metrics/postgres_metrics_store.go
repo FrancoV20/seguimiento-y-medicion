@@ -49,7 +49,7 @@ func (s *PostgreSQLMetricsStore) LoadSprintData(sprintID int64) (SprintData, err
 	query := fmt.Sprintf(`
 		SELECT us.id, us.status, us.story_points,
 		       %s AS estimated_hours, SUM(el.hours)::text AS actual_hours
-		FROM sprint_stories AS ss
+		FROM sprint_story_assignments AS ss
 		JOIN user_stories AS us ON us.id = ss.story_id
 		LEFT JOIN effort_logs AS el ON el.story_id = us.id
 		WHERE ss.sprint_id = $1
