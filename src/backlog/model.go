@@ -40,7 +40,8 @@ type UserStory struct {
 	Description        string
 	Priority           Priority
 	AcceptanceCriteria []AcceptanceCriterion
-	StoryPoints        *int // nil = sin estimación
+	StoryPoints        *int     // nil = sin estimación
+	EstimatedHours     *float64 // nil = sin horas estimadas (FR-014)
 	Status             StoryStatus
 	CreatedAt          time.Time
 }
@@ -59,6 +60,7 @@ type CreateStoryRequest struct {
 	Priority           Priority
 	AcceptanceCriteria []string
 	StoryPoints        *int
+	EstimatedHours     *float64 // opcional; si se informa, debe ser > 0 y < 10000
 }
 
 // CreateStoryResult es el resultado de un alta exitosa.
