@@ -53,12 +53,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implementar `CreateSprint` en `src/sprint/service.go`, validando proyecto, Goal, fechas presentes, historias seleccionadas y estados antes de mutar
-- [ ] T020 [US1] Implementar en `src/sprint/sequence.go` el identificador automático no editable con secuencia por proyecto y sin consumir números en operaciones inválidas
-- [ ] T021 [US1] Implementar en `src/sprint/story_assignment.go` la asignación exclusiva: una historia no puede pertenecer a dos Sprints activos y el conflicto debe bloquearse
-- [ ] T022 [US1] Implementar el movimiento explícito en `src/sprint/service.go`, quitando primero la historia del Sprint actual, devolviéndola a `Pendiente` y permitiendo luego la nueva asignación
-- [ ] T023 [US1] Completar `PostgreSQLSprintStore` en `src/sprint/postgres_sprint_store.go` con transacción para crear Sprint, asociar historias y actualizar estados sin mutaciones parciales
-- [ ] T024 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto/historias y limpieza en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T019 [US1] Implementar `CreateSprint` en `src/sprint/service.go`, validando proyecto, Goal, fechas presentes, historias seleccionadas y estados antes de mutar
+- [x] T020 [US1] Implementar en `src/sprint/sequence.go` el identificador automático no editable con secuencia por proyecto y sin consumir números en operaciones inválidas
+- [x] T021 [US1] Implementar en `src/sprint/story_assignment.go` la asignación exclusiva: una historia no puede pertenecer a dos Sprints activos y el conflicto debe bloquearse
+- [x] T022 [US1] Implementar el movimiento explícito en `src/sprint/service.go`, quitando primero la historia del Sprint actual, devolviéndola a `Pendiente` y permitiendo luego la nueva asignación
+- [x] T023 [US1] Completar `PostgreSQLSprintStore` en `src/sprint/postgres_sprint_store.go` con transacción para crear Sprint, asociar historias y actualizar estados sin mutaciones parciales
+- [x] T024 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto/historias y limpieza en `src/sprint/postgres_sprint_store_integration_test.go`
 
 **Checkpoint**: US1 crea y persiste un Sprint con asignaciones exclusivas, permite movimientos en dos pasos y rechaza Goal vacío.
 

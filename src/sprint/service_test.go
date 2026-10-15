@@ -1,6 +1,7 @@
 package sprint
 
 import (
+	"context"
 	"errors"
 	"reflect"
 	"testing"
@@ -126,6 +127,86 @@ func TestCreateSprint_AllowsStoryMoveOnlyAfterRemovingCurrentAssignment(t *testi
 	}
 	if storiesAfterRemoval[0].ActiveSprintID != result.Sprint.ID {
 		t.Errorf("Sprint activo después de reasignar = %d, se esperaba %d", storiesAfterRemoval[0].ActiveSprintID, result.Sprint.ID)
+	}
+}
+
+func TestMoveStoryRemovesBeforeAssigningToDestinationSprint(t *testing.T) {
+	store := newMemorySprintStore()
+	store.addProject(Project{ID: 1, Status: "Activo"})
+	store.addStory(UserStory{ID: 501, ProjectID: 1, Status: Pendiente})
+	first, err := store.CreateSprint(context.Background(), Sprint{
+		ProjectID: 1,
+		Goal:      "Sprint de origen",
+		StartDate: time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC),
+		StoryIDs:  []int64{501},
+	})
+	if err != nil {
+		t.Fatalf("no se pudo preparar el Sprint de origen: %v", err)
+	}
+	second, err := store.CreateSprint(context.Background(), Sprint{
+		ProjectID: 1,
+		Goal:      "Sprint de destino",
+		StartDate: time.Date(2026, 10, 16, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 10, 30, 0, 0, 0, 0, time.UTC),
+	})
+	if err != nil {
+		t.Fatalf("no se pudo preparar el Sprint de destino: %v", err)
+	}
+
+	if err := MoveStory(context.Background(), store, first.ID, second.ID, 501); err != nil {
+		t.Fatalf("MoveStory() devolvió error: %v", err)
+	}
+	story, exists := store.story(501)
+	if !exists || story.Status != EnSprint || story.ActiveSprintID != second.ID {
+		t.Fatalf("la historia no quedó únicamente en el Sprint destino: %+v", story)
+	}
+}
+
+func TestServicePersistsBeforeMutatingStoriesAndUsesPersistedSprintID(t *testing.T) {
+	store := newMemorySprintStore()
+	project := Project{ID: 1, Status: "Activo", NextSprintNumber: 5}
+	store.addProject(project)
+	store.addStory(UserStory{ID: 601, ProjectID: project.ID, Status: Pendiente})
+	store.nextID = 30
+	stories := []UserStory{{ID: 601, ProjectID: project.ID, Status: Pendiente}}
+
+	result, err := NewService(store).CreateSprint(
+		context.Background(),
+		validCreationRequest([]int64{601}),
+		project,
+		stories,
+	)
+	if err != nil {
+		t.Fatalf("Service.CreateSprint() devolvió error: %v", err)
+	}
+	if result.Sprint.ID != 30 || result.Sprint.DisplayID != "Sprint 5" {
+		t.Fatalf("Sprint persistido inesperado: %+v", result.Sprint)
+	}
+	if stories[0].Status != EnSprint || stories[0].ActiveSprintID != result.Sprint.ID {
+		t.Fatalf("la historia no recibió el ID técnico persistido: %+v", stories[0])
+	}
+}
+
+func TestServiceDoesNotMutateStoriesWhenPersistenceFails(t *testing.T) {
+	store := newMemorySprintStore()
+	project := Project{ID: 1, Status: "Activo"}
+	store.addProject(project)
+	store.addStory(UserStory{ID: 701, ProjectID: project.ID, Status: EnSprint, ActiveSprintID: 99})
+	stories := []UserStory{{ID: 701, ProjectID: project.ID, Status: Pendiente}}
+	before := stories[0]
+
+	_, err := NewService(store).CreateSprint(
+		context.Background(),
+		validCreationRequest([]int64{701}),
+		project,
+		stories,
+	)
+	if !errors.Is(err, ErrActiveSprintConflict) {
+		t.Fatalf("Service.CreateSprint() error = %v, se esperaba conflicto persistido", err)
+	}
+	if stories[0] != before {
+		t.Fatalf("la historia cambió aunque falló la persistencia: antes=%+v después=%+v", before, stories[0])
 	}
 }
 
