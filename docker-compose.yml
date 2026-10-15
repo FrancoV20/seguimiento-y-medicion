@@ -4,8 +4,8 @@ services:
     container_name: seguimiento-y-medicion-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: sym_pass (replace with a strong password)
+      POSTGRES_USER: sym_user
+      POSTGRES_PASSWORD: sym_pass
       POSTGRES_DB: seguimiento_y_medicion
     ports:
       - "5433:5432"
