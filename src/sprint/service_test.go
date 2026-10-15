@@ -151,7 +151,7 @@ func TestCreateSprint_RemoveThenAssignAllowsStoryMove(t *testing.T) {
     project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
     story := UserStory{ID: 401, ProjectID: 1, Status: EnSprint, ActiveSprintID: 11}
 
-    if err := RemoveStoryFromSprint(project.ID, story.ID, 11); err != nil {
+    if err := RemoveStoryFromSprint(&story, 11); err != nil {
         t.Fatalf("RemoveStoryFromSprint() unexpected error: %v", err)
     }
 
