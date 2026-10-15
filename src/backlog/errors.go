@@ -10,5 +10,6 @@ var (
 	ErrInvalidPriority            = errors.New("la prioridad debe ser Alta, Media o Baja")
 	ErrAcceptanceCriteriaRequired = errors.New("agregá al menos un criterio de aceptación")
 	ErrInvalidStoryPoints         = errors.New("los Story Points deben ser 1, 2, 3, 5, 8, 13, 21, 34, 55 u 89")
+	ErrInvalidEstimatedHours      = errors.New("las horas estimadas deben ser mayores a 0 y menores a 10000")
 	ErrPersistence                = errors.New("no se pudo registrar la historia")
 )

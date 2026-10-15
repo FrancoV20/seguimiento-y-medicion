@@ -46,12 +46,16 @@ func (s *PostgreSQLBacklogStore) CreateStory(projectID int64, story UserStory) (
 	if story.StoryPoints != nil {
 		storyPoints = sql.NullInt64{Int64: int64(*story.StoryPoints), Valid: true}
 	}
+	var estimatedHours sql.NullFloat64
+	if story.EstimatedHours != nil {
+		estimatedHours = sql.NullFloat64{Float64: *story.EstimatedHours, Valid: true}
+	}
 
 	err = tx.QueryRowContext(ctx,
-		`INSERT INTO user_stories (project_id, title, description, priority, story_points, status)
-		 VALUES ($1, $2, $3, $4, $5, $6)
+		`INSERT INTO user_stories (project_id, title, description, priority, story_points, estimated_hours, status)
+		 VALUES ($1, $2, $3, $4, $5, $6, $7)
 		 RETURNING id, created_at`,
-		projectID, story.Title, story.Description, string(story.Priority), storyPoints, string(story.Status),
+		projectID, story.Title, story.Description, string(story.Priority), storyPoints, estimatedHours, string(story.Status),
 	).Scan(&story.ID, &story.CreatedAt)
 	if err != nil {
 		return UserStory{}, err

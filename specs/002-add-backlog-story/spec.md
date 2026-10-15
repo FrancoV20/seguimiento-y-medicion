@@ -69,6 +69,8 @@ aceptación y verificando que no se registra y que el sistema solicita agregarlo
   permitir la creación y mostrar una alerta advirtiendo que falta completar la estimación.
 - Si se informan Story Points, el valor debe pertenecer a la serie de Fibonacci admitida
   por el sistema; un valor fuera de esa serie debe rechazarse e indicar el error.
+- Si no se informan horas estimadas, la historia se registra igual y las conserva como
+  ausentes; si se informan, deben ser mayores a 0 y menores a 10000, o el registro se rechaza.
 - Toda historia creada mediante esta funcionalidad debe comenzar con estado "Pendiente";
   el formulario no debe permitir asignarle otro estado inicial.
 - Si ocurre un error al guardar, el sistema debe informar que no pudo completarse la
@@ -107,11 +109,15 @@ aceptación y verificando que no se registra y que el sistema solicita agregarlo
   historia MUST ser visible dentro del Product Backlog del proyecto.
 - **FR-013**: El sistema MUST evitar duplicar la historia cuando el usuario reintenta después
   de un error de validación o de persistencia.
+- **FR-014**: El sistema MUST permitir registrar opcionalmente las horas estimadas de la
+  historia (mayores a 0 y menores a 10000), MUST representar explícitamente su ausencia y
+  MUST rechazar valores fuera de ese rango sin registrar la historia. Este dato habilita el
+  cálculo de desviación de esfuerzo de HU-07.
 
 ### Key Entities *(include if feature involves data)*
 
 - **Historia de usuario**: Unidad de trabajo del Product Backlog con título, descripción,
-  prioridad, criterios de aceptación, Story Points y estado.
+  prioridad, criterios de aceptación, Story Points, horas estimadas (opcional) y estado.
 - **Product Backlog**: Conjunto ordenado de historias perteneciente a un proyecto activo.
 - **Proyecto activo**: Proyecto seleccionado y disponible para recibir nuevas historias.
 - **Criterio de aceptación**: Condición verificable que define cuándo una historia satisface

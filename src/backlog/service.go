@@ -17,7 +17,15 @@ func NewBacklogService(store BacklogStore) *BacklogService {
 	return &BacklogService{store: store}
 }
 
-// CreateStory valida la solicitud y registra la historia en estado Pendiente (T017, T018, T025).
+// maxEstimatedHours es el límite de la columna NUMERIC(6,2) de user_stories.estimated_hours.
+const maxEstimatedHours = 10000
+
+// validEstimatedHours acepta nil (sin horas estimadas) o un valor en (0, 10000).
+func validEstimatedHours(h *float64) bool {
+	return h == nil || (*h > 0 && *h < maxEstimatedHours)
+}
+
+// CreateStory valida la solicitud y registra la historia en estado Pendiente (T017, T018, T025, T037).
 // Valida todo antes de llamar al store, así un error no deja historias a medias.
 func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult, error) {
 	active, err := s.store.ProjectIsActive(req.ProjectID)
@@ -52,11 +60,19 @@ func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult
 	if err := ValidateStoryPoints(req.StoryPoints); err != nil {
 		return nil, err
 	}
+	if !validEstimatedHours(req.EstimatedHours) {
+		return nil, ErrInvalidEstimatedHours
+	}
 
 	var storyPoints *int
 	if req.StoryPoints != nil {
 		v := *req.StoryPoints
 		storyPoints = &v
+	}
+	var estimatedHours *float64
+	if req.EstimatedHours != nil {
+		h := *req.EstimatedHours
+		estimatedHours = &h
 	}
 
 	story := UserStory{
@@ -66,6 +82,7 @@ func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult
 		Priority:           req.Priority,
 		AcceptanceCriteria: criteria,
 		StoryPoints:        storyPoints,
+		EstimatedHours:     estimatedHours,
 		Status:             StatusPending,
 	}
 
