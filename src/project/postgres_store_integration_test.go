@@ -42,7 +42,7 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 	}
 
 	var projectID int
-	t.Cleanup(func() {
+	defer func() {
 		if projectID != 0 {
 			if _, err := db.ExecContext(ctx, `DELETE FROM project_members WHERE project_id = $1`, projectID); err != nil {
 				t.Errorf("clean project-member relation: %v", err)
@@ -54,7 +54,7 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		if _, err := db.ExecContext(ctx, `DELETE FROM members WHERE id = $1`, memberID); err != nil {
 			t.Errorf("clean integration member: %v", err)
 		}
-	})
+	}()
 
 	startDate := time.Date(2026, time.October, 14, 0, 0, 0, 0, time.UTC)
 	project, err := NewProject(
