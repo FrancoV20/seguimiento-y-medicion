@@ -66,6 +66,80 @@ func TestCreateSprint_RejectsEmptyOrWhitespaceGoal(t *testing.T) {
 	}
 }
 
+func TestCreateSprintRejectsInvalidPeriods(t *testing.T) {
+	start := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+	tests := []struct {
+		name string
+		end  time.Time
+	}{
+		{
+			name: "fin anterior al inicio",
+			end:  start.AddDate(0, 0, -1),
+		},
+		{
+			name: "fin igual al inicio",
+			end:  start,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			request := validCreationRequest([]int64{101})
+			request.StartDate = start
+			request.EndDate = tt.end
+			project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
+			stories := []UserStory{{ID: 101, ProjectID: 1, Status: Pendiente}}
+			before := stories[0]
+
+			_, err := CreateSprint(request, project, stories)
+			if !errors.Is(err, ErrInvalidSprintPeriod) {
+				t.Fatalf("CreateSprint() error = %v, se esperaba ErrInvalidSprintPeriod", err)
+			}
+			if stories[0] != before {
+				t.Fatalf("la historia cambió ante un período inválido: antes=%+v después=%+v", before, stories[0])
+			}
+			if request.EndDate != tt.end {
+				t.Fatalf("la solicitud cambió su fecha de fin: got=%v want=%v", request.EndDate, tt.end)
+			}
+		})
+	}
+}
+
+func TestServiceInvalidPeriodDoesNotCallStoreOrConsumeSprintNumber(t *testing.T) {
+	memoryStore := newMemorySprintStore()
+	project := Project{ID: 1, Status: "Activo"}
+	memoryStore.addProject(project)
+	memoryStore.addStory(UserStory{ID: 801, ProjectID: project.ID, Status: Pendiente})
+	store := &countingSprintStore{SprintStore: memoryStore}
+	service := NewService(store)
+	stories := []UserStory{{ID: 801, ProjectID: project.ID, Status: Pendiente}}
+
+	request := validCreationRequest([]int64{801})
+	request.EndDate = request.StartDate
+	_, err := service.CreateSprint(context.Background(), request, project, stories)
+	if !errors.Is(err, ErrInvalidSprintPeriod) {
+		t.Fatalf("CreateSprint() error = %v, se esperaba ErrInvalidSprintPeriod", err)
+	}
+	if store.createCalls != 0 {
+		t.Fatalf("CreateSprint del store llamado %d veces, se esperaba 0", store.createCalls)
+	}
+	if stories[0].Status != Pendiente || stories[0].ActiveSprintID != 0 {
+		t.Fatalf("la historia cambió ante el período inválido: %+v", stories[0])
+	}
+
+	request.EndDate = request.StartDate.AddDate(0, 0, 14)
+	result, err := service.CreateSprint(context.Background(), request, project, stories)
+	if err != nil {
+		t.Fatalf("la creación válida posterior devolvió error: %v", err)
+	}
+	if result.Sprint.DisplayID != "Sprint 1" {
+		t.Errorf("DisplayID posterior al rechazo = %q, se esperaba %q", result.Sprint.DisplayID, "Sprint 1")
+	}
+	if store.createCalls != 1 {
+		t.Errorf("CreateSprint del store llamado %d veces, se esperaba 1", store.createCalls)
+	}
+}
+
 func TestSprintCreationRequestDoesNotExposeGeneratedIdentifier(t *testing.T) {
 	requestType := reflect.TypeOf(SprintCreationRequest{})
 	for _, forbiddenField := range []string{"ID", "Number", "DisplayID"} {
@@ -218,4 +292,14 @@ func validCreationRequest(storyIDs []int64) SprintCreationRequest {
 		EndDate:   time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC),
 		StoryIDs:  storyIDs,
 	}
+}
+
+type countingSprintStore struct {
+	SprintStore
+	createCalls int
+}
+
+func (s *countingSprintStore) CreateSprint(ctx context.Context, sprint Sprint) (Sprint, error) {
+	s.createCalls++
+	return s.SprintStore.CreateSprint(ctx, sprint)
 }

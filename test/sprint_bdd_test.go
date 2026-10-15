@@ -90,6 +90,21 @@ func TestSprintBDDScenarios(t *testing.T) {
 			t.Fatalf("error = %v, se esperaba Goal obligatorio", err)
 		}
 	})
+
+	t.Run("rechazar fecha final anterior o igual a la inicial", func(t *testing.T) {
+		project := activeProject()
+		start := time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC)
+		for _, end := range []time.Time{start.AddDate(0, 0, -1), start} {
+			request := validSprintRequest(project.ID, nil)
+			request.StartDate = start
+			request.EndDate = end
+
+			_, err := sprint.CreateSprint(request, project, nil)
+			if !errors.Is(err, sprint.ErrInvalidSprintPeriod) {
+				t.Errorf("fecha final %v: error = %v, se esperaba período inválido", end, err)
+			}
+		}
+	})
 }
 
 func activeProject() sprint.Project {

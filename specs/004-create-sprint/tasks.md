@@ -72,9 +72,9 @@
 
 ### Tests for User Story 2
 
-- [ ] T025 [P] [US2] Escribir pruebas unitarias para `endDate < startDate` y `endDate == startDate` en `src/sprint/service_test.go`
-- [ ] T026 [P] [US2] Escribir prueba de que fechas inválidas no consumen el identificador secuencial ni llaman al store en `src/sprint/service_test.go`
-- [ ] T027 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/sprint_bdd_test.go`
+- [x] T025 [P] [US2] Escribir pruebas unitarias para `endDate < startDate` y `endDate == startDate` en `src/sprint/service_test.go`
+- [x] T026 [P] [US2] Escribir prueba de que fechas inválidas no consumen el identificador secuencial ni llaman al store en `src/sprint/service_test.go`
+- [x] T027 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 2
 
