@@ -93,9 +93,9 @@
 
 ### Tests for User Story 3
 
-- [ ] T030 [P] [US3] Escribir prueba unitaria de Sprint válido sin historias, advertencia y estado `Activo` en `src/sprint/service_test.go`
-- [ ] T031 [P] [US3] Escribir prueba de integración PostgreSQL para Sprint sin asociaciones en `src/sprint/postgres_sprint_store_integration_test.go`
-- [ ] T032 [P] [US3] Escribir el escenario BDD de Sprint sin historias en `test/sprint_bdd_test.go`
+- [x] T030 [P] [US3] Escribir prueba unitaria de Sprint válido sin historias, advertencia y estado `Activo` en `src/sprint/service_test.go`
+- [x] T031 [P] [US3] Escribir prueba de integración PostgreSQL para Sprint sin asociaciones en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T032 [P] [US3] Escribir el escenario BDD de Sprint sin historias en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 3
 

@@ -43,6 +43,31 @@ func TestCreateSprint_AssignsThreePendingStoriesAndGeneratesDisplayID(t *testing
 	}
 }
 
+func TestServiceCreatesSprintWithoutStoriesAndReturnsWarning(t *testing.T) {
+	store := newMemorySprintStore()
+	project := Project{ID: 1, Name: "Proyecto sin historias", Status: "Activo"}
+	store.addProject(project)
+
+	result, err := NewService(store).CreateSprint(
+		context.Background(),
+		validCreationRequest(nil),
+		project,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("la creación válida sin historias devolvió error: %v", err)
+	}
+	if result.Sprint.Status != SprintActive {
+		t.Errorf("estado = %q, se esperaba %q", result.Sprint.Status, SprintActive)
+	}
+	if len(result.Sprint.StoryIDs) != 0 {
+		t.Errorf("cantidad de historias = %d, se esperaba 0", len(result.Sprint.StoryIDs))
+	}
+	if result.Warning == "" {
+		t.Fatal("la creación exitosa sin historias debe devolver una advertencia")
+	}
+}
+
 func TestCreateSprint_RejectsEmptyOrWhitespaceGoal(t *testing.T) {
 	tests := []struct {
 		name string

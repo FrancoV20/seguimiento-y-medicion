@@ -80,6 +80,23 @@ func TestSprintBDDScenarios(t *testing.T) {
 		}
 	})
 
+	t.Run("crear Sprint sin historias y mostrar advertencia", func(t *testing.T) {
+		project := activeProject()
+		result, err := sprint.CreateSprint(validSprintRequest(project.ID, nil), project, nil)
+		if err != nil {
+			t.Fatalf("la creación de Sprint sin historias devolvió error: %v", err)
+		}
+		if result.Sprint.Status != sprint.SprintActive {
+			t.Errorf("estado del Sprint = %q, se esperaba %q", result.Sprint.Status, sprint.SprintActive)
+		}
+		if len(result.Sprint.StoryIDs) != 0 {
+			t.Errorf("historias asignadas = %v, se esperaba una lista vacía", result.Sprint.StoryIDs)
+		}
+		if result.Warning == "" {
+			t.Fatal("se esperaba una advertencia no bloqueante para el Sprint sin historias")
+		}
+	})
+
 	t.Run("rechazar Sprint Goal vacío", func(t *testing.T) {
 		project := activeProject()
 		request := validSprintRequest(project.ID, nil)
