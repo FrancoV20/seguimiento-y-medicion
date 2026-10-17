@@ -15,7 +15,7 @@
 - [ x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
 - [ x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
 - [x ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [x ] T004 [P] Crear la migración SQL `db/migrations/004_create_sprint_metrics.sql` para snapshots de métricas, conteos parciales y alertas; depende de que las migraciones `001_create_projects.sql`, `002_create_backlog_stories.sql` y `003_create_sprints.sql` ya estén aplicadas
+- [x ] T004 [P] Crear la migración SQL `db/migrations/007_create_sprint_metrics.sql` para snapshots de métricas, conteos parciales y alertas; depende de que las migraciones `001_create_projects.sql`, `002_create_backlog_stories.sql`,`003_timesheet.sql` y `004_create_sprints.sql` ya estén aplicadas
 - [x ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-calculate-metrics/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
