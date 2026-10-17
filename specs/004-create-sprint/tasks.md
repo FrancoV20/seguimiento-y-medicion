@@ -99,9 +99,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Implementar en `src/sprint/service.go` la creación con `storyIDs` vacío sin tratarla como error y devolviendo advertencia explícita
-- [ ] T034 [US3] Completar en `src/sprint/postgres_sprint_store.go` la persistencia de Sprints sin asociaciones dentro de una transacción válida
-- [ ] T035 [US3] Verificar en `src/sprint/service_test.go` y `src/sprint/postgres_sprint_store_integration_test.go` que una advertencia no impide crear el Sprint
+- [x] T033 [US3] Implementar en `src/sprint/service.go` la creación con `storyIDs` vacío sin tratarla como error y devolviendo advertencia explícita
+- [x] T034 [US3] Completar en `src/sprint/postgres_sprint_store.go` la persistencia de Sprints sin asociaciones dentro de una transacción válida
+- [x] T035 [US3] Verificar en `src/sprint/service_test.go` y `src/sprint/postgres_sprint_store_integration_test.go` que una advertencia no impide crear el Sprint
 
 **Checkpoint**: US3 permite registrar la estructura de la iteración sin historias y deja el Sprint listo para asignaciones posteriores.
 

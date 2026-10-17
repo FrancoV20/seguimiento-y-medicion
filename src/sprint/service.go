@@ -53,7 +53,10 @@ func (s Service) CreateSprint(
 		stories[index].Status = EnSprint
 		stories[index].ActiveSprintID = persisted.ID
 	}
-	return SprintCreationResult{Sprint: persisted}, nil
+	return SprintCreationResult{
+		Sprint:  persisted,
+		Warning: candidate.Warning,
+	}, nil
 }
 
 func validateSprintPeriod(startDate, endDate time.Time) error {
@@ -136,7 +139,11 @@ func CreateSprint(request SprintCreationRequest, project Project, stories []User
 		stories[index] = assignedStories[i]
 	}
 
-	return SprintCreationResult{Sprint: sprint}, nil
+	result := SprintCreationResult{Sprint: sprint}
+	if len(sprint.StoryIDs) == 0 {
+		result.Warning = "El Sprint se creó sin historias asignadas."
+	}
+	return result, nil
 }
 
 // MoveStory quita la historia del Sprint actual antes de asignarla al Sprint destino.
