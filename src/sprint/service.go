@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"time"
 )
 
 // Service valida los casos de uso de Sprint y coordina su persistencia.
@@ -23,6 +24,9 @@ func (s Service) CreateSprint(
 	project Project,
 	stories []UserStory,
 ) (SprintCreationResult, error) {
+	if err := validateSprintPeriod(request.StartDate, request.EndDate); err != nil {
+		return SprintCreationResult{}, err
+	}
 	if s.store == nil {
 		return SprintCreationResult{}, ErrPersistence
 	}
@@ -50,6 +54,13 @@ func (s Service) CreateSprint(
 		stories[index].ActiveSprintID = persisted.ID
 	}
 	return SprintCreationResult{Sprint: persisted}, nil
+}
+
+func validateSprintPeriod(startDate, endDate time.Time) error {
+	if startDate.IsZero() || endDate.IsZero() || !endDate.After(startDate) {
+		return ErrInvalidSprintPeriod
+	}
+	return nil
 }
 
 // CreateSprint valida los datos y prepara el Sprint junto con sus historias asignadas.

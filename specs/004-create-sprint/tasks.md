@@ -78,8 +78,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Implementar en `src/sprint/service.go` la validación estricta `endDate > startDate`, rechazando igualdad y anterior con error temporal explícito
-- [ ] T029 [US2] Verificar en `src/sprint/service_test.go` y `test/sprint_bdd_test.go` que el rechazo conserva datos corregibles y no persiste cambios
+- [x] T028 [US2] Implementar en `src/sprint/service.go` la validación estricta `endDate > startDate`, rechazando igualdad y anterior con error temporal explícito
+- [x] T029 [US2] Verificar en `src/sprint/service_test.go` y `test/sprint_bdd_test.go` que el rechazo conserva datos corregibles y no persiste cambios
 
 **Checkpoint**: US2 rechaza ambos períodos inválidos sin alterar el comportamiento válido de US1.
 
