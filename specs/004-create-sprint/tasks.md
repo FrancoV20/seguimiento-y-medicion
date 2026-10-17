@@ -111,11 +111,42 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
-- [ ] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
-- [ ] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
+- [x] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
+- [x] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
+- [x] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
+- [x] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
+
+## Trazabilidad de requisitos y criterios de éxito
+
+| Requisito | Tareas y evidencia asociada |
+|---|---|
+| FR-001 | T019, T023 |
+| FR-002 | T009, T020, T013, T017 |
+| FR-003 | T006, T019 |
+| FR-004 | T019, T014, T025-T029 |
+| FR-005 | T028, T025-T029 |
+| FR-006 | T019, T013, T017 |
+| FR-007 | T021, T023, T013, T017 |
+| FR-008 | T033-T035, T030-T032 |
+| FR-009 | T033, T030, T032 |
+| FR-010 | T021, T015, T018, T023 |
+| FR-011 | T022, T016, T018, T023 |
+| FR-012 | T019, T021, T015, T023 |
+| FR-013 | T006, T010, T013, T017 |
+| FR-014 | T010, T017, T023, T024 |
+| FR-015 | T019, T014, T026, T029 |
+| SC-001 | T013, T017, T019, T023 |
+| SC-002 | T025-T029 |
+| SC-003 | T030-T035 |
+| SC-004 | T039; requiere evaluación manual con Scrum Masters para medir el umbral del 90% |
+| SC-005 | T039; requiere medición manual del tiempo de creación menor a 3 minutos |
+| SC-006 | T014, T017, T020 |
+| SC-007 | T015, T018, T021, T023 |
+| SC-008 | T016, T018, T022, T023 |
+
+SC-004 y SC-005 son métricas de usabilidad; las pruebas automatizadas verifican el comportamiento,
+pero no reemplazan la evaluación con participantes ni la medición del tiempo real de uso.
 
 ---
 

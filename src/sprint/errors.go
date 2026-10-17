@@ -1,6 +1,9 @@
 package sprint
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
 	ErrProjectNotFound      = errors.New("el proyecto no existe")
@@ -11,3 +14,7 @@ var (
 	ErrInvalidSprintNumber  = errors.New("el número de Sprint debe ser positivo")
 	ErrPersistence          = errors.New("no se pudo completar la operación de persistencia")
 )
+
+func persistenceError(operation string) error {
+	return fmt.Errorf("%w: %s", ErrPersistence, operation)
+}

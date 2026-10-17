@@ -23,7 +23,7 @@ func nextSprintNumber(ctx context.Context, tx *sql.Tx, projectID int64) (int64, 
 		return 0, ErrProjectNotFound
 	}
 	if err != nil {
-		return 0, fmt.Errorf("%w: leer secuencia del proyecto: %w", ErrPersistence, err)
+		return 0, persistenceError("leer la secuencia del proyecto")
 	}
 
 	var highestExisting int64
@@ -32,7 +32,7 @@ func nextSprintNumber(ctx context.Context, tx *sql.Tx, projectID int64) (int64, 
 		projectID,
 	).Scan(&highestExisting)
 	if err != nil {
-		return 0, fmt.Errorf("%w: consultar Sprints existentes: %w", ErrPersistence, err)
+		return 0, persistenceError("consultar los Sprints existentes")
 	}
 	if number <= highestExisting {
 		number = highestExisting + 1
@@ -42,7 +42,7 @@ func nextSprintNumber(ctx context.Context, tx *sql.Tx, projectID int64) (int64, 
 		number+1,
 		projectID,
 	); err != nil {
-		return 0, fmt.Errorf("%w: actualizar secuencia del proyecto: %w", ErrPersistence, err)
+		return 0, persistenceError("actualizar la secuencia del proyecto")
 	}
 	return number, nil
 }
