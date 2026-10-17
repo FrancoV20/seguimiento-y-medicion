@@ -12,7 +12,7 @@ import (
 func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
-		databaseURL = "postgres://postgres:44984954@127.0.0.1:5433/seguimiento_y_medicion?sslmode=disable"
+		databaseURL =  "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
 	}
 
 	db, err := sql.Open("pgx", databaseURL)

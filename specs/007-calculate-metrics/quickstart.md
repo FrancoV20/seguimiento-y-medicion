@@ -15,15 +15,15 @@ El servicio `postgres` de Docker Compose usa estos valores:
 
 | Variable | Valor |
 |---|---|
-| Usuario | `postgres` |
-| Contraseña | `44984954` |
+| Usuario | `sym_user` |
+| Contraseña | `sym_pass` |
 | Puerto del host | `5433` |
 | Base de datos | `seguimiento_y_medicion` |
 
 Desde PowerShell, configurá la conexión para las herramientas y pruebas:
 
 ```powershell
-$env:DATABASE_URL = "postgres://postgres:44984954@127.0.0.1:5433/seguimiento_y_medicion?sslmode=disable"
+$env:DATABASE_URL =  "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable""
 ```
 
 Iniciá PostgreSQL y comprobá que acepta conexiones:
