@@ -19,17 +19,24 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 docker compose up -d postgres
 ```
 
-Aplicar las migraciones pendientes en orden numérico. La migración 005 depende de que las
+Aplicar las migraciones pendientes en orden numérico. La migración 003 depende de que las
 migraciones 001, que crea los proyectos e integrantes, 002, que crea las historias del backlog,
-y 003, que crea los Sprints, ya estén aplicadas porque los registros de esfuerzo referencian
+y 004, que crea los Sprints, ya estén aplicadas porque los registros de esfuerzo referencian
 historias e integrantes existentes y solo se aceptan en historias de un Sprint activo:
 
 ```powershell
-migrate -path db/migrations -database "$DATABASE_URL" up
+migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Las pruebas de integración de HU-07 (migración 004) leen la tabla `effort_logs`, por lo que la
-migración 005 debe estar aplicada antes de ejecutarlas.
+Las pruebas de integración de HU-07 leen la tabla `effort_logs`, por lo que la migración 003
+debe estar aplicada antes de ejecutarlas.
+
+Si tu base ya tenía aplicada la 004 antes de que existiera la 003, `migrate` no aplica la 003
+por sí solo. En ese caso hay que recrear la base local y volver a aplicar todo en orden:
+
+    docker compose down -v
+    docker compose up -d postgres
+    migrate -path db/migrations -database $env:DATABASE_URL up
 
 Luego ejecutar las pruebas:
 
@@ -40,15 +47,43 @@ go test ./...
 El comando debe finalizar correctamente y ejecutar las pruebas unitarias de esfuerzo, los
 escenarios BDD y la integración de `PostgreSQLEffortStore` contra PostgreSQL.
 
+## Arranque y apagado de PostgreSQL
+
+Variables de conexión:
+
+| Variable | Dónde se define | Para qué sirve |
+|---|---|---|
+| `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | `docker-compose.yml` (por defecto `sym_user`, `sym_pass`, `seguimiento_y_medicion`) y, si hace falta, el `docker-compose.override.yml` personal de cada integrante (no se sube al repositorio) | Crean el usuario y la base la primera vez que arranca el contenedor |
+| `DATABASE_URL` | Variable de entorno de la terminal | La usan `migrate` y las pruebas de integración |
+
+Formato de `DATABASE_URL`:
+
+    postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable
+
+`PUERTO` es el que publica el contenedor: 5432 por defecto, aunque el override de cada
+integrante puede usar otro (por ejemplo 5433). Ver la sección "Base de datos" del README.
+
+Comandos:
+
+    docker compose up -d postgres    # arrancar
+    docker compose ps                # verificar que está levantado
+    docker compose stop              # apagar conservando los datos
+    docker compose down              # quitar el contenedor, conserva los datos
+    docker compose down -v           # quitar también la base local (borra los datos)
+
+Si `DATABASE_URL` no está definida, las pruebas de integración se omiten (`SKIP`) en lugar de fallar.
+
 ## Required validation scenarios
 
 Las pruebas deben cubrir como mínimo:
 
 1. Carga de esfuerzo diario:
-   - una historia asignada a un Sprint activo recibe 4 horas con fecha actual y actividad
+   - una historia asignada a un Sprint activo recibe 4 horas (valor ejemplo) con fecha actual y actividad
      "Desarrollo de endpoint en Go";
    - el esfuerzo real acumulado aumenta exactamente 4 horas;
    - varios registros sobre la misma historia se acumulan sin sobrescribirse.
+   - cualquier cantidad válida (mayor que 0 y hasta 24, con hasta dos decimales) se suma; el 4
+     es solo el valor concreto usado en el ejemplo.
 2. Horas inválidas:
    - horas negativas, iguales a cero y mayores a 24 se rechazan;
    - 24 y 0,5 se aceptan; 24,01 y valores con más de dos decimales se rechazan;
