@@ -44,7 +44,7 @@
 
 ### Tests for User Story 1
 
-- [x] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Terminada` en `src/metrics/service_test.go`
+- [x] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Hecho` en `src/metrics/service_test.go`
 - [x] T014 [P] [US1] Escribir pruebas unitarias de totales de horas y fórmula `((real - estimado) / estimado) * 100` en `src/metrics/service_test.go`
 - [x] T015 [P] [US1] Escribir pruebas unitarias de desviación positiva, negativa y redondeo a dos decimales en `src/metrics/calculation_test.go`
 - [x] T016 [P] [US1] Escribir la prueba de integración de carga y persistencia de métricas en PostgreSQL en `src/metrics/postgres_metrics_store_integration_test.go`
