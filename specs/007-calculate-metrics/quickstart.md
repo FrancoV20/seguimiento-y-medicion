@@ -7,8 +7,42 @@
 - PostgreSQL levantado con Docker Compose para las pruebas de integración.
 - Herramienta `golang-migrate/migrate` instalada; seguir la instalación de Windows documentada en [README.md](../../README.md).
 - Paquete `src/metrics`, `PostgreSQLMetricsStore` y `go.mod` creados según el plan.
-- Variable `DATABASE_URL` configurada para PostgreSQL, por ejemplo:
-   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada con la cadena indicada en PostgreSQL local.
+
+## PostgreSQL local
+
+El servicio `postgres` de Docker Compose usa estos valores:
+
+| Variable | Valor |
+|---|---|
+| Usuario | `sym_user` |
+| Contraseña | `sym_pass` |
+| Puerto del host | `5433` |
+| Base de datos | `seguimiento_y_medicion` |
+
+Desde PowerShell, configurá la conexión para las herramientas y pruebas:
+
+```powershell
+$env:DATABASE_URL =  "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable""
+```
+
+Iniciá PostgreSQL y comprobá que acepta conexiones:
+
+```powershell
+docker compose up -d postgres
+docker compose exec -T postgres pg_isready -U postgres -d seguimiento_y_medicion
+```
+
+Al terminar, detené el servicio o bajá los servicios de Compose:
+
+```powershell
+docker compose stop postgres
+# Alternativamente:
+docker compose down
+```
+
+`docker compose down` conserva el volumen de datos. No uses `docker compose down -v`
+salvo que quieras borrar deliberadamente los datos locales de PostgreSQL.
 
 ## Run the tests
 
@@ -18,9 +52,9 @@ Desde la raíz del repositorio, iniciar PostgreSQL:
 docker compose up -d postgres
 ```
 
-Aplicar las migraciones pendientes en orden numérico. La migración 004 depende de que las
-migraciones 001, que crea los proyectos, 002, que crea las historias del backlog, y 003, que
-crea los Sprints, ya estén aplicadas porque las métricas leen Sprints e historias existentes:
+Aplicar las migraciones de proyectos, historias y esfuerzo; también deben estar instaladas las
+migraciones de HU-04 que crean `sprints` y `sprint_stories`. La migración de métricas requiere
+esas tablas:
 
 ```powershell
 migrate -path db/migrations -database "$DATABASE_URL" up
@@ -32,8 +66,9 @@ Luego ejecutar las pruebas:
 go test ./...
 ```
 
-El comando debe finalizar correctamente y ejecutar las pruebas unitarias de métricas, los
-escenarios BDD y la integración de `PostgreSQLMetricsStore` contra PostgreSQL.
+El comando debe finalizar correctamente y ejecutar las pruebas unitarias y escenarios BDD.
+La prueba de integración de `PostgreSQLMetricsStore` se omite si PostgreSQL no está disponible
+o si faltan las tablas de HU-04 (`sprints` y `sprint_stories`) o la tabla de métricas.
 
 ## Required validation scenarios
 
@@ -60,7 +95,8 @@ Las pruebas deben cubrir como mínimo:
    - `PostgreSQLMetricsStore` usa pgx mediante `database/sql`;
    - carga fuentes y persiste el snapshot de métricas en PostgreSQL;
    - una falla transaccional no deja snapshots parciales;
-   - la prueba de integración se ejecuta contra PostgreSQL real.
+   - cuando está aplicado el esquema de HU-04 y métricas, la prueba de integración se ejecuta
+     contra PostgreSQL real.
 
 ## Acceptance evidence
 

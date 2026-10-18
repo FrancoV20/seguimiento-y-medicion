@@ -23,7 +23,7 @@ Historia terminada incluida en el Sprint.
 ### Fields
 
 - `id`: identificador único.
-- `status`: solo `Terminada` participa en estas métricas.
+- `status`: solo `Hecho` participa en estas métricas.
 - `storyPoints`: estimación validada.
 - `estimatedHours`: horas estimadas, pueden faltar para el cálculo parcial.
 - `actualHours`: horas reales, deben ser no negativas.

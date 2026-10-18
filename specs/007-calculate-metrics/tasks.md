@@ -12,11 +12,11 @@
 
 **Purpose**: Preparar Go, PostgreSQL/Docker y esquema de métricas.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
-- [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear la migración SQL `db/migrations/004_create_sprint_metrics.sql` para snapshots de métricas, conteos parciales y alertas; depende de que las migraciones `001_create_projects.sql`, `002_create_backlog_stories.sql` y `003_create_sprints.sql` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-calculate-metrics/quickstart.md` la aplicación de migraciones en orden numérico
+- [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
+- [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
+- [x] T004 [P] Crear la migración SQL `db/migrations/007_create_sprint_metrics.sql` para snapshots de métricas, conteos parciales y alertas; depende de que las migraciones `001_create_projects.sql`, `002_create_backlog_stories.sql`,`003_timesheet.sql` y `004_create_sprints.sql` ya estén aplicadas
+- [x] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/004-calculate-metrics/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -24,13 +24,13 @@
 
 **Purpose**: Crear modelos, aritmética, validaciones y persistencia compartidos por las historias.
 
-- [ ] T006 [P] Definir `SprintData`, `CompletedStory`, `SprintMetrics` y `CalculationError` en `src/metrics/model.go`
-- [ ] T007 [P] Definir errores explícitos para Sprint no finalizado, Story Points inválidos, horas reales negativas, esfuerzo no disponible y persistencia en `src/metrics/errors.go`
-- [ ] T008 Implementar operaciones decimales y redondeo matemático a dos posiciones en `src/metrics/calculation.go`, evitando división por cero
-- [ ] T009 Definir `MetricsStore` con `LoadSprintData(sprintID)` y `SaveMetrics(metrics)` en `src/metrics/store.go`
-- [ ] T010 Implementar `PostgreSQLMetricsStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/metrics/postgres_metrics_store.go`
-- [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/metrics/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir la validación de cierre de Sprint y el listado de historias afectadas en `src/metrics/closure_validation.go`
+- [x] T006 [P] Definir `SprintData`, `CompletedStory`, `SprintMetrics` y `CalculationError` en `src/metrics/model.go`
+- [x] T007 [P] Definir errores explícitos para Sprint no finalizado, Story Points inválidos, horas reales negativas, esfuerzo no disponible y persistencia en `src/metrics/errors.go`
+- [x] T008 Implementar operaciones decimales y redondeo matemático a dos posiciones en `src/metrics/calculation.go`, evitando división por cero
+- [x] T009 Definir `MetricsStore` con `LoadSprintData(sprintID)` y `SaveMetrics(metrics)` en `src/metrics/store.go`
+- [x] T010 Implementar `PostgreSQLMetricsStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/metrics/postgres_metrics_store.go`
+- [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/metrics/test_store.go`, sin sustituir la integración PostgreSQL
+- [x] T012 [P] Definir la validación de cierre de Sprint y el listado de historias afectadas en `src/metrics/closure_validation.go`
 
 **Checkpoint**: El modelo, cálculo, validación de cierre, contrato y adaptador PostgreSQL están listos para las historias.
 
@@ -44,19 +44,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Terminada` en `src/metrics/service_test.go`
-- [ ] T014 [P] [US1] Escribir pruebas unitarias de totales de horas y fórmula `((real - estimado) / estimado) * 100` en `src/metrics/service_test.go`
-- [ ] T015 [P] [US1] Escribir pruebas unitarias de desviación positiva, negativa y redondeo a dos decimales en `src/metrics/calculation_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de integración de carga y persistencia de métricas en PostgreSQL en `src/metrics/postgres_metrics_store_integration_test.go`
-- [ ] T017 [P] [US1] Escribir el escenario BDD de cálculo de desviación y velocidad en `test/metrics_bdd_test.go`
+- [x] T013 [P] [US1] Escribir pruebas unitarias de velocidad como suma de Story Points de historias `Hecho` en `src/metrics/service_test.go`
+- [x] T014 [P] [US1] Escribir pruebas unitarias de totales de horas y fórmula `((real - estimado) / estimado) * 100` en `src/metrics/service_test.go`
+- [x] T015 [P] [US1] Escribir pruebas unitarias de desviación positiva, negativa y redondeo a dos decimales en `src/metrics/calculation_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de integración de carga y persistencia de métricas en PostgreSQL en `src/metrics/postgres_metrics_store_integration_test.go`
+- [x] T017 [P] [US1] Escribir el escenario BDD de cálculo de desviación y velocidad en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Implementar `CalculateMetrics` en `src/metrics/service.go`, cargando el Sprint finalizado y sus historias desde `MetricsStore`
-- [ ] T019 [US1] Implementar en `src/metrics/calculation.go` la velocidad, totales de horas, desviación firmada y redondeo matemático a dos decimales
-- [ ] T020 [US1] Implementar en `src/metrics/service.go` la persistencia del resultado mediante `MetricsStore.SaveMetrics` solo después de un cálculo válido
-- [ ] T021 [US1] Completar `PostgreSQLMetricsStore` en `src/metrics/postgres_metrics_store.go` para cargar fuentes y guardar el snapshot dentro de una transacción
-- [ ] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de Sprint finalizado y limpieza en `src/metrics/postgres_metrics_store_integration_test.go`
+- [x] T018 [US1] Implementar `CalculateMetrics` en `src/metrics/service.go`, cargando el Sprint finalizado y sus historias desde `MetricsStore`
+- [x] T019 [US1] Implementar en `src/metrics/calculation.go` la velocidad, totales de horas, desviación firmada y redondeo matemático a dos decimales
+- [x] T020 [US1] Implementar en `src/metrics/service.go` la persistencia del resultado mediante `MetricsStore.SaveMetrics` solo después de un cálculo válido
+- [x] T021 [US1] Completar `PostgreSQLMetricsStore` en `src/metrics/postgres_metrics_store.go` para cargar fuentes y guardar el snapshot dentro de una transacción
+- [x] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de Sprint finalizado y limpieza en `src/metrics/postgres_metrics_store_integration_test.go`
 
 **Checkpoint**: US1 calcula y persiste métricas completas reproducibles, y permite consultar velocidad y desviación de forma independiente.
 
@@ -70,17 +70,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir prueba unitaria de esfuerzo estimado total cero o ausente con desviación `No disponible` en `src/metrics/service_test.go`
-- [ ] T024 [P] [US2] Escribir prueba unitaria de cálculo parcial usando únicamente historias con horas estimadas y reales completas en `src/metrics/service_test.go`
-- [ ] T025 [P] [US2] Escribir prueba del formato exacto `Cálculo parcial: basado en X de Y historias` en `src/metrics/service_test.go`
-- [ ] T026 [P] [US2] Escribir el escenario BDD de ausencia y cálculo parcial en `test/metrics_bdd_test.go`
+- [x] T023 [P] [US2] Escribir prueba unitaria de esfuerzo estimado total cero o ausente con desviación `No disponible` en `src/metrics/service_test.go`
+- [x] T024 [P] [US2] Escribir prueba unitaria de cálculo parcial usando únicamente historias con horas estimadas y reales completas en `src/metrics/service_test.go`
+- [x] T025 [P] [US2] Escribir prueba del formato exacto `Cálculo parcial: basado en X de Y historias` en `src/metrics/service_test.go`
+- [x] T026 [P] [US2] Escribir el escenario BDD de ausencia y cálculo parcial en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implementar en `src/metrics/calculation.go` la selección de historias completas y los conteos `calculationUsedCount`/`calculationTotalCount`
-- [ ] T028 [US2] Implementar en `src/metrics/service.go` la alerta exacta `Cálculo parcial: basado en X de Y historias` cuando `X < Y`
-- [ ] T029 [US2] Implementar en `src/metrics/calculation.go` el resultado `No disponible` cuando el esfuerzo estimado total sea cero o no exista, sin división
-- [ ] T030 [US2] Verificar en `src/metrics/service_test.go` que velocidad y métricas disponibles continúan calculándose aunque la desviación sea `No disponible`
+- [x] T027 [US2] Implementar en `src/metrics/calculation.go` la selección de historias completas y los conteos `calculationUsedCount`/`calculationTotalCount`
+- [x] T028 [US2] Implementar en `src/metrics/service.go` la alerta exacta `Cálculo parcial: basado en X de Y historias` cuando `X < Y`
+- [x] T029 [US2] Implementar en `src/metrics/calculation.go` el resultado `No disponible` cuando el esfuerzo estimado total sea cero o no exista, sin división
+- [x] T030 [US2] Verificar en `src/metrics/service_test.go` que velocidad y métricas disponibles continúan calculándose aunque la desviación sea `No disponible`
 
 **Checkpoint**: US2 informa ausencia de base y cálculo parcial sin valores inválidos ni métricas inventadas.
 
@@ -94,16 +94,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas unitarias de horas reales negativas y Story Points inválidos en `src/metrics/closure_validation_test.go`
-- [ ] T032 [P] [US3] Escribir prueba de múltiples historias inválidas y motivos completos en `src/metrics/closure_validation_test.go`
-- [ ] T033 [P] [US3] Escribir el escenario BDD de bloqueo de cierre en `test/metrics_bdd_test.go`
+- [x] T031 [P] [US3] Escribir pruebas unitarias de horas reales negativas y Story Points inválidos en `src/metrics/closure_validation_test.go`
+- [x] T032 [P] [US3] Escribir prueba de múltiples historias inválidas y motivos completos en `src/metrics/closure_validation_test.go`
+- [x] T033 [P] [US3] Escribir el escenario BDD de bloqueo de cierre en `test/metrics_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Implementar `ValidateSprintClosure` en `src/metrics/closure_validation.go`, devolviendo todos los errores por historia y campo
-- [ ] T035 [US3] Integrar la validación de cierre en `src/metrics/service.go` antes de cambiar el Sprint a `Finalizado` o calcular métricas definitivas
-- [ ] T036 [US3] Implementar en `src/metrics/errors.go` mensajes que identifiquen historias con horas reales negativas o Story Points inválidos y soliciten corrección
-- [ ] T037 [US3] Verificar en `src/metrics/closure_validation_test.go` y `test/metrics_bdd_test.go` que el cierre bloqueado no persiste estado final ni métricas definitivas
+- [x] T034 [US3] Implementar `ValidateSprintClosure` en `src/metrics/closure_validation.go`, devolviendo todos los errores por historia y campo
+- [x] T035 [US3] Integrar la validación de cierre en `src/metrics/service.go` antes de cambiar el Sprint a `Finalizado` o calcular métricas definitivas
+- [x] T036 [US3] Implementar en `src/metrics/errors.go` mensajes que identifiquen historias con horas reales negativas o Story Points inválidos y soliciten corrección
+- [x] T037 [US3] Verificar en `src/metrics/closure_validation_test.go` y `test/metrics_bdd_test.go` que el cierre bloqueado no persiste estado final ni métricas definitivas
 
 **Checkpoint**: US3 bloquea el cierre con datos inválidos y deja el Sprint corregible sin mutaciones parciales.
 
@@ -113,11 +113,25 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T038 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-calculate-metrics/quickstart.md`
-- [ ] T039 [P] Revisar que errores de cálculo y PostgreSQL no expongan detalles internos en `src/metrics/errors.go`
-- [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T041 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T042 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/004-calculate-metrics/tasks.md`
+- [x] T038 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/007-calculate-metrics/quickstart.md`
+- [x] T039 [P] Revisar que errores de cálculo y PostgreSQL no expongan detalles internos en `src/metrics/errors.go`
+- [x] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T041 Ejecutar `go test ./...` y completar los escenarios unitarios y BDD del `quickstart.md`; la integración PostgreSQL requiere las tablas de HU-04
+- [x] T042 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/007-calculate-metrics/tasks.md`
+
+### Requirements traceability
+
+| Requirement | Implementation and verification |
+|---|---|
+| FR-001–FR-009 | T018–T022; `service_test.go`, `calculation_test.go`, `metrics_bdd_test.go` |
+| FR-010–FR-011 | T023–T030; partial-data unit and BDD scenarios |
+| FR-012–FR-013 | T031–T037; closure validation unit tests, service mock test, and BDD scenario |
+| FR-014–FR-015 | T018–T030; empty-sprint/no-estimate behavior and deterministic calculation logic |
+| SC-001–SC-003 | T013–T030; formula, velocity, rounding, and unavailable-deviation tests |
+| SC-004 | No usability study is included in this repository's automated test suite; requires stakeholder validation |
+| SC-005 | The target of less than 2 seconds has no dedicated performance benchmark; not empirically certified by `go test` |
+| SC-006 | T023–T030; exact partial-calculation warning and count tests |
+| SC-007 | T031–T037; invalid-data blocking and no-persistence mock tests |
 
 ---
 
