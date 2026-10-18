@@ -7,8 +7,8 @@ CREATE TABLE user_stories (
     story_points INTEGER CHECK (story_points IN (1,2,3,5,8,13,21,34,55,89)),
     status       TEXT NOT NULL DEFAULT 'Pendiente'
                  CHECK (status IN ('Pendiente', 'En progreso', 'Hecho')),
+    estimated_hours NUMERIC(6,2) CHECK (estimated_hours > 0),  -- opcional (FR-014), lo usa HU-07
     created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
-    -- , estimated_hours NUMERIC(6,2) CHECK (estimated_hours >= 0)  -- si el equipo lo aprueba
 );
 
 CREATE INDEX idx_user_stories_project_id ON user_stories(project_id);
