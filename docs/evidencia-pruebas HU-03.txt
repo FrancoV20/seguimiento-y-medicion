@@ -1,0 +1,244 @@
+﻿=== RUN   TestParseHoursValid
+=== RUN   TestParseHoursValid/4
+=== RUN   TestParseHoursValid/0.5
+=== RUN   TestParseHoursValid/1,5
+=== RUN   TestParseHoursValid/24
+=== RUN   TestParseHoursValid/24.00
+=== RUN   TestParseHoursValid/0.01
+=== RUN   TestParseHoursValid/__2__
+=== RUN   TestParseHoursValid/2.25
+--- PASS: TestParseHoursValid (0.00s)
+    --- PASS: TestParseHoursValid/4 (0.00s)
+    --- PASS: TestParseHoursValid/0.5 (0.00s)
+    --- PASS: TestParseHoursValid/1,5 (0.00s)
+    --- PASS: TestParseHoursValid/24 (0.00s)
+    --- PASS: TestParseHoursValid/24.00 (0.00s)
+    --- PASS: TestParseHoursValid/0.01 (0.00s)
+    --- PASS: TestParseHoursValid/__2__ (0.00s)
+    --- PASS: TestParseHoursValid/2.25 (0.00s)
+=== RUN   TestParseHoursInvalid
+=== RUN   TestParseHoursInvalid/#00
+=== RUN   TestParseHoursInvalid/___
+=== RUN   TestParseHoursInvalid/0
+=== RUN   TestParseHoursInvalid/0.00
+=== RUN   TestParseHoursInvalid/-1
+=== RUN   TestParseHoursInvalid/-0.5
+=== RUN   TestParseHoursInvalid/24.01
+=== RUN   TestParseHoursInvalid/25
+=== RUN   TestParseHoursInvalid/100
+=== RUN   TestParseHoursInvalid/1.555
+=== RUN   TestParseHoursInvalid/abc
+=== RUN   TestParseHoursInvalid/1e2
+=== RUN   TestParseHoursInvalid/4.
+=== RUN   TestParseHoursInvalid/.5
+=== RUN   TestParseHoursInvalid/--1
+=== RUN   TestParseHoursInvalid/1,5,5
+=== RUN   TestParseHoursInvalid/99999999999999999999
+--- PASS: TestParseHoursInvalid (0.00s)
+    --- PASS: TestParseHoursInvalid/#00 (0.00s)
+    --- PASS: TestParseHoursInvalid/___ (0.00s)
+    --- PASS: TestParseHoursInvalid/0 (0.00s)
+    --- PASS: TestParseHoursInvalid/0.00 (0.00s)
+    --- PASS: TestParseHoursInvalid/-1 (0.00s)
+    --- PASS: TestParseHoursInvalid/-0.5 (0.00s)
+    --- PASS: TestParseHoursInvalid/24.01 (0.00s)
+    --- PASS: TestParseHoursInvalid/25 (0.00s)
+    --- PASS: TestParseHoursInvalid/100 (0.00s)
+    --- PASS: TestParseHoursInvalid/1.555 (0.00s)
+    --- PASS: TestParseHoursInvalid/abc (0.00s)
+    --- PASS: TestParseHoursInvalid/1e2 (0.00s)
+    --- PASS: TestParseHoursInvalid/4. (0.00s)
+    --- PASS: TestParseHoursInvalid/.5 (0.00s)
+    --- PASS: TestParseHoursInvalid/--1 (0.00s)
+    --- PASS: TestParseHoursInvalid/1,5,5 (0.00s)
+    --- PASS: TestParseHoursInvalid/99999999999999999999 (0.00s)
+=== RUN   TestInvalidHoursMessage
+--- PASS: TestInvalidHoursMessage (0.00s)
+=== RUN   TestHoursAddIsExact
+--- PASS: TestHoursAddIsExact (0.00s)
+=== RUN   TestHoursString
+--- PASS: TestHoursString (0.00s)
+=== RUN   TestPostgresStoryAcceptsEffort
+=== RUN   TestPostgresStoryAcceptsEffort/historia_en_Sprint_activo
+=== RUN   TestPostgresStoryAcceptsEffort/historia_sin_Sprint
+=== RUN   TestPostgresStoryAcceptsEffort/historia_en_Sprint_finalizado
+=== RUN   TestPostgresStoryAcceptsEffort/historia_inexistente
+=== RUN   TestPostgresStoryAcceptsEffort/identificador_no_num├®rico
+--- PASS: TestPostgresStoryAcceptsEffort (0.14s)
+    --- PASS: TestPostgresStoryAcceptsEffort/historia_en_Sprint_activo (0.01s)
+    --- PASS: TestPostgresStoryAcceptsEffort/historia_sin_Sprint (0.00s)
+    --- PASS: TestPostgresStoryAcceptsEffort/historia_en_Sprint_finalizado (0.00s)
+    --- PASS: TestPostgresStoryAcceptsEffort/historia_inexistente (0.00s)
+    --- PASS: TestPostgresStoryAcceptsEffort/identificador_no_num├®rico (0.00s)
+=== RUN   TestPostgresMemberBelongsToStoryProject
+=== RUN   TestPostgresMemberBelongsToStoryProject/integrante_del_proyecto
+=== RUN   TestPostgresMemberBelongsToStoryProject/integrante_de_otro_proyecto
+=== RUN   TestPostgresMemberBelongsToStoryProject/integrante_inexistente
+=== RUN   TestPostgresMemberBelongsToStoryProject/integrante_no_num├®rico
+=== RUN   TestPostgresMemberBelongsToStoryProject/historia_inexistente
+--- PASS: TestPostgresMemberBelongsToStoryProject (0.12s)
+    --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_del_proyecto (0.01s)
+    --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_de_otro_proyecto (0.00s)
+    --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_inexistente (0.00s)
+    --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_no_num├®rico (0.00s)
+    --- PASS: TestPostgresMemberBelongsToStoryProject/historia_inexistente (0.00s)
+=== RUN   TestPostgresSaveEntryAccumulates
+--- PASS: TestPostgresSaveEntryAccumulates (0.14s)
+=== RUN   TestPostgresSaveEntryFailureLeavesNoPartialData
+--- PASS: TestPostgresSaveEntryFailureLeavesNoPartialData (0.11s)
+=== RUN   TestPostgresCheckConstraintRejectsOutOfRangeHours
+--- PASS: TestPostgresCheckConstraintRejectsOutOfRangeHours (0.12s)
+=== RUN   TestLogEffortRegistersHoursAndAccumulates
+--- PASS: TestLogEffortRegistersHoursAndAccumulates (0.00s)
+=== RUN   TestLogEffortSuccessiveEntriesAccumulate
+--- PASS: TestLogEffortSuccessiveEntriesAccumulate (0.00s)
+=== RUN   TestLogEffortRejectsStoryWithoutActiveSprint
+=== RUN   TestLogEffortRejectsStoryWithoutActiveSprint/historia_sin_Sprint_activo
+=== RUN   TestLogEffortRejectsStoryWithoutActiveSprint/historia_inexistente
+--- PASS: TestLogEffortRejectsStoryWithoutActiveSprint (0.00s)
+    --- PASS: TestLogEffortRejectsStoryWithoutActiveSprint/historia_sin_Sprint_activo (0.00s)
+    --- PASS: TestLogEffortRejectsStoryWithoutActiveSprint/historia_inexistente (0.00s)
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_-1
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_0
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_25
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_24,01
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_1,555
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_
+=== RUN   TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_abc
+--- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_-1 (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_0 (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_25 (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_24,01 (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_1,555 (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_ (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidHoursWithoutChangingState/horas_abc (0.00s)
+=== RUN   TestLogEffortAcceptsBoundaryHours
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_24
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_0,5
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_0.25
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_1
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_7,75
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_8
+=== RUN   TestLogEffortAcceptsBoundaryHours/horas_23,99
+--- PASS: TestLogEffortAcceptsBoundaryHours (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_24 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_0,5 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_0.25 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_1 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_7,75 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_8 (0.00s)
+    --- PASS: TestLogEffortAcceptsBoundaryHours/horas_23,99 (0.00s)
+=== RUN   TestLogEffortRejectsEmptyActivity
+=== RUN   TestLogEffortRejectsEmptyActivity/actividad_vac├¡a
+=== RUN   TestLogEffortRejectsEmptyActivity/actividad_vac├¡a#01
+=== RUN   TestLogEffortRejectsEmptyActivity/actividad_vac├¡a#02
+--- PASS: TestLogEffortRejectsEmptyActivity (0.00s)
+    --- PASS: TestLogEffortRejectsEmptyActivity/actividad_vac├¡a (0.00s)
+    --- PASS: TestLogEffortRejectsEmptyActivity/actividad_vac├¡a#01 (0.00s)
+    --- PASS: TestLogEffortRejectsEmptyActivity/actividad_vac├¡a#02 (0.00s)
+=== RUN   TestLogEffortRejectsMissingOrFutureDate
+=== RUN   TestLogEffortRejectsMissingOrFutureDate/fecha_omitida
+=== RUN   TestLogEffortRejectsMissingOrFutureDate/fecha_de_ma├▒ana
+--- PASS: TestLogEffortRejectsMissingOrFutureDate (0.00s)
+    --- PASS: TestLogEffortRejectsMissingOrFutureDate/fecha_omitida (0.00s)
+    --- PASS: TestLogEffortRejectsMissingOrFutureDate/fecha_de_ma├▒ana (0.00s)
+=== RUN   TestLogEffortUsesInjectedClock
+--- PASS: TestLogEffortUsesInjectedClock (0.00s)
+=== RUN   TestLogEffortRejectsInvalidMember
+=== RUN   TestLogEffortRejectsInvalidMember/integrante_omitido
+=== RUN   TestLogEffortRejectsInvalidMember/integrante_en_blanco
+=== RUN   TestLogEffortRejectsInvalidMember/integrante_inexistente
+=== RUN   TestLogEffortRejectsInvalidMember/integrante_de_otro_proyecto
+--- PASS: TestLogEffortRejectsInvalidMember (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidMember/integrante_omitido (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidMember/integrante_en_blanco (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidMember/integrante_inexistente (0.00s)
+    --- PASS: TestLogEffortRejectsInvalidMember/integrante_de_otro_proyecto (0.00s)
+=== RUN   TestLogEffortReportsAllInvalidFieldsTogether
+--- PASS: TestLogEffortReportsAllInvalidFieldsTogether (0.00s)
+=== RUN   TestLogEffortReportsStorageFailureWithoutFalseSuccess
+=== RUN   TestLogEffortReportsStorageFailureWithoutFalseSuccess/falla_al_guardar
+=== RUN   TestLogEffortReportsStorageFailureWithoutFalseSuccess/falla_al_consultar_el_contexto
+--- PASS: TestLogEffortReportsStorageFailureWithoutFalseSuccess (0.00s)
+    --- PASS: TestLogEffortReportsStorageFailureWithoutFalseSuccess/falla_al_guardar (0.00s)
+    --- PASS: TestLogEffortReportsStorageFailureWithoutFalseSuccess/falla_al_consultar_el_contexto (0.00s)
+=== RUN   TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible
+--- PASS: TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible (0.00s)
+=== RUN   TestValidateInputValid
+--- PASS: TestValidateInputValid (0.00s)
+=== RUN   TestValidateInputHours
+=== RUN   TestValidateInputHours/horas_
+=== RUN   TestValidateInputHours/horas_abc
+=== RUN   TestValidateInputHours/horas_0
+=== RUN   TestValidateInputHours/horas_-1
+=== RUN   TestValidateInputHours/horas_24,01
+=== RUN   TestValidateInputHours/horas_25
+=== RUN   TestValidateInputHours/horas_1,234
+--- PASS: TestValidateInputHours (0.00s)
+    --- PASS: TestValidateInputHours/horas_ (0.00s)
+    --- PASS: TestValidateInputHours/horas_abc (0.00s)
+    --- PASS: TestValidateInputHours/horas_0 (0.00s)
+    --- PASS: TestValidateInputHours/horas_-1 (0.00s)
+    --- PASS: TestValidateInputHours/horas_24,01 (0.00s)
+    --- PASS: TestValidateInputHours/horas_25 (0.00s)
+    --- PASS: TestValidateInputHours/horas_1,234 (0.00s)
+=== RUN   TestValidateInputActivity
+=== RUN   TestValidateInputActivity/actividad_vac├¡a
+=== RUN   TestValidateInputActivity/actividad_vac├¡a#01
+=== RUN   TestValidateInputActivity/actividad_vac├¡a#02
+--- PASS: TestValidateInputActivity (0.00s)
+    --- PASS: TestValidateInputActivity/actividad_vac├¡a (0.00s)
+    --- PASS: TestValidateInputActivity/actividad_vac├¡a#01 (0.00s)
+    --- PASS: TestValidateInputActivity/actividad_vac├¡a#02 (0.00s)
+=== RUN   TestValidateInputActivityIsNormalized
+--- PASS: TestValidateInputActivityIsNormalized (0.00s)
+=== RUN   TestValidateInputDate
+=== RUN   TestValidateInputDate/omitida
+=== RUN   TestValidateInputDate/ma├▒ana
+=== RUN   TestValidateInputDate/hoy
+=== RUN   TestValidateInputDate/hoy_m├ís_tarde_que_ahora
+=== RUN   TestValidateInputDate/ayer
+--- PASS: TestValidateInputDate (0.00s)
+    --- PASS: TestValidateInputDate/omitida (0.00s)
+    --- PASS: TestValidateInputDate/ma├▒ana (0.00s)
+    --- PASS: TestValidateInputDate/hoy (0.00s)
+    --- PASS: TestValidateInputDate/hoy_m├ís_tarde_que_ahora (0.00s)
+    --- PASS: TestValidateInputDate/ayer (0.00s)
+=== RUN   TestValidateInputMember
+=== RUN   TestValidateInputMember/integrante_omitido
+=== RUN   TestValidateInputMember/integrante_omitido#01
+--- PASS: TestValidateInputMember (0.00s)
+    --- PASS: TestValidateInputMember/integrante_omitido (0.00s)
+    --- PASS: TestValidateInputMember/integrante_omitido#01 (0.00s)
+=== RUN   TestValidateInputAccumulatesAllErrors
+--- PASS: TestValidateInputAccumulatesAllErrors (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.485s
+=== RUN   TestScenarioDailyEffortLog
+--- PASS: TestScenarioDailyEffortLog (0.00s)
+=== RUN   TestScenarioEffortAddsToPreviousHours
+--- PASS: TestScenarioEffortAddsToPreviousHours (0.00s)
+=== RUN   TestScenarioInvalidHours
+=== RUN   TestScenarioInvalidHours/horas_-1
+=== RUN   TestScenarioInvalidHours/horas_0
+=== RUN   TestScenarioInvalidHours/horas_25
+--- PASS: TestScenarioInvalidHours (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_-1 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_0 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_25 (0.00s)
+=== RUN   TestScenarioEmptyActivity
+--- PASS: TestScenarioEmptyActivity (0.00s)
+=== RUN   TestScenarioMissingDate
+--- PASS: TestScenarioMissingDate (0.00s)
+=== RUN   TestScenarioMemberNotSpecified
+=== RUN   TestScenarioMemberNotSpecified/integrante_''
+=== RUN   TestScenarioMemberNotSpecified/integrante_'M999'
+--- PASS: TestScenarioMemberNotSpecified (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'' (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'M999' (0.00s)
+=== RUN   TestScenarioStorageFailure
+--- PASS: TestScenarioStorageFailure (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	1.666s

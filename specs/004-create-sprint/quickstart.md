@@ -14,6 +14,40 @@
    El puerto `5433` es el del `docker-compose.yml` por defecto; si tu `docker-compose.override.yml`
    usa otro usuario, clave o puerto, ajustá la URL (ver "Base de datos" en el [README.md](../../README.md)).
 
+## Conexión y ciclo de vida de PostgreSQL
+
+Desde PowerShell, ubicado en la raíz del repositorio, iniciá solo el servicio de PostgreSQL y
+consultá el puerto publicado:
+
+```powershell
+docker compose up -d postgres
+docker compose port postgres 5432
+```
+
+Configurá la URL usando el usuario, la clave y el puerto de tu instalación local. No publiques ni
+compartas esta URL, porque contiene credenciales:
+
+```powershell
+$env:DATABASE_URL = "postgresql://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
+```
+
+La variable dura solo en la ventana actual de PowerShell. Si usás `docker-compose.override.yml`,
+tomá los valores de allí y no compartas su contenido ni la salida completa de `docker compose config`.
+
+Al terminar las pruebas, detené PostgreSQL conservando el contenedor y los datos:
+
+```powershell
+docker compose stop postgres
+```
+
+Para detener y retirar los contenedores del proyecto, sin borrar el volumen con los datos:
+
+```powershell
+docker compose down
+```
+
+No agregues `-v` salvo que quieras borrar explícitamente el volumen y todos los datos locales.
+
 ## Instalar golang-migrate
 
 Si `migrate -version` no responde en tu terminal, instalarlo desde PowerShell:

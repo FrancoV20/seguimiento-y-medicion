@@ -1,6 +1,6 @@
 # Tasks: Registrar horas trabajadas
 
-**Input**: Design documents from `specs/005-log-effort/`
+**Input**: Design documents from `specs/003-timesheet/`
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, quickstart.md
 
@@ -12,11 +12,11 @@
 
 **Purpose**: Preparar Go, PostgreSQL/Docker y esquema de registros de esfuerzo.
 
-- [ ] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
-- [ ] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
-- [ ] T004 [P] Crear las migraciones SQL `db/migrations/005_create_effort_logs.up.sql` y `db/migrations/005_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `003_create_sprints` ya estén aplicadas
-- [ ] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/005-log-effort/quickstart.md` la aplicación de migraciones en orden numérico
+- [x] T001 Verificar o inicializar el módulo Go en `go.mod` con Go 1.27.1
+- [x] T002 Verificar o agregar `github.com/jackc/pgx/v5` y `github.com/jackc/pgx/v5/stdlib` en `go.mod` y actualizar `go.sum`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL 16 en la base `seguimiento_y_medicion`
+- [x] T004 [P] Crear las migraciones SQL `db/migrations/003_create_effort_logs.up.sql` y `db/migrations/003_create_effort_logs.down.sql` para la tabla `effort_logs` (historia, integrante, fecha, actividad, horas `NUMERIC(5,2)` con `CHECK (hours > 0 AND hours <= 24)`); depende de que las migraciones `001_create_projects`, `002_create_backlog_stories` y `004_create_sprints` ya estén aplicadas
+- [x] T005 Instalar la herramienta `github.com/golang-migrate/migrate` si no está instalada y documentar en `specs/003-timesheet/quickstart.md` la aplicación de migraciones en orden numérico
 
 ---
 
@@ -24,13 +24,13 @@
 
 **Purpose**: Crear modelos, aritmética de horas, validaciones y persistencia compartidos por las historias.
 
-- [ ] T006 [P] Definir `EffortEntry`, `LogEffortRequest`, `LogEffortResult` y `AccumulatedEffort` en `src/effort/model.go`
-- [ ] T007 [P] Definir errores explícitos y mensajes exactos para horas inválidas, actividad vacía, fecha requerida, integrante no válido, historia sin Sprint activo y persistencia en `src/effort/errors.go`
-- [ ] T008 [P] Implementar el tipo `Hours` en centésimas de hora con interpretación de entrada, rango `(0, 24]`, máximo dos decimales y suma exacta en `src/effort/hours.go`
-- [ ] T009 Definir `EffortStore` con `StoryAcceptsEffort`, `MemberBelongsToStoryProject`, `SaveEntry` y `AccumulatedHours` en `src/effort/store.go`
-- [ ] T010 Implementar `PostgreSQLEffortStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/effort/postgres_effort_store.go`
-- [ ] T011 [P] Crear el store controlado para pruebas unitarias en `src/effort/test_store.go`, sin sustituir la integración PostgreSQL
-- [ ] T012 [P] Definir la validación de campos con acumulación de todos los errores en `src/effort/validation.go`
+- [x] T006 [P] Definir `EffortEntry`, `LogEffortRequest`, `LogEffortResult` y `AccumulatedEffort` en `src/effort/model.go`
+- [x] T007 [P] Definir errores explícitos y mensajes exactos para horas inválidas, actividad vacía, fecha requerida, integrante no válido, historia sin Sprint activo y persistencia en `src/effort/errors.go`
+- [x] T008 [P] Implementar el tipo `Hours` en centésimas de hora con interpretación de entrada, rango `(0, 24]`, máximo dos decimales y suma exacta en `src/effort/hours.go`
+- [x] T009 Definir `EffortStore` con `StoryAcceptsEffort`, `MemberBelongsToStoryProject`, `SaveEntry` y `AccumulatedHours` en `src/effort/store.go`
+- [x] T010 Implementar `PostgreSQLEffortStore` con `database/sql`, `github.com/jackc/pgx/v5/stdlib` y transacciones en `src/effort/postgres_effort_store.go`
+- [x] T011 [P] Crear el store controlado para pruebas unitarias en `src/effort/test_store.go`, sin sustituir la integración PostgreSQL
+- [x] T012 [P] Definir la validación de campos con acumulación de todos los errores en `src/effort/validation.go`
 
 **Checkpoint**: El modelo, la aritmética, la validación, el contrato y el adaptador PostgreSQL están listos para las historias.
 
@@ -44,19 +44,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir prueba unitaria de registro de 4 horas que suma 4 horas al acumulado de la historia en `src/effort/service_test.go`
-- [ ] T014 [P] [US1] Escribir prueba unitaria de registros sucesivos (4 h y 2,5 h) que acumulan 6,5 h sin sobrescribir en `src/effort/service_test.go`
-- [ ] T015 [P] [US1] Escribir prueba unitaria de rechazo cuando la historia no está asignada a un Sprint activo en `src/effort/service_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de integración de guardado y acumulado con historia en Sprint activo en `src/effort/postgres_effort_store_integration_test.go`
-- [ ] T017 [P] [US1] Escribir el escenario BDD "Carga de esfuerzo diario" en `test/effort_bdd_test.go`
+- [X] T013 [P] [US1] Escribir prueba unitaria de registro de 4 horas que suma 4 horas al acumulado de la historia en `src/effort/service_test.go`
+- [x] T014 [P] [US1] Escribir prueba unitaria de registros sucesivos (4 h y 2,5 h) que acumulan 6,5 h sin sobrescribir en `src/effort/service_test.go`
+- [x] T015 [P] [US1] Escribir prueba unitaria de rechazo cuando la historia no está asignada a un Sprint activo en `src/effort/service_test.go`
+- [X] T016 [P] [US1] Escribir la prueba de integración de guardado y acumulado con historia en Sprint activo en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T017 [P] [US1] Escribir el escenario BDD "Carga de esfuerzo diario" en `test/effort_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T018 [US1] Implementar `LogEffort` en `src/effort/service.go`, cargando el contexto de la historia desde `EffortStore` y usando un reloj inyectable
-- [ ] T019 [US1] Implementar en `src/effort/service.go` el resultado con registro creado, `accumulatedHours` y `successMessage` solo después de persistir
-- [ ] T020 [US1] Implementar `SaveEntry` en `src/effort/postgres_effort_store.go`, insertando el registro y calculando el acumulado en una misma transacción
-- [ ] T021 [US1] Implementar `StoryAcceptsEffort` y `AccumulatedHours` en `src/effort/postgres_effort_store.go`, verificando que el Sprint de la historia esté `Activo`
-- [ ] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto, integrante, historia y Sprint activo, y limpieza en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T018 [US1] Implementar `LogEffort` en `src/effort/service.go`, cargando el contexto de la historia desde `EffortStore` y usando un reloj inyectable
+- [x] T019 [US1] Implementar en `src/effort/service.go` el resultado con registro creado, `accumulatedHours` y `successMessage` solo después de persistir
+- [x] T020 [US1] Implementar `SaveEntry` en `src/effort/postgres_effort_store.go`, insertando el registro y calculando el acumulado en una misma transacción
+- [x] T021 [US1] Implementar `StoryAcceptsEffort` y `AccumulatedHours` en `src/effort/postgres_effort_store.go`, verificando que el Sprint de la historia esté `Activo`
+- [x] T022 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto, integrante, historia y Sprint activo, y limpieza en `src/effort/postgres_effort_store_integration_test.go`
 
 **Checkpoint**: US1 registra esfuerzo y acumula horas de forma reproducible, y permite consultar el acumulado de una historia de forma independiente.
 
@@ -70,17 +70,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir pruebas en tabla de `Hours` con -1, 0, 24, 24,01, 25, 0,5, 1,555, vacío y texto no numérico en `src/effort/hours_test.go`
-- [ ] T024 [P] [US2] Escribir prueba unitaria de que una carga con horas inválidas no invoca `SaveEntry` ni cambia el acumulado en `src/effort/service_test.go`
-- [ ] T025 [P] [US2] Escribir el escenario BDD "Carga de horas inválida" en `test/effort_bdd_test.go`
-- [ ] T026 [P] [US2] Escribir prueba de integración de que la restricción `CHECK` rechaza horas fuera de rango escritas directamente en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T023 [P] [US2] Escribir pruebas en tabla de `Hours` con -1, 0, 24, 24,01, 25, 0,5, 1,555, vacío y texto no numérico en `src/effort/hours_test.go`
+- [x] T024 [P] [US2] Escribir prueba unitaria de que una carga con horas inválidas no invoca `SaveEntry` ni cambia el acumulado en `src/effort/service_test.go`
+- [x] T025 [P] [US2] Escribir el escenario BDD "Carga de horas inválida" en `test/effort_bdd_test.go`
+- [x] T026 [P] [US2] Escribir prueba de integración de que la restricción `CHECK` rechaza horas fuera de rango escritas directamente en `src/effort/postgres_effort_store_integration_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Implementar en `src/effort/hours.go` la validación del rango `(0, 24]`, el máximo de dos decimales y el rechazo de valores no numéricos
-- [ ] T028 [US2] Implementar en `src/effort/errors.go` el mensaje exacto "El valor de horas no es válido"
-- [ ] T029 [US2] Integrar en `src/effort/validation.go` y `src/effort/service.go` la validación de horas antes de guardar
-- [ ] T030 [US2] Verificar en `src/effort/service_test.go` que el acumulado de la historia es idéntico antes y después de una carga rechazada
+- [x] T027 [US2] Implementar en `src/effort/hours.go` la validación del rango `(0, 24]`, el máximo de dos decimales y el rechazo de valores no numéricos
+- [x] T028 [US2] Implementar en `src/effort/errors.go` el mensaje exacto "El valor de horas no es válido"
+- [x] T029 [US2] Integrar en `src/effort/validation.go` y `src/effort/service.go` la validación de horas antes de guardar
+- [x] T030 [US2] Verificar en `src/effort/service_test.go` que el acumulado de la historia es idéntico antes y después de una carga rechazada
 
 **Checkpoint**: US2 rechaza horas inválidas con el mensaje correcto y sin mutaciones.
 
@@ -94,20 +94,20 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas unitarias de actividad vacía y solo espacios en `src/effort/service_test.go`
-- [ ] T032 [P] [US3] Escribir pruebas unitarias de fecha omitida y fecha posterior a la actual con reloj inyectado en `src/effort/service_test.go`
-- [ ] T033 [P] [US3] Escribir pruebas unitarias de integrante omitido, inexistente y ajeno al proyecto de la historia en `src/effort/service_test.go`
-- [ ] T034 [P] [US3] Escribir prueba unitaria de varios campos inválidos con todos los errores informados juntos en `src/effort/service_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD "Actividad realizada vacía", "Fecha de carga faltante" e "Integrante no especificado" en `test/effort_bdd_test.go`
-- [ ] T036 [P] [US3] Escribir prueba de integración de `MemberBelongsToStoryProject` con integrante del proyecto y ajeno en `src/effort/postgres_effort_store_integration_test.go`
+- [X] T031 [P] [US3] Escribir pruebas unitarias de actividad vacía y solo espacios en `src/effort/service_test.go`
+- [X] T032 [P] [US3] Escribir pruebas unitarias de fecha omitida y fecha posterior a la actual con reloj inyectado en `src/effort/service_test.go`
+- [X] T033 [P] [US3] Escribir pruebas unitarias de integrante omitido, inexistente y ajeno al proyecto de la historia en `src/effort/service_test.go`
+- [X] T034 [P] [US3] Escribir prueba unitaria de varios campos inválidos con todos los errores informados juntos en `src/effort/service_test.go`
+- [X] T035 [P] [US3] Escribir los escenarios BDD "Actividad realizada vacía", "Fecha de carga faltante" e "Integrante no especificado" en `test/effort_bdd_test.go`
+- [x] T036 [P] [US3] Escribir prueba de integración de `MemberBelongsToStoryProject` con integrante del proyecto y ajeno en `src/effort/postgres_effort_store_integration_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Implementar en `src/effort/validation.go` la normalización de la actividad y el rechazo de actividad vacía
-- [ ] T038 [US3] Implementar en `src/effort/validation.go` la fecha obligatoria y el rechazo de fechas futuras
-- [ ] T039 [US3] Implementar `MemberBelongsToStoryProject` en `src/effort/postgres_effort_store.go` y su uso en la validación del integrante
-- [ ] T040 [US3] Implementar en `src/effort/errors.go` los mensajes exactos de actividad obligatoria, fecha requerida e integrante responsable
-- [ ] T041 [US3] Verificar en `src/effort/service_test.go` y `test/effort_bdd_test.go` que ninguna validación fallida persiste registros ni modifica el acumulado
+- [x] T037 [US3] Implementar en `src/effort/validation.go` la normalización de la actividad y el rechazo de actividad vacía
+- [x] T038 [US3] Implementar en `src/effort/validation.go` la fecha obligatoria y el rechazo de fechas futuras
+- [X] T039 [US3] Implementar `MemberBelongsToStoryProject` en `src/effort/postgres_effort_store.go` y su uso en la validación del integrante
+- [x] T040 [US3] Implementar en `src/effort/errors.go` los mensajes exactos de actividad obligatoria, fecha requerida e integrante responsable
+- [X] T041 [US3] Verificar en `src/effort/service_test.go` y `test/effort_bdd_test.go` que ninguna validación fallida persiste registros ni modifica el acumulado
 
 **Checkpoint**: US3 exige los campos obligatorios, informa todos los errores y no deja registros parciales.
 
@@ -121,15 +121,15 @@
 
 ### Tests for User Story 4
 
-- [ ] T042 [P] [US4] Escribir prueba unitaria con un store que falla al guardar: mensaje de no completado, sin `successMessage` y sin cambios en el acumulado en `src/effort/service_test.go`
-- [ ] T043 [P] [US4] Escribir prueba de integración de falla transaccional (contexto cancelado o violación forzada) que no deja registros parciales en `src/effort/postgres_effort_store_integration_test.go`
-- [ ] T044 [P] [US4] Escribir el escenario BDD "Error al guardar el registro de esfuerzo" en `test/effort_bdd_test.go`
+- [x] T042 [P] [US4] Escribir prueba unitaria con un store que falla al guardar: mensaje de no completado, sin `successMessage` y sin cambios en el acumulado en `src/effort/service_test.go`
+- [x] T043 [P] [US4] Escribir prueba de integración de falla transaccional (contexto cancelado o violación forzada) que no deja registros parciales en `src/effort/postgres_effort_store_integration_test.go`
+- [x] T044 [P] [US4] Escribir el escenario BDD "Error al guardar el registro de esfuerzo" en `test/effort_bdd_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T045 [US4] Implementar en `src/effort/service.go` el mapeo de errores de almacenamiento a un `storageError` genérico "La operación no pudo completarse"
-- [ ] T046 [US4] Implementar en `src/effort/postgres_effort_store.go` el `ROLLBACK` ante cualquier error de `SaveEntry`
-- [ ] T047 [US4] Verificar en `src/effort/service_test.go` que un resultado con `storageError` nunca incluye `successMessage` ni registro
+- [x] T045 [US4] Implementar en `src/effort/service.go` el mapeo de errores de almacenamiento a un `storageError` genérico "La operación no pudo completarse"
+- [x] T046 [US4] Implementar en `src/effort/postgres_effort_store.go` el `ROLLBACK` ante cualquier error de `SaveEntry`
+- [x] T047 [US4] Verificar en `src/effort/service_test.go` que un resultado con `storageError` nunca incluye `successMessage` ni registro
 
 **Checkpoint**: US4 informa fallas sin falso éxito ni datos parciales.
 
@@ -139,12 +139,12 @@
 
 **Purpose**: Validación final, documentación, integración con HU-07 y trazabilidad.
 
-- [ ] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/005-log-effort/quickstart.md`
-- [ ] T049 [P] Revisar que los errores de validación y PostgreSQL no expongan detalles internos en `src/effort/errors.go`
-- [ ] T050 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T051 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T052 Coordinar con el responsable de HU-07 que `actualHours` de cada historia se lee como la suma de `effort_logs.hours` y que la migración 005 se aplica antes de sus pruebas de integración
-- [ ] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/005-log-effort/tasks.md`
+- [x] T048 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/003-timesheet/quickstart.md`
+- [x] T049 [P] Revisar que los errores de validación y PostgreSQL no expongan detalles internos en `src/effort/errors.go`
+- [x] T050 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T051 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
+- [x] T052 Coordinar con el responsable de HU-07 que `actualHours` de cada historia se lee como la suma de `effort_logs.hours` y que la migración 003 se aplica antes de sus pruebas de integración
+- [x] T053 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-007 en `specs/003-timesheet/tasks.md`
 
 ---
 
@@ -239,3 +239,30 @@ T044: Escenario BDD en test/effort_bdd_test.go
 - Las pruebas deben verificar comportamiento real y observar un estado fallido antes de implementar.
 - PostgreSQL debe ejecutarse con Docker; la aplicación Go y las pruebas se ejecutan localmente.
 - Los nombres de tablas y columnas de las migraciones 001, 002 y 003 deben verificarse en los archivos reales antes de escribir T004 y T010.
+
+## Trazabilidad
+
+| Requisito | Pruebas |
+|---|---|
+| FR-001 | TestLogEffortRegistersHoursAndAccumulates, TestScenarioDailyEffortLog, TestPostgresSaveEntryAccumulates |
+| FR-002 | TestLogEffortSuccessiveEntriesAccumulate, TestScenarioEffortAddsToPreviousHours |
+| FR-003 | TestLogEffortSuccessiveEntriesAccumulate, TestPostgresSaveEntryAccumulates |
+| FR-004 | TestParseHoursValid, TestParseHoursInvalid, TestLogEffortAcceptsBoundaryHours, TestPostgresCheckConstraintRejectsOutOfRangeHours |
+| FR-005 | TestInvalidHoursMessage, TestLogEffortRejectsInvalidHoursWithoutChangingState, TestScenarioInvalidHours |
+| FR-006 | TestValidateInputActivity, TestLogEffortRejectsEmptyActivity, TestScenarioEmptyActivity |
+| FR-007 | TestValidateInputDate, TestLogEffortRejectsMissingOrFutureDate, TestScenarioMissingDate |
+| FR-008 | TestValidateInputDate, TestLogEffortRejectsMissingOrFutureDate, TestLogEffortUsesInjectedClock |
+| FR-009 | TestLogEffortRejectsInvalidMember, TestScenarioMemberNotSpecified, TestPostgresMemberBelongsToStoryProject |
+| FR-010 | TestValidateInputAccumulatesAllErrors, TestLogEffortReportsAllInvalidFieldsTogether |
+| FR-011 | TestLogEffortRejectsStoryWithoutActiveSprint, TestPostgresStoryAcceptsEffort |
+| FR-012 | TestLogEffortReportsStorageFailureWithoutFalseSuccess, TestScenarioStorageFailure, TestPostgresSaveEntryFailureLeavesNoPartialData |
+| FR-013 | TestLogEffortReportsStorageFailureWithoutFalseSuccess (no expone el error interno), revisión de errors.go (T049) |
+| FR-014 | EffortStore.AccumulatedHours, TestPostgresSaveEntryAccumulates; coordinación con HU-07 (T052) |
+| FR-015 | TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible |
+| SC-001 | TestScenarioDailyEffortLog, TestLogEffortSuccessiveEntriesAccumulate |
+| SC-002 | TestLogEffortRejectsInvalidHoursWithoutChangingState, TestScenarioInvalidHours |
+| SC-003 | TestLogEffortRejectsEmptyActivity, TestLogEffortRejectsMissingOrFutureDate, TestLogEffortRejectsInvalidMember |
+| SC-004 | TestLogEffortReportsStorageFailureWithoutFalseSuccess, TestPostgresSaveEntryFailureLeavesNoPartialData |
+| SC-005 | Verificación de tiempo en TestPostgresSaveEntryAccumulates |
+| SC-006 | TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible |
+| SC-007 | No aplica en esta historia: requiere una interfaz de usuario, que está fuera de alcance (plan.md y spec.md) |

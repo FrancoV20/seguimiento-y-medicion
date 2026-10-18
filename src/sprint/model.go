@@ -31,6 +31,12 @@ type Sprint struct {
 	StoryIDs  []int64
 }
 
+// SprintCreationResult contiene el Sprint creado y una advertencia no bloqueante, si corresponde.
+type SprintCreationResult struct {
+	Sprint  Sprint
+	Warning string
+}
+
 // StoryStatus representa el estado de una historia de usuario en el Product Backlog.
 type StoryStatus string
 

@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"testing"
 	"time"
 )
@@ -10,19 +11,22 @@ func TestNewProject_RejectsMissingRequiredFields(t *testing.T) {
 	endDate := startDate.AddDate(0, 0, 14)
 
 	tests := []struct {
-		name        string
-		projectName string
-		members     []string
+		name          string
+		projectName   string
+		members       []string
+		expectedError error
 	}{
 		{
-			name:        "rejects empty project name",
-			projectName: "",
-			members:     []string{"Gabriel"},
+			name:          "rejects empty project name",
+			projectName:   "",
+			members:       []string{"Gabriel"},
+			expectedError: ErrEmptyName,
 		},
 		{
-			name:        "rejects missing members",
-			projectName: "Academic project",
-			members:     nil,
+			name:          "rejects missing members",
+			projectName:   "Academic project",
+			members:       nil,
+			expectedError: ErrMissingMembers,
 		},
 	}
 
@@ -33,8 +37,8 @@ func TestNewProject_RejectsMissingRequiredFields(t *testing.T) {
 			_, err := NewProject(test.projectName, test.members, startDate, endDate)
 
 			// Then / Assert: creation must fail with an explicit error.
-			if err == nil {
-				t.Fatal("expected an error for a missing required field")
+			if !errors.Is(err, test.expectedError) {
+				t.Fatalf("expected error %v, got %v", test.expectedError, err)
 			}
 		})
 	}
@@ -52,8 +56,8 @@ func TestNewProject_RejectsInvalidDates(t *testing.T) {
 		_, err := NewProject(name, members, startDate, endDate)
 
 		// Assert
-		if err == nil {
-			t.Fatal("expected an error when end date is before start date")
+		if !errors.Is(err, ErrInvalidPeriod) {
+			t.Fatalf("expected error %v, got %v", ErrInvalidPeriod, err)
 		}
 	})
 }

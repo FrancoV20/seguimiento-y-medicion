@@ -3,6 +3,7 @@ package project
 import "time"
 
 type Project struct {
+	ID        int
 	Name      string
 	Members   []string
 	StartDate time.Time
@@ -20,4 +21,9 @@ type ProjectCreationRequest struct {
 	Members   []string
 	StartDate time.Time
 	EndDate   time.Time
+}
+
+type ProjectCreationResult struct {
+	Project *Project
+	Message string
 }

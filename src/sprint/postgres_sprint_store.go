@@ -23,13 +23,13 @@ var _ SprintStore = (*PostgreSQLSprintStore)(nil)
 func NewPostgreSQLSprintStore(dsn string) (*PostgreSQLSprintStore, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		return nil, fmt.Errorf("%w: abrir conexión PostgreSQL: %w", ErrPersistence, err)
+		return nil, persistenceError("abrir la conexión")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("%w: conectar con PostgreSQL: %w", ErrPersistence, err)
+		return nil, persistenceError("conectar con la base de datos")
 	}
 	return &PostgreSQLSprintStore{db: db}, nil
 }
@@ -37,7 +37,7 @@ func NewPostgreSQLSprintStore(dsn string) (*PostgreSQLSprintStore, error) {
 // Close cierra la conexión a PostgreSQL.
 func (s *PostgreSQLSprintStore) Close() error {
 	if err := s.db.Close(); err != nil {
-		return fmt.Errorf("%w: cerrar conexión PostgreSQL: %w", ErrPersistence, err)
+		return persistenceError("cerrar la conexión")
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (s *PostgreSQLSprintStore) CreateSprint(ctx context.Context, sprint Sprint)
 	}
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return Sprint{}, fmt.Errorf("%w: iniciar transacción de Sprint: %w", ErrPersistence, err)
+		return Sprint{}, persistenceError("iniciar la creación del Sprint")
 	}
 	defer tx.Rollback()
 
@@ -87,13 +87,13 @@ func (s *PostgreSQLSprintStore) CreateSprint(ctx context.Context, sprint Sprint)
 		sprint.Status,
 	).Scan(&sprint.ID)
 	if err != nil {
-		return Sprint{}, persistenceError("crear Sprint", err)
+		return Sprint{}, persistenceError("crear el Sprint")
 	}
 	if err := persistStoryAssignments(ctx, tx, sprint.ID, stories); err != nil {
 		return Sprint{}, err
 	}
 	if err := tx.Commit(); err != nil {
-		return Sprint{}, persistenceError("confirmar creación de Sprint", err)
+		return Sprint{}, persistenceError("confirmar la creación del Sprint")
 	}
 	return sprint, nil
 }
@@ -106,7 +106,7 @@ func (s *PostgreSQLSprintStore) AssignStories(ctx context.Context, sprintID int6
 	}
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return persistenceError("iniciar transacción de asignación", err)
+		return persistenceError("iniciar la asignación de historias")
 	}
 	defer tx.Rollback()
 
@@ -120,7 +120,7 @@ func (s *PostgreSQLSprintStore) AssignStories(ctx context.Context, sprintID int6
 		return ErrStoryNotAvailable
 	}
 	if err != nil {
-		return persistenceError("consultar Sprint para asignación", err)
+		return persistenceError("consultar el Sprint para asignación")
 	}
 	if status != SprintActive {
 		return ErrStoryNotAvailable
@@ -134,7 +134,7 @@ func (s *PostgreSQLSprintStore) AssignStories(ctx context.Context, sprintID int6
 		return err
 	}
 	if err := tx.Commit(); err != nil {
-		return persistenceError("confirmar asignación de historias", err)
+		return persistenceError("confirmar la asignación de historias")
 	}
 	return nil
 }
@@ -143,7 +143,7 @@ func (s *PostgreSQLSprintStore) AssignStories(ctx context.Context, sprintID int6
 func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64, storyID int64) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return persistenceError("iniciar transacción para quitar historia", err)
+		return persistenceError("iniciar la eliminación de una historia")
 	}
 	defer tx.Rollback()
 
@@ -156,7 +156,7 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		return ErrStoryNotAvailable
 	}
 	if err != nil {
-		return persistenceError("consultar Sprint para quitar historia", err)
+		return persistenceError("consultar el Sprint para quitar una historia")
 	}
 	if status != SprintActive {
 		return ErrStoryNotAvailable
@@ -175,7 +175,7 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		return ErrStoryNotAvailable
 	}
 	if err != nil {
-		return persistenceError("consultar historia para quitar", err)
+		return persistenceError("consultar la historia para quitar")
 	}
 	if activeSprintID.Valid {
 		story.ActiveSprintID = activeSprintID.Int64
@@ -190,11 +190,11 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		storyID,
 	)
 	if err != nil {
-		return persistenceError("eliminar asociación de historia", err)
+		return persistenceError("eliminar la asociación de historia")
 	}
 	affected, err := result.RowsAffected()
 	if err != nil {
-		return persistenceError("verificar eliminación de asociación", err)
+		return persistenceError("verificar la eliminación de la asociación")
 	}
 	if affected != 1 {
 		return ErrStoryNotAvailable
@@ -205,17 +205,17 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		storyID,
 	)
 	if err != nil {
-		return persistenceError("devolver historia a Pendiente", err)
+		return persistenceError("devolver la historia a Pendiente")
 	}
 	affected, err = result.RowsAffected()
 	if err != nil {
-		return persistenceError("verificar devolución de historia a Pendiente", err)
+		return persistenceError("verificar la devolución de la historia a Pendiente")
 	}
 	if affected != 1 {
 		return ErrStoryNotAvailable
 	}
 	if err := tx.Commit(); err != nil {
-		return persistenceError("confirmar eliminación de asociación", err)
+		return persistenceError("confirmar la eliminación de la asociación")
 	}
 	return nil
 }
@@ -244,7 +244,7 @@ func lockAssignableStories(
 			return nil, fmt.Errorf("%w: historia %d inexistente", ErrStoryNotAvailable, storyID)
 		}
 		if err != nil {
-			return nil, persistenceError("bloquear historia para asignación", err)
+			return nil, persistenceError("consultar la historia para asignación")
 		}
 		if activeSprintID.Valid {
 			story.ActiveSprintID = activeSprintID.Int64
@@ -270,7 +270,7 @@ func persistStoryAssignments(ctx context.Context, tx *sql.Tx, sprintID int64, st
 			if isUniqueViolation(err) {
 				return fmt.Errorf("%w: historia %d", ErrActiveSprintConflict, story.ID)
 			}
-			return persistenceError("crear asociación de historia", err)
+			return persistenceError("crear la asociación de historia")
 		}
 		result, err := tx.ExecContext(ctx, `
 			UPDATE user_stories
@@ -282,21 +282,17 @@ func persistStoryAssignments(ctx context.Context, tx *sql.Tx, sprintID int64, st
 			Pendiente,
 		)
 		if err != nil {
-			return persistenceError("actualizar estado de historia", err)
+			return persistenceError("actualizar el estado de la historia")
 		}
 		affected, err := result.RowsAffected()
 		if err != nil {
-			return persistenceError("verificar actualización de historia", err)
+			return persistenceError("verificar la actualización del estado de la historia")
 		}
 		if affected != 1 {
 			return fmt.Errorf("%w: historia %d", ErrActiveSprintConflict, story.ID)
 		}
 	}
 	return nil
-}
-
-func persistenceError(operation string, err error) error {
-	return fmt.Errorf("%w: %s: %w", ErrPersistence, operation, err)
 }
 
 func isUniqueViolation(err error) bool {

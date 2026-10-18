@@ -44,21 +44,21 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir prueba unitaria de creación con tres historias pendientes, estado `En Sprint` e identificador automático en `src/sprint/service_test.go`
-- [ ] T014 [P] [US1] Escribir pruebas unitarias de Goal vacío e identificador no editable en `src/sprint/service_test.go`
-- [ ] T015 [P] [US1] Escribir prueba unitaria de conflicto cuando una historia ya pertenece a otro Sprint activo en `src/sprint/service_test.go`
-- [ ] T016 [P] [US1] Escribir prueba unitaria del movimiento quitar-primero/asignar-después en `src/sprint/service_test.go`
-- [ ] T017 [P] [US1] Escribir prueba de integración PostgreSQL para Sprint, tres asociaciones, estados y secuencia en `src/sprint/postgres_sprint_store_integration_test.go`
-- [ ] T018 [P] [US1] Escribir escenarios BDD de creación, conflicto, movimiento, identificador automático y Goal obligatorio en `test/sprint_bdd_test.go`
+- [x] T013 [P] [US1] Escribir prueba unitaria de creación con tres historias pendientes, estado `En Sprint` e identificador automático en `src/sprint/service_test.go`
+- [x] T014 [P] [US1] Escribir pruebas unitarias de Goal vacío e identificador no editable en `src/sprint/service_test.go`
+- [x] T015 [P] [US1] Escribir prueba unitaria de conflicto cuando una historia ya pertenece a otro Sprint activo en `src/sprint/service_test.go`
+- [x] T016 [P] [US1] Escribir prueba unitaria del movimiento quitar-primero/asignar-después en `src/sprint/service_test.go`
+- [x] T017 [P] [US1] Escribir prueba de integración PostgreSQL para Sprint, tres asociaciones, estados y secuencia en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T018 [P] [US1] Escribir escenarios BDD de creación, conflicto, movimiento, identificador automático y Goal obligatorio en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implementar `CreateSprint` en `src/sprint/service.go`, validando proyecto, Goal, fechas presentes, historias seleccionadas y estados antes de mutar
-- [ ] T020 [US1] Implementar en `src/sprint/sequence.go` el identificador automático no editable con secuencia por proyecto y sin consumir números en operaciones inválidas
-- [ ] T021 [US1] Implementar en `src/sprint/story_assignment.go` la asignación exclusiva: una historia no puede pertenecer a dos Sprints activos y el conflicto debe bloquearse
-- [ ] T022 [US1] Implementar el movimiento explícito en `src/sprint/service.go`, quitando primero la historia del Sprint actual, devolviéndola a `Pendiente` y permitiendo luego la nueva asignación
-- [ ] T023 [US1] Completar `PostgreSQLSprintStore` en `src/sprint/postgres_sprint_store.go` con transacción para crear Sprint, asociar historias y actualizar estados sin mutaciones parciales
-- [ ] T024 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto/historias y limpieza en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T019 [US1] Implementar `CreateSprint` en `src/sprint/service.go`, validando proyecto, Goal, fechas presentes, historias seleccionadas y estados antes de mutar
+- [x] T020 [US1] Implementar en `src/sprint/sequence.go` el identificador automático no editable con secuencia por proyecto y sin consumir números en operaciones inválidas
+- [x] T021 [US1] Implementar en `src/sprint/story_assignment.go` la asignación exclusiva: una historia no puede pertenecer a dos Sprints activos y el conflicto debe bloquearse
+- [x] T022 [US1] Implementar el movimiento explícito en `src/sprint/service.go`, quitando primero la historia del Sprint actual, devolviéndola a `Pendiente` y permitiendo luego la nueva asignación
+- [x] T023 [US1] Completar `PostgreSQLSprintStore` en `src/sprint/postgres_sprint_store.go` con transacción para crear Sprint, asociar historias y actualizar estados sin mutaciones parciales
+- [x] T024 [US1] Habilitar la integración PostgreSQL con variables de conexión, fixtures de proyecto/historias y limpieza en `src/sprint/postgres_sprint_store_integration_test.go`
 
 **Checkpoint**: US1 crea y persiste un Sprint con asignaciones exclusivas, permite movimientos en dos pasos y rechaza Goal vacío.
 
@@ -72,14 +72,14 @@
 
 ### Tests for User Story 2
 
-- [ ] T025 [P] [US2] Escribir pruebas unitarias para `endDate < startDate` y `endDate == startDate` en `src/sprint/service_test.go`
-- [ ] T026 [P] [US2] Escribir prueba de que fechas inválidas no consumen el identificador secuencial ni llaman al store en `src/sprint/service_test.go`
-- [ ] T027 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/sprint_bdd_test.go`
+- [x] T025 [P] [US2] Escribir pruebas unitarias para `endDate < startDate` y `endDate == startDate` en `src/sprint/service_test.go`
+- [x] T026 [P] [US2] Escribir prueba de que fechas inválidas no consumen el identificador secuencial ni llaman al store en `src/sprint/service_test.go`
+- [x] T027 [P] [US2] Escribir el escenario BDD de fechas inválidas en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Implementar en `src/sprint/service.go` la validación estricta `endDate > startDate`, rechazando igualdad y anterior con error temporal explícito
-- [ ] T029 [US2] Verificar en `src/sprint/service_test.go` y `test/sprint_bdd_test.go` que el rechazo conserva datos corregibles y no persiste cambios
+- [x] T028 [US2] Implementar en `src/sprint/service.go` la validación estricta `endDate > startDate`, rechazando igualdad y anterior con error temporal explícito
+- [x] T029 [US2] Verificar en `src/sprint/service_test.go` y `test/sprint_bdd_test.go` que el rechazo conserva datos corregibles y no persiste cambios
 
 **Checkpoint**: US2 rechaza ambos períodos inválidos sin alterar el comportamiento válido de US1.
 
@@ -93,15 +93,15 @@
 
 ### Tests for User Story 3
 
-- [ ] T030 [P] [US3] Escribir prueba unitaria de Sprint válido sin historias, advertencia y estado `Activo` en `src/sprint/service_test.go`
-- [ ] T031 [P] [US3] Escribir prueba de integración PostgreSQL para Sprint sin asociaciones en `src/sprint/postgres_sprint_store_integration_test.go`
-- [ ] T032 [P] [US3] Escribir el escenario BDD de Sprint sin historias en `test/sprint_bdd_test.go`
+- [x] T030 [P] [US3] Escribir prueba unitaria de Sprint válido sin historias, advertencia y estado `Activo` en `src/sprint/service_test.go`
+- [x] T031 [P] [US3] Escribir prueba de integración PostgreSQL para Sprint sin asociaciones en `src/sprint/postgres_sprint_store_integration_test.go`
+- [x] T032 [P] [US3] Escribir el escenario BDD de Sprint sin historias en `test/sprint_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Implementar en `src/sprint/service.go` la creación con `storyIDs` vacío sin tratarla como error y devolviendo advertencia explícita
-- [ ] T034 [US3] Completar en `src/sprint/postgres_sprint_store.go` la persistencia de Sprints sin asociaciones dentro de una transacción válida
-- [ ] T035 [US3] Verificar en `src/sprint/service_test.go` y `src/sprint/postgres_sprint_store_integration_test.go` que una advertencia no impide crear el Sprint
+- [x] T033 [US3] Implementar en `src/sprint/service.go` la creación con `storyIDs` vacío sin tratarla como error y devolviendo advertencia explícita
+- [x] T034 [US3] Completar en `src/sprint/postgres_sprint_store.go` la persistencia de Sprints sin asociaciones dentro de una transacción válida
+- [x] T035 [US3] Verificar en `src/sprint/service_test.go` y `src/sprint/postgres_sprint_store_integration_test.go` que una advertencia no impide crear el Sprint
 
 **Checkpoint**: US3 permite registrar la estructura de la iteración sin historias y deja el Sprint listo para asignaciones posteriores.
 
@@ -111,11 +111,42 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
-- [ ] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
-- [ ] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
-- [ ] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
+- [x] T036 [P] Documentar variables de conexión, arranque y apagado de PostgreSQL Docker en `specs/004-create-sprint/quickstart.md`
+- [x] T037 [P] Revisar que los errores de Sprint no expongan detalles internos de PostgreSQL en `src/sprint/errors.go`
+- [x] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T039 Ejecutar `go test ./...` y completar todos los escenarios del `quickstart.md`
+- [x] T040 Revisar trazabilidad de FR-001 a FR-015 y SC-001 a SC-008 en `specs/004-create-sprint/tasks.md`
+
+## Trazabilidad de requisitos y criterios de éxito
+
+| Requisito | Tareas y evidencia asociada |
+|---|---|
+| FR-001 | T019, T023 |
+| FR-002 | T009, T020, T013, T017 |
+| FR-003 | T006, T019 |
+| FR-004 | T019, T014, T025-T029 |
+| FR-005 | T028, T025-T029 |
+| FR-006 | T019, T013, T017 |
+| FR-007 | T021, T023, T013, T017 |
+| FR-008 | T033-T035, T030-T032 |
+| FR-009 | T033, T030, T032 |
+| FR-010 | T021, T015, T018, T023 |
+| FR-011 | T022, T016, T018, T023 |
+| FR-012 | T019, T021, T015, T023 |
+| FR-013 | T006, T010, T013, T017 |
+| FR-014 | T010, T017, T023, T024 |
+| FR-015 | T019, T014, T026, T029 |
+| SC-001 | T013, T017, T019, T023 |
+| SC-002 | T025-T029 |
+| SC-003 | T030-T035 |
+| SC-004 | T039; requiere evaluación manual con Scrum Masters para medir el umbral del 90% |
+| SC-005 | T039; requiere medición manual del tiempo de creación menor a 3 minutos |
+| SC-006 | T014, T017, T020 |
+| SC-007 | T015, T018, T021, T023 |
+| SC-008 | T016, T018, T022, T023 |
+
+SC-004 y SC-005 son métricas de usabilidad; las pruebas automatizadas verifican el comportamiento,
+pero no reemplazan la evaluación con participantes ni la medición del tiempo real de uso.
 
 ---
 

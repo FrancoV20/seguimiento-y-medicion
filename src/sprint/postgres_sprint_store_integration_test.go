@@ -48,6 +48,40 @@ func TestPostgreSQLSprintStoreCreateSprintAndSequence(t *testing.T) {
 	}
 }
 
+func TestPostgreSQLSprintStoreCreatesSprintWithoutStoryAssignments(t *testing.T) {
+	store, projectID, _ := setupPostgreSQLSprintTest(t, 0)
+	ctx := context.Background()
+
+	created, err := store.CreateSprint(ctx, integrationSprint(projectID, nil))
+	if err != nil {
+		t.Fatalf("la creación de Sprint sin historias devolvió error: %v", err)
+	}
+	if created.Status != SprintActive {
+		t.Errorf("estado = %q, se esperaba %q", created.Status, SprintActive)
+	}
+	if len(created.StoryIDs) != 0 {
+		t.Errorf("historias devueltas = %v, se esperaba una lista vacía", created.StoryIDs)
+	}
+
+	var sprintCount, assignmentCount int
+	if err := store.db.QueryRowContext(ctx,
+		`SELECT count(*) FROM sprints WHERE id = $1 AND project_id = $2`,
+		created.ID,
+		projectID,
+	).Scan(&sprintCount); err != nil {
+		t.Fatalf("no se pudo verificar la persistencia del Sprint: %v", err)
+	}
+	if err := store.db.QueryRowContext(ctx,
+		`SELECT count(*) FROM sprint_story_assignments WHERE sprint_id = $1`,
+		created.ID,
+	).Scan(&assignmentCount); err != nil {
+		t.Fatalf("no se pudieron verificar las asociaciones: %v", err)
+	}
+	if sprintCount != 1 || assignmentCount != 0 {
+		t.Errorf("Sprints persistidos=%d, asociaciones=%d; se esperaba 1 y 0", sprintCount, assignmentCount)
+	}
+}
+
 func TestPostgreSQLSprintStoreAssignmentConflictRollsBack(t *testing.T) {
 	store, projectID, storyIDs := setupPostgreSQLSprintTest(t, 2)
 	ctx := context.Background()

@@ -1,6 +1,6 @@
 # Feature Specification: Registrar horas trabajadas
 
-**Feature Branch**: `005-log-effort`
+**Feature Branch**: `003-timesheet`
 
 **Created**: 2026-10-09
 
@@ -22,12 +22,16 @@ comparar el esfuerzo estimado con el real ni calcular la desviación del Sprint 
 4 horas con fecha actual y la actividad "Desarrollo de endpoint en Go", y verificando que el
 esfuerzo real acumulado de la historia aumenta exactamente 4 horas.
 
+
 **Acceptance Scenarios**:
 
 1. **Given** un Product Builder con una historia asignada en el Sprint activo, **When** ingresa
    la fecha actual, detalla la tarea técnica (por ejemplo "Desarrollo de endpoint en Go") y
    carga "4" horas, **Then** el sistema suma esas 4 horas al esfuerzo real acumulado de esa
    historia de usuario.
+    *Nota: "4" es el dato concreto del ejemplo, para poder verificar la suma con un valor exacto.
+   La regla de negocio es la de FR-004: se acepta cualquier cantidad mayor que 0 y hasta 24
+   horas por registro, con hasta dos decimales.*
 2. **Given** una historia que ya tiene horas acumuladas, **When** se registra un nuevo esfuerzo
    válido sobre ella, **Then** el acumulado resultante es la suma de todos los registros
    válidos de esa historia, sin sobrescribir los anteriores.

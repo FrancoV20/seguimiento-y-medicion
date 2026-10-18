@@ -20,8 +20,8 @@ func validateSprint(sprint Sprint) error {
 	if strings.TrimSpace(sprint.Goal) == "" {
 		return ErrGoalRequired
 	}
-	if sprint.StartDate.IsZero() || sprint.EndDate.IsZero() || !sprint.EndDate.After(sprint.StartDate) {
-		return ErrInvalidSprintPeriod
+	if err := validateSprintPeriod(sprint.StartDate, sprint.EndDate); err != nil {
+		return err
 	}
 	if sprint.ProjectID <= 0 {
 		return ErrProjectNotFound
