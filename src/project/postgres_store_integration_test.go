@@ -28,7 +28,7 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		t.Fatalf("connect to database: %v", err)
 	}
 
-	if _, err := db.ExecContext(ctx, `TRUNCATE TABLE project_members, projects, members RESTART IDENTITY`); err != nil {
+	if _, err := db.ExecContext(ctx, `TRUNCATE TABLE project_members, projects, members RESTART IDENTITY CASCADE`); err != nil {
 		t.Fatalf("clean project tables: %v", err)
 	}
 
