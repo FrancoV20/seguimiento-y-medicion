@@ -18,10 +18,10 @@
 
 **Purpose**: Preparar estructura, embebido de migraciones y entorno.
 
-- [ ] T001 Verificar `go.mod` con Go 1.27.1 y que `github.com/jackc/pgx/v5/stdlib` ya esté incorporado
-- [ ] T002 [P] Crear la estructura `src/web/`, `src/web/templates/`, `src/web/static/` y `src/cmd/server/`
-- [ ] T003 [P] Crear `db/migrations.go` con `//go:embed migrations/*.sql` y una función que devuelva la mayor versión de los archivos `.up.sql`
-- [ ] T004 [P] Verificar que `docker-compose.yml` expone PostgreSQL y documentar `DATABASE_URL` (con la nota del puerto 5432 o 5433) y `ADDR` en `specs/020a-web-base/quickstart.md`
+- [X] T001 Verificar `go.mod` con Go 1.27.1 y que `github.com/jackc/pgx/v5/stdlib` ya esté incorporado
+- [X] T002 [P] Crear la estructura `src/web/`, `src/web/templates/`, `src/web/static/` y `src/cmd/server/`
+- [X] T003 [P] Crear `db/migrations.go` con `//go:embed migrations/*.sql` y una función que devuelva la mayor versión de los archivos `.up.sql`
+- [X] T004 [P] Verificar que `docker-compose.yml` expone PostgreSQL y documentar `DATABASE_URL` (con la nota del puerto 5432 o 5433) y `ADDR` en `specs/020a-web-base/quickstart.md`
 
 ---
 
@@ -29,11 +29,11 @@
 
 **Purpose**: Tipos y utilidades compartidos por todas las historias.
 
-- [ ] T005 [P] Definir los textos compartidos de las páginas de error (no encontrado, método no permitido, error inesperado, "El servicio no está disponible temporalmente") en `src/web/messages.go`
-- [ ] T006 [P] Definir `AppError` (`NotFound`, `Unavailable`, `Internal`) en `src/web/errors.go`
-- [ ] T007 [P] Definir `Section` y `Registry` con rechazo de direcciones duplicadas en `src/web/sections.go`
-- [ ] T008 [P] Definir `PageData`, `ActiveContext`, `WithActiveContext` y `ActiveContextFrom` en `src/web/render.go`
-- [ ] T009 [P] Crear los estilos locales base (estructura, menú, sección resaltada, páginas de error) en `src/web/static/app.css`
+- [X] T005 [P] Definir los textos compartidos de las páginas de error (no encontrado, método no permitido, error inesperado, "El servicio no está disponible temporalmente") en `src/web/messages.go`
+- [X] T006 [P] Definir `AppError` (`NotFound`, `Unavailable`, `Internal`) en `src/web/errors.go`
+- [X] T007 [P] Definir `Section` y `Registry` con rechazo de direcciones duplicadas en `src/web/sections.go`
+- [X] T008 [P] Definir `PageData`, `ActiveContext`, `WithActiveContext` y `ActiveContextFrom` en `src/web/render.go`
+- [X] T009 [P] Crear los estilos locales base (estructura, menú, sección resaltada, páginas de error) en `src/web/static/app.css`
 
 **Checkpoint**: Los tipos compartidos existen; las historias pueden escribir sus pruebas.
 
@@ -47,22 +47,22 @@
 
 ### Tests for User Story 1
 
-- [ ] T010 [P] [US1] Escribir pruebas de `LoadConfig` (variable faltante nombrada sin valores, valor por defecto de `ADDR`, redacción de la URL) en `src/web/config_test.go`
-- [ ] T011 [P] [US1] Escribir pruebas de la apertura con reintentos (éxito al N-ésimo intento, agotamiento sin exponer la clave ni la URL completa) en `src/web/database_test.go`
-- [ ] T012 [P] [US1] Escribir pruebas por tabla de la verificación de esquema (versión menor, `dirty`, igual, mayor con advertencia, sin tabla) en `src/web/schema_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de integración de `PostgreSQLSchemaVersionReader` contra PostgreSQL real en `src/web/postgres_schema_version_reader_integration_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de apagado ordenado con una solicitud en curso (completa en hasta 10 s y libera la base) en `src/web/server_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de puerto en uso o no válido: informa el puerto afectado sin detalles internos y no queda en ejecución, en `src/web/server_test.go`
-- [ ] T016 [P] [US1] Escribir los escenarios BDD de arranque y página de inicio en `test/web_base_bdd_test.go`
+- [X] T010 [P] [US1] Escribir pruebas de `LoadConfig` (variable faltante nombrada sin valores, valor por defecto de `ADDR`, redacción de la URL) en `src/web/config_test.go`
+- [X] T011 [P] [US1] Escribir pruebas de la apertura con reintentos (éxito al N-ésimo intento, agotamiento sin exponer la clave ni la URL completa) en `src/web/database_test.go`
+- [X] T012 [P] [US1] Escribir pruebas por tabla de la verificación de esquema (versión menor, `dirty`, igual, mayor con advertencia, sin tabla) en `src/web/schema_test.go`
+- [X] T013 [P] [US1] Escribir la prueba de integración de `PostgreSQLSchemaVersionReader` contra PostgreSQL real en `src/web/postgres_schema_version_reader_integration_test.go`
+- [X] T014 [P] [US1] Escribir la prueba de apagado ordenado con una solicitud en curso (completa en hasta 10 s y libera la base) en `src/web/server_test.go`
+- [X] T015 [P] [US1] Escribir la prueba de puerto en uso o no válido: informa el puerto afectado sin detalles internos y no queda en ejecución, en `src/web/server_test.go`
+- [X] T016 [P] [US1] Escribir los escenarios BDD de arranque y página de inicio en `test/web_base_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implementar `LoadConfig` y la redacción de valores en `src/web/config.go`
-- [ ] T018 [US1] Implementar la apertura de conexión con reintentos (10 intentos, 2 s) en `src/web/database.go`
-- [ ] T019 [US1] Implementar `SchemaVersionReader` y `CheckSchema` en `src/web/schema.go`
-- [ ] T020 [US1] Implementar `PostgreSQLSchemaVersionReader` en `src/web/postgres_schema_version_reader.go`
-- [ ] T021 [US1] Implementar la construcción del servidor, la ruta `GET /`, `Server.Use` y el apagado ordenado en `src/web/server.go`
-- [ ] T022 [US1] Implementar el arranque (configuración, base, esquema, rutas, señales) en `src/cmd/server/main.go`, informando puerto en uso sin detalles internos
+- [X] T017 [US1] Implementar `LoadConfig` y la redacción de valores en `src/web/config.go`
+- [X] T018 [US1] Implementar la apertura de conexión con reintentos (10 intentos, 2 s) en `src/web/database.go`
+- [X] T019 [US1] Implementar `SchemaVersionReader` y `CheckSchema` en `src/web/schema.go`
+- [X] T020 [US1] Implementar `PostgreSQLSchemaVersionReader` en `src/web/postgres_schema_version_reader.go`
+- [X] T021 [US1] Implementar la construcción del servidor, la ruta `GET /`, `Server.Use` y el apagado ordenado en `src/web/server.go`
+- [X] T022 [US1] Implementar el arranque (configuración, base, esquema, rutas, señales) en `src/cmd/server/main.go`, informando puerto en uso sin detalles internos
 
 **Checkpoint**: US1 arranca o falla con mensajes claros y muestra la página de inicio; HU-20b puede empezar a usar el servidor.
 
