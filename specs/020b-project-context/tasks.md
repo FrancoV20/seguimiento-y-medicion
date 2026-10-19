@@ -31,10 +31,10 @@
 **Purpose**: Tipos, interfaz y adaptador PostgreSQL compartidos por las historias.
 
 - [ ] T006 [P] Definir `MsgOperationFailed` ("La operación no pudo completarse"), `Flash` y `FormView` en `src/web/flash.go` y `src/web/forms.go`
-- [ ] T007 [P] Definir `ResolvedContext`, `ProjectSummary`, `MemberSummary` y los nombres de las cookies de contexto en `src/web/context.go` (`ActiveContext` ya existe desde HU-20a)
-- [ ] T008 [P] Definir la interfaz `ContextStore` con `ListProjects`, `ListMembers` y `ResolveContext` en `src/web/context_store.go`
-- [ ] T009 [P] Escribir la prueba de integración de `PostgreSQLContextStore` con fixtures de dos proyectos e integrantes, incluyendo "no existe" frente a "no disponible" y la verificación de tiempo de `ResolveContext`, en `src/web/postgres_context_store_integration_test.go`
-- [ ] T010 Implementar `PostgreSQLContextStore` con `database/sql` y pgx en `src/web/postgres_context_store.go`, ajustado al esquema de T001
+- [x] T007 [P] Definir `ResolvedContext`, `ProjectSummary`, `MemberSummary` y los nombres de las cookies de contexto en `src/web/context.go` (`ActiveContext` ya existe desde HU-20a)
+- [x] T008 [P] Definir la interfaz `ContextStore` con `ListProjects`, `ListMembers` y `ResolveContext` en `src/web/context_store.go`
+- [x] T009 [P] Escribir la prueba de integración de `PostgreSQLContextStore` con fixtures de dos proyectos e integrantes, incluyendo "no existe" frente a "no disponible" y la verificación de tiempo de `ResolveContext`, en `src/web/postgres_context_store_integration_test.go`
+- [x] T010 Implementar `PostgreSQLContextStore` con `database/sql` y pgx en `src/web/postgres_context_store.go`, ajustado al esquema de T001
 - [ ] T011 [P] Definir los atributos de las cookies de contexto (`ctx_proyecto`, `ctx_integrante`: sesión, `HttpOnly`, `SameSite=Lax`, `Secure` con HTTPS) y su lectura segura en `src/web/context.go`
 
 **Checkpoint**: El modelo, la interfaz y el adaptador PostgreSQL están listos para las historias.
