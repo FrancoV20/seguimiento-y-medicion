@@ -1,5 +1,4 @@
 package web
-package web
 
 import (
 	"crypto/tls"
