@@ -165,3 +165,90 @@ func TestEscenarioWeb_PuertoEnUso(t *testing.T) {
 		t.Errorf("se esperaba un error que nombre el puerto %s, se obtuvo: %v", puerto, err)
 	}
 }
+
+// US2 - Escenario 1 (T027, FR-008).
+func TestEscenarioWeb_EstructuraComunConMenuYContexto(t *testing.T) {
+	// Dado cualquier página de la aplicación
+	srv := httptest.NewServer(web.NewServer(silencioso()).Handler())
+	defer srv.Close()
+
+	// Cuando se muestra
+	body := leer(t, srv.URL+"/")
+
+	// Entonces incluye el menú, la sección actual resaltada y el espacio de contexto
+	for _, esperado := range []string{"<nav", `aria-current="page"`, "Sin proyecto seleccionado"} {
+		if !strings.Contains(body, esperado) {
+			t.Errorf("la estructura común debe contener %q", esperado)
+		}
+	}
+}
+
+// US2 - Escenario 2 (T027, FR-009).
+func TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu(t *testing.T) {
+	// Dado que hay una sección registrada y otras todavía no implementadas
+	s := web.NewServer(silencioso())
+	nada := http.HandlerFunc(func(http.ResponseWriter, *http.Request) {})
+	if err := s.Register(web.Section{Name: "Proyectos", Path: "/proyectos"}, web.Routes{"GET /proyectos": nada}); err != nil {
+		t.Fatalf("no se pudo registrar la sección: %v", err)
+	}
+	srv := httptest.NewServer(s.Handler())
+	defer srv.Close()
+
+	// Cuando se muestra el menú
+	body := leer(t, srv.URL+"/")
+
+	// Entonces aparecen solo las registradas
+	if !strings.Contains(body, `href="/proyectos"`) {
+		t.Error("la sección registrada debe aparecer en el menú")
+	}
+	if strings.Contains(body, `href="/sprints"`) {
+		t.Error("una sección no registrada no debe aparecer en el menú")
+	}
+}
+
+// US2 - Escenario 3 (T027, FR-010, SC-006).
+func TestEscenarioWeb_SinRecursosExternos(t *testing.T) {
+	// Dado que no hay conexión a internet
+	srv := httptest.NewServer(web.NewServer(silencioso()).Handler())
+	defer srv.Close()
+
+	// Cuando abro la aplicación
+	body := leer(t, srv.URL+"/")
+	css, err := http.Get(srv.URL + "/static/app.css")
+	if err != nil {
+		t.Fatalf("no se pudo pedir el CSS: %v", err)
+	}
+	css.Body.Close()
+
+	// Entonces estilos y recursos cargan desde el propio servidor
+	if strings.Contains(body, "https://") || strings.Contains(body, "http://") || css.StatusCode != http.StatusOK {
+		t.Errorf("la página no debe depender de otros orígenes (CSS: %d)", css.StatusCode)
+	}
+}
+
+// US2 - Escenario 4 (T027, FR-011).
+func TestEscenarioWeb_CaracteresEspeciales(t *testing.T) {
+	// Dado un texto con tildes, ñ y símbolos
+	s := web.NewServer(silencioso())
+	texto := "Planificación del año — ¿listo? ✓"
+	rec := httptest.NewRecorder()
+
+	// Cuando se muestra en una pantalla
+	s.Renderer().Page(rec, httptest.NewRequest(http.MethodGet, "/", nil), "home.html", web.PageData{Title: texto})
+
+	// Entonces se ve correctamente
+	if !strings.Contains(rec.Body.String(), texto) {
+		t.Errorf("el texto %q no se ve tal cual", texto)
+	}
+}
+
+func leer(t *testing.T, url string) string {
+	t.Helper()
+	resp, err := http.Get(url)
+	if err != nil {
+		t.Fatalf("GET %s: %v", url, err)
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return string(b)
+}
