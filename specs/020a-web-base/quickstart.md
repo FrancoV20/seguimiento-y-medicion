@@ -5,9 +5,11 @@
 - Go 1.27.1 instalado; verificar con `go version`.
 - Docker Desktop instalado y en ejecución.
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml`
-  o `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada. El `docker-compose.yml` publica PostgreSQL en el puerto
+  `5433`; si tu `docker-compose.override.yml` usa otro puerto, usuario o clave, ajustá la URL:
+  `postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable`.
+- En PowerShell la variable se pierde al cerrar la terminal; para dejarla fija:
+  `[Environment]::SetEnvironmentVariable("DATABASE_URL", "<url>", "User")`.
 - Opcional: `ADDR` para cambiar el puerto del servidor (por defecto `:8080`).
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
 
@@ -17,13 +19,13 @@ Desde la raíz del repositorio, iniciar PostgreSQL y aplicar migraciones:
 
 ```powershell
 docker compose up -d postgres
-migrate -path db/migrations -database $env:DATABASE_URL up
+migrate -path db/migrations -database "$env:DATABASE_URL" up
 ```
 
 Iniciar el servidor y abrir `http://localhost:8080`:
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
 
