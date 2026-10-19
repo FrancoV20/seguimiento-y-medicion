@@ -30,7 +30,7 @@
 
 **Purpose**: Tipos, interfaz y adaptador PostgreSQL compartidos por las historias.
 
-- [ ] T006 [P] Definir `MsgOperationFailed` ("La operación no pudo completarse"), `Flash` y `FormView` en `src/web/flash.go` y `src/web/forms.go`
+- [x] T006 [P] Definir `MsgOperationFailed` ("La operación no pudo completarse"), `Flash` y `FormView` en `src/web/flash.go` y `src/web/forms.go`
 - [x] T007 [P] Definir `ResolvedContext`, `ProjectSummary`, `MemberSummary` y los nombres de las cookies de contexto en `src/web/context.go` (`ActiveContext` ya existe desde HU-20a)
 - [x] T008 [P] Definir la interfaz `ContextStore` con `ListProjects`, `ListMembers` y `ResolveContext` en `src/web/context_store.go`
 - [x] T009 [P] Escribir la prueba de integración de `PostgreSQLContextStore` con fixtures de dos proyectos e integrantes, incluyendo "no existe" frente a "no disponible" y la verificación de tiempo de `ResolveContext`, en `src/web/postgres_context_store_integration_test.go`
@@ -77,13 +77,13 @@
 - [ ] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
 - [ ] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
 - [ ] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
-- [ ] T027 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
+- [ ] T024 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
-- [ ] T025 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
-- [ ] T026 [US2] Revisar que ninguna plantilla use `template.HTML` con datos de usuarios en `src/web/templates/`
+- [ ] T025 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
+- [ ] T026 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
+- [ ] T027 [US2] Revisar que ninguna plantilla use `template.HTML` con datos de usuarios en `src/web/templates/`
 - [ ] T028 [US2] [Extra] Implementar cabeceras de seguridad (`nosniff`, `Referrer-Policy`, `Content-Security-Policy`) y el límite de cuerpo en `src/web/security.go`
 
 **Checkpoint**: US2 protege el contenido y los formularios para todas las historias posteriores.
@@ -98,7 +98,7 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Escribir pruebas de lectura de cookies (no numérica, negativa, muy grande, vacía) tratadas como ausencia en `src/web/context_test.go`
+- [x] T029 [P] [US3] Escribir pruebas de lectura de cookies (no numérica, negativa, muy grande, vacía) tratadas como ausencia en `src/web/context_test.go`
 - [ ] T030 [P] [US3] Escribir pruebas de handler con `cookiejar`: seleccionar proyecto y ver su nombre en el layout, mantenerlo entre secciones y que no se autoselecciona con un solo proyecto, en `src/web/context_handlers_test.go`
 - [ ] T031 [P] [US3] Escribir pruebas de handler con `cookiejar`: cambiar de proyecto limpia el integrante, volver a elegir el mismo lo conserva y una cookie de sesión nueva vuelve a pedir el proyecto, en `src/web/context_handlers_test.go`
 - [ ] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
