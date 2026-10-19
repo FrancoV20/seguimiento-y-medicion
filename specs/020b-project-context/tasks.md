@@ -149,13 +149,13 @@
 
 ### Tests for User Story 5
 
-- [ ] T048 [P] [US5] Escribir pruebas por tabla del saneamiento de `volver_a` (`/`, `/backlog`, `//otro.com`, `https://x`, `\\x`, caracteres de control, sección no registrada) en `src/web/return_to_test.go`
+- [x] T048 [P] [US5] Escribir pruebas por tabla del saneamiento de `volver_a` (`/`, `/backlog`, `//otro.com`, `https://x`, `\\x`, caracteres de control, sección no registrada) en `src/web/return_to_test.go`
 - [ ] T049 [P] [US5] Escribir pruebas de handler: sección protegida sin proyecto redirige con mensaje y regresa tras elegir; sección sin requisitos accesible, en `src/web/context_middleware_test.go`
 - [ ] T050 [P] [US5] Escribir los escenarios BDD de secciones protegidas en `test/context_bdd_test.go`
 
 ### Implementation for User Story 5
 
-- [ ] T051 [US5] Implementar el saneamiento del destino de regreso en `src/web/return_to.go`
+- [x] T051 [US5] Implementar el saneamiento del destino de regreso en `src/web/return_to.go`
 - [ ] T052 [US5] Implementar `RequireContext(section)` que redirige a `/contexto/proyecto` o `/contexto/integrante` con `volver_a` en `src/web/context_middleware.go`
 - [ ] T053 [US5] Aplicar `RequireContext` a las secciones según `RequiresProject` y `RequiresMember` al registrarlas, en `src/web/sections.go`
 
