@@ -20,19 +20,49 @@ const ShutdownTimeout = 10 * time.Second
 type Server struct {
 	logger          *slog.Logger
 	mux             *http.ServeMux
+	registry        *Registry
+	renderer        *Renderer
 	middlewares     []func(http.Handler) http.Handler
 	shutdownTimeout time.Duration
 }
 
 // NewServer crea el servidor con la página de inicio registrada.
 func NewServer(logger *slog.Logger) *Server {
+	registry := NewRegistry()
 	s := &Server{
 		logger:          logger,
 		mux:             http.NewServeMux(),
+		registry:        registry,
+		renderer:        NewRenderer(registry, logger),
 		shutdownTimeout: ShutdownTimeout,
 	}
 	s.HandleFunc("GET /{$}", s.home)
+	s.Handle("GET /static/", staticHandler())
 	return s
+}
+
+// Renderer devuelve el renderizador de páginas con el layout común.
+func (s *Server) Renderer() *Renderer { return s.renderer }
+
+// Routes asocia patrones de http.ServeMux (por ejemplo "GET /proyectos/{id}") con sus handlers.
+type Routes map[string]http.Handler
+
+// Register agrega una sección al menú y registra sus rutas (HU-20a, T028).
+// Una dirección o ruta repetida es un error de programación: el arranque debe fallar.
+func (s *Server) Register(section Section, routes Routes) (err error) {
+	if err := s.registry.Add(section); err != nil {
+		return err
+	}
+	defer func() {
+		if rec := recover(); rec != nil {
+			s.registry.remove(strings.TrimSpace(section.Path))
+			err = fmt.Errorf("la sección %q no se pudo registrar: %v", section.Name, rec)
+		}
+	}()
+	for pattern, h := range routes {
+		s.mux.Handle(pattern, h)
+	}
+	return nil
 }
 
 // Handle registra un handler para un patrón de http.ServeMux (por ejemplo "GET /proyectos").
@@ -132,29 +162,7 @@ func (s *Server) Serve(ctx context.Context, ln net.Listener, onShutdown func()) 
 	return result
 }
 
-// home muestra la página de inicio. HU-20a US2 la reemplaza por la plantilla con el layout común.
+// home muestra la página de inicio con el layout común.
 func (s *Server) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_, _ = w.Write([]byte(homeHTML))
+	s.renderer.Page(w, r, "home.html", PageData{Title: HomeName})
 }
-
-const homeHTML = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Inicio · Software Metrics &amp; Estimation</title>
-</head>
-<body>
-<header class="app-header">
-<a class="app-title" href="/">Software Metrics &amp; Estimation</a>
-<nav class="app-nav" aria-label="Menú principal"><ul><li><a href="/" class="active" aria-current="page">Inicio</a></li></ul></nav>
-<p class="app-context">Sin proyecto seleccionado</p>
-</header>
-<main class="app-main">
-<h1>Inicio</h1>
-<p>Administrá proyectos de software: backlog, sprints, estimación, esfuerzo y métricas.</p>
-</main>
-</body>
-</html>
-`

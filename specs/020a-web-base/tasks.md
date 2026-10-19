@@ -76,17 +76,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir pruebas del menú: solo secciones registradas, sección actual resaltada y nueva sección sin tocar el layout en `src/web/sections_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de que registrar dos secciones con la misma dirección hace fallar el arranque con un mensaje claro en `src/web/sections_test.go`
-- [ ] T025 [P] [US2] Escribir pruebas de la página renderizada: espacio de contexto "Sin proyecto seleccionado", `Content-Type` UTF-8 y texto con tildes, ñ y símbolos en `src/web/render_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba que verifica que el HTML no referencia otros orígenes y que `/static/app.css` se sirve localmente en `src/web/render_test.go`
-- [ ] T027 [P] [US2] Escribir los escenarios BDD de estructura y navegación en `test/web_base_bdd_test.go`
+- [X] T023 [P] [US2] Escribir pruebas del menú: solo secciones registradas, sección actual resaltada y nueva sección sin tocar el layout en `src/web/sections_test.go`
+- [X] T024 [P] [US2] Escribir la prueba de que registrar dos secciones con la misma dirección hace fallar el arranque con un mensaje claro en `src/web/sections_test.go`
+- [X] T025 [P] [US2] Escribir pruebas de la página renderizada: espacio de contexto "Sin proyecto seleccionado", `Content-Type` UTF-8 y texto con tildes, ñ y símbolos en `src/web/render_test.go`
+- [X] T026 [P] [US2] Escribir la prueba que verifica que el HTML no referencia otros orígenes y que `/static/app.css` se sirve localmente en `src/web/render_test.go`
+- [X] T027 [P] [US2] Escribir los escenarios BDD de estructura y navegación en `test/web_base_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Implementar plantillas embebidas, render a buffer y funciones auxiliares en `src/web/render.go`
-- [ ] T029 [US2] Crear `layout.html` y `home.html` en `src/web/templates/` con menú, resaltado y espacio de contexto
-- [ ] T030 [US2] Servir `/static/` desde los archivos embebidos en `src/web/server.go`
+- [X] T028 [US2] Implementar plantillas embebidas, render a buffer y funciones auxiliares en `src/web/render.go`
+- [X] T029 [US2] Crear `layout.html` y `home.html` en `src/web/templates/` con menú, resaltado y espacio de contexto
+- [X] T030 [US2] Servir `/static/` desde los archivos embebidos en `src/web/server.go`
 
 **Checkpoint**: US2 ofrece la estructura que HU-20b y HU-21 a HU-25 consumen.
 
