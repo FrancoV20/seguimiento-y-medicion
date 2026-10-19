@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar el esquema que se lee y preparar el entorno.
 
-- [ ] T001 Revisar `db/migrations/001_*.up.sql` y el store de HU-01 (tablas `projects`, `members` y `project_members`); anotar en `specs/020b-project-context/data-model.md` los nombres reales de columnas y decidir si se reutiliza el store existente o se crea `ContextStore`
-- [ ] T002 [P] Verificar que HU-20a expone `Section` (con `RequiresProject` y `RequiresMember`), `Server.Register`, `Server.Use`, `PageData`, `ActiveContext`, `Fail` y `RenderError`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y que `001` está aplicada con `migrate -path db/migrations -database $env:DATABASE_URL up`
-- [ ] T004 Confirmar con `go doc net/http.CrossOriginProtection` la API disponible en Go 1.27.1 y registrar el resultado en `specs/020b-project-context/research.md`
+- [x] T001 Revisar `db/migrations/001_*.up.sql` y el store de HU-01 (tablas `projects`, `members` y `project_members`); anotar en `specs/020b-project-context/data-model.md` los nombres reales de columnas y decidir si se reutiliza el store existente o se crea `ContextStore`
+- [x] T002 [P] Verificar que HU-20a expone `Section` (con `RequiresProject` y `RequiresMember`), `Server.Register`, `Server.Use`, `PageData`, `ActiveContext`, `Fail` y `RenderError`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y que `001` está aplicada con `migrate -path db/migrations -database $env:DATABASE_URL up`
+- [x] T004 Confirmar con `go doc net/http.CrossOriginProtection` la API disponible en Go 1.27.1 y registrar el resultado en `specs/020b-project-context/research.md`
 - [ ] T005 [P] Crear el auxiliar de pruebas que registra tres secciones de prueba (sin requisitos, con `RequiresProject` y con `RequiresMember`) y un formulario de prueba en `src/web/testhelpers_test.go`
 
 ---
