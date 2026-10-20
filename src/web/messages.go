@@ -32,4 +32,7 @@ const (
 	MsgMemberInvalid      = "El integrante elegido no pertenece al proyecto. Elegí uno de la lista."
 	MsgMemberGone         = "Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro."
 	MsgNoMembers          = "Este proyecto no tiene integrantes"
+
+	MsgProjectRequired = "Para entrar a esta sección primero elegí un proyecto."
+	MsgMemberRequired  = "Para esta acción primero tenés que identificarte como integrante del proyecto."
 )
