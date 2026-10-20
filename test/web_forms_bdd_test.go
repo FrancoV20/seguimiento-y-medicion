@@ -24,7 +24,7 @@ type formApp struct {
 	guardados atomic.Int32
 }
 
-func nuevaFormApp(t *testing.T) *formApp {
+func nuevaFormApp(t *testing.T, usar ...func(*web.Server)) *formApp {
 	t.Helper()
 	app := &formApp{}
 	srv := web.NewServer(silencioso())
@@ -56,6 +56,9 @@ func nuevaFormApp(t *testing.T) *formApp {
 	})
 	if err != nil {
 		t.Fatalf("no se pudo registrar la sección de prueba: %v", err)
+	}
+	for _, u := range usar {
+		u(srv)
 	}
 	app.servidor = httptest.NewServer(srv.Handler())
 	t.Cleanup(app.servidor.Close)
@@ -198,5 +201,106 @@ func TestEscenarioForm_MensajeDeUnaSolaVista(t *testing.T) {
 	// Entonces el mensaje no vuelve a aparecer
 	if strings.Contains(segunda, formTextoExito) || strings.Contains(tercera, formTextoExito) {
 		t.Errorf("el mensaje no debía volver a aparecer")
+	}
+}
+// enviarDesde envía el formulario con las cabeceras que identifican el origen de la solicitud.
+func (a *formApp) enviarDesde(t *testing.T, cabeceras map[string]string) (*http.Response, string) {
+	t.Helper()
+	cuerpo := strings.NewReader(url.Values{"nombre": {"Proyecto X"}}.Encode())
+	req, err := http.NewRequest(http.MethodPost, a.servidor.URL+"/prueba/guardar", cuerpo)
+	if err != nil {
+		t.Fatalf("no se pudo armar la solicitud: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	for k, v := range cabeceras {
+		req.Header.Set(k, v)
+	}
+	resp, err := formNavegador(false).Do(req)
+	if err != nil {
+		t.Fatalf("POST /prueba/guardar: %v", err)
+	}
+	return resp, formCuerpo(t, resp)
+}
+
+func conGuardia(s *web.Server) { s.Use(web.CrossOriginGuard(s.Renderer())) }
+
+// US2 - Escenario: Contenido con HTML (FR-005, SC-004).
+func TestEscenarioForm_ContenidoConHTMLSeVeComoTexto(t *testing.T) {
+	// Dado un texto con HTML o scripts
+	const script = "<script>alert(1)</script>"
+	app := nuevaFormApp(t, func(s *web.Server) {
+		s.Use(func(siguiente http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				ac := &web.ActiveContext{ProjectID: 1, ProjectName: script, MemberID: 2, MemberName: script}
+				siguiente.ServeHTTP(w, r.WithContext(web.WithActiveContext(r.Context(), ac)))
+			})
+		})
+	})
+
+	// Cuando se muestra en cualquier pantalla
+	for _, ruta := range []string{"/", "/prueba/resultado"} {
+		_, cuerpo := app.abrir(t, formNavegador(true), ruta)
+
+		// Entonces se ve como texto y no se ejecuta
+		if strings.Contains(cuerpo, script) {
+			t.Errorf("%s: el script se escribió sin escapar", ruta)
+		}
+		if !strings.Contains(cuerpo, "&lt;script&gt;alert(1)&lt;/script&gt;") {
+			t.Errorf("%s: el script debía verse como texto", ruta)
+		}
+	}
+}
+
+// US2 - Escenario: Envío desde otro sitio (FR-006, SC-005).
+func TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza(t *testing.T) {
+	casos := map[string]map[string]string{
+		"Sec-Fetch-Site cross-site": {"Sec-Fetch-Site": "cross-site"},
+		"Origin de otro sitio":      {"Origin": "https://sitio-malicioso.example"},
+	}
+	for nombre, cabeceras := range casos {
+		t.Run(nombre, func(t *testing.T) {
+			// Dado un formulario enviado desde otro sitio web
+			app := nuevaFormApp(t, conGuardia)
+
+			// Cuando llega al sistema
+			resp, cuerpo := app.enviarDesde(t, cabeceras)
+
+			// Entonces se rechaza con código 403 y un mensaje claro, sin ejecutar ninguna acción
+			if resp.StatusCode != http.StatusForbidden {
+				t.Errorf("se esperaba 403, se obtuvo %d", resp.StatusCode)
+			}
+			if !strings.Contains(cuerpo, web.MsgForbidden) {
+				t.Errorf("falta el mensaje claro %q", web.MsgForbidden)
+			}
+			if app.guardados.Load() != 0 {
+				t.Errorf("no debía ejecutarse ninguna acción")
+			}
+		})
+	}
+}
+
+// US2 - Escenario: Envío desde la aplicación (FR-006).
+func TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa(t *testing.T) {
+	// Dado un formulario enviado desde la propia aplicación
+	app := nuevaFormApp(t, conGuardia)
+	casos := map[string]map[string]string{
+		"Sec-Fetch-Site same-origin": {"Sec-Fetch-Site": "same-origin"},
+		"Origin de la aplicación":    {"Origin": app.servidor.URL},
+	}
+	for nombre, cabeceras := range casos {
+		t.Run(nombre, func(t *testing.T) {
+			antes := app.guardados.Load()
+
+			// Cuando llega al sistema
+			resp, _ := app.enviarDesde(t, cabeceras)
+
+			// Entonces se procesa normalmente
+			if resp.StatusCode != http.StatusSeeOther {
+				t.Errorf("se esperaba 303, se obtuvo %d", resp.StatusCode)
+			}
+			if app.guardados.Load() != antes+1 {
+				t.Errorf("el envío debía procesarse")
+			}
+		})
 	}
 }
