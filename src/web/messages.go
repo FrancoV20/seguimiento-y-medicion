@@ -17,4 +17,7 @@ const (
 	LinkBackHome = "Volver al inicio"
 
 	MsgNoProjectSelected = "Sin proyecto seleccionado"
+
+	TitleForbidden = "Solicitud rechazada"
+	MsgForbidden   = "La solicitud se rechazó porque no se originó en esta aplicación."
 )

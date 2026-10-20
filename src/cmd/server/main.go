@@ -35,7 +35,9 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail(err.Error())
 	}
 
-	srv := web.NewServer(logger)
+	srv := web.NewServer(logger)	
+	// La protección contra envíos de otro origen va primero (HU-20b, T025).
+	srv.Use(web.CrossOriginGuard(srv.Renderer()))
 	ln, err := srv.Listen(cfg.Addr)
 	if err != nil {
 		return fail(err.Error())

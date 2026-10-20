@@ -74,15 +74,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
-- [ ] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
+- [x] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
+- [x] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
 - [ ] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
-- [ ] T024 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
+- [x] T024 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
-- [ ] T026 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
+- [x] T025 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
+- [x] T026 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
 - [ ] T027 [US2] Revisar que ninguna plantilla use `template.HTML` con datos de usuarios en `src/web/templates/`
 - [ ] T028 [US2] [Extra] Implementar cabeceras de seguridad (`nosniff`, `Referrer-Policy`, `Content-Security-Policy`) y el límite de cuerpo en `src/web/security.go`
 
