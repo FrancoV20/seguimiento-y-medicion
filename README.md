@@ -46,7 +46,7 @@ con roles Scrum adaptados a la cátedra:
 - Franco Valentin Velazco - Scrum Master
 - Adriel Alonso Gonzalez - Product Builder
 - Alejandro Ruiz Andreola - Product Builder
-- Giuliana Betitol Rivadeo - Product Builder
+- Giuliana Bettiol Rivadeo - Product Builder
 - Juan Ignacio Sanchez - Product Builder
 
 ## Guía para comenzar el Sprint
