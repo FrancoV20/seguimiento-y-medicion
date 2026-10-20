@@ -2,13 +2,16 @@ package test
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -163,5 +166,202 @@ func TestEscenarioWeb_PuertoEnUso(t *testing.T) {
 	_, puerto, _ := net.SplitHostPort(ocupado.Addr().String())
 	if err == nil || !strings.Contains(err.Error(), puerto) {
 		t.Errorf("se esperaba un error que nombre el puerto %s, se obtuvo: %v", puerto, err)
+	}
+}
+
+// US2 - Escenario 1 (T027, FR-008).
+func TestEscenarioWeb_EstructuraComunConMenuYContexto(t *testing.T) {
+	// Dado cualquier página de la aplicación
+	srv := httptest.NewServer(web.NewServer(silencioso()).Handler())
+	defer srv.Close()
+
+	// Cuando se muestra
+	body := leer(t, srv.URL+"/")
+
+	// Entonces incluye el menú, la sección actual resaltada y el espacio de contexto
+	for _, esperado := range []string{"<nav", `aria-current="page"`, "Sin proyecto seleccionado"} {
+		if !strings.Contains(body, esperado) {
+			t.Errorf("la estructura común debe contener %q", esperado)
+		}
+	}
+}
+
+// US2 - Escenario 2 (T027, FR-009).
+func TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu(t *testing.T) {
+	// Dado que hay una sección registrada y otras todavía no implementadas
+	s := web.NewServer(silencioso())
+	nada := http.HandlerFunc(func(http.ResponseWriter, *http.Request) {})
+	if err := s.Register(web.Section{Name: "Proyectos", Path: "/proyectos"}, web.Routes{"GET /proyectos": nada}); err != nil {
+		t.Fatalf("no se pudo registrar la sección: %v", err)
+	}
+	srv := httptest.NewServer(s.Handler())
+	defer srv.Close()
+
+	// Cuando se muestra el menú
+	body := leer(t, srv.URL+"/")
+
+	// Entonces aparecen solo las registradas
+	if !strings.Contains(body, `href="/proyectos"`) {
+		t.Error("la sección registrada debe aparecer en el menú")
+	}
+	if strings.Contains(body, `href="/sprints"`) {
+		t.Error("una sección no registrada no debe aparecer en el menú")
+	}
+}
+
+// US2 - Escenario 3 (T027, FR-010, SC-006).
+func TestEscenarioWeb_SinRecursosExternos(t *testing.T) {
+	// Dado que no hay conexión a internet
+	srv := httptest.NewServer(web.NewServer(silencioso()).Handler())
+	defer srv.Close()
+
+	// Cuando abro la aplicación
+	body := leer(t, srv.URL+"/")
+	css, err := http.Get(srv.URL + "/static/app.css")
+	if err != nil {
+		t.Fatalf("no se pudo pedir el CSS: %v", err)
+	}
+	css.Body.Close()
+
+	// Entonces estilos y recursos cargan desde el propio servidor
+	if strings.Contains(body, "https://") || strings.Contains(body, "http://") || css.StatusCode != http.StatusOK {
+		t.Errorf("la página no debe depender de otros orígenes (CSS: %d)", css.StatusCode)
+	}
+}
+
+// US2 - Escenario 4 (T027, FR-011).
+func TestEscenarioWeb_CaracteresEspeciales(t *testing.T) {
+	// Dado un texto con tildes, ñ y símbolos
+	s := web.NewServer(silencioso())
+	texto := "Planificación del año — ¿listo? ✓"
+	rec := httptest.NewRecorder()
+
+	// Cuando se muestra en una pantalla
+	s.Renderer().Page(rec, httptest.NewRequest(http.MethodGet, "/", nil), "home.html", web.PageData{Title: texto})
+
+	// Entonces se ve correctamente
+	if !strings.Contains(rec.Body.String(), texto) {
+		t.Errorf("el texto %q no se ve tal cual", texto)
+	}
+}
+
+func leer(t *testing.T, url string) string {
+	t.Helper()
+	resp, err := http.Get(url)
+	if err != nil {
+		t.Fatalf("GET %s: %v", url, err)
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return string(b)
+}
+
+// Servidor con las rutas que usan los escenarios de errores.
+func servidorParaErrores(baseCaida *atomic.Bool) http.Handler {
+	s := web.NewServer(silencioso())
+	s.HandleFunc("GET /algo/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id, err := web.PathID(r, "id")
+		if err != nil {
+			s.Renderer().Fail(w, r, err)
+			return
+		}
+		fmt.Fprintf(w, "algo %d", id)
+	})
+	s.HandleFunc("GET /falla", func(http.ResponseWriter, *http.Request) { panic("fallo inesperado") })
+	s.HandleFunc("GET /datos", func(w http.ResponseWriter, r *http.Request) {
+		if baseCaida.Load() {
+			s.Renderer().Fail(w, r, fmt.Errorf("consultar datos: %w", driver.ErrBadConn))
+			return
+		}
+		s.Renderer().Page(w, r, "home.html", web.PageData{Title: "Datos"})
+	})
+	return s.Handler()
+}
+
+func estado(t *testing.T, url, method string) (int, string) {
+	t.Helper()
+	req, _ := http.NewRequest(method, url, nil)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("%s %s: %v", method, url, err)
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return resp.StatusCode, string(b)
+}
+
+// US3 - Escenario 1 (T037, FR-012).
+func TestEscenarioWeb_DireccionInexistenteOMalformadaDa404(t *testing.T) {
+	// Dado el servidor en ejecución
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	for _, path := range []string{"/no-existe", "/algo/abc"} {
+		// Cuando solicito una dirección que no existe o con un parámetro malformado
+		code, body := estado(t, srv.URL+path, http.MethodGet)
+
+		// Entonces veo la página 404 con la estructura común y un enlace al inicio, nunca un 500
+		if code != http.StatusNotFound || !strings.Contains(body, "<nav") || !strings.Contains(body, `href="/"`) {
+			t.Errorf("%s: se esperaba 404 con estructura común, se obtuvo %d", path, code)
+		}
+	}
+}
+
+// US3 - Escenario 2 (T037, FR-013).
+func TestEscenarioWeb_MetodoNoSoportadoDa405(t *testing.T) {
+	// Dado una dirección existente
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	// Cuando la solicito con un método no soportado
+	code, body := estado(t, srv.URL+"/", http.MethodPost)
+
+	// Entonces veo la página 405 con la estructura común y el servidor sigue en ejecución
+	if code != http.StatusMethodNotAllowed || !strings.Contains(body, "<nav") {
+		t.Errorf("se esperaba 405 con estructura común, se obtuvo %d", code)
+	}
+	if code, _ := estado(t, srv.URL+"/", http.MethodGet); code != http.StatusOK {
+		t.Error("el servidor debe seguir respondiendo después del 405")
+	}
+}
+
+// US3 - Escenario 3 (T037, FR-014).
+func TestEscenarioWeb_FalloInesperadoDa500Generico(t *testing.T) {
+	// Dado una pantalla que falla de forma inesperada
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	// Cuando la solicito
+	code, body := estado(t, srv.URL+"/falla", http.MethodGet)
+
+	// Entonces veo una página 500 genérica y el servidor sigue en ejecución
+	if code != http.StatusInternalServerError || strings.Contains(body, "fallo inesperado") || !strings.Contains(body, `href="/"`) {
+		t.Errorf("se esperaba un 500 genérico con enlace al inicio, se obtuvo %d", code)
+	}
+	if code, _ := estado(t, srv.URL+"/", http.MethodGet); code != http.StatusOK {
+		t.Error("el servidor debe seguir respondiendo después del fallo")
+	}
+}
+
+// US3 - Escenarios 4 y 5 (T037, FR-015).
+func TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar(t *testing.T) {
+	// Dado que el servidor está en ejecución y la base de datos deja de responder
+	baseCaida := new(atomic.Bool)
+	srv := httptest.NewServer(servidorParaErrores(baseCaida))
+	defer srv.Close()
+	baseCaida.Store(true)
+
+	// Cuando solicito una página que necesita la base
+	code, body := estado(t, srv.URL+"/datos", http.MethodGet)
+
+	// Entonces veo la página 503 sin detalles internos
+	if code != http.StatusServiceUnavailable || !strings.Contains(body, "El servicio no está disponible temporalmente") {
+		t.Errorf("se esperaba 503 con el mensaje de servicio no disponible, se obtuvo %d", code)
+	}
+
+	// Y cuando la base vuelve a responder, funciona sin reiniciar el servidor
+	baseCaida.Store(false)
+	if code, _ := estado(t, srv.URL+"/datos", http.MethodGet); code != http.StatusOK {
+		t.Errorf("al volver la base se esperaba 200, se obtuvo %d", code)
 	}
 }

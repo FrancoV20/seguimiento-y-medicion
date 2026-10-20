@@ -1,0 +1,29 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}} · {{appName}}</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="app-header">
+  <a class="app-title" href="/">{{appName}}</a>
+  <nav class="app-nav" aria-label="Menú principal">
+    <ul>
+      {{- range .Menu}}
+      <li><a href="{{.Path}}"{{if .Active}} class="active" aria-current="page"{{end}}>{{.Name}}</a></li>
+      {{- end}}
+    </ul>
+  </nav>
+  <p class="app-context">
+    {{- with .Context}}{{if .ProjectName}}Proyecto: <strong>{{.ProjectName}}</strong>{{else}}{{noProject}}{{end}}{{if .MemberName}} · Integrante: <strong>{{.MemberName}}</strong>{{end}}
+    {{- else}}{{noProject}}{{end -}}
+  </p>
+</header>
+<main class="app-main">
+{{template "content" .}}
+</main>
+</body>
+</html>
+{{end}}

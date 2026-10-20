@@ -51,3 +51,32 @@ func (r *Registry) Add(s Section) error {
 func (r *Registry) Sections() []Section {
 	return append([]Section(nil), r.sections...)
 }
+
+// HomeName y HomePath identifican la página de inicio, que siempre encabeza el menú.
+const (
+	HomeName = "Inicio"
+	HomePath = "/"
+)
+
+// Menu arma el menú para la dirección actual: Inicio primero y después las
+// secciones registradas, con la sección actual resaltada (HU-20a, T028).
+func (r *Registry) Menu(currentPath string) []MenuItem {
+	items := make([]MenuItem, 0, len(r.sections)+1)
+	items = append(items, MenuItem{Name: HomeName, Path: HomePath, Active: currentPath == HomePath})
+	for _, s := range r.sections {
+		active := currentPath == s.Path || strings.HasPrefix(currentPath, strings.TrimSuffix(s.Path, "/")+"/")
+		items = append(items, MenuItem{Name: s.Name, Path: s.Path, Active: active})
+	}
+	return items
+}
+
+// remove quita una sección (se usa si el registro de sus rutas falla).
+func (r *Registry) remove(path string) {
+	delete(r.paths, path)
+	for i, s := range r.sections {
+		if s.Path == path {
+			r.sections = append(r.sections[:i], r.sections[i+1:]...)
+			return
+		}
+	}
+}
