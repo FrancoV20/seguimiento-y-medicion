@@ -104,7 +104,7 @@
 - [X] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
 - [X] T033 [P] [US3] Escribir pruebas de handler: sin proyectos, "Aún no hay proyectos" y acceso a crear el primero solo si la sección Proyectos está registrada, en `src/web/context_handlers_test.go`
 - [X] T034 [P] [US3] Escribir la prueba con la base de datos caída: no se limpia la selección y se responde 503, en `src/web/context_middleware_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD de selección de proyecto en `test/context_bdd_test.go`
+- [x] T035 [P] [US3] Escribir los escenarios BDD de selección de proyecto en `test/context_bdd_test.go`
 
 ### Implementation for User Story 3
 
@@ -125,17 +125,17 @@
 
 ### Tests for User Story 4
 
-- [ ] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
+- [x] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
 - [ ] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
-- [ ] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
+- [x] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
 - [ ] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] Implementar `GET` y `POST /contexto/integrante` en `src/web/context_handlers.go`, validando que el integrante pertenezca al proyecto activo
-- [ ] T045 [US4] Crear `select_member.html` con el estado vacío en `src/web/templates/`
-- [ ] T046 [US4] Implementar en `src/web/context_middleware.go` el rechazo de acciones con integrante ajeno y la limpieza de identificación
-- [ ] T047 [US4] Mostrar el integrante activo y el enlace "Cambiar" en `src/web/templates/layout.html`
+- [x] T044 [US4] Implementar `GET` y `POST /contexto/integrante` en `src/web/context_handlers.go`, validando que el integrante pertenezca al proyecto activo
+- [x] T045 [US4] Crear `select_member.html` con el estado vacío en `src/web/templates/`
+- [x] T046 [US4] Implementar en `src/web/context_middleware.go` el rechazo de acciones con integrante ajeno y la limpieza de identificación
+- [x] T047 [US4] Mostrar el integrante activo y el enlace "Cambiar" en `src/web/templates/layout.html`
 
 **Checkpoint**: US4 identifica al integrante y deja listo el contexto para HU-14 y HU-24.
 

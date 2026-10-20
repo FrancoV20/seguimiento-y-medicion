@@ -8,6 +8,7 @@ import (
 const (
 	pathSelectProject = "/contexto/proyecto"
 	pathProjects      = "/proyectos"
+	pathSelectMember  = "/contexto/integrante"
 )
 
 // RegisterContext registra el middleware del contexto de trabajo y la pantalla de selección
@@ -17,6 +18,8 @@ func RegisterContext(s *Server, store ContextStore) {
 	s.Use(contextMiddleware(store, s.renderer))
 	s.HandleFunc("GET "+pathSelectProject, h.showProjects)
 	s.HandleFunc("POST "+pathSelectProject, h.selectProject)
+	s.HandleFunc("GET "+pathSelectMember, h.showMembers)
+	s.HandleFunc("POST "+pathSelectMember, h.selectMember)
 }
 
 type contextHandlers struct {
@@ -90,5 +93,72 @@ func (h *contextHandlers) selectProject(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 	setContextCookie(w, r, CookieProject, id)
+	RedirectSeeOther(w, r, returnTo)
+}
+
+// selectMemberData son los datos de la pantalla de identificación.
+type selectMemberData struct {
+	Members     []MemberSummary
+	ActiveID    int64
+	ReturnTo    string
+	ProjectName string
+	NoMembers   string
+}
+
+// requireProject devuelve el contexto activo; si no hay proyecto, redirige a elegirlo y
+// devuelve nil.
+func (h *contextHandlers) requireProject(w http.ResponseWriter, r *http.Request, returnTo string) *ActiveContext {
+	ac := ActiveContextFrom(r.Context())
+	if ac == nil || ac.ProjectID == 0 {
+		SetFlash(w, r, FlashWarning, MsgChooseProjectFirst)
+		RedirectSeeOther(w, r, pathSelectProject+"?volver_a="+url.QueryEscape(returnTo))
+		return nil
+	}
+	return ac
+}
+
+// showMembers muestra solo los integrantes del proyecto activo (T044).
+func (h *contextHandlers) showMembers(w http.ResponseWriter, r *http.Request) {
+	returnTo := h.returnTo(r.URL.Query().Get("volver_a"))
+	ac := h.requireProject(w, r, returnTo)
+	if ac == nil {
+		return
+	}
+	members, err := h.store.ListMembers(r.Context(), ac.ProjectID)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	h.server.renderer.Page(w, r, "select_member.html", PageData{
+		Title: TitleSelectMember,
+		Data: selectMemberData{
+			Members: members, ActiveID: ac.MemberID, ReturnTo: returnTo,
+			ProjectName: ac.ProjectName, NoMembers: MsgNoMembers,
+		},
+	})
+}
+
+// selectMember guarda la identificación (T044). Un integrante que no pertenece al proyecto
+// activo se rechaza, se limpia la identificación y se vuelve al selector con un mensaje.
+func (h *contextHandlers) selectMember(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	returnTo := h.returnTo(r.PostFormValue("volver_a"))
+	ac := h.requireProject(w, r, returnTo)
+	if ac == nil {
+		return
+	}
+	id := parseID(r.PostFormValue("integrante_id"))
+	resolved, err := h.store.ResolveContext(r.Context(), ac.ProjectID, id)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	if !resolved.MemberBelongs {
+		clearContextCookie(w, r, CookieMember)
+		SetFlash(w, r, FlashError, MsgMemberInvalid)
+		RedirectSeeOther(w, r, pathSelectMember+"?volver_a="+url.QueryEscape(returnTo))
+		return
+	}
+	setContextCookie(w, r, CookieMember, id)
 	RedirectSeeOther(w, r, returnTo)
 }

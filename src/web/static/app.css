@@ -65,3 +65,5 @@ body {
 .picker-list { border: 1px solid #ccc; border-radius: .25rem; padding: .5rem 1rem; margin: 0 0 1rem; max-width: 32rem; }
 .picker-item { margin: .35rem 0; }
 .picker-item label { cursor: pointer; }
+.app-context-links { margin-left: .75rem; font-size: .9em; }
+.app-context-links a { color: inherit; text-decoration: underline; }

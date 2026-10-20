@@ -88,7 +88,7 @@ Las pruebas deben cubrir como mínimo:
 2. Elegir proyecto e integrante y navegar entre secciones.
 3. Enviar un formulario de prueba válido, recargar y comprobar que no se duplica y que el mensaje
    de éxito no reaparece.
-4. Cerrar todas las ventanas del navegador, volver a abrir y comprobar que se pide elegir de nuevo.
+4. Abrir una ventana privada, elegir proyecto, cerrar todas las ventanas privadas y abrir otra: se pide elegir de nuevo (un navegador con ‘continuar donde lo dejaste’ conserva las cookies de sesión)
 
 ## Acceptance evidence
 
