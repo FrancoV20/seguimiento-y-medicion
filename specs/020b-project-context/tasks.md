@@ -53,7 +53,7 @@
 - [x] T013 [P] [US1] Escribir pruebas de errores de campo con valores conservados y del texto único `MsgOperationFailed` sin mensaje de éxito en `src/web/forms_test.go`
 - [x] T014 [P] [US1] Escribir la prueba de Post/Redirect/Get: respuesta 303 y recarga sin duplicar el registro en `src/web/forms_test.go`
 - [x] T015 [P] [US1] Escribir la prueba de formato de mensajes: cada tipo tiene su clase y una etiqueta de texto además del color, igual en todas las páginas de prueba, en `src/web/alert_test.go`
-- [ ] T016 [P] [US1] Escribir los escenarios BDD de mensajes y formularios en `test/web_forms_bdd_test.go`
+- [x] T016 [P] [US1] Escribir los escenarios BDD de mensajes y formularios en `test/web_forms_bdd_test.go`
 
 ### Implementation for User Story 1
 
