@@ -108,10 +108,10 @@
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Implementar el middleware de resolución de contexto (lee cookies, valida con `ResolveContext`, limpia lo inválido con `SetFlash`, completa el `ActiveContext`) en `src/web/context_middleware.go`
-- [ ] T037 [US3] Implementar `GET` y `POST /contexto/proyecto` (303, borra el integrante solo si el proyecto cambia) en `src/web/context_handlers.go`
-- [ ] T038 [US3] Crear `select_project.html` y el parcial `project_picker.html` con la lista y el estado vacío en `src/web/templates/`
-- [ ] T039 [US3] Registrar las rutas del contexto y el middleware con `Server.Register` y `Server.Use` en `src/cmd/server/main.go`
+- [x] T036 [US3] Implementar el middleware de resolución de contexto (lee cookies, valida con `ResolveContext`, limpia lo inválido con `SetFlash`, completa el `ActiveContext`) en `src/web/context_middleware.go`
+- [x] T037 [US3] Implementar `GET` y `POST /contexto/proyecto` (303, borra el integrante solo si el proyecto cambia) en `src/web/context_handlers.go`
+- [x] T038 [US3] Crear `select_project.html` y el parcial `project_picker.html` con la lista y el estado vacío en `src/web/templates/`
+- [x] T039 [US3] Registrar las rutas del contexto y el middleware con `Server.Register` y `Server.Use` en `src/cmd/server/main.go`
 
 **Checkpoint**: US3 permite elegir y mantener el proyecto activo; desbloquea a HU-22, HU-23 y HU-25.
 
