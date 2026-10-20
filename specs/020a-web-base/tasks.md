@@ -127,10 +127,10 @@
 - [X] T043 [P] Escribir una prueba de integración que cree una base descartable, aplique todos los `.up.sql` de `db/migrations/` en orden y la borre al terminar (nunca usa la base de desarrollo), para detectar huecos u orden incorrecto, en `db/migrations_integration_test.go`
 - [X] T044 [P] Documentar variables, arranque, apagado y la verificación manual de caída de la base en `specs/020a-web-base/quickstart.md`
 - [X] T045 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/errors.go` y `src/web/config.go`
-- [ ] T046 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T047 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T048 Coordinar con quien hace HU-20b que cada sección se registra con `Server.Register`, que `ActiveContext` y `Server.Use` son sus puntos de extensión y que HU-20b puede comenzar al cerrar US1 y US2
-- [ ] T049 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020a-web-base/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
+- [X] T046 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [X] T047 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [X] T048 Coordinar con quien hace HU-20b que cada sección se registra con `Server.Register`, que `ActiveContext` y `Server.Use` son sus puntos de extensión y que HU-20b puede comenzar al cerrar US1 y US2
+- [X] T049 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020a-web-base/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
 - [X] T050 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/020a-web-base/tasks.md`
 
 ---
