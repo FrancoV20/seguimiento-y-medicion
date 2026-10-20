@@ -126,7 +126,7 @@
 ### Tests for User Story 4
 
 - [x] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
-- [ ] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
+- [x] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
 - [x] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
 - [ ] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
 
@@ -150,14 +150,14 @@
 ### Tests for User Story 5
 
 - [x] T048 [P] [US5] Escribir pruebas por tabla del saneamiento de `volver_a` (`/`, `/backlog`, `//otro.com`, `https://x`, `\\x`, caracteres de control, sección no registrada) en `src/web/return_to_test.go`
-- [ ] T049 [P] [US5] Escribir pruebas de handler: sección protegida sin proyecto redirige con mensaje y regresa tras elegir; sección sin requisitos accesible, en `src/web/context_middleware_test.go`
-- [ ] T050 [P] [US5] Escribir los escenarios BDD de secciones protegidas en `test/context_bdd_test.go`
+- [x] T049 [P] [US5] Escribir pruebas de handler: sección protegida sin proyecto redirige con mensaje y regresa tras elegir; sección sin requisitos accesible, en `src/web/context_middleware_test.go`
+- [x] T050 [P] [US5] Escribir los escenarios BDD de secciones protegidas en `test/context_bdd_test.go`
 
 ### Implementation for User Story 5
 
 - [x] T051 [US5] Implementar el saneamiento del destino de regreso en `src/web/return_to.go`
-- [ ] T052 [US5] Implementar `RequireContext(section)` que redirige a `/contexto/proyecto` o `/contexto/integrante` con `volver_a` en `src/web/context_middleware.go`
-- [ ] T053 [US5] Aplicar `RequireContext` a las secciones según `RequiresProject` y `RequiresMember` al registrarlas, en `src/web/sections.go`
+- [x] T052 [US5] Implementar `RequireContext(section)` que redirige a `/contexto/proyecto` o `/contexto/integrante` con `volver_a` en `src/web/context_middleware.go`
+- [x] T053 [US5] Aplicar `RequireContext` a las secciones según `RequiresProject` y `RequiresMember` al registrarlas, en `src/web/sections.go`
 
 **Checkpoint**: US5 protege las secciones y vuelve al destino pedido de forma segura.
 

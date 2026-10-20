@@ -3,6 +3,7 @@ package web
 import (
 	"net/http"
 	"strings"
+	"net/url"
 )
 
 // contextMiddleware resuelve el contexto de trabajo en cada solicitud (HU-20b): lee las cookies,
@@ -64,4 +65,40 @@ func contextMiddleware(store ContextStore, rd *Renderer) func(http.Handler) http
 			next.ServeHTTP(w, r.WithContext(WithActiveContext(ctx, ac)))
 		})
 	}
+}
+// RequireContext protege una sección según RequiresProject y RequiresMember (HU-20b, T052).
+// Si falta el proyecto o el integrante, redirige con 303 a elegirlo, con un mensaje, y lleva el
+// destino de regreso para volver a esta sección. Una sección sin requisitos pasa sin cambios.
+// Un integrante siempre exige proyecto: sin proyecto se pide primero el proyecto.
+func RequireContext(section Section) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		if !section.RequiresProject && !section.RequiresMember {
+			return next
+		}
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ac := ActiveContextFrom(r.Context())
+			hasProject := ac != nil && ac.ProjectID != 0
+			hasMember := hasProject && ac.MemberID != 0
+			switch {
+			case !hasProject:
+				SetFlash(w, r, FlashWarning, MsgProjectRequired)
+				RedirectSeeOther(w, r, pathSelectProject+"?volver_a="+url.QueryEscape(returnDestination(r, section)))
+			case section.RequiresMember && !hasMember:
+				SetFlash(w, r, FlashWarning, MsgMemberRequired)
+				RedirectSeeOther(w, r, pathSelectMember+"?volver_a="+url.QueryEscape(returnDestination(r, section)))
+			default:
+				next.ServeHTTP(w, r)
+			}
+		})
+	}
+}
+
+// returnDestination es la dirección a la que se vuelve después de elegir: la misma pantalla si
+// se pidió con GET o HEAD; si fue un envío (POST...), la sección de origen, para volver por GET.
+// Los datos del formulario no se conservan (limitación aceptada, ver research.md).
+func returnDestination(r *http.Request, section Section) string {
+	if r.Method == http.MethodGet || r.Method == http.MethodHead {
+		return r.URL.RequestURI()
+	}
+	return strings.TrimSpace(section.Path)
 }
