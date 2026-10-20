@@ -45,3 +45,8 @@ body {
 .error-page { padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
 .error-page h1 { margin-top: 0; color: var(--danger); }
 .error-page a { color: var(--accent); }
+
+.app-context strong { color: var(--text); }
+.home-sections { padding-left: 1.25rem; }
+.home-sections a { color: var(--accent); }
+.muted { color: var(--muted); }

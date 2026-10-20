@@ -76,17 +76,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir pruebas del menú: solo secciones registradas, sección actual resaltada y nueva sección sin tocar el layout en `src/web/sections_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de que registrar dos secciones con la misma dirección hace fallar el arranque con un mensaje claro en `src/web/sections_test.go`
-- [ ] T025 [P] [US2] Escribir pruebas de la página renderizada: espacio de contexto "Sin proyecto seleccionado", `Content-Type` UTF-8 y texto con tildes, ñ y símbolos en `src/web/render_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba que verifica que el HTML no referencia otros orígenes y que `/static/app.css` se sirve localmente en `src/web/render_test.go`
-- [ ] T027 [P] [US2] Escribir los escenarios BDD de estructura y navegación en `test/web_base_bdd_test.go`
+- [X] T023 [P] [US2] Escribir pruebas del menú: solo secciones registradas, sección actual resaltada y nueva sección sin tocar el layout en `src/web/sections_test.go`
+- [X] T024 [P] [US2] Escribir la prueba de que registrar dos secciones con la misma dirección hace fallar el arranque con un mensaje claro en `src/web/sections_test.go`
+- [X] T025 [P] [US2] Escribir pruebas de la página renderizada: espacio de contexto "Sin proyecto seleccionado", `Content-Type` UTF-8 y texto con tildes, ñ y símbolos en `src/web/render_test.go`
+- [X] T026 [P] [US2] Escribir la prueba que verifica que el HTML no referencia otros orígenes y que `/static/app.css` se sirve localmente en `src/web/render_test.go`
+- [X] T027 [P] [US2] Escribir los escenarios BDD de estructura y navegación en `test/web_base_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Implementar plantillas embebidas, render a buffer y funciones auxiliares en `src/web/render.go`
-- [ ] T029 [US2] Crear `layout.html` y `home.html` en `src/web/templates/` con menú, resaltado y espacio de contexto
-- [ ] T030 [US2] Servir `/static/` desde los archivos embebidos en `src/web/server.go`
+- [X] T028 [US2] Implementar plantillas embebidas, render a buffer y funciones auxiliares en `src/web/render.go`
+- [X] T029 [US2] Crear `layout.html` y `home.html` en `src/web/templates/` con menú, resaltado y espacio de contexto
+- [X] T030 [US2] Servir `/static/` desde los archivos embebidos en `src/web/server.go`
 
 **Checkpoint**: US2 ofrece la estructura que HU-20b y HU-21 a HU-25 consumen.
 
@@ -100,20 +100,20 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas de 404 con estructura común y enlace al inicio para dirección inexistente y parámetro malformado, negativo o muy grande en `src/web/errors_test.go`
-- [ ] T032 [P] [US3] Escribir la prueba de que una plantilla que falla a mitad del render produce la página de error completa y nunca HTML parcial en `src/web/render_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de 405 con estructura común y servidor activo en `src/web/errors_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de pánico: página 500 genérica con estructura común, servidor activo, detalle solo en el log en `src/web/middleware_test.go`
-- [ ] T035 [P] [US3] Escribir la prueba que verifica que ninguna página de error contiene rutas, SQL, trazas ni el valor de `DATABASE_URL` en `src/web/errors_test.go`
-- [ ] T036 [P] [US3] Escribir la prueba de integración con un proxy TCP local que se pausa y reanuda delante de PostgreSQL: 503 con la base caída (estructura común sin consultar la base) y respuesta normal al volver, sin reiniciar, en `src/web/database_outage_integration_test.go`
-- [ ] T037 [P] [US3] Escribir los escenarios BDD de errores en `test/web_base_bdd_test.go`
+- [X] T031 [P] [US3] Escribir pruebas de 404 con estructura común y enlace al inicio para dirección inexistente y parámetro malformado, negativo o muy grande en `src/web/errors_test.go`
+- [X] T032 [P] [US3] Escribir la prueba de que una plantilla que falla a mitad del render produce la página de error completa y nunca HTML parcial en `src/web/render_test.go`
+- [X] T033 [P] [US3] Escribir la prueba de 405 con estructura común y servidor activo en `src/web/errors_test.go`
+- [X] T034 [P] [US3] Escribir la prueba de pánico: página 500 genérica con estructura común, servidor activo, detalle solo en el log en `src/web/middleware_test.go`
+- [X] T035 [P] [US3] Escribir la prueba que verifica que ninguna página de error contiene rutas, SQL, trazas ni el valor de `DATABASE_URL` en `src/web/errors_test.go`
+- [X] T036 [P] [US3] Escribir la prueba de integración con un proxy TCP local que se pausa y reanuda delante de PostgreSQL: 503 con la base caída (estructura común sin consultar la base) y respuesta normal al volver, sin reiniciar, en `src/web/database_outage_integration_test.go`
+- [X] T037 [P] [US3] Escribir los escenarios BDD de errores en `test/web_base_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Implementar `Fail`, `RenderError` y las páginas 404, 405, 500 y 503 con `error.html` en `src/web/errors.go` y `src/web/templates/error.html`
-- [ ] T039 [US3] Implementar el middleware de recuperación de pánicos con registro de la traza en `src/web/middleware.go`
-- [ ] T040 [US3] Detectar indisponibilidad de la base (error de conexión, `driver.ErrBadConn`, `context.DeadlineExceeded`) y mapearla a 503 en `src/web/errors.go`
-- [ ] T041 [US3] Envolver el `ServeMux` para que 404 y 405 usen la estructura común, verificando antes el comportamiento de `mux.Handler(r)` en Go 1.27.1 (ver Decision 10 de `research.md`), en `src/web/server.go`
+- [X] T038 [US3] Implementar `Fail`, `RenderError` y las páginas 404, 405, 500 y 503 con `error.html` en `src/web/errors.go` y `src/web/templates/error.html`
+- [X] T039 [US3] Implementar el middleware de recuperación de pánicos con registro de la traza en `src/web/middleware.go`
+- [X] T040 [US3] Detectar indisponibilidad de la base (error de conexión, `driver.ErrBadConn`, `context.DeadlineExceeded`) y mapearla a 503 en `src/web/errors.go`
+- [X] T041 [US3] Envolver el `ServeMux` para que 404 y 405 usen la estructura común, verificando antes el comportamiento de `mux.Handler(r)` en Go 1.27.1 (ver Decision 10 de `research.md`), en `src/web/server.go`
 - [ ] T042 [US3] [Extra] Agregar un tiempo máximo por solicitud con contexto en `src/web/middleware.go` (no es criterio de aceptación)
 
 **Checkpoint**: US3 mantiene el servidor en pie y sin filtrar detalles ante cualquier fallo.
@@ -124,14 +124,14 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T043 [P] Escribir una prueba de integración que cree una base descartable, aplique todos los `.up.sql` de `db/migrations/` en orden y la borre al terminar (nunca usa la base de desarrollo), para detectar huecos u orden incorrecto, en `db/migrations_integration_test.go`
-- [ ] T044 [P] Documentar variables, arranque, apagado y la verificación manual de caída de la base en `specs/020a-web-base/quickstart.md`
-- [ ] T045 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/errors.go` y `src/web/config.go`
-- [ ] T046 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T047 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T048 Coordinar con quien hace HU-20b que cada sección se registra con `Server.Register`, que `ActiveContext` y `Server.Use` son sus puntos de extensión y que HU-20b puede comenzar al cerrar US1 y US2
-- [ ] T049 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020a-web-base/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
-- [ ] T050 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/020a-web-base/tasks.md`
+- [X] T043 [P] Escribir una prueba de integración que cree una base descartable, aplique todos los `.up.sql` de `db/migrations/` en orden y la borre al terminar (nunca usa la base de desarrollo), para detectar huecos u orden incorrecto, en `db/migrations_integration_test.go`
+- [X] T044 [P] Documentar variables, arranque, apagado y la verificación manual de caída de la base en `specs/020a-web-base/quickstart.md`
+- [X] T045 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/errors.go` y `src/web/config.go`
+- [X] T046 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [X] T047 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [X] T048 Coordinar con quien hace HU-20b que cada sección se registra con `Server.Register`, que `ActiveContext` y `Server.Use` son sus puntos de extensión y que HU-20b puede comenzar al cerrar US1 y US2
+- [X] T049 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020a-web-base/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
+- [X] T050 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/020a-web-base/tasks.md`
 
 ---
 
@@ -222,9 +222,12 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 
 ## Trazabilidad
 
+Estado al cierre: todos los requisitos tienen al menos una prueba automatizada. T042 (tiempo
+máximo por solicitud) es `[Extra]`, no cubre ningún requisito y queda pendiente.
+
 | Requisito | Pruebas |
 |---|---|
-| FR-001 | T016 |
+| FR-001 | T016, T025 |
 | FR-002 | T010, T016 |
 | FR-003 | T011, T016 |
 | FR-004 | T011, T016, T035 |
@@ -232,7 +235,7 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 | FR-006 | T015, T016 |
 | FR-007 | T014 |
 | FR-008 | T025, T027 |
-| FR-009 | T023, T024, T027 |
+| FR-009 | T023, T024, T027 (incluye `Server.Register` con ruta en conflicto) |
 | FR-010 | T026 |
 | FR-011 | T025 |
 | FR-012 | T031, T037 |
@@ -247,4 +250,4 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 | SC-004 | T035 |
 | SC-005 | T036 |
 | SC-006 | T026 |
-| SC-007 | Verificación de tiempo en la prueba de la página de inicio (T016) |
+| SC-007 | T016 (`TestEscenarioWeb_PaginaDeInicioConMenu` falla si la página tarda más de 500 ms) |

@@ -1,0 +1,14 @@
+{{define "content"}}
+<h1>Inicio</h1>
+<p>Administrá proyectos de software: backlog, sprints, estimación, esfuerzo y métricas.</p>
+{{- if gt (len .Menu) 1}}
+<h2>Secciones</h2>
+<ul class="home-sections">
+  {{- range .Menu}}{{if ne .Path "/"}}
+  <li><a href="{{.Path}}">{{.Name}}</a></li>
+  {{- end}}{{end}}
+</ul>
+{{- else}}
+<p class="muted">Todavía no hay secciones disponibles.</p>
+{{- end}}
+{{end}}
