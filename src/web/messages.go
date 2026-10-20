@@ -26,4 +26,10 @@ const (
 	MsgProjectGone         = "El proyecto que tenías seleccionado ya no existe. Elegí otro."
 	MsgNoProjects          = "Aún no hay proyectos"
 	LinkCreateFirstProject = "Crear el primer proyecto"
+
+	TitleSelectMember     = "Identificarme"
+	MsgChooseProjectFirst = "Primero elegí un proyecto."
+	MsgMemberInvalid      = "El integrante elegido no pertenece al proyecto. Elegí uno de la lista."
+	MsgMemberGone         = "Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro."
+	MsgNoMembers          = "Este proyecto no tiene integrantes"
 )
