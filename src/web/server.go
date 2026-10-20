@@ -78,13 +78,56 @@ func (s *Server) Use(mw func(http.Handler) http.Handler) {
 	s.middlewares = append(s.middlewares, mw)
 }
 
-// Handler devuelve el handler completo con los middlewares aplicados.
+// Handler devuelve el handler completo: la recuperación de pánicos primero,
+// después los middlewares en el orden de Use y al final las rutas.
 func (s *Server) Handler() http.Handler {
-	var h http.Handler = s.mux
+	var h http.Handler = http.HandlerFunc(s.route)
 	for i := len(s.middlewares) - 1; i >= 0; i-- {
 		h = s.middlewares[i](h)
 	}
-	return h
+	return recoverPanics(s.logger, s.renderer, h)
+}
+
+// route atiende con el ServeMux y reemplaza sus respuestas 404 y 405 en texto
+// plano por las páginas de error con la estructura común (HU-20a, T041).
+func (s *Server) route(w http.ResponseWriter, r *http.Request) {
+	h, pattern := s.mux.Handler(r)
+	if pattern != "" {
+		s.mux.ServeHTTP(w, r) // ServeHTTP completa los valores de la ruta ({id})
+		return
+	}
+	// Sin patrón: el mux respondería 404 o 405. Se averigua cuál sin escribir nada.
+	probe := &statusProbe{header: http.Header{}}
+	h.ServeHTTP(probe, r)
+	if probe.status == http.StatusMethodNotAllowed {
+		if allow := probe.header.Get("Allow"); allow != "" {
+			w.Header().Set("Allow", allow)
+		}
+		s.renderer.RenderError(w, r, http.StatusMethodNotAllowed, TitleMethodNotAllowed, MsgMethodNotAllowed)
+		return
+	}
+	s.renderer.RenderError(w, r, http.StatusNotFound, TitleNotFound, MsgNotFound)
+}
+
+// statusProbe es un ResponseWriter que solo guarda el código y los encabezados.
+type statusProbe struct {
+	header http.Header
+	status int
+}
+
+func (p *statusProbe) Header() http.Header { return p.header }
+
+func (p *statusProbe) Write(b []byte) (int, error) {
+	if p.status == 0 {
+		p.status = http.StatusOK
+	}
+	return len(b), nil
+}
+
+func (p *statusProbe) WriteHeader(code int) {
+	if p.status == 0 {
+		p.status = code
+	}
 }
 
 // PortError explica por qué no se puede escuchar en la dirección configurada.

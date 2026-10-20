@@ -100,20 +100,20 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir pruebas de 404 con estructura común y enlace al inicio para dirección inexistente y parámetro malformado, negativo o muy grande en `src/web/errors_test.go`
-- [ ] T032 [P] [US3] Escribir la prueba de que una plantilla que falla a mitad del render produce la página de error completa y nunca HTML parcial en `src/web/render_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de 405 con estructura común y servidor activo en `src/web/errors_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de pánico: página 500 genérica con estructura común, servidor activo, detalle solo en el log en `src/web/middleware_test.go`
-- [ ] T035 [P] [US3] Escribir la prueba que verifica que ninguna página de error contiene rutas, SQL, trazas ni el valor de `DATABASE_URL` en `src/web/errors_test.go`
-- [ ] T036 [P] [US3] Escribir la prueba de integración con un proxy TCP local que se pausa y reanuda delante de PostgreSQL: 503 con la base caída (estructura común sin consultar la base) y respuesta normal al volver, sin reiniciar, en `src/web/database_outage_integration_test.go`
-- [ ] T037 [P] [US3] Escribir los escenarios BDD de errores en `test/web_base_bdd_test.go`
+- [X] T031 [P] [US3] Escribir pruebas de 404 con estructura común y enlace al inicio para dirección inexistente y parámetro malformado, negativo o muy grande en `src/web/errors_test.go`
+- [X] T032 [P] [US3] Escribir la prueba de que una plantilla que falla a mitad del render produce la página de error completa y nunca HTML parcial en `src/web/render_test.go`
+- [X] T033 [P] [US3] Escribir la prueba de 405 con estructura común y servidor activo en `src/web/errors_test.go`
+- [X] T034 [P] [US3] Escribir la prueba de pánico: página 500 genérica con estructura común, servidor activo, detalle solo en el log en `src/web/middleware_test.go`
+- [X] T035 [P] [US3] Escribir la prueba que verifica que ninguna página de error contiene rutas, SQL, trazas ni el valor de `DATABASE_URL` en `src/web/errors_test.go`
+- [X] T036 [P] [US3] Escribir la prueba de integración con un proxy TCP local que se pausa y reanuda delante de PostgreSQL: 503 con la base caída (estructura común sin consultar la base) y respuesta normal al volver, sin reiniciar, en `src/web/database_outage_integration_test.go`
+- [X] T037 [P] [US3] Escribir los escenarios BDD de errores en `test/web_base_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Implementar `Fail`, `RenderError` y las páginas 404, 405, 500 y 503 con `error.html` en `src/web/errors.go` y `src/web/templates/error.html`
-- [ ] T039 [US3] Implementar el middleware de recuperación de pánicos con registro de la traza en `src/web/middleware.go`
-- [ ] T040 [US3] Detectar indisponibilidad de la base (error de conexión, `driver.ErrBadConn`, `context.DeadlineExceeded`) y mapearla a 503 en `src/web/errors.go`
-- [ ] T041 [US3] Envolver el `ServeMux` para que 404 y 405 usen la estructura común, verificando antes el comportamiento de `mux.Handler(r)` en Go 1.27.1 (ver Decision 10 de `research.md`), en `src/web/server.go`
+- [X] T038 [US3] Implementar `Fail`, `RenderError` y las páginas 404, 405, 500 y 503 con `error.html` en `src/web/errors.go` y `src/web/templates/error.html`
+- [X] T039 [US3] Implementar el middleware de recuperación de pánicos con registro de la traza en `src/web/middleware.go`
+- [X] T040 [US3] Detectar indisponibilidad de la base (error de conexión, `driver.ErrBadConn`, `context.DeadlineExceeded`) y mapearla a 503 en `src/web/errors.go`
+- [X] T041 [US3] Envolver el `ServeMux` para que 404 y 405 usen la estructura común, verificando antes el comportamiento de `mux.Handler(r)` en Go 1.27.1 (ver Decision 10 de `research.md`), en `src/web/server.go`
 - [ ] T042 [US3] [Extra] Agregar un tiempo máximo por solicitud con contexto en `src/web/middleware.go` (no es criterio de aceptación)
 
 **Checkpoint**: US3 mantiene el servidor en pie y sin filtrar detalles ante cualquier fallo.

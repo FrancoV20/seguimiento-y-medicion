@@ -6,6 +6,7 @@ import (
 	"embed"
 	"fmt"
 	"html/template"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"path"
@@ -61,6 +62,7 @@ const AppName = "Software Metrics & Estimation"
 type Renderer struct {
 	registry *Registry
 	logger   *slog.Logger
+	files    fs.FS // plantillas; las pruebas pueden reemplazarlas
 
 	mu    sync.Mutex
 	pages map[string]*template.Template
@@ -68,12 +70,13 @@ type Renderer struct {
 
 // NewRenderer crea el renderizador; el menú se arma con registry.
 func NewRenderer(registry *Registry, logger *slog.Logger) *Renderer {
-	return &Renderer{registry: registry, logger: logger, pages: map[string]*template.Template{}}
+	return &Renderer{registry: registry, logger: logger, files: templateFiles, pages: map[string]*template.Template{}}
 }
 
 var templateFuncs = template.FuncMap{
 	"appName":   func() string { return AppName },
 	"noProject": func() string { return MsgNoProjectSelected },
+	"backHome":  func() string { return LinkBackHome },
 }
 
 // page devuelve layout.html + la plantilla pedida, parseadas una sola vez.
@@ -83,7 +86,7 @@ func (rd *Renderer) page(name string) (*template.Template, error) {
 	if t, ok := rd.pages[name]; ok {
 		return t, nil
 	}
-	t, err := template.New("layout.html").Funcs(templateFuncs).ParseFS(templateFiles, "templates/layout.html", path.Join("templates", name))
+	t, err := template.New("layout.html").Funcs(templateFuncs).ParseFS(rd.files, "templates/layout.html", path.Join("templates", name))
 	if err != nil {
 		return nil, fmt.Errorf("plantilla %q: %w", name, err)
 	}
@@ -119,6 +122,11 @@ func (rd *Renderer) PageStatus(w http.ResponseWriter, r *http.Request, status in
 	}
 	if err != nil {
 		rd.logger.Error("no se pudo construir la página", "plantilla", name, "ruta", r.URL.Path, "detalle", err.Error())
+		if name != errorTemplate {
+			rd.RenderError(w, r, http.StatusInternalServerError, TitleInternal, MsgInternal)
+			return
+		}
+		// Si falla la propia página de error, queda un texto plano genérico.
 		http.Error(w, MsgInternal, http.StatusInternalServerError)
 		return
 	}
