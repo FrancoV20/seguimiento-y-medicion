@@ -50,3 +50,15 @@ body {
 .home-sections { padding-left: 1.25rem; }
 .home-sections a { color: var(--accent); }
 .muted { color: var(--muted); }
+/* HU-20b: mensajes y formularios */
+.alert { margin: 0 0 1rem; padding: .75rem 1rem; border: 1px solid; border-left-width: .35rem; border-radius: .25rem; }
+.alert-label { margin-right: .25rem; }
+.alert-success { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; }
+.alert-error { background: #fdecea; border-color: #c62828; color: #7f1d1d; }
+.alert-warning { background: #fff8e1; border-color: #b26a00; color: #5d3a00; }
+.field { margin: 0 0 1rem; }
+.field label { display: block; font-weight: 600; margin-bottom: .25rem; }
+.field input { width: 100%; max-width: 32rem; padding: .4rem .5rem; box-sizing: border-box; }
+.field-invalid input { border: 2px solid #c62828; }
+.field-error { margin: .25rem 0 0; color: #7f1d1d; }
+.field-error-label { font-weight: 700; }

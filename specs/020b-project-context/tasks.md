@@ -22,7 +22,7 @@
 - [x] T002 [P] Verificar que HU-20a expone `Section` (con `RequiresProject` y `RequiresMember`), `Server.Register`, `Server.Use`, `PageData`, `ActiveContext`, `Fail` y `RenderError`
 - [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y que `001` está aplicada con `migrate -path db/migrations -database $env:DATABASE_URL up`
 - [x] T004 Confirmar con `go doc net/http.CrossOriginProtection` la API disponible en Go 1.27.1 y registrar el resultado en `specs/020b-project-context/research.md`
-- [ ] T005 [P] Crear el auxiliar de pruebas que registra tres secciones de prueba (sin requisitos, con `RequiresProject` y con `RequiresMember`) y un formulario de prueba en `src/web/testhelpers_test.go`
+- [x] T005 [P] Crear el auxiliar de pruebas que registra tres secciones de prueba (sin requisitos, con `RequiresProject` y con `RequiresMember`) y un formulario de prueba en `src/web/testhelpers_test.go`
 
 ---
 
@@ -49,18 +49,18 @@
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Escribir pruebas de `flash`: se muestra una sola vez, se borra al leerse y se renderiza escapado en `src/web/flash_test.go`
-- [ ] T013 [P] [US1] Escribir pruebas de errores de campo con valores conservados y del texto único `MsgOperationFailed` sin mensaje de éxito en `src/web/forms_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de Post/Redirect/Get: respuesta 303 y recarga sin duplicar el registro en `src/web/forms_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de formato de mensajes: cada tipo tiene su clase y una etiqueta de texto además del color, igual en todas las páginas de prueba, en `src/web/alert_test.go`
+- [x] T012 [P] [US1] Escribir pruebas de `flash`: se muestra una sola vez, se borra al leerse y se renderiza escapado en `src/web/flash_test.go`
+- [x] T013 [P] [US1] Escribir pruebas de errores de campo con valores conservados y del texto único `MsgOperationFailed` sin mensaje de éxito en `src/web/forms_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de Post/Redirect/Get: respuesta 303 y recarga sin duplicar el registro en `src/web/forms_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de formato de mensajes: cada tipo tiene su clase y una etiqueta de texto además del color, igual en todas las páginas de prueba, en `src/web/alert_test.go`
 - [ ] T016 [P] [US1] Escribir los escenarios BDD de mensajes y formularios en `test/web_forms_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implementar `SetFlash` y la lectura con borrado en `src/web/flash.go`
-- [ ] T018 [US1] Implementar `FormView` y los partials `alert.html` y `field.html` en `src/web/forms.go` y `src/web/templates/partials/`
-- [ ] T019 [US1] Implementar el auxiliar de redirección 303 después de un envío válido en `src/web/forms.go`
-- [ ] T020 [US1] Agregar `Flash` y `Form` a `PageData`, mostrar las alertas en `layout.html` y agregar al final de `app.css` los estilos de mensajes (éxito, error, advertencia) y de campos con error
+- [x] T017 [US1] Implementar `SetFlash` y la lectura con borrado en `src/web/flash.go`
+- [x] T018 [US1] Implementar `FormView` y los partials `alert.html` y `field.html` en `src/web/forms.go` y `src/web/templates/partials/`
+- [x] T019 [US1] Implementar el auxiliar de redirección 303 después de un envío válido en `src/web/forms.go`
+- [x] T020 [US1] Agregar `Flash` y `Form` a `PageData`, mostrar las alertas en `layout.html` y agregar al final de `app.css` los estilos de mensajes (éxito, error, advertencia) y de campos con error
 
 **Checkpoint**: US1 deja los componentes que HU-21 a HU-25 reutilizan; con US1 y US2 HU-21 ya puede comenzar.
 

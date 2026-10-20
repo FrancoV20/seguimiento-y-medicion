@@ -37,6 +37,8 @@ type PageData struct {
 	Menu    []MenuItem
 	Context *ActiveContext
 	Data    any
+	Flash   *Flash
+	Form    *FormView
 }
 
 type activeContextKey struct{}
@@ -114,6 +116,11 @@ func (rd *Renderer) PageStatus(w http.ResponseWriter, r *http.Request, status in
 	if data.Context == nil {
 		data.Context = ActiveContextFrom(r.Context())
 	}
+	_, cookieErr := r.Cookie(CookieFlash)
+	hadFlashCookie := cookieErr == nil
+	if data.Flash == nil && hadFlashCookie {
+		data.Flash = flashFromRequest(r)
+	}
 
 	var buf bytes.Buffer
 	t, err := rd.page(name)
@@ -129,6 +136,9 @@ func (rd *Renderer) PageStatus(w http.ResponseWriter, r *http.Request, status in
 		// Si falla la propia página de error, queda un texto plano genérico.
 		http.Error(w, MsgInternal, http.StatusInternalServerError)
 		return
+	}
+	if hadFlashCookie {
+		clearContextCookie(w, r, CookieFlash) // el mensaje se muestra una sola vez
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(status)
