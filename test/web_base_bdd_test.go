@@ -2,13 +2,16 @@ package test
 
 import (
 	"context"
+	"database/sql/driver"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -251,4 +254,114 @@ func leer(t *testing.T, url string) string {
 	defer resp.Body.Close()
 	b, _ := io.ReadAll(resp.Body)
 	return string(b)
+}
+
+// Servidor con las rutas que usan los escenarios de errores.
+func servidorParaErrores(baseCaida *atomic.Bool) http.Handler {
+	s := web.NewServer(silencioso())
+	s.HandleFunc("GET /algo/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id, err := web.PathID(r, "id")
+		if err != nil {
+			s.Renderer().Fail(w, r, err)
+			return
+		}
+		fmt.Fprintf(w, "algo %d", id)
+	})
+	s.HandleFunc("GET /falla", func(http.ResponseWriter, *http.Request) { panic("fallo inesperado") })
+	s.HandleFunc("GET /datos", func(w http.ResponseWriter, r *http.Request) {
+		if baseCaida.Load() {
+			s.Renderer().Fail(w, r, fmt.Errorf("consultar datos: %w", driver.ErrBadConn))
+			return
+		}
+		s.Renderer().Page(w, r, "home.html", web.PageData{Title: "Datos"})
+	})
+	return s.Handler()
+}
+
+func estado(t *testing.T, url, method string) (int, string) {
+	t.Helper()
+	req, _ := http.NewRequest(method, url, nil)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("%s %s: %v", method, url, err)
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return resp.StatusCode, string(b)
+}
+
+// US3 - Escenario 1 (T037, FR-012).
+func TestEscenarioWeb_DireccionInexistenteOMalformadaDa404(t *testing.T) {
+	// Dado el servidor en ejecución
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	for _, path := range []string{"/no-existe", "/algo/abc"} {
+		// Cuando solicito una dirección que no existe o con un parámetro malformado
+		code, body := estado(t, srv.URL+path, http.MethodGet)
+
+		// Entonces veo la página 404 con la estructura común y un enlace al inicio, nunca un 500
+		if code != http.StatusNotFound || !strings.Contains(body, "<nav") || !strings.Contains(body, `href="/"`) {
+			t.Errorf("%s: se esperaba 404 con estructura común, se obtuvo %d", path, code)
+		}
+	}
+}
+
+// US3 - Escenario 2 (T037, FR-013).
+func TestEscenarioWeb_MetodoNoSoportadoDa405(t *testing.T) {
+	// Dado una dirección existente
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	// Cuando la solicito con un método no soportado
+	code, body := estado(t, srv.URL+"/", http.MethodPost)
+
+	// Entonces veo la página 405 con la estructura común y el servidor sigue en ejecución
+	if code != http.StatusMethodNotAllowed || !strings.Contains(body, "<nav") {
+		t.Errorf("se esperaba 405 con estructura común, se obtuvo %d", code)
+	}
+	if code, _ := estado(t, srv.URL+"/", http.MethodGet); code != http.StatusOK {
+		t.Error("el servidor debe seguir respondiendo después del 405")
+	}
+}
+
+// US3 - Escenario 3 (T037, FR-014).
+func TestEscenarioWeb_FalloInesperadoDa500Generico(t *testing.T) {
+	// Dado una pantalla que falla de forma inesperada
+	srv := httptest.NewServer(servidorParaErrores(new(atomic.Bool)))
+	defer srv.Close()
+
+	// Cuando la solicito
+	code, body := estado(t, srv.URL+"/falla", http.MethodGet)
+
+	// Entonces veo una página 500 genérica y el servidor sigue en ejecución
+	if code != http.StatusInternalServerError || strings.Contains(body, "fallo inesperado") || !strings.Contains(body, `href="/"`) {
+		t.Errorf("se esperaba un 500 genérico con enlace al inicio, se obtuvo %d", code)
+	}
+	if code, _ := estado(t, srv.URL+"/", http.MethodGet); code != http.StatusOK {
+		t.Error("el servidor debe seguir respondiendo después del fallo")
+	}
+}
+
+// US3 - Escenarios 4 y 5 (T037, FR-015).
+func TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar(t *testing.T) {
+	// Dado que el servidor está en ejecución y la base de datos deja de responder
+	baseCaida := new(atomic.Bool)
+	srv := httptest.NewServer(servidorParaErrores(baseCaida))
+	defer srv.Close()
+	baseCaida.Store(true)
+
+	// Cuando solicito una página que necesita la base
+	code, body := estado(t, srv.URL+"/datos", http.MethodGet)
+
+	// Entonces veo la página 503 sin detalles internos
+	if code != http.StatusServiceUnavailable || !strings.Contains(body, "El servicio no está disponible temporalmente") {
+		t.Errorf("se esperaba 503 con el mensaje de servicio no disponible, se obtuvo %d", code)
+	}
+
+	// Y cuando la base vuelve a responder, funciona sin reiniciar el servidor
+	baseCaida.Store(false)
+	if code, _ := estado(t, srv.URL+"/datos", http.MethodGet); code != http.StatusOK {
+		t.Errorf("al volver la base se esperaba 200, se obtuvo %d", code)
+	}
 }

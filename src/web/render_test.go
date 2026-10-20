@@ -1,11 +1,13 @@
 package web
 
 import (
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
 	"strings"
 	"testing"
+	"testing/fstest"
 )
 
 // T025: estructura común, contexto vacío, UTF-8 y caracteres especiales (FR-008, FR-011).
@@ -95,3 +97,35 @@ func TestStatic_SirveLosEstilosLocales(t *testing.T) {
 }
 
 var recursoCSSExterno = regexp.MustCompile(`(?i)(@import|url\()\s*["']?\s*(https?:)?//`)
+
+// T032: una plantilla que falla a mitad del render da la página de error completa (FR-017).
+
+func TestPage_FalloAMitadDelRenderMuestraPaginaDeErrorCompleta(t *testing.T) {
+	archivo := func(name string) *fstest.MapFile {
+		b, err := fs.ReadFile(templateFiles, "templates/"+name)
+		if err != nil {
+			t.Fatalf("no se pudo leer la plantilla %s: %v", name, err)
+		}
+		return &fstest.MapFile{Data: b}
+	}
+	rd := NewRenderer(NewRegistry(), quietLogger())
+	rd.files = fstest.MapFS{
+		"templates/layout.html": archivo("layout.html"),
+		"templates/error.html":  archivo("error.html"),
+		"templates/rota.html":   {Data: []byte(`{{define "content"}}<p>contenido parcial</p>{{.Data.NoExiste}}{{end}}`)},
+	}
+	rec := httptest.NewRecorder()
+
+	rd.Page(rec, httptest.NewRequest(http.MethodGet, "/", nil), "rota.html", PageData{Title: "Rota", Data: struct{}{}})
+
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("se esperaba 500, se obtuvo %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if strings.Contains(body, "contenido parcial") {
+		t.Error("no debe enviarse el HTML que se alcanzó a generar antes del fallo")
+	}
+	if !strings.Contains(body, TitleInternal) || !strings.Contains(body, "</html>") {
+		t.Error("debe enviarse la página de error completa con la estructura común")
+	}
+}
