@@ -20,4 +20,10 @@ const (
 
 	TitleForbidden = "Solicitud rechazada"
 	MsgForbidden   = "La solicitud se rechazó porque no se originó en esta aplicación."
+
+	TitleSelectProject     = "Elegir proyecto"
+	MsgProjectInvalid      = "El proyecto elegido no existe o no es válido. Elegí uno de la lista."
+	MsgProjectGone         = "El proyecto que tenías seleccionado ya no existe. Elegí otro."
+	MsgNoProjects          = "Aún no hay proyectos"
+	LinkCreateFirstProject = "Crear el primer proyecto"
 )

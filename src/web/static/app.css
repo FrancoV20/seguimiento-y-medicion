@@ -62,3 +62,6 @@ body {
 .field-invalid input { border: 2px solid #c62828; }
 .field-error { margin: .25rem 0 0; color: #7f1d1d; }
 .field-error-label { font-weight: 700; }
+.picker-list { border: 1px solid #ccc; border-radius: .25rem; padding: .5rem 1rem; margin: 0 0 1rem; max-width: 32rem; }
+.picker-item { margin: .35rem 0; }
+.picker-item label { cursor: pointer; }

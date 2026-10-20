@@ -116,6 +116,9 @@ func (rd *Renderer) PageStatus(w http.ResponseWriter, r *http.Request, status in
 	if data.Context == nil {
 		data.Context = ActiveContextFrom(r.Context())
 	}
+	if data.Flash == nil {
+		data.Flash = pendingFlashFrom(r.Context())
+	}
 	_, cookieErr := r.Cookie(CookieFlash)
 	hadFlashCookie := cookieErr == nil
 	if data.Flash == nil && hadFlashCookie {

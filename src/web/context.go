@@ -49,11 +49,7 @@ func readIDCookie(r *http.Request, name string) (id int64, present bool) {
 	if err != nil {
 		return 0, false
 	}
-	n, err := strconv.ParseInt(c.Value, 10, 64)
-	if err != nil || !validID(n) || strconv.FormatInt(n, 10) != c.Value {
-		return 0, true
-	}
-	return n, true
+	return parseID(c.Value), true
 }
 
 // requestIsHTTPS indica si la solicitud llegó por HTTPS.
@@ -83,4 +79,14 @@ func clearContextCookie(w http.ResponseWriter, r *http.Request, name string) {
 	c.MaxAge = -1
 	c.Expires = time.Unix(0, 0)
 	http.SetCookie(w, c)
+}
+
+// parseID convierte un texto en identificador. Devuelve 0 si no es un entero canónico entre
+// 1 y MaxID (vacío, no numérico, negativo, muy grande, con signo o con ceros a la izquierda).
+func parseID(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	if err != nil || !validID(n) || strconv.FormatInt(n, 10) != s {
+		return 0
+	}
+	return n
 }

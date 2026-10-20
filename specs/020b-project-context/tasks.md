@@ -76,7 +76,7 @@
 
 - [x] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
 - [x] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
-- [ ] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
+- [x] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
 - [x] T024 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
 
 ### Implementation for User Story 2
@@ -99,11 +99,11 @@
 ### Tests for User Story 3
 
 - [x] T029 [P] [US3] Escribir pruebas de lectura de cookies (no numérica, negativa, muy grande, vacía) tratadas como ausencia en `src/web/context_test.go`
-- [ ] T030 [P] [US3] Escribir pruebas de handler con `cookiejar`: seleccionar proyecto y ver su nombre en el layout, mantenerlo entre secciones y que no se autoselecciona con un solo proyecto, en `src/web/context_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir pruebas de handler con `cookiejar`: cambiar de proyecto limpia el integrante, volver a elegir el mismo lo conserva y una cookie de sesión nueva vuelve a pedir el proyecto, en `src/web/context_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir pruebas de handler: sin proyectos, "Aún no hay proyectos" y acceso a crear el primero solo si la sección Proyectos está registrada, en `src/web/context_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba con la base de datos caída: no se limpia la selección y se responde 503, en `src/web/context_middleware_test.go`
+- [X] T030 [P] [US3] Escribir pruebas de handler con `cookiejar`: seleccionar proyecto y ver su nombre en el layout, mantenerlo entre secciones y que no se autoselecciona con un solo proyecto, en `src/web/context_handlers_test.go`
+- [X] T031 [P] [US3] Escribir pruebas de handler con `cookiejar`: cambiar de proyecto limpia el integrante, volver a elegir el mismo lo conserva y una cookie de sesión nueva vuelve a pedir el proyecto, en `src/web/context_handlers_test.go`
+- [X] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
+- [X] T033 [P] [US3] Escribir pruebas de handler: sin proyectos, "Aún no hay proyectos" y acceso a crear el primero solo si la sección Proyectos está registrada, en `src/web/context_handlers_test.go`
+- [X] T034 [P] [US3] Escribir la prueba con la base de datos caída: no se limpia la selección y se responde 503, en `src/web/context_middleware_test.go`
 - [ ] T035 [P] [US3] Escribir los escenarios BDD de selección de proyecto en `test/context_bdd_test.go`
 
 ### Implementation for User Story 3

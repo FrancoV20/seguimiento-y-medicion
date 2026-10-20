@@ -80,3 +80,5 @@ func (r *Registry) remove(path string) {
 		}
 	}
 }
+// Has indica si hay una sección registrada con esa dirección.
+func (r *Registry) Has(path string) bool { return r.paths[path] }

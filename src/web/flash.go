@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"unicode/utf8"
+	"context"
 )
 
 // CookieFlash es la cookie del mensaje de una sola vista (HU-20b).
@@ -86,4 +87,16 @@ func flashFromRequest(r *http.Request) *Flash {
 		return nil
 	}
 	return &Flash{Kind: kind, Text: text}
+}
+type pendingFlashKey struct{}
+
+// withPendingFlash lleva una advertencia detectada en esta solicitud (por ejemplo, un
+// proyecto que ya no existe) para mostrarla en la misma respuesta.
+func withPendingFlash(ctx context.Context, f *Flash) context.Context {
+	return context.WithValue(ctx, pendingFlashKey{}, f)
+}
+
+func pendingFlashFrom(ctx context.Context) *Flash {
+	f, _ := ctx.Value(pendingFlashKey{}).(*Flash)
+	return f
 }

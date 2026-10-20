@@ -65,7 +65,9 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	if warning != "" {
 		logger.Warn(warning)
 	}
-
+	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
+	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
+	
 	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
 		return fail(err.Error())
 	}
