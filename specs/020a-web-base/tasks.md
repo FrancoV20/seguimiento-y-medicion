@@ -124,14 +124,14 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T043 [P] Escribir una prueba de integración que cree una base descartable, aplique todos los `.up.sql` de `db/migrations/` en orden y la borre al terminar (nunca usa la base de desarrollo), para detectar huecos u orden incorrecto, en `db/migrations_integration_test.go`
-- [ ] T044 [P] Documentar variables, arranque, apagado y la verificación manual de caída de la base en `specs/020a-web-base/quickstart.md`
-- [ ] T045 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/errors.go` y `src/web/config.go`
+- [X] T043 [P] Escribir una prueba de integración que cree una base descartable, aplique todos los `.up.sql` de `db/migrations/` en orden y la borre al terminar (nunca usa la base de desarrollo), para detectar huecos u orden incorrecto, en `db/migrations_integration_test.go`
+- [X] T044 [P] Documentar variables, arranque, apagado y la verificación manual de caída de la base en `specs/020a-web-base/quickstart.md`
+- [X] T045 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/errors.go` y `src/web/config.go`
 - [ ] T046 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T047 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [ ] T048 Coordinar con quien hace HU-20b que cada sección se registra con `Server.Register`, que `ActiveContext` y `Server.Use` son sus puntos de extensión y que HU-20b puede comenzar al cerrar US1 y US2
 - [ ] T049 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020a-web-base/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
-- [ ] T050 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/020a-web-base/tasks.md`
+- [X] T050 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/020a-web-base/tasks.md`
 
 ---
 
@@ -222,9 +222,12 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 
 ## Trazabilidad
 
+Estado al cierre: todos los requisitos tienen al menos una prueba automatizada. T042 (tiempo
+máximo por solicitud) es `[Extra]`, no cubre ningún requisito y queda pendiente.
+
 | Requisito | Pruebas |
 |---|---|
-| FR-001 | T016 |
+| FR-001 | T016, T025 |
 | FR-002 | T010, T016 |
 | FR-003 | T011, T016 |
 | FR-004 | T011, T016, T035 |
@@ -232,7 +235,7 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 | FR-006 | T015, T016 |
 | FR-007 | T014 |
 | FR-008 | T025, T027 |
-| FR-009 | T023, T024, T027 |
+| FR-009 | T023, T024, T027 (incluye `Server.Register` con ruta en conflicto) |
 | FR-010 | T026 |
 | FR-011 | T025 |
 | FR-012 | T031, T037 |
@@ -247,4 +250,4 @@ T037: Escenarios BDD en test/web_base_bdd_test.go
 | SC-004 | T035 |
 | SC-005 | T036 |
 | SC-006 | T026 |
-| SC-007 | Verificación de tiempo en la prueba de la página de inicio (T016) |
+| SC-007 | T016 (`TestEscenarioWeb_PaginaDeInicioConMenu` falla si la página tarda más de 500 ms) |
