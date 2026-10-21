@@ -66,9 +66,10 @@
 ## Decision 7: Sin Story Points es una advertencia, no un error
 
 - **Decision**: Sin Story Points la historia se crea y, como después se redirige, la advertencia se
-  muestra con `SetFlash` de tipo advertencia, con el texto de HU-02 si lo define. Como el mensaje de
-  una sola vista es único, el texto combina la confirmación y la advertencia (por ejemplo "Historia
-  creada. Falta completar la estimación").
+  muestra con `SetFlash` de tipo advertencia. Como el mensaje de una sola vista es único, el texto
+  combina la confirmación y la advertencia: "Historia creada correctamente. Falta completar la
+  estimación de Story Points" (propuesta del equipo; si HU-02 define otro texto, se usa ese). Sin
+  horas estimadas no hay advertencia: la columna dice "Sin estimar".
 - **Rationale**: HU-02 permite crearla igual; la advertencia no puede quedar "junto al campo" porque
   el formulario ya no se muestra. En la lista, la historia aparece con "Sin estimar".
 - **A verificar** (T001): cómo devuelve HU-02 la advertencia y su texto.
@@ -101,10 +102,13 @@
 
 ## Decision 11: Lista simple y "Sin estimar"
 
-- **Decision**: La lista muestra título, prioridad, Story Points y estado, ordenada por `id`
-  descendente, sin paginación. Un valor ausente de Story Points se muestra "Sin estimar".
+- **Decision**: La lista muestra identificador, título, prioridad, Story Points, horas estimadas y
+  estado, ordenada por `id` descendente, sin paginación. Un valor ausente de Story Points o de horas
+  se muestra "Sin estimar".
 - **Rationale**: Es lo mínimo para verificar el alta; cero sería engañoso para una historia sin
-  estimar. HU-13 define el orden por prioridad y los filtros.
+  estimar. El enunciado pide que cada historia muestre su identificador y HU-23 lo necesita para
+  elegir historias. El orden por `id` descendente es provisional y no es un criterio de aceptación:
+  HU-13 define el orden por prioridad y los filtros y reemplaza la prueba de orden.
 - **Alternatives considered**: Ordenar por prioridad ahora (descartada: es alcance de HU-13).
 
 ## Decision 12: Estrategia de pruebas
@@ -126,12 +130,37 @@
   HU-07 la lee. Sin este campo ninguna pantalla del Sprint 2 permite cargarla (HU-17 no tiene
   interfaz) y la desviación de esfuerzo de HU-25 mostraría siempre "No disponible" en la demo.
 - **Atención**: la columna es `NUMERIC(6,2)`, que redondea sin error un valor con más de dos
-  decimales (1,555 pasa a 1,56). La validación tiene que hacerse antes de guardar, en HU-02 o con la
-  regla de HU-17, y no en la base. Si HU-02 no la hace, HU-22 usa la regla de HU-17 en lugar de
-  escribir una propia, para que haya una sola.
+  decimales (1,555 pasa a 1,56). La validación tiene que hacerse antes de guardar, en el dominio y no en
+  la base, que solo exige `estimated_hours > 0`. Si HU-02 no la hace, se agrega en el dominio, junto
+  a su regla, para que haya una sola que HU-17 reutilice.
+- **Regla de horas**: las horas ya forman parte del alta de HU-02, así que HU-22 no depende de
+  HU-17; HU-17 reutiliza la misma regla y mensaje al modificarlas. El formulario acepta coma o punto como separador decimal, no admite separadores
+  de miles y muestra el valor con coma.
 - **Alternatives considered**: Una pantalla de interfaz separada para HU-17 (descartada: otra historia
   que no está en el sprint); no cargarlas desde la web (descartada por lo anterior).
 - **A verificar** (T001): si HU-02 acepta y valida las horas estimadas al crear, y cómo trata la coma
   decimal.
 - **Sin límite de largo en título y descripción**: las columnas son `TEXT`, por lo que no hay
   validación de largo. Un límite sería una decisión de producto aparte.
+
+## Decision 14: Máximo de horas estimadas
+
+- **Decision**: Se rechazan las horas mayores que 9999,99 con "Las horas estimadas no pueden superar
+  9999,99" junto al campo.
+- **Rationale**: La columna `estimated_hours` es `NUMERIC(6,2)`; una cifra mayor fallaría al guardar
+  con un error genérico ("La operación no pudo completarse") que engaña a quien la ingresó. El tope
+  se escribe en el dominio, junto a la regla de horas de HU-02, no en el handler, para que haya una
+  sola regla.
+- **Pendiente del equipo**: el valor es una propuesta (el máximo de la columna); el equipo puede
+  fijar un tope de negocio menor.
+- **Alternatives considered**: Dejar que la base falle (descartada: mensaje engañoso); validar solo
+  en el handler (descartada: dos copias de la regla).
+
+## Decision 15: Quitar criterios
+
+- **Decision**: "Quitar" elimina el campo de criterio elegido; con un solo campo restante no hace
+  nada visible y el formulario se vuelve a mostrar con los datos escritos.
+- **Rationale**: Una historia sin campo de criterio no se podría completar sin recargar la página, y
+  HU-02 exige al menos un criterio.
+- **Alternatives considered**: Permitir quitar todos los campos (descartada: deja un formulario sin
+  forma de agregar el primer criterio sin una acción extra).

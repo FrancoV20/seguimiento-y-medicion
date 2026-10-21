@@ -1,7 +1,7 @@
 # Specification Quality Checklist: Interfaz web del Product Backlog
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-10-18
+**Created**: 2026-10-18 | **Revised**: 2026-10-21
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -47,9 +47,21 @@
   advertencia por falta de Story Points y si valida las horas estimadas (tarea T001).
 - Decisión: el formulario carga las horas estimadas opcionales al crear la historia, porque la columna
   ya existe y HU-17 no tiene interfaz en el Sprint 2; modificarlas después es de HU-17.
-- Estimación sugerida para el Planning Poker: 3 Story Points, ajustada si se vota otro valor. Lo más
-  caro es la lista con su catálogo y los criterios dinámicos; el patrón de formulario, lista y
-  pruebas se reutiliza de HU-21. El campo de horas estimadas suma poco si HU-02 ya las valida; si
-  T001 muestra que hay que escribir la regla, conviene revisar la estimación.
+- Revisión del 21/10/2026: la spec pasó de 9 a 18 escenarios, uno por regla, todos simples (sin
+  esquemas): criterios dinámicos separado en agregar, quitar y no quitar el último; datos inválidos
+  separado en título, descripción, prioridad, Story Points y horas; se agregaron sin horas, horas con
+  coma y horas por encima del máximo (9999,99).
+- Se sacaron del Issue "Sin proyecto activo al guardar" (HU-20b), "Recarga" (HU-20b) y "Error al leer"
+  (HU-20a); siguen con prueba propia (T029, T016 y T037). El orden de la lista es de HU-13: el que
+  tiene hoy es provisional.
+- No depende de HU-17: las horas estimadas ya forman parte del alta de HU-02 (la migración `002` tiene la
+  columna); HU-17 reutiliza la regla. El máximo de 9999,99 y los textos
+  propios ("Historia creada correctamente", mensaje combinado, Story Points inválidos) son una
+  propuesta del equipo.
+- La lista muestra el identificador (el enunciado lo pide); no muestra descripción ni criterios.
+- Estimación sugerida para el Planning Poker: 3 Story Points, a revisar: con 18 escenarios y 52 tareas
+  conviene confirmarla. Lo más caro es la lista con su catálogo, los criterios dinámicos y las reglas
+  de horas; el patrón de formulario, lista y pruebas se reutiliza de HU-21.
+- Los títulos repetidos se permiten (HU-02 no define unicidad) y quedan como caso límite.
 
 All checklist items pass. The feature is ready for `/speckit-plan`.

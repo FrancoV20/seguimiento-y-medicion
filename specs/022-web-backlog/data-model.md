@@ -10,7 +10,9 @@ través del servicio y el store existentes. La lista lee las historias del proye
   estimated_hours NUMERIC(6,2), created_at TIMESTAMPTZ)`.
   - `priority` solo admite `'Alta'`, `'Media'` o `'Baja'`.
   - `story_points` es opcional y solo admite 1, 2, 3, 5, 8, 13, 21, 34, 55 u 89.
-  - `status` solo admite `'Pendiente'`, `'En progreso'` o `'Hecho'`.
+  - `status` solo admite los estados del ciclo de vida: `'Pendiente'`, `'En Sprint'`, `'En progreso'` y
+    `'Hecho'` (la migración `002` define tres y una migración posterior agrega `'En Sprint'`; se
+    confirma en T004). Esta historia solo crea historias `'Pendiente'`.
   - `estimated_hours` es opcional y debe ser mayor que 0.
   - `title` y `description` no pueden estar en blanco y no tienen límite de largo.
 - `acceptance_criteria(id BIGSERIAL PK, story_id BIGINT REFERENCES user_stories(id) ON DELETE
@@ -22,17 +24,18 @@ Notas:
 - `user_stories.project_id` no tiene borrado en cascada: eliminar un proyecto con historias falla. Las
   pruebas borran primero las historias (los criterios caen en cascada) y después el proyecto.
 - `NUMERIC(6,2)` redondea sin error un valor con más de dos decimales (1,555 pasa a 1,56): la
-  validación debe hacerse antes de guardar (HU-02 o HU-17; se confirma en T001).
+  validación debe hacerse antes de guardar, en el dominio (HU-02; se confirma en T001). La base solo
+  exige `estimated_hours > 0`.
 
 ## Datos leídos (definidos por HU-02)
 
 - Historia del Backlog: identificador, proyecto al que pertenece, título, descripción, prioridad,
   Story Points (puede faltar), horas estimadas (pueden faltar) y estado (`'Pendiente'`,
-  `'En progreso'` o `'Hecho'`).
+  `'En Sprint'`, `'En progreso'` o `'Hecho'`).
 - Criterios de aceptación de la historia: uno o más textos con su posición (`acceptance_criteria`).
 
-Esta pantalla muestra título, prioridad, Story Points, horas estimadas y estado; no muestra
-descripción ni criterios.
+Esta pantalla muestra identificador, título, prioridad, Story Points, horas estimadas y estado; no
+muestra descripción ni criterios (verlos y editarlos es de HU-13).
 
 ## StoryForm
 
@@ -43,7 +46,7 @@ Datos del envío, para conservarlos al volver a mostrar el formulario.
 - `title`, `description`: texto de cada campo.
 - `priority`: valor elegido entre `Alta`, `Media` y `Baja`.
 - `storyPoints`: valor elegido entre 1, 2, 3, 5, 8, 13, 21, 34, 55 y 89, o vacío.
-- `estimatedHours`: texto ingresado (puede estar vacío).
+- `estimatedHours`: texto ingresado, con coma o punto (puede estar vacío).
 - `criteria`: lista ordenada de textos de criterios, uno por campo mostrado.
 
 ### Rules
@@ -69,7 +72,10 @@ Resultado de armar el envío para invocar el alta.
 - Story Points vacío es válido (se crea con advertencia); un valor que no es válido para HU-02 genera
   un error junto al campo.
 - Horas estimadas vacías son válidas y no generan advertencia; cero, negativas, no numéricas o con más
-  de dos decimales generan un error junto al campo (regla de HU-02 y HU-17, se confirma en T001).
+  de dos decimales generan un error junto al campo (regla del dominio de HU-02, que HU-17 reutiliza; se confirma en T001); un valor
+  mayor que 9999,99 genera el error del máximo.
+- La coma y el punto se aceptan como separador decimal; no se admiten separadores de miles. El valor
+  se guarda sin redondeo y se muestra con coma.
 - Las demás reglas (título, descripción, prioridad, al menos un criterio) las aplica HU-02.
 
 ## FormAction
@@ -104,7 +110,8 @@ Fila de la lista del Backlog.
 
 ### Rules
 
-- Se ordenan por `id` descendente (las más recientes primero).
+- Se ordenan por `id` descendente (las más recientes primero); es un orden provisional que HU-13
+  reemplaza.
 - Solo incluye historias del proyecto pedido.
 
 ## FieldErrors
@@ -119,11 +126,15 @@ Mensajes de error por campo para `FormView` de HU-20b.
 ### Messages
 
 - Título, descripción, prioridad y criterios: los de HU-02, sin cambios.
-- Story Points inválidos: el de HU-02 si lo define, o un mensaje propio de HU-22.
-- Horas estimadas inválidas: el de HU-02 o HU-17 ("El valor de horas no es válido") si lo definen, o
-  un mensaje propio de HU-22.
-- Éxito: mensaje de alta (`MsgStoryCreated`), tomado de HU-02 si lo define.
-- Advertencia por falta de Story Points: la de HU-02 si la define (`MsgMissingStoryPoints`).
+- Story Points inválidos: el de HU-02 si lo define, o `MsgInvalidStoryPoints` ("Los Story Points no
+  son un valor válido"), propio de HU-22.
+- Horas estimadas inválidas: el de HU-02 si lo define; si no, "El valor de horas no es válido" (el mismo
+  texto de HU-03 y HU-17).
+- Horas estimadas por encima del máximo: `MsgHoursTooLarge` ("Las horas estimadas no pueden superar
+  9999,99"), propio de HU-22.
+- Éxito: `MsgStoryCreated` ("Historia creada correctamente"), tomado de HU-02 si lo define.
+- Advertencia por falta de Story Points: `MsgStoryCreatedMissingPoints` ("Historia creada
+  correctamente. Falta completar la estimación de Story Points"), o la de HU-02 si la define.
 - Falla de guardado: `MsgOperationFailed` de HU-20b.
 
 ## StoryCatalog

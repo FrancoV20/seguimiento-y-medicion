@@ -1,6 +1,6 @@
 # Implementation Plan: Interfaz web del Product Backlog
 
-**Branch**: `HU-22` | **Date**: 2026-10-18 | **Spec**: [spec.md](spec.md)
+**Branch**: `HU-22` | **Date**: 2026-10-18 (revisada 2026-10-21) | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from [spec.md](spec.md)
 
@@ -12,7 +12,8 @@ exige proyecto activo, así que HU-20b redirige a la selección cuando falta. El
 reglas de negocio: arma la lista de criterios (agregar, quitar, ignorar en blanco), delega el alta en
 el caso de uso de HU-02 con el proyecto del contexto del servidor y traduce sus errores a mensajes
 junto a cada campo. Un adaptador `PostgreSQLStoryCatalog` propio de HU-22 lee las historias del
-proyecto. No agrega migraciones, no usa JavaScript y no modifica HU-20a, HU-20b ni HU-21.
+proyecto. Las horas estimadas se validan en el dominio (HU-02, con los límites de dos decimales y 9999,99
+que HU-17 reutiliza), no en el handler. No agrega migraciones, no usa JavaScript y no modifica HU-20a, HU-20b ni HU-21.
 
 > **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
 > 1. La ruta del paquete de HU-02 y las firmas de su servicio de alta y de su store; los tipos de
@@ -22,7 +23,10 @@ proyecto. No agrega migraciones, no usa JavaScript y no modifica HU-20a, HU-20b 
 > 2. Cómo devuelve HU-02 la advertencia por falta de Story Points y el estado inicial `'Pendiente'`.
 > 3. Que la migración `002` en `main` siga igual al esquema confirmado en `data-model.md`
 >    (`user_stories` y `acceptance_criteria`).
-> 4. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` (también para `POST`),
+> 4. Si el alta de HU-02 ya valida las horas estimadas (más allá del `CHECK > 0` de la base): más de
+>    dos decimales, coma decimal y máximo de 9999,99, y con qué mensaje; lo que falte se agrega en el
+>    dominio, no en el handler.
+> 5. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` (también para `POST`),
 >    `ActiveContextFrom`, `SetFlash`, `FormView`, parciales `alert.html` y `field.html`.
 
 ## Technical Context
@@ -51,7 +55,7 @@ validación de HU-02 sin cambios, ningún detalle interno en las respuestas, los
 se conservan ante cualquier error, y el proyecto de la historia sale siempre del contexto del
 servidor.
 
-**Scale/Scope**: Una pantalla (formulario y lista mínima) y una ruta con dos métodos. No incluye
+**Scale/Scope**: Una pantalla (formulario y lista mínima) y una ruta con dos métodos; 18 escenarios. No incluye
 orden por prioridad, filtros ni edición (HU-13), asignación a Sprints (HU-23) ni modificar las horas
 estimadas después del alta (HU-17).
 
@@ -129,11 +133,12 @@ RequiresProject: true}`.
 3. `agregar_criterio`: agregar un campo vacío y volver a mostrar el formulario (200), sin guardar.
    `quitar_criterio:N`: quitar ese campo, salvo que sea el último, y volver a mostrar el formulario
    (200), sin guardar.
-4. `guardar`: ignorar criterios en blanco, parsear los Story Points y las horas estimadas (vacíos son válidos) e invocar el
+4. `guardar`: ignorar criterios en blanco, parsear los Story Points y las horas estimadas (vacíos son
+   válidos; coma o punto como decimal, sin separador de miles) e invocar el
    servicio de HU-02 con el proyecto de `ActiveContext`. El campo de proyecto del formulario, si
    llega, se descarta.
-5. Éxito: `SetFlash` de éxito (o de advertencia si faltan Story Points) y redirección 303 a
-   `/backlog`.
+5. Éxito: `SetFlash` de éxito ("Historia creada correctamente") o, si faltan Story Points, de
+   advertencia con el mensaje combinado; sin horas no hay advertencia. Redirección 303 a `/backlog`.
 6. Error de validación de HU-02: mensaje junto al campo correspondiente y respuesta 422 con el
    formulario y los datos conservados.
 7. Cualquier otro error: `MsgOperationFailed` con los datos conservados y respuesta 500. Si la lectura
@@ -141,7 +146,7 @@ RequiresProject: true}`.
 
 ### Mapeo de errores de HU-02 a campos (se confirma en T001)
 
-| Error de HU-02 | Campo |
+| Error | Campo |
 | --- | --- |
 | Título obligatorio | `titulo` |
 | Descripción obligatoria | `descripcion` |
@@ -149,6 +154,7 @@ RequiresProject: true}`.
 | Sin criterios de aceptación | `criterio` (grupo de criterios) |
 | Story Points inválidos | `story_points` |
 | Horas estimadas inválidas | `horas_estimadas` |
+| Horas estimadas por encima de 9999,99 | `horas_estimadas` |
 | Cualquier otro | Mensaje general `MsgOperationFailed` |
 
 ### Contratos que consume
