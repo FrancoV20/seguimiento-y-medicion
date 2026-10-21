@@ -128,7 +128,7 @@
 - [x] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
 - [x] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
 - [x] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
-- [ ] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
+- [X] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
 
 ### Implementation for User Story 4
 
@@ -167,14 +167,14 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T054 [P] Documentar en `specs/020b-project-context/quickstart.md` los datos de prueba reales una vez confirmado el esquema de `001`
-- [ ] T055 [P] Registrar la deuda técnica "roles (Scrum Master y Product Builder) sin distinguir" en `docs/` o en el backlog para la retrospectiva
-- [ ] T056 [P] Revisar que errores y mensajes de formularios y del contexto no expongan detalles internos en `src/web/context_handlers.go` y `src/web/forms.go`
-- [ ] T057 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T058 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T059 Avisar al equipo que HU-21 puede comenzar al cerrar US1 y US2, y que HU-14 y HU-22 a HU-25 pueden usar el contexto al cerrar US3 a US5
-- [ ] T060 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020b-project-context/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
-- [ ] T061 Revisar trazabilidad de FR-001 a FR-024 y SC-001 a SC-012 en `specs/020b-project-context/tasks.md`
+- [x] T054 [P] Documentar en `specs/020b-project-context/quickstart.md` los datos de prueba reales una vez confirmado el esquema de `001`
+- [x] T055 [P] Registrar la deuda técnica "roles (Scrum Master y Product Builder) sin distinguir" en `docs/` o en el backlog para la retrospectiva
+- [x] T056 [P] Revisar que errores y mensajes de formularios y del contexto no expongan detalles internos en `src/web/context_handlers.go` y `src/web/forms.go`
+- [x] T057 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T058 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T059 Avisar al equipo que HU-21 puede comenzar al cerrar US1 y US2, y que HU-14 y HU-22 a HU-25 pueden usar el contexto al cerrar US3 a US5
+- [x] T060 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020b-project-context/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
+- [x] T061 Revisar trazabilidad de FR-001 a FR-024 y SC-001 a SC-012 en `specs/020b-project-context/tasks.md`
 
 ---
 
@@ -293,19 +293,19 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | Requisito | Pruebas |
 |---|---|
 | FR-001 | T015, T016 |
-| FR-002 | T013, T016 |
+| FR-002 | T013 (el BDD con formulario real llega con HU-21) |
 | FR-003 | T013, T016 |
 | FR-004 | T012, T014, T016 |
 | FR-005 | T021, T023 |
 | FR-006 | T022, T023 |
 | FR-007 | T030, T035 |
 | FR-008 | T009, T030, T035 |
-| FR-009 | T030, T031 |
+| FR-009 | T030, T031, T035 |
 | FR-010 | T033, T035 |
-| FR-011 | T030 |
-| FR-012 | T031 |
-| FR-013 | T032 |
-| FR-014 | T032 |
+| FR-011 | T030, T035 |
+| FR-012 | T031, T035 |
+| FR-013 | T032, T035 |
+| FR-014 | T032, T035 |
 | FR-015 | T009, T040, T043 |
 | FR-016 | T041, T043 |
 | FR-017 | T042, T043 |
@@ -313,9 +313,9 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | FR-019 | T049, T050 |
 | FR-020 | T048, T050 |
 | FR-021 | T049, T050 |
-| FR-022 | T029, T032 |
+| FR-022 | T029, T032, T042 |
 | FR-023 | T009, T032, T042 |
-| FR-024 | T034 |
+| FR-024 | T034, T056 |
 | SC-001 | T015 |
 | SC-002 | T013 |
 | SC-003 | T014 |
@@ -328,3 +328,16 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | SC-010 | T048 |
 | SC-011 | No automatizable: se verifica en el chequeo manual de `quickstart.md` |
 | SC-012 | Verificación de tiempo de `ResolveContext` en T009 |
+
+## Escenarios de quickstart.md y pruebas que los cubren
+
+| Grupo del quickstart | Pruebas |
+|---|---|
+| 1. Mensajes y formularios | flash_test.go, forms_test.go, alert_test.go, web_forms_bdd_test.go |
+| 2. Seguridad | escape_test.go, security_test.go, web_forms_bdd_test.go (el límite de cuerpo 413 es extra: no implementado) |
+| 3. Selección de proyecto | context_handlers_test.go, context_bdd_test.go |
+| 4. Datos inválidos | context_test.go, context_handlers_test.go, context_member_test.go |
+| 5. Identificación del integrante | context_member_test.go, context_bdd_test.go |
+| 6. Secciones protegidas | context_guard_test.go, return_to_test.go, context_bdd_test.go |
+| 7. Disponibilidad | context_handlers_test.go (base caída), context_errors_test.go |
+| 8. PostgreSQL | postgres_context_store_integration_test.go |
