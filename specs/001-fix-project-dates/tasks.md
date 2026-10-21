@@ -10,7 +10,7 @@
 
 Las pruebas se escriben antes que el código (RED → GREEN → REFACTOR).
 
-- [ ] T001 Revisar HU-01 en `main`: archivo y función donde se valida el rango de fechas, mensaje actual, nombre de la restricción `CHECK` de la tabla `projects` (`\d projects` en `psql`), y último número de migración. Buscar los tests y fixtures que crean proyectos con fecha de inicio igual a la de fin, en todo el repositorio: `Get-ChildItem -Recurse -Include *.go | Select-String "StartDate"` y revisar cada uno. Anotar el resultado en `specs/001-*/data-model.md`.
+- [x] T001 Revisar HU-01 en `main`: archivo y función donde se valida el rango de fechas, mensaje actual, nombre de la restricción `CHECK` de la tabla `projects` (`\d projects` en `psql`), y último número de migración. Buscar los tests y fixtures que crean proyectos con fecha de inicio igual a la de fin, en todo el repositorio: `Get-ChildItem -Recurse -Include *.go | Select-String "StartDate"` y revisar cada uno. Anotar el resultado en `specs/001-*/data-model.md`.
 - [ ] T002 [P] Escribir las pruebas unitarias de la regla: fin anterior falla, fin igual falla, fin un día posterior se crea, en el archivo de pruebas del servicio de HU-01.
 - [ ] T003 [P] Escribir la prueba de integración del `ProjectStore` contra PostgreSQL: guardar con fechas iguales falla por la restricción y no deja filas.
 - [ ] T004 [P] Actualizar los escenarios BDD de HU-01: el de fecha igual pasa a rechazo y se agrega el de un día posterior.
