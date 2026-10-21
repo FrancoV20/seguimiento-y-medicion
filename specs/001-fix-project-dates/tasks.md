@@ -35,7 +35,7 @@ Las pruebas se escriben antes que el código (RED → GREEN → REFACTOR).
   ALTER TABLE projects ADD CONSTRAINT projects_end_not_before_start CHECK (end_date >= start_date);
   ```
   Verificar el `.up.sql` y el `.down.sql` con `migrate up`, `migrate down 1` y `migrate up` de nuevo.
-- [ ] T007 Corregir los tests y fixtures que usaban fechas iguales (los de T001), cambiando la fecha de fin a una posterior. Ninguna prueba de otra historia debe depender de la regla vieja.
+- [x] T007 Corregir los tests y fixtures que usaban fechas iguales (los de T001), cambiando la fecha de fin a una posterior. Ninguna prueba de otra historia debe depender de la regla vieja.
 - [ ] T008 Actualizar la documentación: `specs/001-*/spec.md` (escenario, requisito y caso borde de fechas), `quickstart.md`, `tasks.md`, y el texto de HU-01 en el documento de planificación y en el Issue de HU-01.
 - [ ] T009 Ejecutar `go test -count=1 -p 1 ./...` completo y guardar la salida final en `specs/001-*/evidencia-fix-fechas.txt`, junto con la salida inicial con las pruebas nuevas fallando (`evidencia-fix-fechas-red.txt`).
 - [ ] T010 Pull Request desde `FIX-HU-01` revisado por otro integrante. Al integrarlo, avisar al equipo que corra `migrate up`.

@@ -12,7 +12,7 @@ import (
 func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
-		databaseURL =  "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
+		databaseURL = "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
 	}
 
 	db, err := sql.Open("pgx", databaseURL)
@@ -51,7 +51,7 @@ func TestPostgreSQLMetricsStoreLoadsAndSavesMetrics(t *testing.T) {
 	var projectID, memberID, sprintID, storyID int64
 	if err := db.QueryRow(`
 		INSERT INTO projects (name, start_date, end_date)
-		VALUES ('Metrics integration test', CURRENT_DATE, CURRENT_DATE)
+		VALUES ('Metrics integration test', CURRENT_DATE, CURRENT_DATE + INTERVAL '1 day')
 		RETURNING id`).Scan(&projectID); err != nil {
 		t.Fatalf("insert project fixture: %v", err)
 	}
