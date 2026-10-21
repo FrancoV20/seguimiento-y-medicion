@@ -5,8 +5,9 @@
 - Go 1.27.1 instalado; verificar con `go version`.
 - Docker Desktop instalado y en ejecución.
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
-- HU-01, HU-20a y HU-20b (US1 y US2) integradas en `main`; en tu rama, traerlas con
-  `git merge origin/main`.
+- HU-01, FIX-HU-01, HU-20a y HU-20b (US1 y US2) integradas en `main`; en tu rama, traerlas con
+  `git merge origin/main` y aplicar las migraciones nuevas (la de FIX-HU-01 cambia la restricción de
+  fechas de `projects`).
 - Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml`
   o `docker-compose.override.yml` (por ejemplo 5432 o 5433):
   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
@@ -35,9 +36,9 @@ $env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_m
 go run ./src/cmd/server
 ```
 
-Esta feature no agrega migraciones. La semilla no es una migración y no consume número; si alguna
-vez hiciera falta una migración, toma el último número de `main` más uno (hoy la próxima es la 008),
-sin importar el número de la historia.
+Esta feature no agrega migraciones (la de FIX-HU-01 ya viene en `main`). La semilla no es una
+migración y no consume número; si alguna vez hiciera falta una migración, toma el último número de
+`main` más uno, sin importar el número de la historia.
 
 ## Run the tests
 
@@ -55,7 +56,9 @@ Las pruebas deben cubrir como mínimo:
 
 1. Alta válida:
    - proyecto con nombre, integrantes y fechas: mensaje de éxito y aparece en la lista;
-   - misma fecha de inicio y de fin: se crea;
+   - misma fecha de inicio y de fin: se rechaza (FIX-HU-01) con el mensaje de fechas junto a la
+     fecha de fin, datos conservados y sin crear;
+   - fecha de fin un día posterior a la de inicio: se crea;
    - recargar la página después de crear: no se duplica ni se repite el mensaje;
    - crear no cambia el proyecto activo.
 2. Integrantes disponibles:
@@ -63,11 +66,11 @@ Las pruebas deben cubrir como mínimo:
    - sin integrantes cargados: "No hay integrantes disponibles" y no se puede crear;
    - identificadores repetidos se toman una vez.
 3. Errores de validación:
-   - nombre vacío, fechas inconsistentes y sin integrantes: mensajes exactos de HU-01, cada uno
-     junto a su campo, datos conservados, sin crear;
-   - fecha de inicio o de fin faltante: indica cuál falta;
-   - fecha con formato inválido;
-   - integrante no numérico o inexistente.
+   - nombre vacío o solo espacios, fecha de fin anterior a la de inicio y sin integrantes: mensajes de
+     HU-01, cada uno junto a su campo, datos conservados, sin crear;
+   - fecha de inicio vacía: "Falta la fecha de inicio"; fecha de fin vacía: "Falta la fecha de fin";
+   - fecha con formato inválido: "La fecha no tiene un formato válido";
+   - integrante no numérico o inexistente: "El integrante seleccionado no es válido".
 4. Falla de guardado:
    - "La operación no pudo completarse", datos conservados, sin mensaje de éxito y sin el
      proyecto en la lista.
@@ -91,6 +94,12 @@ En la Sprint Review, con 5 personas que no hayan visto la pantalla:
 3. Anotar si lo lograron en el primer intento (sin ver un mensaje de error).
 4. Guardar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt` con una línea por
    persona: tiempo y si fue al primer intento, más el promedio y el porcentaje de éxito.
+
+## Manual breve de usuario
+
+Agregar al manual breve de usuario del repositorio (en la ruta que acordó el equipo) la sección
+"Gestión de Proyectos": cómo crear un proyecto, qué significa cada mensaje de error y que la fecha
+de fin debe ser posterior a la de inicio. Incluir una captura de la pantalla.
 
 ## Acceptance evidence
 

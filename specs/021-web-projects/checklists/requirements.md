@@ -44,5 +44,14 @@
 - Estimación sugerida para el Planning Poker: 5 Story Points (a confirmar con el equipo). Era 3
   cuando se asumía que HU-20b entregaba la lista y los integrantes; ahora incluye el catálogo
   propio, el parseo de fechas e integrantes y la semilla.
+- Revisión del 20/10/2026: el Issue tiene 12 escenarios, uno por regla (los de error van separados,
+  como en HU-01) y se prueban por separado (T019 a T022). Recarga y falla de lectura
+  son de HU-20b y HU-20a, y se prueban con tests de handler (T012 y T031).
+- La fecha de fin igual a la de inicio ahora se rechaza (FIX-HU-01). HU-21 depende de ese fix.
+- Textos literales de los mensajes propios y del éxito: propuesta del equipo (`data-model.md`).
+- El apellido "Betitol" del seed coincide con el README; el PDF de planificación dice "Bettiol".
+  Confirmar cuál es el correcto antes de la demo.
+- Las secciones SDD (objetivo, entradas, salidas, reglas, restricciones, casos límite y errores) y la
+  tabla de trazabilidad están en `spec.md`.
 
 All checklist items pass. The feature is ready for `/speckit-plan`.

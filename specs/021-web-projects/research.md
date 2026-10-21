@@ -121,3 +121,30 @@
   como "La operación no pudo completarse", que confunde.
 - **Alternatives considered**: Dejar que falle el guardado (aceptable si el equipo prioriza el
   alcance, porque ya cae en el mensaje general sin exponer detalles).
+
+## Decision 14: Fecha de fin igual a la de inicio se rechaza (FIX-HU-01)
+
+- **Decision**: HU-21 no define la regla: usa la de HU-01 con el cambio de FIX-HU-01 y muestra su
+  mensaje junto a la fecha de fin. No hay validación propia en el handler.
+- **Rationale**: El equipo decidió el 20/10/2026 que la fecha de fin debe ser posterior a la de
+  inicio, igual que en los Sprints (HU-04); un proyecto de un solo día no podría contener ningún
+  Sprint. Una única copia de la regla evita divergencias con HU-11.
+- **Alternatives considered**: Rechazarlo solo en el handler (descartada: dos copias de la regla y el
+  alta por otro camino quedaría sin regla).
+- **Consecuencia**: HU-21 no se puede integrar antes de FIX-HU-01; T001 lo verifica y T011 falla si
+  no está.
+
+## Decision 15: Textos literales de los mensajes propios
+
+- **Decision**: Los mensajes propios de HU-21 y el de éxito tienen texto fijo (ver `data-model.md`) y
+  viven como constantes en `projects_form.go`.
+- **Rationale**: Un criterio que dice "veo el mensaje" sin texto no se puede verificar con
+  exactitud; con constantes, cambiar un texto es un solo lugar.
+- **Pendiente**: si el equipo define un patrón de mensajes de éxito en HU-20b, se alinea.
+
+## Decision 16: Nombre del menú y título de la pantalla
+
+- **Decision**: La sección del menú se llama "Proyectos" y la pantalla se titula "Gestión de
+  Proyectos", como en HU-01.
+- **Rationale**: Las tareas registraban "Proyectos" y los criterios decían "Gestión de Proyectos"; se
+  deja explícito para que las pruebas busquen el texto correcto en cada lugar.

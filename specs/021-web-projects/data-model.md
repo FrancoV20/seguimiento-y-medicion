@@ -10,7 +10,8 @@ tablas `projects`, `project_members` y `members`. Los integrantes se cargan con
 - `members(id SERIAL PK, display_name VARCHAR(255) NOT NULL)`: catálogo global; el nombre no es
   único.
 - `projects(id SERIAL PK, name VARCHAR(255) NOT NULL, start_date DATE NOT NULL, end_date DATE NOT
-  NULL, status VARCHAR(50) DEFAULT 'Activo')` con `CHECK (end_date >= start_date)`.
+  NULL, status VARCHAR(50) DEFAULT 'Activo')` con `CHECK (end_date > start_date)` desde FIX-HU-01
+  (antes `>=`).
 - `project_members(project_id, member_id)` con clave primaria compuesta y borrado en cascada.
 
 `projects.status` no se usa en esta historia.
@@ -87,12 +88,15 @@ Mensajes de error por campo para `FormView` de HU-20b.
 
 ### Messages
 
-- Nombre, fechas inconsistentes y sin integrantes: los de HU-01, sin cambios.
-- Fecha faltante: indica cuál falta.
-- Formato de fecha inválido: mensaje propio de HU-21 (`MsgInvalidDateFormat`).
-- Integrante no válido: mensaje propio de HU-21 (`MsgInvalidMember`).
+- Nombre, fecha de fin anterior o igual a la de inicio (FIX-HU-01) y sin integrantes: los de HU-01,
+  sin cambios; se toman de su código (T001).
+- Fecha faltante: "Falta la fecha de inicio" o "Falta la fecha de fin" (`MsgMissingStartDate`,
+  `MsgMissingEndDate`; propuesta).
+- Formato de fecha inválido: "La fecha no tiene un formato válido" (`MsgInvalidDateFormat`).
+- Integrante no válido: "El integrante seleccionado no es válido" (`MsgInvalidMember`).
 - Sin integrantes cargados: "No hay integrantes disponibles" (`MsgNoMembersAvailable`).
-- Éxito: mensaje de alta (`MsgProjectCreated`), tomado de HU-01 si lo define.
+- Éxito: "Proyecto creado correctamente" (`MsgProjectCreated`; propuesta, salvo que HU-01 ya
+  defina otro texto).
 - Falla de guardado: `MsgOperationFailed` de HU-20b.
 
 ## ProjectCatalog

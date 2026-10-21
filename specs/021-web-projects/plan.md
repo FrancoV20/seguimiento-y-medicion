@@ -12,7 +12,8 @@ duplica reglas de negocio: valida solo el formato del envío (fechas `AAAA-MM-DD
 de integrantes, duplicados), delega el alta en el caso de uso de HU-01 y traduce sus errores a
 mensajes junto a cada campo. Un adaptador `PostgreSQLProjectCatalog` propio de HU-21 lee la lista
 de proyectos y el catálogo de integrantes. Los integrantes se cargan con un script semilla. No
-agrega migraciones ni modifica HU-20a ni HU-20b.
+agrega migraciones ni modifica HU-20a ni HU-20b. La regla de fechas (fin posterior al inicio) es
+de HU-01 con **FIX-HU-01**, que debe estar en `main` antes de integrar esta historia.
 
 > **Supuestos a verificar antes de implementar (T001 y T002)**:
 > 1. La ruta del paquete de HU-01 y las firmas de `ProjectService.CreateProject` y `ProjectStore`
@@ -22,6 +23,8 @@ agrega migraciones ni modifica HU-20a ni HU-20b.
 > 3. HU-20a y HU-20b (US1 y US2) están en `main`: `Server.Register`, `Renderer.Page`, `Fail`,
 >    `RenderError`, `SetFlash`, `FormView`, los parciales `alert.html` y `field.html`, y la
 >    protección contra envíos de otro origen.
+> 4. FIX-HU-01 está en `main`: el servicio rechaza una fecha de fin igual o anterior a la de inicio
+>    y la migración que lo refuerza en la base ya se aplicó (`migrate up`).
 
 ## Technical Context
 
@@ -45,7 +48,7 @@ con `net/http/httptest` sobre el `ProjectService` y la base reales, escenarios B
 **Performance Goals**: La pantalla responde en menos de 500 ms bajo uso normal (SC-006).
 
 **Constraints**: Sin migraciones ni dependencias nuevas; reglas y mensajes de validación de HU-01
-sin cambios; ningún detalle interno en las respuestas; los datos del formulario se conservan ante
+(con FIX-HU-01) sin cambios; ningún detalle interno en las respuestas; los datos del formulario se conservan ante
 cualquier error.
 
 **Scale/Scope**: Una pantalla (lista y formulario) y una ruta con dos métodos. No incluye editar
@@ -116,7 +119,8 @@ ningún archivo de HU-20a ni de HU-20b.
 | GET | `/proyectos` | Formulario de alta y lista de proyectos |
 | POST | `/proyectos` | Campos `nombre`, `fecha_inicio`, `fecha_fin` e `integrantes` (uno por integrante marcado); crea el proyecto y redirige con 303 a `/proyectos` |
 
-La sección se registra como `Section{Name: "Proyectos", Path: "/proyectos"}`, sin
+La sección del menú se llama "Proyectos" y la pantalla se titula "Gestión de Proyectos". Se registra
+como `Section{Name: "Proyectos", Path: "/proyectos"}`, sin
 `RequiresProject` ni `RequiresMember`, para poder entrar sin proyecto activo.
 
 ### Flujo del POST
@@ -136,7 +140,7 @@ La sección se registra como `Section{Name: "Proyectos", Path: "/proyectos"}`, s
 | Error de HU-01 | Campo |
 | --- | --- |
 | Nombre obligatorio | `nombre` |
-| Fecha de fin anterior a la de inicio | `fecha_fin` |
+| Fecha de fin anterior o igual a la de inicio (FIX-HU-01) | `fecha_fin` |
 | Falta una fecha | La fecha faltante |
 | Sin integrantes o integrante inexistente | `integrantes` |
 | Cualquier otro | Mensaje general `MsgOperationFailed` |
@@ -146,7 +150,8 @@ La sección se registra como `Section{Name: "Proyectos", Path: "/proyectos"}`, s
 - De HU-20a: `Server.Register(section, routes)`, `Renderer.Page`, `Fail` y `RenderError`.
 - De HU-20b (US1 y US2): `SetFlash`, `FormView`, `MsgOperationFailed`, la redirección 303, los
   parciales `alert.html` y `field.html` y la protección contra envíos de otro origen.
-- De HU-01: `ProjectService.CreateProject`, `ProjectStore` y sus errores y mensajes.
+- De HU-01 y FIX-HU-01: `ProjectService.CreateProject`, `ProjectStore`, sus errores y mensajes, y la
+  regla de fecha de fin posterior a la de inicio.
 - No usa `ContextStore`, `project_picker.html` ni `ActiveContext`.
 
 ## Complexity Tracking
@@ -169,3 +174,12 @@ historia; el costo es una consulta de lista de proyectos adicional, de lectura.
 - **VI. PostgreSQL Persistence**: PASS. El único almacenamiento nuevo (lecturas de lista e
   integrantes) tiene adaptador e integración contra PostgreSQL.
 - **Technology & Quality Constraints**: PASS. Sin dependencias ni tecnologías nuevas.
+
+## Quality Gates (Definition of Done)
+
+- Rama propia `HU-21`; Pull Request revisado y aprobado por un integrante distinto del autor.
+- Pruebas escritas antes del código (RED → GREEN → REFACTOR) con evidencia en `evidencia-red.txt`.
+- `go test -count=1 -p 1 ./...`, `go vet ./...` y `gofmt -l .` sin diferencias, y el pipeline en verde.
+- Cobertura de las reglas propias de la pantalla (parseo y mapeo de errores) de al menos 80%.
+- Manual breve de usuario actualizado con la pantalla "Gestión de Proyectos".
+- `quickstart.md` y `tasks.md` actualizados; tarjeta en "Hecho" en el tablero.
