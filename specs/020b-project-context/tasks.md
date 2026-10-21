@@ -18,11 +18,11 @@
 
 **Purpose**: Confirmar el esquema que se lee y preparar el entorno.
 
-- [ ] T001 Revisar `db/migrations/001_*.up.sql` y el store de HU-01 (tablas `projects`, `members` y `project_members`); anotar en `specs/020b-project-context/data-model.md` los nombres reales de columnas y decidir si se reutiliza el store existente o se crea `ContextStore`
-- [ ] T002 [P] Verificar que HU-20a expone `Section` (con `RequiresProject` y `RequiresMember`), `Server.Register`, `Server.Use`, `PageData`, `ActiveContext`, `Fail` y `RenderError`
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y que `001` está aplicada con `migrate -path db/migrations -database $env:DATABASE_URL up`
-- [ ] T004 Confirmar con `go doc net/http.CrossOriginProtection` la API disponible en Go 1.27.1 y registrar el resultado en `specs/020b-project-context/research.md`
-- [ ] T005 [P] Crear el auxiliar de pruebas que registra tres secciones de prueba (sin requisitos, con `RequiresProject` y con `RequiresMember`) y un formulario de prueba en `src/web/testhelpers_test.go`
+- [x] T001 Revisar `db/migrations/001_*.up.sql` y el store de HU-01 (tablas `projects`, `members` y `project_members`); anotar en `specs/020b-project-context/data-model.md` los nombres reales de columnas y decidir si se reutiliza el store existente o se crea `ContextStore`
+- [x] T002 [P] Verificar que HU-20a expone `Section` (con `RequiresProject` y `RequiresMember`), `Server.Register`, `Server.Use`, `PageData`, `ActiveContext`, `Fail` y `RenderError`
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y que `001` está aplicada con `migrate -path db/migrations -database $env:DATABASE_URL up`
+- [x] T004 Confirmar con `go doc net/http.CrossOriginProtection` la API disponible en Go 1.27.1 y registrar el resultado en `specs/020b-project-context/research.md`
+- [x] T005 [P] Crear el auxiliar de pruebas que registra tres secciones de prueba (sin requisitos, con `RequiresProject` y con `RequiresMember`) y un formulario de prueba en `src/web/testhelpers_test.go`
 
 ---
 
@@ -30,12 +30,12 @@
 
 **Purpose**: Tipos, interfaz y adaptador PostgreSQL compartidos por las historias.
 
-- [ ] T006 [P] Definir `MsgOperationFailed` ("La operación no pudo completarse"), `Flash` y `FormView` en `src/web/flash.go` y `src/web/forms.go`
-- [ ] T007 [P] Definir `ResolvedContext`, `ProjectSummary`, `MemberSummary` y los nombres de las cookies de contexto en `src/web/context.go` (`ActiveContext` ya existe desde HU-20a)
-- [ ] T008 [P] Definir la interfaz `ContextStore` con `ListProjects`, `ListMembers` y `ResolveContext` en `src/web/context_store.go`
-- [ ] T009 [P] Escribir la prueba de integración de `PostgreSQLContextStore` con fixtures de dos proyectos e integrantes, incluyendo "no existe" frente a "no disponible" y la verificación de tiempo de `ResolveContext`, en `src/web/postgres_context_store_integration_test.go`
-- [ ] T010 Implementar `PostgreSQLContextStore` con `database/sql` y pgx en `src/web/postgres_context_store.go`, ajustado al esquema de T001
-- [ ] T011 [P] Definir los atributos de las cookies de contexto (`ctx_proyecto`, `ctx_integrante`: sesión, `HttpOnly`, `SameSite=Lax`, `Secure` con HTTPS) y su lectura segura en `src/web/context.go`
+- [x] T006 [P] Definir `MsgOperationFailed` ("La operación no pudo completarse"), `Flash` y `FormView` en `src/web/flash.go` y `src/web/forms.go`
+- [x] T007 [P] Definir `ResolvedContext`, `ProjectSummary`, `MemberSummary` y los nombres de las cookies de contexto en `src/web/context.go` (`ActiveContext` ya existe desde HU-20a)
+- [x] T008 [P] Definir la interfaz `ContextStore` con `ListProjects`, `ListMembers` y `ResolveContext` en `src/web/context_store.go`
+- [x] T009 [P] Escribir la prueba de integración de `PostgreSQLContextStore` con fixtures de dos proyectos e integrantes, incluyendo "no existe" frente a "no disponible" y la verificación de tiempo de `ResolveContext`, en `src/web/postgres_context_store_integration_test.go`
+- [x] T010 Implementar `PostgreSQLContextStore` con `database/sql` y pgx en `src/web/postgres_context_store.go`, ajustado al esquema de T001
+- [X] T011 [P] Definir los atributos de las cookies de contexto (`ctx_proyecto`, `ctx_integrante`: sesión, `HttpOnly`, `SameSite=Lax`, `Secure` con HTTPS) y su lectura segura en `src/web/context.go`
 
 **Checkpoint**: El modelo, la interfaz y el adaptador PostgreSQL están listos para las historias.
 
@@ -49,18 +49,18 @@
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Escribir pruebas de `flash`: se muestra una sola vez, se borra al leerse y se renderiza escapado en `src/web/flash_test.go`
-- [ ] T013 [P] [US1] Escribir pruebas de errores de campo con valores conservados y del texto único `MsgOperationFailed` sin mensaje de éxito en `src/web/forms_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de Post/Redirect/Get: respuesta 303 y recarga sin duplicar el registro en `src/web/forms_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de formato de mensajes: cada tipo tiene su clase y una etiqueta de texto además del color, igual en todas las páginas de prueba, en `src/web/alert_test.go`
-- [ ] T016 [P] [US1] Escribir los escenarios BDD de mensajes y formularios en `test/web_forms_bdd_test.go`
+- [x] T012 [P] [US1] Escribir pruebas de `flash`: se muestra una sola vez, se borra al leerse y se renderiza escapado en `src/web/flash_test.go`
+- [x] T013 [P] [US1] Escribir pruebas de errores de campo con valores conservados y del texto único `MsgOperationFailed` sin mensaje de éxito en `src/web/forms_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de Post/Redirect/Get: respuesta 303 y recarga sin duplicar el registro en `src/web/forms_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de formato de mensajes: cada tipo tiene su clase y una etiqueta de texto además del color, igual en todas las páginas de prueba, en `src/web/alert_test.go`
+- [x] T016 [P] [US1] Escribir los escenarios BDD de mensajes y formularios en `test/web_forms_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implementar `SetFlash` y la lectura con borrado en `src/web/flash.go`
-- [ ] T018 [US1] Implementar `FormView` y los partials `alert.html` y `field.html` en `src/web/forms.go` y `src/web/templates/partials/`
-- [ ] T019 [US1] Implementar el auxiliar de redirección 303 después de un envío válido en `src/web/forms.go`
-- [ ] T020 [US1] Agregar `Flash` y `Form` a `PageData`, mostrar las alertas en `layout.html` y agregar al final de `app.css` los estilos de mensajes (éxito, error, advertencia) y de campos con error
+- [x] T017 [US1] Implementar `SetFlash` y la lectura con borrado en `src/web/flash.go`
+- [x] T018 [US1] Implementar `FormView` y los partials `alert.html` y `field.html` en `src/web/forms.go` y `src/web/templates/partials/`
+- [x] T019 [US1] Implementar el auxiliar de redirección 303 después de un envío válido en `src/web/forms.go`
+- [x] T020 [US1] Agregar `Flash` y `Form` a `PageData`, mostrar las alertas en `layout.html` y agregar al final de `app.css` los estilos de mensajes (éxito, error, advertencia) y de campos con error
 
 **Checkpoint**: US1 deja los componentes que HU-21 a HU-25 reutilizan; con US1 y US2 HU-21 ya puede comenzar.
 
@@ -74,16 +74,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
-- [ ] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
-- [ ] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
-- [ ] T027 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
+- [x] T021 [P] [US2] Escribir pruebas de escape: texto con HTML y scripts se muestra como texto en `src/web/escape_test.go`
+- [x] T022 [P] [US2] Escribir pruebas de protección: `Sec-Fetch-Site: cross-site` y `Origin` ajeno rechazados con 403 y mensaje claro, sin ejecutar la acción; mismo origen aceptado, en `src/web/security_test.go`
+- [x] T023 [P] [US2] Escribir los escenarios BDD de seguridad en `test/web_forms_bdd_test.go`
+- [x] T024 [P] [US2] [Extra] Escribir pruebas de cuerpo mayor a 1 MiB rechazado con 413 y de las cabeceras de seguridad en `src/web/security_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T024 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
-- [ ] T025 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
-- [ ] T026 [US2] Revisar que ninguna plantilla use `template.HTML` con datos de usuarios en `src/web/templates/`
+- [x] T025 [US2] Integrar `http.CrossOriginProtection` con respuesta 403 usando `RenderError` en `src/web/security.go`
+- [x] T026 [US2] Registrar la protección con `Server.Use` en `src/cmd/server/main.go`
+- [ ] T027 [US2] Revisar que ninguna plantilla use `template.HTML` con datos de usuarios en `src/web/templates/`
 - [ ] T028 [US2] [Extra] Implementar cabeceras de seguridad (`nosniff`, `Referrer-Policy`, `Content-Security-Policy`) y el límite de cuerpo en `src/web/security.go`
 
 **Checkpoint**: US2 protege el contenido y los formularios para todas las historias posteriores.
@@ -98,20 +98,20 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Escribir pruebas de lectura de cookies (no numérica, negativa, muy grande, vacía) tratadas como ausencia en `src/web/context_test.go`
-- [ ] T030 [P] [US3] Escribir pruebas de handler con `cookiejar`: seleccionar proyecto y ver su nombre en el layout, mantenerlo entre secciones y que no se autoselecciona con un solo proyecto, en `src/web/context_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir pruebas de handler con `cookiejar`: cambiar de proyecto limpia el integrante, volver a elegir el mismo lo conserva y una cookie de sesión nueva vuelve a pedir el proyecto, en `src/web/context_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir pruebas de handler: sin proyectos, "Aún no hay proyectos" y acceso a crear el primero solo si la sección Proyectos está registrada, en `src/web/context_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba con la base de datos caída: no se limpia la selección y se responde 503, en `src/web/context_middleware_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD de selección de proyecto en `test/context_bdd_test.go`
+- [x] T029 [P] [US3] Escribir pruebas de lectura de cookies (no numérica, negativa, muy grande, vacía) tratadas como ausencia en `src/web/context_test.go`
+- [X] T030 [P] [US3] Escribir pruebas de handler con `cookiejar`: seleccionar proyecto y ver su nombre en el layout, mantenerlo entre secciones y que no se autoselecciona con un solo proyecto, en `src/web/context_handlers_test.go`
+- [X] T031 [P] [US3] Escribir pruebas de handler con `cookiejar`: cambiar de proyecto limpia el integrante, volver a elegir el mismo lo conserva y una cookie de sesión nueva vuelve a pedir el proyecto, en `src/web/context_handlers_test.go`
+- [X] T032 [P] [US3] Escribir pruebas de handler: identificador inexistente o inválido conserva la selección anterior con mensaje claro; proyecto eliminado limpia la selección con advertencia, en `src/web/context_handlers_test.go`
+- [X] T033 [P] [US3] Escribir pruebas de handler: sin proyectos, "Aún no hay proyectos" y acceso a crear el primero solo si la sección Proyectos está registrada, en `src/web/context_handlers_test.go`
+- [X] T034 [P] [US3] Escribir la prueba con la base de datos caída: no se limpia la selección y se responde 503, en `src/web/context_middleware_test.go`
+- [x] T035 [P] [US3] Escribir los escenarios BDD de selección de proyecto en `test/context_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Implementar el middleware de resolución de contexto (lee cookies, valida con `ResolveContext`, limpia lo inválido con `SetFlash`, completa el `ActiveContext`) en `src/web/context_middleware.go`
-- [ ] T037 [US3] Implementar `GET` y `POST /contexto/proyecto` (303, borra el integrante solo si el proyecto cambia) en `src/web/context_handlers.go`
-- [ ] T038 [US3] Crear `select_project.html` y el parcial `project_picker.html` con la lista y el estado vacío en `src/web/templates/`
-- [ ] T039 [US3] Registrar las rutas del contexto y el middleware con `Server.Register` y `Server.Use` en `src/cmd/server/main.go`
+- [x] T036 [US3] Implementar el middleware de resolución de contexto (lee cookies, valida con `ResolveContext`, limpia lo inválido con `SetFlash`, completa el `ActiveContext`) en `src/web/context_middleware.go`
+- [x] T037 [US3] Implementar `GET` y `POST /contexto/proyecto` (303, borra el integrante solo si el proyecto cambia) en `src/web/context_handlers.go`
+- [x] T038 [US3] Crear `select_project.html` y el parcial `project_picker.html` con la lista y el estado vacío en `src/web/templates/`
+- [x] T039 [US3] Registrar las rutas del contexto y el middleware con `Server.Register` y `Server.Use` en `src/cmd/server/main.go`
 
 **Checkpoint**: US3 permite elegir y mantener el proyecto activo; desbloquea a HU-22, HU-23 y HU-25.
 
@@ -125,17 +125,17 @@
 
 ### Tests for User Story 4
 
-- [ ] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
-- [ ] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
-- [ ] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
-- [ ] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
+- [x] T040 [P] [US4] Escribir pruebas de handler: el selector muestra solo integrantes del proyecto activo y el nombre queda visible en el layout, en `src/web/context_handlers_test.go`
+- [x] T041 [P] [US4] Escribir pruebas de handler: acción que requiere integrante sin identificarse redirige a identificarse y vuelve, en `src/web/context_handlers_test.go`
+- [x] T042 [P] [US4] Escribir pruebas de handler: integrante de otro proyecto rechazado con identificación limpiada; integrante quitado limpiado con advertencia, en `src/web/context_middleware_test.go`
+- [X] T043 [P] [US4] Escribir los escenarios BDD de identificación del integrante en `test/context_bdd_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T044 [US4] Implementar `GET` y `POST /contexto/integrante` en `src/web/context_handlers.go`, validando que el integrante pertenezca al proyecto activo
-- [ ] T045 [US4] Crear `select_member.html` con el estado vacío en `src/web/templates/`
-- [ ] T046 [US4] Implementar en `src/web/context_middleware.go` el rechazo de acciones con integrante ajeno y la limpieza de identificación
-- [ ] T047 [US4] Mostrar el integrante activo y el enlace "Cambiar" en `src/web/templates/layout.html`
+- [x] T044 [US4] Implementar `GET` y `POST /contexto/integrante` en `src/web/context_handlers.go`, validando que el integrante pertenezca al proyecto activo
+- [x] T045 [US4] Crear `select_member.html` con el estado vacío en `src/web/templates/`
+- [x] T046 [US4] Implementar en `src/web/context_middleware.go` el rechazo de acciones con integrante ajeno y la limpieza de identificación
+- [x] T047 [US4] Mostrar el integrante activo y el enlace "Cambiar" en `src/web/templates/layout.html`
 
 **Checkpoint**: US4 identifica al integrante y deja listo el contexto para HU-14 y HU-24.
 
@@ -149,15 +149,15 @@
 
 ### Tests for User Story 5
 
-- [ ] T048 [P] [US5] Escribir pruebas por tabla del saneamiento de `volver_a` (`/`, `/backlog`, `//otro.com`, `https://x`, `\\x`, caracteres de control, sección no registrada) en `src/web/return_to_test.go`
-- [ ] T049 [P] [US5] Escribir pruebas de handler: sección protegida sin proyecto redirige con mensaje y regresa tras elegir; sección sin requisitos accesible, en `src/web/context_middleware_test.go`
-- [ ] T050 [P] [US5] Escribir los escenarios BDD de secciones protegidas en `test/context_bdd_test.go`
+- [x] T048 [P] [US5] Escribir pruebas por tabla del saneamiento de `volver_a` (`/`, `/backlog`, `//otro.com`, `https://x`, `\\x`, caracteres de control, sección no registrada) en `src/web/return_to_test.go`
+- [x] T049 [P] [US5] Escribir pruebas de handler: sección protegida sin proyecto redirige con mensaje y regresa tras elegir; sección sin requisitos accesible, en `src/web/context_middleware_test.go`
+- [x] T050 [P] [US5] Escribir los escenarios BDD de secciones protegidas en `test/context_bdd_test.go`
 
 ### Implementation for User Story 5
 
-- [ ] T051 [US5] Implementar el saneamiento del destino de regreso en `src/web/return_to.go`
-- [ ] T052 [US5] Implementar `RequireContext(section)` que redirige a `/contexto/proyecto` o `/contexto/integrante` con `volver_a` en `src/web/context_middleware.go`
-- [ ] T053 [US5] Aplicar `RequireContext` a las secciones según `RequiresProject` y `RequiresMember` al registrarlas, en `src/web/sections.go`
+- [x] T051 [US5] Implementar el saneamiento del destino de regreso en `src/web/return_to.go`
+- [x] T052 [US5] Implementar `RequireContext(section)` que redirige a `/contexto/proyecto` o `/contexto/integrante` con `volver_a` en `src/web/context_middleware.go`
+- [x] T053 [US5] Aplicar `RequireContext` a las secciones según `RequiresProject` y `RequiresMember` al registrarlas, en `src/web/sections.go`
 
 **Checkpoint**: US5 protege las secciones y vuelve al destino pedido de forma segura.
 
@@ -167,14 +167,14 @@
 
 **Purpose**: Validación final, documentación y trazabilidad.
 
-- [ ] T054 [P] Documentar en `specs/020b-project-context/quickstart.md` los datos de prueba reales una vez confirmado el esquema de `001`
-- [ ] T055 [P] Registrar la deuda técnica "roles (Scrum Master y Product Builder) sin distinguir" en `docs/` o en el backlog para la retrospectiva
-- [ ] T056 [P] Revisar que errores y mensajes de formularios y del contexto no expongan detalles internos en `src/web/context_handlers.go` y `src/web/forms.go`
-- [ ] T057 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T058 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T059 Avisar al equipo que HU-21 puede comenzar al cerrar US1 y US2, y que HU-14 y HU-22 a HU-25 pueden usar el contexto al cerrar US3 a US5
-- [ ] T060 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020b-project-context/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
-- [ ] T061 Revisar trazabilidad de FR-001 a FR-024 y SC-001 a SC-012 en `specs/020b-project-context/tasks.md`
+- [x] T054 [P] Documentar en `specs/020b-project-context/quickstart.md` los datos de prueba reales una vez confirmado el esquema de `001`
+- [x] T055 [P] Registrar la deuda técnica "roles (Scrum Master y Product Builder) sin distinguir" en `docs/` o en el backlog para la retrospectiva
+- [x] T056 [P] Revisar que errores y mensajes de formularios y del contexto no expongan detalles internos en `src/web/context_handlers.go` y `src/web/forms.go`
+- [x] T057 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T058 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T059 Avisar al equipo que HU-21 puede comenzar al cerrar US1 y US2, y que HU-14 y HU-22 a HU-25 pueden usar el contexto al cerrar US3 a US5
+- [x] T060 Guardar la salida de `go test -count=1 -p 1 -v ./...` en `specs/020b-project-context/evidencia-pruebas.txt` y la cobertura de `go test -count=1 -p 1 -cover ./...` para el informe de métricas y cobertura
+- [x] T061 Revisar trazabilidad de FR-001 a FR-024 y SC-001 a SC-012 en `specs/020b-project-context/tasks.md`
 
 ---
 
@@ -293,19 +293,19 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | Requisito | Pruebas |
 |---|---|
 | FR-001 | T015, T016 |
-| FR-002 | T013, T016 |
+| FR-002 | T013 (el BDD con formulario real llega con HU-21) |
 | FR-003 | T013, T016 |
 | FR-004 | T012, T014, T016 |
 | FR-005 | T021, T023 |
 | FR-006 | T022, T023 |
 | FR-007 | T030, T035 |
 | FR-008 | T009, T030, T035 |
-| FR-009 | T030, T031 |
+| FR-009 | T030, T031, T035 |
 | FR-010 | T033, T035 |
-| FR-011 | T030 |
-| FR-012 | T031 |
-| FR-013 | T032 |
-| FR-014 | T032 |
+| FR-011 | T030, T035 |
+| FR-012 | T031, T035 |
+| FR-013 | T032, T035 |
+| FR-014 | T032, T035 |
 | FR-015 | T009, T040, T043 |
 | FR-016 | T041, T043 |
 | FR-017 | T042, T043 |
@@ -313,9 +313,9 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | FR-019 | T049, T050 |
 | FR-020 | T048, T050 |
 | FR-021 | T049, T050 |
-| FR-022 | T029, T032 |
+| FR-022 | T029, T032, T042 |
 | FR-023 | T009, T032, T042 |
-| FR-024 | T034 |
+| FR-024 | T034, T056 |
 | SC-001 | T015 |
 | SC-002 | T013 |
 | SC-003 | T014 |
@@ -328,3 +328,16 @@ T050: Escenarios BDD en test/context_bdd_test.go
 | SC-010 | T048 |
 | SC-011 | No automatizable: se verifica en el chequeo manual de `quickstart.md` |
 | SC-012 | Verificación de tiempo de `ResolveContext` en T009 |
+
+## Escenarios de quickstart.md y pruebas que los cubren
+
+| Grupo del quickstart | Pruebas |
+|---|---|
+| 1. Mensajes y formularios | flash_test.go, forms_test.go, alert_test.go, web_forms_bdd_test.go |
+| 2. Seguridad | escape_test.go, security_test.go, web_forms_bdd_test.go (el límite de cuerpo 413 es extra: no implementado) |
+| 3. Selección de proyecto | context_handlers_test.go, context_bdd_test.go |
+| 4. Datos inválidos | context_test.go, context_handlers_test.go, context_member_test.go |
+| 5. Identificación del integrante | context_member_test.go, context_bdd_test.go |
+| 6. Secciones protegidas | context_guard_test.go, return_to_test.go, context_bdd_test.go |
+| 7. Disponibilidad | context_handlers_test.go (base caída), context_errors_test.go |
+| 8. PostgreSQL | postgres_context_store_integration_test.go |

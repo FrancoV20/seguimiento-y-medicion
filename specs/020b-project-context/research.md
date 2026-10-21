@@ -31,6 +31,8 @@
   Las solicitudes sin esos encabezados (curl, pruebas) pasan, lo que permite probar sin ruido.
 - **Alternatives considered**: Token CSRF por formulario (descartada por ahora: más código en
   cada plantilla); posponer (descartada por el equipo: la robustez pesa en la evaluación).
+- **Confirmado (T004)** con `go doc`: `NewCrossOriginProtection()`, `SetDenyHandler(h)` y
+  `Handler(h)`. GET/HEAD/OPTIONS siempre pasan; sin `Sec-Fetch-Site` ni `Origin` se permite.
 
 ## Decision 4 (opcional): Cabeceras de seguridad y límite de cuerpo
 

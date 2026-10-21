@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-17 | **Updated**: 2026-10-18
 
-**Status**: Draft
+**Status**: Implemented
 
 **Input**: User description: "HU-20b / Formularios Seguros y Contexto de Trabajo: Como Usuario, quiero que los formularios y mensajes funcionen igual en todo el sistema sin perder mis datos, y poder seleccionar un proyecto e identificarme como integrante de ese proyecto, para que las secciones muestren solo los datos del proyecto y mis acciones (esfuerzo, votos) queden asociadas a mi nombre. Depende de HU-20a (base web) y de los datos de HU-01."
 

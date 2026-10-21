@@ -27,14 +27,32 @@ número menor, recrearla con `docker compose down -v` y volver a migrar.
 
 ## Datos de prueba
 
-Las pruebas de integración y BDD crean sus propios proyectos e integrantes (fixtures) y los
-eliminan al terminar. Para probar a mano antes de que exista HU-21, crear dos proyectos con varios
-integrantes usando el caso de uso `CreateProject` de HU-01 desde una prueba o con `INSERT`
-ajustados al esquema real de `001_*.up.sql` (tablas `projects`, `members` y `project_members`).
+Las pruebas de integración y BDD crean sus propios proyectos e integrantes (fixtures) y los eliminan al terminar. Para probar a mano, hasta que exista la pantalla de alta (HU-21), cargá datos con SQL. Reemplazá `USUARIO` por el de tu `DATABASE_URL`:
 
-Mientras no existan las secciones reales (Backlog, Sprints, Esfuerzo, Métricas), las pruebas
-registran secciones de prueba: una sin requisitos, una con `RequiresProject` y una con
-`RequiresMember`.
+```powershell
+@"
+INSERT INTO projects (name, start_date, end_date) VALUES
+  ('Demo HU20b - Proyecto Alfa', '2026-09-01', '2026-12-15'),
+  ('Demo HU20b - Proyecto Beta', '2026-10-01', '2027-02-28');
+INSERT INTO members (display_name) VALUES ('Demo Ana'), ('Demo Beto'), ('Demo Carla');
+INSERT INTO project_members (project_id, member_id)
+SELECT p.id, m.id FROM projects p, members m
+WHERE (p.name = 'Demo HU20b - Proyecto Alfa' AND m.display_name IN ('Demo Ana', 'Demo Beto'))
+   OR (p.name = 'Demo HU20b - Proyecto Beta' AND m.display_name = 'Demo Carla');
+"@ | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
+```
+
+Para borrarlos:
+
+```powershell
+"DELETE FROM projects WHERE name LIKE 'Demo HU20b - %'; DELETE FROM members WHERE display_name LIKE 'Demo %';" | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
+```
+
+Esquema que se lee (`001_create_projects.up.sql`): `projects(id, name, start_date, end_date, status)`, `members(id, display_name)` y `project_members(project_id, member_id)`.
+
+Atención: la prueba de integración de HU-01 hace `TRUNCATE ... CASCADE` y borra los datos de la base local cada vez que corrés `go test ./...` con `DATABASE_URL` definida. Probá a mano antes de correr la suite completa, o volvé a cargar los datos después.
+
+Las secciones reales (Backlog, Sprints, Esfuerzo, Métricas) llegan en HU-22 a HU-25. Mientras tanto, las pruebas registran secciones de prueba: una sin requisitos, una con `RequiresProject` y una con `RequiresMember`.
 
 ## Required validation scenarios
 
@@ -83,12 +101,25 @@ Las pruebas deben cubrir como mínimo:
 
 ## Manual check
 
-1. Abrir `http://localhost:8080`, ir a una sección protegida y comprobar la redirección a la
-   selección de proyecto.
-2. Elegir proyecto e integrante y navegar entre secciones.
-3. Enviar un formulario de prueba válido, recargar y comprobar que no se duplica y que el mensaje
-   de éxito no reaparece.
-4. Cerrar todas las ventanas del navegador, volver a abrir y comprobar que se pide elegir de nuevo.
+1. Levantar la base y arrancar el servidor en un puerto libre (el 8080 puede estar ocupado):
+
+```powershell
+   docker compose up -d postgres
+   $env:ADDR = ":8081"
+   go run ./src/cmd/server
+```
+
+2. Abrir `http://localhost:8081/contexto/proyecto` y comprobar la lista de proyectos. Elegir uno: su nombre aparece en el encabezado.
+3. Apretar "Identificarme": solo aparecen los integrantes de ese proyecto. Elegir uno y comprobar "Integrante: ..." en el encabezado. Cambiar de proyecto: la identificación desaparece.
+4. En las herramientas del navegador (F12, Application, Cookies): `ctx_proyecto` y `ctx_integrante` con HttpOnly, SameSite Lax y Expires "Session".
+5. Abrir una ventana privada, elegir proyecto, cerrar todas las ventanas privadas y abrir otra: se pide elegir de nuevo. (Un navegador con "continuar donde lo dejaste" conserva las cookies de sesión.)
+6. Comprobar el rechazo de envíos de otro origen. Debe imprimir `403`:
+
+```powershell
+   try { Invoke-WebRequest -Uri http://localhost:8081/contexto/proyecto -Method Post -Headers @{"Sec-Fetch-Site"="cross-site"} -Body "proyecto_id=1" -UseBasicParsing } catch { $_.Exception.Response.StatusCode.value__ }
+```
+
+   Este paso también confirma el cableado de `main.go`, que las pruebas automáticas no cubren.
 
 ## Acceptance evidence
 

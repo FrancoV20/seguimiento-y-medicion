@@ -1,0 +1,21 @@
+{{define "content"}}
+<h1>Identificarme</h1>
+{{with .Data}}
+{{if .Members}}
+<p>Proyecto: <strong>{{.ProjectName}}</strong>. Elegí tu nombre entre los integrantes del proyecto. No hace falta contraseña: tus acciones (cargar esfuerzo, votar) quedan a tu nombre hasta que lo cambies.</p>
+<form method="post" action="/contexto/integrante">
+  <input type="hidden" name="volver_a" value="{{.ReturnTo}}">
+  {{template "member_picker" .}}
+  <button type="submit">Identificarme</button>
+</form>
+{{else}}
+<p class="muted">{{.NoMembers}}</p>
+{{end}}
+{{end}}
+{{end}}
+
+{{define "member_picker"}}<fieldset class="picker-list">
+  <legend>Integrantes</legend>
+  {{range .Members}}<div class="picker-item"><label><input type="radio" name="integrante_id" value="{{.ID}}"{{if eq .ID $.ActiveID}} checked{{end}}> {{.Name}}</label></div>
+  {{end}}
+</fieldset>{{end}}
