@@ -59,8 +59,10 @@ func (s *Server) Register(section Section, routes Routes) (err error) {
 			err = fmt.Errorf("la sección %q no se pudo registrar: %v", section.Name, rec)
 		}
 	}()
+	// Las secciones que declaran RequiresProject o RequiresMember quedan protegidas (HU-20b, T053).
+	guard := RequireContext(section)
 	for pattern, h := range routes {
-		s.mux.Handle(pattern, h)
+		s.mux.Handle(pattern, guard(h))
 	}
 	return nil
 }

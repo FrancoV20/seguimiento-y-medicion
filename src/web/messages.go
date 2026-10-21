@@ -17,4 +17,22 @@ const (
 	LinkBackHome = "Volver al inicio"
 
 	MsgNoProjectSelected = "Sin proyecto seleccionado"
+
+	TitleForbidden = "Solicitud rechazada"
+	MsgForbidden   = "La solicitud se rechazó porque no se originó en esta aplicación."
+
+	TitleSelectProject     = "Elegir proyecto"
+	MsgProjectInvalid      = "El proyecto elegido no existe o no es válido. Elegí uno de la lista."
+	MsgProjectGone         = "El proyecto que tenías seleccionado ya no existe. Elegí otro."
+	MsgNoProjects          = "Aún no hay proyectos"
+	LinkCreateFirstProject = "Crear el primer proyecto"
+
+	TitleSelectMember     = "Identificarme"
+	MsgChooseProjectFirst = "Primero elegí un proyecto."
+	MsgMemberInvalid      = "El integrante elegido no pertenece al proyecto. Elegí uno de la lista."
+	MsgMemberGone         = "Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro."
+	MsgNoMembers          = "Este proyecto no tiene integrantes"
+
+	MsgProjectRequired = "Para entrar a esta sección primero elegí un proyecto."
+	MsgMemberRequired  = "Para esta acción primero tenés que identificarte como integrante del proyecto."
 )

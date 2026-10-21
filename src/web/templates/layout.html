@@ -16,14 +16,30 @@
       {{- end}}
     </ul>
   </nav>
-  <p class="app-context">
+    <p class="app-context">
     {{- with .Context}}{{if .ProjectName}}Proyecto: <strong>{{.ProjectName}}</strong>{{else}}{{noProject}}{{end}}{{if .MemberName}} · Integrante: <strong>{{.MemberName}}</strong>{{end}}
-    {{- else}}{{noProject}}{{end -}}
+    {{- else}}{{noProject}}{{end}}
+    <span class="app-context-links">
+      {{- with .Context}}{{if .ProjectName}}<a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">{{if .MemberName}}Cambiar integrante{{else}}Identificarme{{end}}</a>{{else}}<a href="/contexto/proyecto">Elegir proyecto</a>{{end}}{{else}}<a href="/contexto/proyecto">Elegir proyecto</a>{{end -}}
+    </span>
   </p>
 </header>
 <main class="app-main">
+{{with .Flash}}{{template "alert" .}}{{end}}
 {{template "content" .}}
 </main>
 </body>
 </html>
 {{end}}
+{{define "alert"}}<div class="{{.Class}}" role="{{.Role}}"><strong class="alert-label">{{.Label}}:</strong> <span class="alert-text">{{.Text}}</span></div>{{end}}
+
+{{define "field"}}<div class="field{{if .Error}} field-invalid{{end}}">
+  <label for="{{.Name}}">{{.Label}}</label>
+  <input type="{{.Type}}" id="{{.Name}}" name="{{.Name}}" value="{{.Value}}"{{if .Error}} aria-invalid="true" aria-describedby="{{.Name}}-error"{{end}}>
+  {{if .Error}}<p class="field-error" id="{{.Name}}-error"><span class="field-error-label">Error:</span> {{.Error}}</p>{{end}}
+</div>{{end}}
+{{define "project_picker"}}<fieldset class="picker-list">
+  <legend>Proyectos</legend>
+  {{range .Projects}}<div class="picker-item"><label><input type="radio" name="proyecto_id" value="{{.ID}}"{{if eq .ID $.ActiveID}} checked{{end}}> {{.Name}}</label></div>
+  {{end}}
+</fieldset>{{end}}

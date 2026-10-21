@@ -3,11 +3,13 @@
 Esta feature **no crea tablas ni migraciones**. Lee los proyectos e integrantes creados por HU-01
 (migración `001`). La selección y el mensaje de una sola vista viven en cookies del navegador.
 
-> **A verificar (T001)**: las tablas de HU-01 son `projects`, `members` y `project_members`. Los
-> nombres de columnas y la relación exacta se toman del esquema real de
-> `db/migrations/001_*.up.sql` y se anotan acá. Lo que sigue describe los datos necesarios, no
-> nombres definitivos de columnas.
-
+>> **Verificado (T001)** contra `001_create_projects.up.sql`:
+> - `projects(id SERIAL, name, start_date, end_date, status)`
+> - `members(id SERIAL, display_name)`
+> - `project_members(project_id, member_id)`, PK compuesta, ON DELETE CASCADE en ambas FK.
+> `MemberSummary.name` y `ResolvedContext.memberName` salen de `members.display_name`.
+> Los `id` son INTEGER de 32 bits: una cookie con un valor fuera de 1..2147483647 se trata como
+> ausencia ANTES de consultar, para que no se confunda con "base no disponible".
 ## Flash
 
 Mensaje de una sola vista.

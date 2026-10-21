@@ -1,0 +1,16 @@
+{{define "content"}}
+<h1>Elegir proyecto</h1>
+{{with .Data}}
+{{if .Projects}}
+<p>Elegí el proyecto con el que vas a trabajar. La elección dura mientras no cierres el navegador.</p>
+<form method="post" action="/contexto/proyecto">
+    <input type="hidden" name="volver_a" value="{{.ReturnTo}}">
+    {{template "project_picker" .}}
+    <button type="submit">Elegir proyecto</button>
+</form>
+{{else}}
+<p class="muted">{{.NoProjects}}</p>
+{{if .CanCreate}}<p><a href="{{.CreatePath}}">{{.CreateLabel}}</a></p>{{end}}
+{{end}}
+{{end}}
+{{end}}

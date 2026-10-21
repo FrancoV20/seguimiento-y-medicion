@@ -170,3 +170,12 @@ No hay violaciones de la constitución que requieran justificación.
 - **VI. PostgreSQL Persistence**: PASS. El almacenamiento tiene adaptador concreto e integración
   contra PostgreSQL.
 - **Technology & Quality Constraints**: PASS. Sin dependencias ni tecnologías nuevas.
+
+## Desviaciones respecto al plan original (registradas al implementar)
+
+- Los parciales `alert`, `field`, `project_picker` y `member_picker` se definen con `{{define}}` en `templates/layout.html` y `select_member.html`, no en `templates/partials/`: `render.go` solo embebe `templates/*.html`.
+- `SetFlash` recibe también la solicitud: `SetFlash(w, r, kind, text)`, para decidir el atributo `Secure`.
+- `RequireContext` se aplica dentro de `Server.Register` (`server.go`), no en `sections.go`: ahí se unen la sección y sus rutas.
+- Las advertencias que detecta el middleware (proyecto o integrante que dejó de ser válido) viajan en el contexto de la solicitud (`withPendingFlash`) para verse en la misma respuesta y no en la siguiente.
+- Las pruebas de US4 y US5 están en `context_member_test.go` y `context_guard_test.go`, no en los archivos indicados en `tasks.md`.
+- T027 y T028 (extras) no se implementaron.
