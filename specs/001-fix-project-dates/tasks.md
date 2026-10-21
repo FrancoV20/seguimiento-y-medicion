@@ -14,8 +14,8 @@ Las pruebas se escriben antes que el código (RED → GREEN → REFACTOR).
 - [x] T002 [P] Escribir las pruebas unitarias de la regla: fin anterior falla, fin igual falla, fin un día posterior se crea, en el archivo de pruebas del servicio de HU-01.
 - [x] T003 [P] Escribir la prueba de integración del `ProjectStore` contra PostgreSQL: guardar con fechas iguales falla por la restricción y no deja filas.
 - [x] T004 [P] Actualizar los escenarios BDD de HU-01: el de fecha igual pasa a rechazo y se agrega el de un día posterior.
-- [ ] T005 Cambiar la validación del servicio: fin menor o igual al inicio es error de fechas, con el mensaje propuesto.
-- [ ] T006 Crear la migración nueva `db/migrations/NNN_projects_end_after_start.up.sql` y `.down.sql` (`NNN` = último número de `main` más uno; hoy sería la 008). No se edita la migración `001`: las migraciones tienen dueño. Contenido propuesto del `.up.sql`:
+- [x] T005 Cambiar la validación del servicio: fin menor o igual al inicio es error de fechas, con el mensaje propuesto.
+- [x] T006 Crear la migración nueva `db/migrations/NNN_projects_end_after_start.up.sql` y `.down.sql` (`NNN` = último número de `main` más uno; hoy sería la 008). No se edita la migración `001`: las migraciones tienen dueño. Contenido propuesto del `.up.sql`:
   ```sql
   DO $$
   DECLARE c text;
