@@ -1,9 +1,17 @@
-# HU-20b: deuda técnica, decisiones a confirmar y notas de proceso
+# HU-20b: deuda técnica, decisiones de alcance y notas de proceso
 
-## Decisiones de alcance a confirmar con la cátedra
+## Decisiones de alcance
 1. **Sin contraseña.** Identificarse es elegir un nombre entre los integrantes del proyecto. No es un mecanismo de seguridad (Assumptions de spec.md).
+   Estado: decisión del equipo (2026-10-21): se difiere. Se termina el Sprint 2 sin contraseña y se corrige después como historia nueva.
 2. **Sin roles.** No se distingue Scrum Master de Product Builder porque HU-01 no guarda el rol. Distinguirlos exige una migración (columna de rol en `project_members`) y escenarios de permisos en HU-02, HU-04, HU-05, HU-15 y otras.
+   Estado: decisión del equipo (2026-10-21): se difiere. Se termina el Sprint 2 sin roles y se corrige después como historia nueva.
 3. **Cookies sin firmar.** Se validan contra la base en cada solicitud, así que una cookie manipulada no da acceso a nada que no esté ya abierto. La cookie `flash` solo acepta tres tipos y hasta 300 caracteres, y se muestra siempre escapada: falsificarla solo produce un mensaje falso. Si se exige autenticación real: firmar con HMAC y agregar `SESSION_SECRET` a la configuración.
+   Estado: pendiente de tratar con el equipo. Tiene sentido decidirla junto con la historia de contraseña.
+
+## Historias candidatas para el Sprint 3
+- Autenticación con contraseña (reemplaza la identificación por nombre).
+- Roles y permisos por Scrum Master / Product Builder (migración con el rol y verificaciones en las acciones de cada historia).
+- Firma de cookies, si se agrega autenticación.
 
 ## Limitaciones conocidas
 - `Secure` se agrega solo si la conexión llega por TLS directo (`r.TLS`). Detrás de un proxy habría que leer `X-Forwarded-Proto`.
