@@ -3,11 +3,13 @@ package project
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"os"
 	"strconv"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -41,6 +43,50 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		t.Fatalf("insert integration member: %v", err)
 	}
 
+	const equalDateProjectName = "Equal Date Integration Project"
+	defer func() {
+		if _, err := db.ExecContext(
+			ctx,
+			`DELETE FROM projects WHERE name = $1`,
+			equalDateProjectName,
+		); err != nil {
+			t.Errorf("clean equal-date integration project: %v", err)
+		}
+	}()
+
+	startDate := time.Date(2026, time.October, 14, 0, 0, 0, 0, time.UTC)
+	equalDateProject := Project{
+		Name:      equalDateProjectName,
+		Members:   []string{strconv.Itoa(memberID)},
+		StartDate: startDate,
+		EndDate:   startDate,
+		Status:    "Active",
+	}
+	store := NewPostgreSQLProjectStore(db)
+	if err := store.Create(&equalDateProject); err == nil {
+		t.Error("expected the database to reject a project with equal dates")
+	} else {
+		var postgresError *pgconn.PgError
+		if !errors.As(err, &postgresError) {
+			t.Fatalf("expected a PostgreSQL constraint error, got %T: %v", err, err)
+		}
+		if postgresError.Code != "23514" {
+			t.Errorf("expected check-constraint SQLSTATE 23514, got %q", postgresError.Code)
+		}
+	}
+
+	var equalDateProjectCount int
+	if err := db.QueryRowContext(
+		ctx,
+		`SELECT COUNT(*) FROM projects WHERE name = $1`,
+		equalDateProjectName,
+	).Scan(&equalDateProjectCount); err != nil {
+		t.Fatalf("count equal-date project rows: %v", err)
+	}
+	if equalDateProjectCount != 0 {
+		t.Errorf("expected no persisted equal-date project, got %d", equalDateProjectCount)
+	}
+
 	var projectID int
 	defer func() {
 		if projectID != 0 {
@@ -56,7 +102,6 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		}
 	}()
 
-	startDate := time.Date(2026, time.October, 14, 0, 0, 0, 0, time.UTC)
 	project, err := NewProject(
 		"Integration Project",
 		[]string{strconv.Itoa(memberID)},
@@ -67,7 +112,6 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		t.Fatalf("create valid project model: %v", err)
 	}
 
-	store := NewPostgreSQLProjectStore(db)
 	if err := store.Create(&project); err != nil {
 		t.Fatalf("store project: %v", err)
 	}

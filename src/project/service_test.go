@@ -40,7 +40,7 @@ func TestProjectService_CreateProject_Success(t *testing.T) {
 	}
 }
 
-func TestProjectService_CreateProject_SuccessWithEqualDates(t *testing.T) {
+func TestProjectService_CreateProject_RejectsEqualDates(t *testing.T) {
 	// Given / Arrange: valid members are available and both dates are equal.
 	store := &TestProjectStore{
 		Members: map[int]bool{1: true, 2: true},
@@ -54,7 +54,36 @@ func TestProjectService_CreateProject_SuccessWithEqualDates(t *testing.T) {
 		EndDate:   date,
 	}
 
-	// When / Act: a project with equal start and end dates is created.
+	// When / Act: creation is attempted with equal start and end dates.
+	result, err := service.CreateProject(req)
+
+	// Then / Assert: the period is rejected and no project is created.
+	if !errors.Is(err, ErrInvalidPeriod) {
+		t.Errorf("expected error %v, got %v", ErrInvalidPeriod, err)
+	}
+	if result != nil {
+		t.Errorf("expected nil result, got %#v", result)
+	}
+	if len(store.Projects) != 0 {
+		t.Errorf("expected no projects in the store, got %d", len(store.Projects))
+	}
+}
+
+func TestProjectService_CreateProject_SuccessWithEndDateOneDayAfter(t *testing.T) {
+	// Given / Arrange: valid members and an end date one day after the start date.
+	store := &TestProjectStore{
+		Members: map[int]bool{1: true, 2: true},
+	}
+	service := NewProjectService(store)
+	startDate := time.Date(2026, time.October, 14, 0, 0, 0, 0, time.UTC)
+	req := ProjectCreationRequest{
+		Name:      "Single-Day Project",
+		Members:   []string{"1", "2"},
+		StartDate: startDate,
+		EndDate:   startDate.AddDate(0, 0, 1),
+	}
+
+	// When / Act: the project is created.
 	result, err := service.CreateProject(req)
 
 	// Then / Assert: creation succeeds.
@@ -66,6 +95,9 @@ func TestProjectService_CreateProject_SuccessWithEqualDates(t *testing.T) {
 	}
 	if !strings.Contains(result.Message, "Proyecto creado exitosamente") {
 		t.Errorf("expected success message, got %q", result.Message)
+	}
+	if len(store.Projects) != 1 {
+		t.Errorf("expected one project in the store, got %d", len(store.Projects))
 	}
 }
 
