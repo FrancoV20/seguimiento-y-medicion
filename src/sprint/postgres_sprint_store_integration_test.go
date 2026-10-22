@@ -39,6 +39,7 @@ func TestPostgreSQLSprintStoreCreateSprintAndSequence(t *testing.T) {
 		t.Fatalf("asociaciones=%d e historias En Sprint=%d; se esperaban 3 de cada", assignments, inSprint)
 	}
 
+	finishPostgreSQLSprint(t, store, first.ID) // un solo Sprint activo por proyecto (FIX-HU-04)
 	second, err := store.CreateSprint(ctx, integrationSprint(projectID, nil))
 	if err != nil {
 		t.Fatalf("la creación del segundo Sprint devolvió error: %v", err)
@@ -90,13 +91,11 @@ func TestPostgreSQLSprintStoreAssignmentConflictRollsBack(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	second, err := store.CreateSprint(ctx, integrationSprint(projectID, nil))
-	if err != nil {
-		t.Fatal(err)
-	}
 	if err := store.AssignStories(ctx, first.ID, []int64{storyIDs[1]}); err != nil {
 		t.Fatalf("primera asignación falló: %v", err)
 	}
+	// Un solo Sprint activo (FIX-HU-04): la historia sigue asignada al Sprint 1 ya finalizado.
+	finishPostgreSQLSprint(t, store, first.ID)
 
 	_, err = store.CreateSprint(ctx, integrationSprint(projectID, storyIDs))
 	if !errors.Is(err, ErrActiveSprintConflict) {
@@ -122,21 +121,21 @@ func TestPostgreSQLSprintStoreAssignmentConflictRollsBack(t *testing.T) {
 	).Scan(&sprintCount); err != nil {
 		t.Fatalf("no se pudo comprobar el rollback del Sprint: %v", err)
 	}
-	if sprintCount != 2 {
-		t.Errorf("cantidad de Sprints = %d, se esperaban 2 tras el rechazo", sprintCount)
+	if sprintCount != 1 {
+		t.Errorf("cantidad de Sprints = %d, se esperaba 1 tras el rechazo", sprintCount)
 	}
-	third, err := store.CreateSprint(ctx, integrationSprint(projectID, nil))
+	second, err := store.CreateSprint(ctx, integrationSprint(projectID, storyIDs[:1]))
 	if err != nil {
 		t.Fatalf("no se pudo crear el Sprint posterior al rechazo: %v", err)
 	}
-	if third.DisplayID != "Sprint 3" {
-		t.Errorf("DisplayID posterior al rechazo = %q, se esperaba Sprint 3", third.DisplayID)
+	if second.DisplayID != "Sprint 2" {
+		t.Errorf("DisplayID posterior al rechazo = %q, se esperaba Sprint 2", second.DisplayID)
 	}
 
-	if err := store.RemoveStory(ctx, first.ID, storyIDs[1]); err != nil {
+	if err := store.RemoveStory(ctx, second.ID, storyIDs[0]); err != nil {
 		t.Fatalf("RemoveStory() falló: %v", err)
 	}
-	if err := store.AssignStories(ctx, second.ID, []int64{storyIDs[1]}); err != nil {
+	if err := store.AssignStories(ctx, second.ID, []int64{storyIDs[0]}); err != nil {
 		t.Fatalf("reasignación tras quitar la historia falló: %v", err)
 	}
 }

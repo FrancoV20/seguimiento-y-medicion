@@ -2,8 +2,34 @@ package sprint
 
 import (
 	"errors"
+	"strings"
 	"testing"
 )
+
+// FIX-HU-04 (T004, T006): el mensaje indica a qué Sprint está asignada la historia.
+func TestAssignStoryToSprint_MensajeIndicaElSprintDeLaHistoria(t *testing.T) {
+	story := UserStory{ID: 2, ProjectID: 3, Status: EnSprint, ActiveSprintID: 9, ActiveSprintNumber: 3}
+
+	err := AssignStoryToSprint(&story, 12)
+
+	if !errors.Is(err, ErrActiveSprintConflict) {
+		t.Fatalf("se esperaba ErrActiveSprintConflict, se obtuvo: %v", err)
+	}
+	if !strings.Contains(err.Error(), "ya está asignada al Sprint 3") || strings.Contains(err.Error(), "otro Sprint") {
+		t.Errorf("el mensaje debe decir 'ya está asignada al Sprint 3': %q", err.Error())
+	}
+}
+
+func TestRemoveStoryFromSprint_LimpiaElNumeroDeSprint(t *testing.T) {
+	story := UserStory{ID: 4, ProjectID: 3, Status: EnSprint, ActiveSprintID: 9, ActiveSprintNumber: 3}
+
+	if err := RemoveStoryFromSprint(&story, 9); err != nil {
+		t.Fatalf("quitar la historia falló: %v", err)
+	}
+	if story.Status != Pendiente || story.ActiveSprintID != 0 || story.ActiveSprintNumber != 0 {
+		t.Errorf("al quitarla debía quedar Pendiente y sin Sprint: %+v", story)
+	}
+}
 
 func TestAssignStoryToSprintUpdatesPendingStory(t *testing.T) {
 	story := UserStory{ID: 7, ProjectID: 3, Status: Pendiente}

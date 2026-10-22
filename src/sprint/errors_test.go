@@ -15,6 +15,7 @@ func TestDomainErrorsAreDistinctAndCanBeWrapped(t *testing.T) {
 		{name: "período inválido", err: ErrInvalidSprintPeriod},
 		{name: "historia no disponible", err: ErrStoryNotAvailable},
 		{name: "conflicto de Sprint activo", err: ErrActiveSprintConflict},
+		{name: "ya hay un Sprint activo", err: ErrActiveSprintExists},
 		{name: "persistencia", err: ErrPersistence},
 	}
 	seen := make(map[error]bool, len(tests))
