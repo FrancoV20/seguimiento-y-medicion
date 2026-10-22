@@ -17,7 +17,7 @@ Unidad de gestión que habilita backlog, Sprints, esfuerzo y métricas.
 
 - `name` contiene al menos un carácter no vacío.
 - `memberIDs` tiene al menos un elemento.
-- `endDate >= startDate`.
+- `endDate > startDate`.
 - Un proyecto creado y persistido se encuentra disponible para seleccionar en HU-02.
 
 ## Member

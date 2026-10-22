@@ -17,12 +17,12 @@ HU-01 hoy permite crear un proyecto con la misma fecha de inicio y de fin (escen
 **Escenario: Fechas inválidas (se mantiene).**
 Dado que el usuario intenta crear un proyecto,
 Cuando ingresa una fecha de finalización anterior a la fecha de inicio,
-Entonces el sistema impide la creación y muestra un mensaje de error indicando la inconsistencia temporal.
+Entonces el sistema impide la creación y muestra "La fecha de finalización debe ser posterior a la fecha de inicio".
 
 **Escenario: Fecha de finalización igual a la fecha de inicio (reemplaza al escenario que la permitía).**
 Dado que el usuario intenta crear un proyecto con nombre e integrantes válidos,
 Cuando ingresa la misma fecha para inicio y finalización,
-Entonces el sistema impide la creación y muestra un mensaje indicando que la fecha de finalización debe ser posterior a la fecha de inicio.
+Entonces el sistema impide la creación y muestra "La fecha de finalización debe ser posterior a la fecha de inicio".
 
 **Escenario: Fecha de finalización un día posterior a la de inicio (límite nuevo).**
 Dado que el usuario intenta crear un proyecto con nombre e integrantes válidos,
@@ -68,9 +68,17 @@ Entonces el almacenamiento lo rechaza y no queda ningún proyecto nuevo.
 - HU-11 (modificar proyecto): su escenario "Fechas inválidas al modificar" pasa a "anterior o igual".
 - HU-12 no cambia: un proyecto que empieza o termina hoy sigue siendo "En curso".
 
-## Texto del mensaje (propuesta)
+## Texto vigente de HU-01 para planificación e Issue
 
-"La fecha de finalización debe ser posterior a la fecha de inicio". Se usa tanto para fin anterior como para fin igual, así hay un solo mensaje para la regla. En T001 se confirma el texto actual y se reemplaza.
+**Historia**: Como usuario de la pantalla de Gestión de Proyectos, quiero ingresar el nombre, los integrantes y las fechas de inicio y finalización para registrar un proyecto, con una fecha de finalización posterior a la de inicio, y comenzar a gestionarlo en el sistema.
+
+**Criterio de aceptación — período inválido**: si la fecha de finalización es anterior o igual a la de inicio, el sistema no crea el proyecto y muestra "La fecha de finalización debe ser posterior a la fecha de inicio".
+
+**Criterio de aceptación — duración mínima**: si la fecha de finalización es un día posterior a la de inicio y los demás datos son válidos, el sistema crea el proyecto y confirma el éxito.
+
+## Mensaje vigente
+
+"La fecha de finalización debe ser posterior a la fecha de inicio". Se usa tanto para fin anterior como para fin igual, con un único mensaje de validación.
 
 ## Success Criteria
 

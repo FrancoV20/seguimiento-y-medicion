@@ -42,30 +42,33 @@ Las pruebas deben cubrir como mínimo:
    - nombre no vacío;
    - al menos un integrante disponible;
    - fecha de inicio y fin informadas;
-   - fin posterior o igual al inicio;
+   - fin estrictamente posterior al inicio;
    - `ProjectStore.Create` recibe el proyecto;
    - el resultado confirma éxito y estado `Activo`.
 2. Fechas inválidas:
    - fecha de fin anterior rechaza la creación;
    - no se llama a `ProjectStore.Create`;
    - se muestra un error de inconsistencia temporal.
-3. Fechas iguales:
-   - fecha de inicio igual a fecha de fin permite la creación.
-4. Campos obligatorios:
+3. Fecha de fin igual a la de inicio:
+   - se rechaza la creación con "La fecha de finalización debe ser posterior a la fecha de inicio";
+   - no se llama a `ProjectStore.Create` ni queda un proyecto persistido.
+4. Límite válido:
+   - una fecha de fin un día posterior a la de inicio permite la creación.
+5. Campos obligatorios:
    - nombre vacío se rechaza;
    - integrantes ausentes se rechazan;
    - fecha de inicio o fin ausente se rechaza;
    - los datos restantes se conservan para corregir el formulario.
-5. Persistencia:
+6. Persistencia:
    - un error de `ProjectStore` no muestra éxito;
    - no se confirma el proyecto como creado;
    - un reintento válido no genera duplicación dentro del flujo del caso de uso.
-6. Integrantes:
+7. Integrantes:
    - un integrante inexistente se rechaza;
    - integrantes duplicados se rechazan con un error de validación explícito;
    - los integrantes duplicados no se normalizan ni se ignoran en silencio;
    - al menos un integrante válido queda asociado al proyecto.
-7. PostgreSQL:
+8. PostgreSQL:
    - `PostgreSQLProjectStore` usa pgx mediante `database/sql`;
    - el proyecto y sus integrantes se persisten en PostgreSQL;
    - un fallo transaccional no deja registros parciales.

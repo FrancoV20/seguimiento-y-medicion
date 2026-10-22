@@ -9,8 +9,8 @@
 ## Summary
 
 Implementar el caso de uso de creación de proyectos desde Gestión de Proyectos. El dominio
-validará nombre, integrantes y período, permitirá fechas iguales, rechazará una fecha final
-anterior y persistirá el proyecto mediante `ProjectStore`, cuya implementación concreta usará
+validará nombre, integrantes y período, exigirá que la fecha final sea posterior a la inicial y
+persistirá el proyecto mediante `ProjectStore`, cuya implementación concreta usará
 PostgreSQL con `github.com/jackc/pgx/v5` a través de `database/sql`. La operación será atómica:
 ningún proyecto se registra cuando falla una validación o la persistencia.
 
@@ -35,7 +35,7 @@ integración PostgreSQL para el adaptador de `ProjectStore`
 **Performance Goals**: Validar y registrar un proyecto en menos de 100 ms sin contar latencia
 de la base de datos
 
-**Constraints**: Nombre no vacío, al menos un integrante, fechas obligatorias, `end >= start`,
+**Constraints**: Nombre no vacío, al menos un integrante, fechas obligatorias, `end > start`,
 mensaje de éxito solo después de persistencia confirmada y sin duplicación ante errores
 
 **Scale/Scope**: Un proyecto y sus integrantes; no incluye edición, eliminación, consulta,
@@ -50,7 +50,7 @@ autenticación ni migraciones fuera del esquema mínimo necesario para persistir
 - **Quality by Construction**: PASS. Validación, entidad y persistencia se separan mediante un
   caso de uso y un contrato de almacenamiento.
 - **Test-First and Evidence-Driven Delivery**: PASS. Se probarán creación, campos obligatorios,
-  fechas iguales, fechas inválidas y errores de persistencia con `go test ./...`, incluyendo
+  fechas iguales rechazadas, fechas válidas e errores de persistencia con `go test ./...`, incluyendo
   integración del adaptador contra PostgreSQL.
 - **Agile, Collaborative Execution**: PASS. El proyecto creado queda disponible para organizar
   el trabajo del equipo.
@@ -106,7 +106,7 @@ No hay violaciones de la constitución que requieran justificar complejidad adic
 - **Quality by Construction**: PASS. La entidad, la solicitud, el servicio y `ProjectStore`
   tienen responsabilidades separadas y verificables.
 - **Test-First and Evidence-Driven Delivery**: PASS. `quickstart.md` define pruebas para éxito,
-  fechas iguales, fechas inválidas, obligatorios y fallas de persistencia.
+  fechas iguales rechazadas, fechas inválidas, obligatorios y fallas de persistencia.
 - **Agile, Collaborative Execution**: PASS. El proyecto creado queda listo para backlog y
   Sprints posteriores.
 - **Measurement and Continuous Improvement**: PASS. El período y los integrantes persistidos

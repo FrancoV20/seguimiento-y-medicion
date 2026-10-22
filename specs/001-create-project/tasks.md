@@ -1,5 +1,7 @@
 # Tasks: Crear nuevo proyecto
 
+> **Regla vigente**: FIX-HU-01 reemplaza el comportamiento inicial que aceptaba fechas iguales. Para proyectos válidos, la fecha de finalización debe ser estrictamente posterior a la de inicio.
+
 **Input**: Design documents from `specs/001-create-project/`
 
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, quickstart.md
@@ -42,7 +44,7 @@
 
 ### Tests for User Story 1
 
-- [X] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fecha de inicio igual a fecha de fin en `src/project/service_test.go`
+- [X] T011 [P] [US1] Escribir pruebas unitarias de creación válida, proyecto `Activo`, al menos un integrante y fechas válidas en `src/project/service_test.go`
 - [X] T012 [P] [US1] Escribir pruebas unitarias de campos obligatorios, integrante inexistente e integrante duplicado con error explícito y sin llamar al store en `src/project/service_test.go`
 - [X] T013 [P] [US1] Escribir la prueba de integración de persistencia exitosa en PostgreSQL, incluyendo proyecto e integrantes relacionados, en `src/project/postgres_store_integration_test.go`
 - [X] T014 [P] [US1] Escribir el escenario BDD de creación exitosa y confirmación en `test/project_bdd_test.go`
@@ -60,9 +62,9 @@
 
 ## Phase 4: User Story 2 - Evitar fechas inconsistentes (Priority: P2)
 
-**Goal**: Rechazar un proyecto cuya fecha de finalización sea anterior a la fecha de inicio sin persistirlo.
+**Goal**: Rechazar un proyecto cuya fecha de finalización sea anterior o igual a la fecha de inicio sin persistirlo.
 
-**Independent Test**: Enviar un proyecto con `endDate < startDate`; verificar error de inconsistencia temporal, ausencia de mensaje de éxito y cero llamadas al store.
+**Independent Test**: Enviar un proyecto con `endDate <= startDate`; verificar el error de fechas, ausencia de mensaje de éxito y cero llamadas al store.
 
 ### Tests for User Story 2
 
@@ -71,7 +73,7 @@
 
 ### Implementation for User Story 2
 
-- [X] T021 [US2] Completar la validación de calendario en `src/project/service.go` para aceptar `endDate == startDate` y rechazar únicamente `endDate < startDate` con el error explícito correspondiente
+- [X] T021 [US2] Completar la validación de calendario para aceptar únicamente `endDate > startDate`; FIX-HU-01 reemplaza la regla original que permitía la igualdad
 - [X] T022 [US2] Verificar en `src/project/service_test.go` y `test/project_bdd_test.go` que una fecha inválida conserva los datos corregibles, no registra proyectos y no muestra éxito
 
 **Checkpoint**: US2 rechaza períodos inválidos de forma independiente sin alterar el comportamiento válido de US1.
@@ -118,7 +120,7 @@
 ## Parallel Example: User Story 1
 
 ```text
-T010: Pruebas unitarias de creación válida y fecha igual en src/project/service_test.go
+T010: Pruebas unitarias de creación válida en src/project/service_test.go
 T011: Pruebas unitarias de obligatorios, integrante inexistente y duplicado en src/project/service_test.go
 T012: Prueba de integración PostgreSQL en src/project/postgres_store_integration_test.go
 T013: Escenario BDD en test/project_bdd_test.go
@@ -127,7 +129,7 @@ T013: Escenario BDD en test/project_bdd_test.go
 ## Parallel Example: User Story 2
 
 ```text
-T018: Prueba unitaria de endDate < startDate en src/project/service_test.go
+T018: Prueba unitaria de endDate <= startDate en src/project/service_test.go
 T019: Escenario BDD de fechas inválidas en test/project_bdd_test.go
 ```
 
@@ -161,7 +163,7 @@ T019: Escenario BDD de fechas inválidas en test/project_bdd_test.go
 | FR-001 | Acceder al formulario desde Gestión de Proyectos | Deferred | Diferido a Frontend/QA. |
 | FR-002 | Solicitar nombre, integrantes y fechas | T006, T011, T015 | El modelo/request y el servicio cubren los datos de entrada del backend. |
 | FR-003 | Validar campos obligatorios antes del registro | T012, T015 | Incluye nombre, integrantes y fechas obligatorias. |
-| FR-004 | Aceptar fecha final igual o posterior a la inicial | T011, T019, T021, T022 | Pruebas de igualdad e invalidez, más validación del período. |
+| FR-004 | Aceptar fecha final estrictamente posterior a la inicial | T011, T019, T021, T022, FIX-HU-01 T002-T007 | FIX-HU-01 reemplaza el comportamiento que aceptaba fechas iguales; ahora se prueban igualdad rechazada y un día posterior aceptado. |
 | FR-005 | Registrar un proyecto con sus datos | T013, T015, T017, T018 | Servicio, store y prueba de integración PostgreSQL. |
 | FR-006 | Confirmar el registro exitoso | T014, T016 | Escenario BDD y resultado formal de creación. |
 | FR-007 | Rechazar períodos inválidos con error temporal | T019, T020, T021, T022 | Pruebas unitarias/BDD e implementación del rechazo. |

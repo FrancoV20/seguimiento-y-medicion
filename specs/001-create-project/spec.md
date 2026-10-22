@@ -34,20 +34,28 @@ válidos y verificando que el proyecto queda registrado y que el usuario recibe 
 ### User Story 2 - Evitar fechas inconsistentes (Priority: P2)
 
 Como usuario que intenta registrar un proyecto, quiero recibir una advertencia cuando
-la fecha de finalización sea anterior a la fecha de inicio para corregir los datos antes
-de guardar información inválida.
+la fecha de finalización sea anterior o igual a la fecha de inicio para corregir los datos
+antes de guardar información inválida.
 
 **Why this priority**: La consistencia temporal es necesaria para que el seguimiento,
 la planificación y las métricas del proyecto sean confiables.
 
-**Independent Test**: Puede probarse ingresando una fecha de finalización anterior a la
-fecha de inicio y verificando que no se crea ningún proyecto y se informa el error.
+**Independent Test**: Puede probarse ingresando una fecha de finalización anterior o igual a
+la fecha de inicio y verificando que no se crea ningún proyecto y se informa el error.
 
 **Acceptance Scenarios**:
 
 1. **Given** el usuario intenta crear un proyecto, **When** ingresa una fecha de
    finalización anterior a la fecha de inicio, **Then** el sistema impide la creación
-   y muestra un mensaje de error indicando la inconsistencia temporal.
+   y muestra "La fecha de finalización debe ser posterior a la fecha de inicio".
+
+2. **Given** el usuario intenta crear un proyecto, **When** ingresa la misma fecha para
+   inicio y finalización, **Then** el sistema impide la creación y muestra
+   "La fecha de finalización debe ser posterior a la fecha de inicio".
+
+3. **Given** el usuario completa los datos obligatorios con una fecha de finalización un día
+   posterior a la de inicio, **When** presiona "Crear", **Then** el sistema registra el
+   proyecto y muestra un mensaje de éxito.
 
 ---
 
@@ -58,8 +66,8 @@ fecha de inicio y verificando que no se crea ningún proyecto y se informa el er
   requiere al menos un integrante.
 - Si falta la fecha de inicio o la fecha de fin, el sistema debe impedir la creación e
   indicar cuál es el dato obligatorio faltante.
-- Si la fecha de finalización coincide con la fecha de inicio, el sistema debe permitir la
-  creación, ya que no existe una finalización anterior al inicio.
+- Si la fecha de finalización coincide con la fecha de inicio, el sistema debe impedir la
+  creación; la fecha de finalización debe ser estrictamente posterior.
 - Si ocurre un error al registrar el proyecto, el sistema debe informar que no pudo
   completarse la operación y no debe mostrar un mensaje de éxito.
 
@@ -73,14 +81,15 @@ fecha de inicio y verificando que no se crea ningún proyecto y se informa el er
   la fecha de inicio y la fecha de finalización.
 - **FR-003**: El sistema MUST validar que todos los campos obligatorios estén completos antes
   de intentar registrar el proyecto.
-- **FR-004**: El sistema MUST validar que la fecha de finalización sea igual o posterior a la
-  fecha de inicio.
+- **FR-004**: El sistema MUST validar que la fecha de finalización sea estrictamente posterior
+  a la fecha de inicio.
 - **FR-005**: Si los datos son válidos y el usuario presiona "Crear", el sistema MUST
   registrar un nuevo proyecto con el nombre, los integrantes y ambas fechas.
 - **FR-006**: Después de un registro exitoso, el sistema MUST mostrar un mensaje de éxito al
   usuario.
-- **FR-007**: Si la fecha de finalización es anterior a la fecha de inicio, el sistema MUST
-  impedir el registro y mostrar un mensaje de error que indique la inconsistencia temporal.
+- **FR-007**: Si la fecha de finalización es anterior o igual a la fecha de inicio, el sistema
+  MUST impedir el registro y mostrar "La fecha de finalización debe ser posterior a la fecha
+  de inicio".
 - **FR-008**: Cuando la validación falla, el sistema MUST conservar los datos ingresados para
   permitir su corrección, excepto los valores que no puedan conservarse por restricciones
   del formulario.
@@ -93,7 +102,7 @@ fecha de inicio y verificando que no se crea ningún proyecto y se informa el er
   integrantes, fecha de inicio y fecha de finalización.
 - **Integrante**: Persona asociada al proyecto y responsable de participar en su gestión.
 - **Período del proyecto**: Intervalo definido por la fecha de inicio y la fecha de
-  finalización, cuya consistencia requiere que el fin no sea anterior al inicio.
+  finalización, cuya consistencia requiere que el fin sea posterior al inicio.
 
 ## Success Criteria *(mandatory)*
 
@@ -101,8 +110,8 @@ fecha de inicio y verificando que no se crea ningún proyecto y se informa el er
 
 - **SC-001**: El 100% de los intentos con nombre, integrantes y fechas válidas registra un
   proyecto y muestra un mensaje de éxito.
-- **SC-002**: El 100% de los intentos con fecha de finalización anterior a la fecha de inicio
-  es rechazado sin registrar un proyecto y muestra un mensaje de error temporal.
+- **SC-002**: El 100% de los intentos con fecha de finalización anterior o igual a la fecha de
+  inicio es rechazado sin registrar un proyecto y muestra el mensaje de error temporal.
 - **SC-003**: Un usuario puede completar y enviar el formulario de creación en menos de
   2 minutos cuando dispone de los datos requeridos.
 - **SC-004**: Al menos el 90% de los usuarios de prueba puede completar correctamente la
