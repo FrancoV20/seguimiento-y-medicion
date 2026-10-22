@@ -10,13 +10,14 @@ func AssignStoryToSprint(story *UserStory, sprintID int64) error {
 		return ErrStoryNotAvailable
 	}
 	if story.Status == EnSprint || story.ActiveSprintID != 0 {
-		return ErrActiveSprintConflict
+		return &StoryAlreadyAssignedError{StoryID: story.ID, SprintNumber: story.ActiveSprintNumber}
 	}
 	if story.Status != Pendiente {
 		return ErrStoryNotAvailable
 	}
 	story.Status = EnSprint
 	story.ActiveSprintID = sprintID
+	story.ActiveSprintNumber = 0 // lo completa quien conoce el número del Sprint
 	return nil
 }
 
@@ -27,6 +28,7 @@ func RemoveStoryFromSprint(story *UserStory, sprintID int64) error {
 	}
 	story.Status = Pendiente
 	story.ActiveSprintID = 0
+	story.ActiveSprintNumber = 0
 	return nil
 }
 
@@ -35,7 +37,7 @@ func validateStoryForProject(story UserStory, projectID int64) error {
 		return fmt.Errorf("%w: la historia %d pertenece a otro proyecto", ErrStoryNotAvailable, story.ID)
 	}
 	if story.Status == EnSprint || story.ActiveSprintID != 0 {
-		return fmt.Errorf("%w: historia %d", ErrActiveSprintConflict, story.ID)
+		return &StoryAlreadyAssignedError{StoryID: story.ID, SprintNumber: story.ActiveSprintNumber}
 	}
 	if story.Status != Pendiente {
 		return fmt.Errorf("%w: historia %d", ErrStoryNotAvailable, story.ID)

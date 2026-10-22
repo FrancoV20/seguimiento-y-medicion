@@ -116,12 +116,55 @@ Resultado de creación y asignación.
 - Una operación inválida no cambia estados de historias ni crea asociaciones parciales.
 - La advertencia por Sprint vacío no convierte el resultado en error.
 
-## StoryMove
+## Quitar y volver a asignar (FIX-HU-04)
 
-Operación explícita para cambiar una historia de Sprint.
+Reemplaza a `StoryMove`: con un solo Sprint activo por proyecto no hay otro Sprint activo al
+que mover la historia, y la función `MoveStory` se eliminó.
 
 ### Transition
 
-`Sprint activo A + historia En Sprint -> quitar -> historia Pendiente -> asignar a Sprint B -> historia En Sprint`.
+`historia En Sprint del Sprint activo -> quitar -> historia Pendiente -> asignar al Sprint activo -> historia En Sprint`.
 
-La asignación directa `Sprint activo A -> Sprint activo B` sin quitar primero debe rechazarse.
+## FIX-HU-04: un solo Sprint activo por proyecto
+
+### Revisión de HU-04 en `main` (T001)
+
+- Paquete `src/sprint`. Firmas: `Service.CreateSprint(ctx, request, project, stories)`, la
+  función de dominio `CreateSprint(request, project, stories)` y `SprintStore` con
+  `CreateSprint(ctx, sprint)`, `AssignStories(ctx, sprintID, storyIDs)` y
+  `RemoveStory(ctx, sprintID, storyID)`.
+- `projects.next_sprint_number` se lee con `SELECT … FOR UPDATE` y se incrementa en
+  `nextSprintNumber` (`sequence.go`), dentro de la transacción de `CreateSprint`.
+- Al asignar, la historia queda en "En Sprint" (`AssignStoryToSprint` y
+  `persistStoryAssignments`); al quitarla vuelve a "Pendiente" (`RemoveStoryFromSprint`).
+  Confirmado.
+- Pruebas que creaban dos Sprints activos en el mismo proyecto (corregidas en T007):
+  `TestMemorySprintStoreGeneratesSequentialSprintIDs`,
+  `TestMemorySprintStoreAssignsExclusivelyAndAllowsRemoveThenAssign`,
+  `TestMoveStoryRemovesBeforeAssigningToDestinationSprint` (eliminada junto con `MoveStory`),
+  `TestPostgreSQLSprintStoreCreateSprintAndSequence` y
+  `TestPostgreSQLSprintStoreAssignmentConflictRollsBack`. Las pruebas de HU-03 y HU-07 insertan
+  Sprints directamente con SQL y no pasan por el servicio: no se ven afectadas.
+
+### Campos nuevos
+
+- `Project.ActiveSprintNumber`: número del Sprint activo; 0 si no hay. Si quien llama lo
+  informa, la validación de dominio rechaza antes de llegar a la base.
+- `UserStory.ActiveSprintNumber`: número visible del Sprint al que está asignada; se usa en
+  el mensaje de conflicto.
+
+### Errores (los usa HU-23)
+
+| Error | Cómo reconocerlo | Mensaje |
+|---|---|---|
+| Ya hay un Sprint activo | `errors.Is(err, sprint.ErrActiveSprintExists)`; `errors.As(err, &*sprint.ActiveSprintExistsError)` da `Number` | `ya hay un Sprint activo (Sprint N)` |
+| Historia ya asignada | `errors.Is(err, sprint.ErrActiveSprintConflict)`; `errors.As(err, &*sprint.StoryAlreadyAssignedError)` da `StoryID` y `SprintNumber` | `la historia X ya está asignada al Sprint N` |
+
+### Cómo se aplica la regla
+
+En `PostgreSQLSprintStore.CreateSprint`, dentro de la transacción y antes de tomar el número,
+`lockProjectWithoutActiveSprint` bloquea la fila del proyecto (`SELECT … FOR UPDATE`) y busca
+un Sprint del proyecto con estado `Activo`. Si existe, devuelve `ActiveSprintExistsError` y la
+transacción se revierte sin incrementar `next_sprint_number`. El bloqueo ordena las creaciones
+simultáneas: la segunda espera, ve el Sprint de la primera y se rechaza. No hay migraciones ni
+índices nuevos.

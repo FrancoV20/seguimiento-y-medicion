@@ -57,6 +57,10 @@ func (s *PostgreSQLSprintStore) CreateSprint(ctx context.Context, sprint Sprint)
 	}
 	defer tx.Rollback()
 
+	// Un solo Sprint activo: se verifica antes de tomar el número, así un rechazo no lo consume (R3).
+	if err := lockProjectWithoutActiveSprint(ctx, tx, sprint.ProjectID); err != nil {
+		return Sprint{}, err
+	}
 	number, err := nextSprintNumber(ctx, tx, sprint.ProjectID)
 	if err != nil {
 		return Sprint{}, err
@@ -232,14 +236,15 @@ func lockAssignableStories(
 	stories := make([]UserStory, 0, len(ids))
 	for _, storyID := range ids {
 		var story UserStory
-		var activeSprintID sql.NullInt64
+		var activeSprintID, activeSprintNumber sql.NullInt64
 		err := tx.QueryRowContext(ctx, `
-			SELECT id, project_id, status, active_sprint_id
-			FROM user_stories
-			WHERE id = $1
-			FOR UPDATE`,
+			SELECT us.id, us.project_id, us.status, us.active_sprint_id, s.number
+			FROM user_stories us
+			LEFT JOIN sprints s ON s.id = us.active_sprint_id
+			WHERE us.id = $1
+			FOR UPDATE OF us`,
 			storyID,
-		).Scan(&story.ID, &story.ProjectID, &story.Status, &activeSprintID)
+		).Scan(&story.ID, &story.ProjectID, &story.Status, &activeSprintID, &activeSprintNumber)
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("%w: historia %d inexistente", ErrStoryNotAvailable, storyID)
 		}
@@ -248,6 +253,9 @@ func lockAssignableStories(
 		}
 		if activeSprintID.Valid {
 			story.ActiveSprintID = activeSprintID.Int64
+		}
+		if activeSprintNumber.Valid {
+			story.ActiveSprintNumber = activeSprintNumber.Int64
 		}
 		if targetSprintID != 0 && story.ActiveSprintID == targetSprintID && story.Status == EnSprint {
 			continue
@@ -268,7 +276,7 @@ func persistStoryAssignments(ctx context.Context, tx *sql.Tx, sprintID int64, st
 			story.ID,
 		); err != nil {
 			if isUniqueViolation(err) {
-				return fmt.Errorf("%w: historia %d", ErrActiveSprintConflict, story.ID)
+				return &StoryAlreadyAssignedError{StoryID: story.ID}
 			}
 			return persistenceError("crear la asociación de historia")
 		}
@@ -289,7 +297,7 @@ func persistStoryAssignments(ctx context.Context, tx *sql.Tx, sprintID int64, st
 			return persistenceError("verificar la actualización del estado de la historia")
 		}
 		if affected != 1 {
-			return fmt.Errorf("%w: historia %d", ErrActiveSprintConflict, story.ID)
+			return &StoryAlreadyAssignedError{StoryID: story.ID}
 		}
 	}
 	return nil
