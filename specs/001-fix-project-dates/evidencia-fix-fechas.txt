@@ -1,0 +1,106 @@
+Prerequisito: DATABASE_URL no está configurada. PostgreSQL está activo, pero los tests de integración que dependen de una URL pueden omitirse.
+
+=== go test -count=1 -p 1 ./... ===
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.711s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.745s
+?   	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	[no test files]
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	1.695s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	1.833s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	1.917s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.767s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	3.150s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	3.502s
+EXIT_CODE=0
+
+=== go vet ./... ===
+EXIT_CODE=0
+
+=== gofmt -l . ===
+db\migrations.go
+db\migrations_integration_test.go
+db\migrations_test.go
+src\backlog\errors.go
+src\backlog\estimated_hours_test.go
+src\backlog\model.go
+src\backlog\postgres_backlog_store.go
+src\backlog\postgres_backlog_store_integration_test.go
+src\backlog\postgres_estimated_hours_integration_test.go
+src\backlog\service.go
+src\backlog\service_test.go
+src\backlog\store.go
+src\backlog\story_points.go
+src\backlog\story_points_test.go
+src\backlog\test_store.go
+src\cmd\server\main.go
+src\effort\errors.go
+src\effort\hours.go
+src\effort\hours_test.go
+src\effort\model.go
+src\effort\postgres_effort_store.go
+src\effort\postgres_effort_store_integration_test.go
+src\effort\service.go
+src\effort\service_test.go
+src\effort\store.go
+src\effort\test_store.go
+src\effort\validation.go
+src\effort\validation_test.go
+src\metrics\calculation.go
+src\metrics\calculation_test.go
+src\metrics\closure_validation.go
+src\metrics\closure_validation_test.go
+src\metrics\errors.go
+src\metrics\model.go
+src\metrics\postgres_metrics_store.go
+src\metrics\service.go
+src\metrics\service_test.go
+src\metrics\store.go
+src\metrics\test_store.go
+src\project\model.go
+src\project\postgres_store.go
+src\project\project_test.go
+src\project\service.go
+src\project\store.go
+src\project\test_store.go
+src\sprint\errors.go
+src\sprint\errors_test.go
+src\sprint\model.go
+src\sprint\postgres_sprint_store.go
+src\sprint\postgres_sprint_store_integration_test.go
+src\sprint\sequence.go
+src\sprint\sequence_test.go
+src\sprint\service.go
+src\sprint\service_test.go
+src\sprint\store.go
+src\sprint\story_assignment.go
+src\sprint\story_assignment_test.go
+src\sprint\test_store.go
+src\sprint\test_store_test.go
+src\web\config.go
+src\web\config_test.go
+src\web\database.go
+src\web\database_outage_integration_test.go
+src\web\database_test.go
+src\web\errors.go
+src\web\errors_test.go
+src\web\messages.go
+src\web\middleware.go
+src\web\middleware_test.go
+src\web\postgres_schema_version_reader.go
+src\web\postgres_schema_version_reader_integration_test.go
+src\web\render.go
+src\web\render_test.go
+src\web\schema.go
+src\web\schema_test.go
+src\web\sections.go
+src\web\sections_test.go
+src\web\server.go
+src\web\server_test.go
+src\web\static.go
+test\backlog_bdd_test.go
+test\effort_bdd_test.go
+test\metrics_bdd_test.go
+test\sprint_bdd_test.go
+test\web_base_bdd_test.go
+EXIT_CODE=0
+
+RED inicial: ver specs/001-fix-project-dates/evidencia-fix-fechas-red.txt

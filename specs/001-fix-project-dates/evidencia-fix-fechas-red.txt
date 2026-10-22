@@ -1,0 +1,33 @@
+Fase 1 RED
+Comando de suite completa: go test -count=1 -p 1 ./...
+DATABASE_URL no se configuró para la suite: la base local está vacía, sin migraciones aplicadas.
+T003 se ejecutó por separado contra PostgreSQL, en un esquema temporal aislado con la restricción de db/migrations/001_create_projects.up.sql; el esquema se eliminó al terminar.
+
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	2.590s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.532s
+?   	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	[no test files]
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	2.820s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.065s
+--- FAIL: TestProjectService_CreateProject_RejectsEqualDates (0.00s)
+    service_test.go:62: expected error end date cannot be before start date, got <nil>
+    service_test.go:65: expected nil result, got &project.ProjectCreationResult{Project:(*project.Project)(0x33cab03a47e0), Message:"Proyecto creado exitosamente"}
+    service_test.go:68: expected no projects in the store, got 1
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project	2.119s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.742s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	5.065s
+--- FAIL: TestProjectCreation_EqualDates_BDD (0.00s)
+    project_bdd_test.go:102: expected error end date cannot be before start date, got <nil>
+    project_bdd_test.go:108: expected nil result, got &project.ProjectCreationResult{Project:(*project.Project)(0x191667aae1c0), Message:"Proyecto creado exitosamente"}
+    project_bdd_test.go:111: expected no projects in the store, got 1
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	4.830s
+FAIL
+
+=== T003: PostgreSQL integration RED in isolated schema based on migration 001 ===
+--- FAIL: TestPostgreSQLProjectStore_Create_Integration (0.35s)
+    postgres_store_integration_test.go:67: expected the database to reject a project with equal dates
+    postgres_store_integration_test.go:87: expected no persisted equal-date project, got 1
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.801s
+FAIL

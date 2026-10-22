@@ -15,7 +15,7 @@
 ## Decision 3: Fechas inclusivas a nivel de día
 
 - **Decision**: Comparar fechas como fechas de calendario, sin componente horario; `fechaFin == fechaInicio` es válido y `fechaFin < fechaInicio` es inválido.
-- **Rationale**: La especificación permite explícitamente fechas iguales y solo exige impedir una finalización anterior.
+- **Rationale (regla vigente tras FIX-HU-01)**: la fecha de finalización debe ser estrictamente posterior a la de inicio; se rechazan fechas iguales y anteriores para que el proyecto pueda contener al menos un Sprint.
 - **Alternatives considered**: Usar timestamps y exigir una hora de finalización posterior. Se descarta porque agrega precisión no solicitada y puede producir errores de zona horaria.
 
 ## Decision 4: Integrantes existentes y sin duplicados

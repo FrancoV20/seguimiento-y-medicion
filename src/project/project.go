@@ -11,7 +11,7 @@ func NewProject(name string, members []string, startDate, endDate time.Time) (Pr
 	if len(members) == 0 {
 		return Project{}, ErrMissingMembers
 	}
-	if startDate.IsZero() || endDate.IsZero() || endDate.Before(startDate) {
+	if startDate.IsZero() || endDate.IsZero() || !endDate.After(startDate) {
 		return Project{}, ErrInvalidPeriod
 	}
 
