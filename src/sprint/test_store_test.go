@@ -18,6 +18,7 @@ func TestMemorySprintStoreGeneratesSequentialSprintIDs(t *testing.T) {
 		if sprint.DisplayID != want {
 			t.Errorf("Sprint %d: DisplayID = %q, se esperaba %q", index+1, sprint.DisplayID, want)
 		}
+		finishMemorySprint(t, store, sprint.ID) // un solo Sprint activo por proyecto (FIX-HU-04)
 	}
 }
 
@@ -25,16 +26,19 @@ func TestMemorySprintStoreAssignsExclusivelyAndAllowsRemoveThenAssign(t *testing
 	store := newMemorySprintStore()
 	store.addProject(Project{ID: 1, Status: "Activo"})
 	store.addStory(UserStory{ID: 10, ProjectID: 1, Status: Pendiente})
+	store.addStory(UserStory{ID: 11, ProjectID: 1, Status: Pendiente})
 	first, err := store.CreateSprint(context.Background(), validTestSprint(1))
-	if err != nil {
-		t.Fatal(err)
-	}
-	second, err := store.CreateSprint(context.Background(), validTestSprint(1))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := store.AssignStories(context.Background(), first.ID, []int64{10}); err != nil {
 		t.Fatalf("primera asignación: %v", err)
+	}
+	// Un solo Sprint activo (FIX-HU-04): el segundo se crea después de finalizar el primero.
+	finishMemorySprint(t, store, first.ID)
+	second, err := store.CreateSprint(context.Background(), validTestSprint(1))
+	if err != nil {
+		t.Fatal(err)
 	}
 	if err := store.AssignStories(context.Background(), second.ID, []int64{10}); !errors.Is(err, ErrActiveSprintConflict) {
 		t.Fatalf("segunda asignación = %v, se esperaba conflicto", err)
@@ -43,13 +47,16 @@ func TestMemorySprintStoreAssignsExclusivelyAndAllowsRemoveThenAssign(t *testing
 	if story.Status != EnSprint || story.ActiveSprintID != first.ID {
 		t.Fatalf("la asignación existente no se conservó: %+v", story)
 	}
-	if err := store.RemoveStory(context.Background(), first.ID, 10); err != nil {
+	if err := store.AssignStories(context.Background(), second.ID, []int64{11}); err != nil {
+		t.Fatalf("asignación de una historia pendiente: %v", err)
+	}
+	if err := store.RemoveStory(context.Background(), second.ID, 11); err != nil {
 		t.Fatalf("RemoveStory(): %v", err)
 	}
-	if err := store.AssignStories(context.Background(), second.ID, []int64{10}); err != nil {
+	if err := store.AssignStories(context.Background(), second.ID, []int64{11}); err != nil {
 		t.Fatalf("asignación después de quitar: %v", err)
 	}
-	story, _ = store.story(10)
+	story, _ = store.story(11)
 	if story.Status != EnSprint || story.ActiveSprintID != second.ID {
 		t.Fatalf("la historia no se reasignó: %+v", story)
 	}

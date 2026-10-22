@@ -174,7 +174,7 @@ func TestSprintCreationRequestDoesNotExposeGeneratedIdentifier(t *testing.T) {
 	}
 }
 
-func TestCreateSprint_RejectsStoryAssignedToAnotherActiveSprint(t *testing.T) {
+func TestCreateSprint_RejectsStoryAlreadyAssignedToASprint(t *testing.T) {
 	req := validCreationRequest([]int64{201})
 	project := Project{ID: 1, Name: "Proyecto A", Status: "Activo"}
 	stories := []UserStory{{
@@ -229,38 +229,8 @@ func TestCreateSprint_AllowsStoryMoveOnlyAfterRemovingCurrentAssignment(t *testi
 	}
 }
 
-func TestMoveStoryRemovesBeforeAssigningToDestinationSprint(t *testing.T) {
-	store := newMemorySprintStore()
-	store.addProject(Project{ID: 1, Status: "Activo"})
-	store.addStory(UserStory{ID: 501, ProjectID: 1, Status: Pendiente})
-	first, err := store.CreateSprint(context.Background(), Sprint{
-		ProjectID: 1,
-		Goal:      "Sprint de origen",
-		StartDate: time.Date(2026, 10, 1, 0, 0, 0, 0, time.UTC),
-		EndDate:   time.Date(2026, 10, 15, 0, 0, 0, 0, time.UTC),
-		StoryIDs:  []int64{501},
-	})
-	if err != nil {
-		t.Fatalf("no se pudo preparar el Sprint de origen: %v", err)
-	}
-	second, err := store.CreateSprint(context.Background(), Sprint{
-		ProjectID: 1,
-		Goal:      "Sprint de destino",
-		StartDate: time.Date(2026, 10, 16, 0, 0, 0, 0, time.UTC),
-		EndDate:   time.Date(2026, 10, 30, 0, 0, 0, 0, time.UTC),
-	})
-	if err != nil {
-		t.Fatalf("no se pudo preparar el Sprint de destino: %v", err)
-	}
-
-	if err := MoveStory(context.Background(), store, first.ID, second.ID, 501); err != nil {
-		t.Fatalf("MoveStory() devolvió error: %v", err)
-	}
-	story, exists := store.story(501)
-	if !exists || story.Status != EnSprint || story.ActiveSprintID != second.ID {
-		t.Fatalf("la historia no quedó únicamente en el Sprint destino: %+v", story)
-	}
-}
+// "Mover una historia entre Sprints" ya no aplica con un solo Sprint activo (FIX-HU-04):
+// lo reemplaza TestServicio_QuitarYVolverAAsignarEnElSprintActivo en active_sprint_test.go.
 
 func TestServicePersistsBeforeMutatingStoriesAndUsesPersistedSprintID(t *testing.T) {
 	store := newMemorySprintStore()

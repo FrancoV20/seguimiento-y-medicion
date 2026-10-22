@@ -52,6 +52,7 @@ func (s Service) CreateSprint(
 		index := storyIndexes[storyID]
 		stories[index].Status = EnSprint
 		stories[index].ActiveSprintID = persisted.ID
+		stories[index].ActiveSprintNumber = persisted.Number
 	}
 	return SprintCreationResult{
 		Sprint:  persisted,
@@ -70,6 +71,11 @@ func validateSprintPeriod(startDate, endDate time.Time) error {
 func CreateSprint(request SprintCreationRequest, project Project, stories []UserStory) (SprintCreationResult, error) {
 	if request.ProjectID <= 0 || project.ID != request.ProjectID {
 		return SprintCreationResult{}, ErrProjectNotFound
+	}
+	// Un solo Sprint activo por proyecto (FIX-HU-04, R1). El almacenamiento vuelve a
+	// verificarlo con la fila del proyecto bloqueada, que es la fuente de verdad.
+	if project.ActiveSprintNumber > 0 {
+		return SprintCreationResult{}, &ActiveSprintExistsError{Number: project.ActiveSprintNumber}
 	}
 
 	sprint := Sprint{
@@ -134,6 +140,7 @@ func CreateSprint(request SprintCreationRequest, project Project, stories []User
 		if err := AssignStoryToSprint(&assignedStories[i], sprint.ID); err != nil {
 			return SprintCreationResult{}, err
 		}
+		assignedStories[i].ActiveSprintNumber = sprint.Number
 	}
 	for i, index := range selectedIndexes {
 		stories[index] = assignedStories[i]
@@ -144,15 +151,4 @@ func CreateSprint(request SprintCreationRequest, project Project, stories []User
 		result.Warning = "El Sprint se creó sin historias asignadas."
 	}
 	return result, nil
-}
-
-// MoveStory quita la historia del Sprint actual antes de asignarla al Sprint destino.
-func MoveStory(ctx context.Context, store SprintStore, fromSprintID, toSprintID, storyID int64) error {
-	if store == nil || fromSprintID <= 0 || toSprintID <= 0 || fromSprintID == toSprintID || storyID <= 0 {
-		return ErrStoryNotAvailable
-	}
-	if err := store.RemoveStory(ctx, fromSprintID, storyID); err != nil {
-		return err
-	}
-	return store.AssignStories(ctx, toSprintID, []int64{storyID})
 }

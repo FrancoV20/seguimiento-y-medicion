@@ -59,6 +59,11 @@ func (s *memorySprintStore) CreateSprint(ctx context.Context, sprint Sprint) (Sp
 	if err := validateSprint(sprint); err != nil {
 		return Sprint{}, err
 	}
+	for _, existing := range s.sprints {
+		if existing.ProjectID == sprint.ProjectID && existing.Status == SprintActive {
+			return Sprint{}, &ActiveSprintExistsError{Number: existing.Number}
+		}
+	}
 	storyIDs, err := normalizeStoryIDs(sprint.StoryIDs)
 	if err != nil {
 		return Sprint{}, err
@@ -69,6 +74,7 @@ func (s *memorySprintStore) CreateSprint(ctx context.Context, sprint Sprint) (Sp
 		if !exists {
 			return Sprint{}, fmt.Errorf("%w: historia %d inexistente", ErrStoryNotAvailable, storyID)
 		}
+		story = s.withSprintNumber(story)
 		if err := validateStoryForProject(story, sprint.ProjectID); err != nil {
 			return Sprint{}, err
 		}
@@ -100,6 +106,7 @@ func (s *memorySprintStore) CreateSprint(ctx context.Context, sprint Sprint) (Sp
 		if err := AssignStoryToSprint(&candidates[i], sprint.ID); err != nil {
 			return Sprint{}, err
 		}
+		candidates[i].ActiveSprintNumber = number
 	}
 	for _, story := range candidates {
 		s.stories[story.ID] = story
@@ -135,6 +142,7 @@ func (s *memorySprintStore) AssignStories(ctx context.Context, sprintID int64, s
 			candidates = append(candidates, story)
 			continue
 		}
+		story = s.withSprintNumber(story)
 		if err := validateStoryForProject(story, sprint.ProjectID); err != nil {
 			return err
 		}
@@ -149,6 +157,7 @@ func (s *memorySprintStore) AssignStories(ctx context.Context, sprintID int64, s
 			if err := AssignStoryToSprint(&candidates[i], sprintID); err != nil {
 				return err
 			}
+			candidates[i].ActiveSprintNumber = sprint.Number
 		}
 		assigned[candidates[i].ID] = struct{}{}
 	}
@@ -162,6 +171,15 @@ func (s *memorySprintStore) AssignStories(ctx context.Context, sprintID int64, s
 	sort.Slice(sprint.StoryIDs, func(i, j int) bool { return sprint.StoryIDs[i] < sprint.StoryIDs[j] })
 	s.sprints[sprintID] = sprint
 	return nil
+}
+
+// withSprintNumber completa el número visible del Sprint al que está asignada la historia,
+// para los mensajes de conflicto (FIX-HU-04). Se llama con el mutex tomado.
+func (s *memorySprintStore) withSprintNumber(story UserStory) UserStory {
+	if assigned, ok := s.sprints[story.ActiveSprintID]; ok {
+		story.ActiveSprintNumber = assigned.Number
+	}
+	return story
 }
 
 func (s *memorySprintStore) RemoveStory(ctx context.Context, sprintID int64, storyID int64) error {

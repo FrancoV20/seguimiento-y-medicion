@@ -8,6 +8,9 @@ type Project struct {
 	Name             string
 	Status           string
 	NextSprintNumber int64
+
+	// ActiveSprintNumber es el número del Sprint activo del proyecto; 0 si no tiene (FIX-HU-04).
+	ActiveSprintNumber int64
 }
 
 // SprintStatus representa el estado del ciclo de vida de un Sprint.
@@ -53,6 +56,9 @@ type UserStory struct {
 	ProjectID      int64
 	Status         StoryStatus
 	ActiveSprintID int64
+
+	// ActiveSprintNumber es el número visible del Sprint asignado, para los mensajes (FIX-HU-04).
+	ActiveSprintNumber int64
 }
 
 // SprintCreationRequest contiene los datos del Sprint ingresados por el usuario.

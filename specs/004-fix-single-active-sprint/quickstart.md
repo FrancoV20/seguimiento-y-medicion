@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Go 1.27.1, Docker Desktop y `golang-migrate/migrate` instalados según el [README.md](../../README.md).
-- HU-04 integrada en `main`; en tu rama `FIX-HU-04`, traer lo último con `git merge origin/main`.
+- HU-04 integrada en `main`; el fix se trabaja en la rama `HU-04_Fixes` (traer lo último con `git merge origin/main`).
 - `DATABASE_URL` configurada con el puerto que publica tu contenedor (5432 o 5433).
 
 ## Antes de probar: revisar datos existentes
@@ -22,7 +22,10 @@ docker compose up -d postgres
 go test -count=1 -p 1 ./...
 ```
 
-La prueba de creación simultánea usa dos goroutines contra PostgreSQL real; se ejecuta con el resto.
+La prueba de creación simultánea (`TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo`) lanza
+cuatro creaciones a la vez contra PostgreSQL real; se ejecuta con el resto. Las pruebas del fix están en
+`src/sprint/active_sprint_test.go`, `src/sprint/postgres_active_sprint_integration_test.go`,
+`src/sprint/story_assignment_test.go` y `test/sprint_bdd_test.go`.
 
 ## Required validation scenarios
 
@@ -39,8 +42,8 @@ La prueba de creación simultánea usa dos goroutines contra PostgreSQL real; se
 En PowerShell, ejecutar `chcp 65001` antes:
 
 ```powershell
-go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/004-fix-single-active-sprint/evidencia-red.txt
-go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/004-fix-single-active-sprint/evidencia-pruebas.txt
+go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/004-fix-single-active-sprint/evidencia-fix-sprint-activo-red.txt
+go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/004-fix-single-active-sprint/evidencia-fix-sprint-activo.txt
 ```
 
 La primera se guarda antes de implementar, con las pruebas nuevas fallando.

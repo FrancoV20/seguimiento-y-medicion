@@ -3,6 +3,7 @@ package test
 import (
 	"errors"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -33,39 +34,92 @@ func TestSprintBDDScenarios(t *testing.T) {
 		}
 	})
 
-	t.Run("bloquear historia que pertenece a otro Sprint activo", func(t *testing.T) {
+	t.Run("bloquear historia que ya está asignada a un Sprint", func(t *testing.T) {
+		// Dado que una historia ya está asignada al Sprint 2
 		project := activeProject()
 		story := sprint.UserStory{
-			ID:             20,
-			ProjectID:      project.ID,
-			Status:         sprint.EnSprint,
-			ActiveSprintID: 99,
+			ID:                 20,
+			ProjectID:          project.ID,
+			Status:             sprint.EnSprint,
+			ActiveSprintID:     99,
+			ActiveSprintNumber: 2,
 		}
 
+		// Cuando el Scrum Master intenta asignarla a un Sprint
 		_, err := sprint.CreateSprint(validSprintRequest(project.ID, []int64{story.ID}), project, []sprint.UserStory{story})
-		if !errors.Is(err, sprint.ErrActiveSprintConflict) {
-			t.Fatalf("error = %v, se esperaba conflicto con Sprint activo", err)
+
+		// Entonces se bloquea e indica que ya está asignada al Sprint 2
+		if !errors.Is(err, sprint.ErrActiveSprintConflict) || !strings.Contains(err.Error(), "ya está asignada al Sprint 2") {
+			t.Fatalf("error = %v, se esperaba 'ya está asignada al Sprint 2'", err)
 		}
 	})
 
-	t.Run("permitir movimiento solo después de quitar la asignación", func(t *testing.T) {
+	t.Run("quitar una historia y volver a asignarla", func(t *testing.T) {
+		// Dado una historia En Sprint del Sprint activo
 		project := activeProject()
 		story := sprint.UserStory{
-			ID:             30,
-			ProjectID:      project.ID,
-			Status:         sprint.EnSprint,
-			ActiveSprintID: 31,
-		}
-		if err := sprint.RemoveStoryFromSprint(&story, 31); err != nil {
-			t.Fatalf("no se pudo quitar la historia del Sprint actual: %v", err)
+			ID:                 30,
+			ProjectID:          project.ID,
+			Status:             sprint.EnSprint,
+			ActiveSprintID:     31,
+			ActiveSprintNumber: 1,
 		}
 
-		result, err := sprint.CreateSprint(validSprintRequest(project.ID, []int64{story.ID}), project, []sprint.UserStory{story})
-		if err != nil {
-			t.Fatalf("no se pudo asignar la historia después de quitarla: %v", err)
+		// Cuando la quita del Sprint
+		if err := sprint.RemoveStoryFromSprint(&story, 31); err != nil {
+			t.Fatalf("no se pudo quitar la historia del Sprint: %v", err)
 		}
-		if !reflect.DeepEqual(result.Sprint.StoryIDs, []int64{story.ID}) {
-			t.Errorf("historias del nuevo Sprint = %v, se esperaba [%d]", result.Sprint.StoryIDs, story.ID)
+
+		// Entonces vuelve a Pendiente y la nueva asignación se permite sin conflicto
+		if story.Status != sprint.Pendiente {
+			t.Fatalf("estado al quitarla = %q, se esperaba Pendiente", story.Status)
+		}
+		if err := sprint.AssignStoryToSprint(&story, 31); err != nil {
+			t.Fatalf("no se pudo volver a asignar la historia: %v", err)
+		}
+		if story.Status != sprint.EnSprint || story.ActiveSprintID != 31 {
+			t.Errorf("al volver a asignarla debía quedar En Sprint: %+v", story)
+		}
+	})
+
+	t.Run("un solo Sprint activo por proyecto", func(t *testing.T) {
+		// Dado un proyecto que tiene el Sprint activo "Sprint 3"
+		project := activeProject()
+		project.ActiveSprintNumber = 3
+		stories := []sprint.UserStory{{ID: 40, ProjectID: project.ID, Status: sprint.Pendiente}}
+
+		// Cuando el Scrum Master intenta crear otro Sprint
+		_, err := sprint.CreateSprint(validSprintRequest(project.ID, []int64{40}), project, stories)
+
+		// Entonces se impide, informa el Sprint activo y no asigna historias
+		if !errors.Is(err, sprint.ErrActiveSprintExists) || !strings.Contains(err.Error(), "Sprint 3") {
+			t.Fatalf("error = %v, se esperaba 'ya hay un Sprint activo (Sprint 3)'", err)
+		}
+		if stories[0].Status != sprint.Pendiente {
+			t.Errorf("la historia no debía asignarse: %+v", stories[0])
+		}
+	})
+
+	t.Run("asignación exitosa deja las historias En Sprint", func(t *testing.T) {
+		// Dado un proyecto sin Sprint activo y tres historias pendientes
+		project := activeProject()
+		stories := []sprint.UserStory{
+			{ID: 50, ProjectID: project.ID, Status: sprint.Pendiente},
+			{ID: 51, ProjectID: project.ID, Status: sprint.Pendiente},
+			{ID: 52, ProjectID: project.ID, Status: sprint.Pendiente},
+		}
+
+		// Cuando creo el Sprint y le asigno las tres
+		result, err := sprint.CreateSprint(validSprintRequest(project.ID, []int64{50, 51, 52}), project, stories)
+
+		// Entonces quedan En Sprint de ese Sprint
+		if err != nil {
+			t.Fatalf("no se pudo crear el Sprint: %v", err)
+		}
+		for _, st := range stories {
+			if st.Status != sprint.EnSprint || st.ActiveSprintNumber != result.Sprint.Number {
+				t.Errorf("la historia %d debía quedar En Sprint del %s: %+v", st.ID, result.Sprint.DisplayID, st)
+			}
 		}
 	})
 
