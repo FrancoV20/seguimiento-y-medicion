@@ -46,12 +46,12 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [P] [US1] Escribir pruebas unitarias del parseo del formulario (fechas válidas, formato inválido, campo ausente, identificadores repetidos, valores conservados) en `src/web/projects_form_test.go`
-- [ ] T010 [P] [US1] Escribir la prueba de handler de alta exitosa: respuesta 303 a `/proyectos`, mensaje de éxito una sola vez, proyecto en la lista con sus datos y sin cambiar el proyecto activo, en `src/web/projects_handlers_test.go`
-- [ ] T011 [P] [US1] Escribir la prueba de handler con la misma fecha de inicio y de fin: se rechaza con el mensaje de fechas de HU-01 (FIX-HU-01) junto a `fecha_fin`, datos conservados y ningún proyecto creado; y con la fecha de fin un día posterior: se crea, en `src/web/projects_handlers_test.go`
-- [ ] T012 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo proyecto ni se repite el mensaje, en `src/web/projects_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler sin integrantes cargados: "No hay integrantes disponibles", y un envío directo no crea el proyecto, en `src/web/projects_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir los escenarios BDD de alta exitosa, fecha de fin igual a la de inicio (rechazo) y sin integrantes disponibles en `test/web_projects_bdd_test.go`
+- [x] T009 [P] [US1] Escribir pruebas unitarias del parseo del formulario (fechas válidas, formato inválido, campo ausente, identificadores repetidos, valores conservados) en `src/web/projects_form_test.go`
+- [x] T010 [P] [US1] Escribir la prueba de handler de alta exitosa: respuesta 303 a `/proyectos`, mensaje de éxito una sola vez, proyecto en la lista con sus datos y sin cambiar el proyecto activo, en `src/web/projects_handlers_test.go`
+- [x] T011 [P] [US1] Escribir la prueba de handler con la misma fecha de inicio y de fin: se rechaza con el mensaje de fechas de HU-01 (FIX-HU-01) junto a `fecha_fin`, datos conservados y ningún proyecto creado; y con la fecha de fin un día posterior: se crea, en `src/web/projects_handlers_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo proyecto ni se repite el mensaje, en `src/web/projects_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler sin integrantes cargados: "No hay integrantes disponibles", y un envío directo no crea el proyecto, en `src/web/projects_handlers_test.go`
+- [x] T014 [P] [US1] Escribir los escenarios BDD de alta exitosa, fecha de fin igual a la de inicio (rechazo) y sin integrantes disponibles en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 1
 
@@ -120,7 +120,7 @@
 - [ ] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
 - [ ] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
 - [ ] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
 - [ ] T042 Coordinar con el responsable de HU-20b que la sección "Proyectos" (`/proyectos`) queda registrada para que su aviso "acceso a crear el primero" apunte a esta pantalla, y con quien tome HU-11 que esta lista es el punto de partida de la edición
