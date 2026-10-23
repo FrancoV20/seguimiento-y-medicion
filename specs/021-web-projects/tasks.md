@@ -20,8 +20,8 @@
 
 - [x] T001 Revisar HU-01: ruta del paquete, firmas de `ProjectService.CreateProject` y `ProjectStore`, tipos de error y mensajes exactos de validación, normalización del nombre, si limita el largo del nombre y texto del mensaje de éxito; confirmar que FIX-HU-01 está en `main` (el servicio rechaza fin igual o anterior al inicio y la migración nueva está aplicada) y tomar el texto de su mensaje de fechas; anotar el resultado en `specs/021-web-projects/data-model.md` y ajustar el mapeo de `plan.md`
 - [x] T002 Hacer `git merge origin/main` y verificar que FIX-HU-01, HU-20a y HU-20b (US1 y US2) están integradas: `Server.Register`, `Renderer.Page`, `Fail`, `RenderError`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Crear `db/seeds/members.sql` con los cinco integrantes del equipo, sin duplicar al ejecutarlo más de una vez
-- [ ] T004 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/021-web-projects/quickstart.md` `DATABASE_URL` (con la nota del puerto 5432 o 5433) y la carga de la semilla
+- [x] T003 [P] Crear `db/seeds/members.sql` con los cinco integrantes del equipo, sin duplicar al ejecutarlo más de una vez
+- [x] T004 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/021-web-projects/quickstart.md` `DATABASE_URL` (con la nota del puerto 5432 o 5433) y la carga de la semilla
 
 ---
 

@@ -9,21 +9,25 @@
   `git merge origin/main` y aplicar las migraciones nuevas (la de FIX-HU-01 cambia la restricción de
   fechas de `projects`).
 - Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml`
-  o `docker-compose.override.yml` (por ejemplo 5432 o 5433):
+  o `docker-compose.override.yml` (por ejemplo 5432 o 5433). El Compose del repositorio publica
+  PostgreSQL en 5433; consultar `docker compose port postgres 5432` y usar el puerto que devuelva:
   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
 
 ## Run the application
 
-Desde la raíz del repositorio, iniciar PostgreSQL y aplicar migraciones:
+Desde la raíz del repositorio, iniciar PostgreSQL y confirmar su puerto publicado. Configurar
+`DATABASE_URL` con tus datos locales antes de aplicar las migraciones; no guardar claves personales
+en archivos del repositorio.
 
 ```powershell
 docker compose up -d postgres
+docker compose port postgres 5432
 migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Cargar los integrantes de prueba (una vez por base local; se puede repetir sin duplicar). Ajustar
-`USUARIO` al de tu base:
+Cargar los cinco integrantes del equipo (una vez por base local; el script se puede volver a ejecutar
+sin duplicar integrantes). Ajustar `USUARIO` al configurado en tu base:
 
 ```powershell
 Get-Content -Encoding UTF8 db/seeds/members.sql | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
