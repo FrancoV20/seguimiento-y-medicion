@@ -31,7 +31,7 @@
 
 - [x] T005 [P] Definir `ProjectRow`, `MemberOption` y la interfaz `ProjectCatalog` con `ListProjects` y `ListMembers` en `src/web/projects_catalog.go`
 - [x] T006 [P] Escribir la prueba de integración de `PostgreSQLProjectCatalog` con fixtures propias de dos proyectos con distinta cantidad de integrantes: cantidad correcta, orden descendente por `id`, proyecto sin integrantes en cero, catálogo ordenado por nombre y lista vacía sin error, en `src/web/postgres_project_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLProjectCatalog` con `database/sql` y pgx en `src/web/postgres_project_catalog.go`
+- [x] T007 Implementar `PostgreSQLProjectCatalog` con `database/sql` y pgx en `src/web/postgres_project_catalog.go`
 - [x] T008 [P] Definir los nombres de los campos del formulario (`nombre`, `fecha_inicio`, `fecha_fin`, `integrantes`) y los textos `MsgNoMembersAvailable` ("No hay integrantes disponibles"), `MsgMissingStartDate` ("Falta la fecha de inicio"), `MsgMissingEndDate` ("Falta la fecha de fin"), `MsgInvalidDateFormat` ("La fecha no tiene un formato válido"), `MsgInvalidMember` ("El integrante seleccionado no es válido") y `MsgProjectCreated` ("Proyecto creado exitosamente", texto real de HU-01) en `src/web/projects_form.go`
 
 **Checkpoint**: El catálogo PostgreSQL, los tipos y los textos están listos para las historias.

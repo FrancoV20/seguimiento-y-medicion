@@ -78,9 +78,9 @@ func TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices(t *testing.T) {
 	db.SetMaxOpenConns(1)
 
 	for _, statement := range []string{
-		`CREATE TEMP TABLE projects (id INTEGER, name VARCHAR(255), start_date DATE, end_date DATE)`,
-		`CREATE TEMP TABLE project_members (project_id INTEGER, member_id INTEGER)`,
-		`CREATE TEMP TABLE members (id INTEGER, display_name VARCHAR(255))`,
+		`CREATE TEMP TABLE projects (id INTEGER PRIMARY KEY, name VARCHAR(255), start_date DATE, end_date DATE)`,
+		`CREATE TEMP TABLE project_members (project_id INTEGER, member_id INTEGER, PRIMARY KEY (project_id, member_id))`,
+		`CREATE TEMP TABLE members (id INTEGER PRIMARY KEY, display_name VARCHAR(255))`,
 	} {
 		if _, err := db.ExecContext(context.Background(), statement); err != nil {
 			t.Fatalf("no se pudo preparar el esquema PostgreSQL aislado: %v", err)
