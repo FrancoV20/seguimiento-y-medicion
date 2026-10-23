@@ -55,10 +55,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar el parseo del formulario (recorte del nombre, fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
-- [ ] T016 [US1] Implementar los handlers `GET /proyectos` y `POST /proyectos` en `src/web/projects_handlers.go`: cargan el catálogo, invocan `ProjectService.CreateProject` y, si tiene éxito, usan `SetFlash` y la redirección 303
-- [ ] T017 [US1] Crear `projects.html` con el formulario (nombre, integrantes marcables, fechas) usando los parciales `alert.html` y `field.html`, y el aviso "No hay integrantes disponibles", en `src/web/templates/projects.html`
-- [ ] T018 [US1] Construir el `ProjectService` de HU-01 y el `PostgreSQLProjectCatalog` y registrar la sección "Proyectos" (`/proyectos`, sin requisitos de contexto) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T015 [US1] Implementar el parseo del formulario (recorte del nombre, fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
+- [x] T016 [US1] Implementar los handlers `GET /proyectos` y `POST /proyectos` en `src/web/projects_handlers.go`: cargan el catálogo, invocan `ProjectService.CreateProject` y, si tiene éxito, usan `SetFlash` y la redirección 303
+- [x] T017 [US1] Crear `projects.html` con el formulario (nombre, integrantes marcables, fechas) usando los parciales `alert.html` y `field.html`, y el aviso "No hay integrantes disponibles", en `src/web/templates/projects.html`
+- [x] T018 [US1] Construir el `ProjectService` de HU-01 y el `PostgreSQLProjectCatalog` y registrar la sección "Proyectos" (`/proyectos`, sin requisitos de contexto) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 crea proyectos desde la web con las reglas de HU-01; HU-22 a HU-25 ya tienen proyectos con los que trabajar.
 

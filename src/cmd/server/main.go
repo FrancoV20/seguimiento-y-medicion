@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -35,7 +36,7 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail(err.Error())
 	}
 
-	srv := web.NewServer(logger)	
+	srv := web.NewServer(logger)
 	// La protección contra envíos de otro origen va primero (HU-20b, T025).
 	srv.Use(web.CrossOriginGuard(srv.Renderer()))
 	ln, err := srv.Listen(cfg.Addr)
@@ -67,7 +68,15 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	}
 	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
-	
+
+	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
+	projectCatalog := web.NewPostgreSQLProjectCatalog(database)
+	if err := web.RegisterProjects(srv, projectService, projectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Proyectos")
+	}
+
 	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
 		return fail(err.Error())
 	}

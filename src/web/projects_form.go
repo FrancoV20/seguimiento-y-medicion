@@ -2,6 +2,8 @@ package web
 
 import (
 	"net/url"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -33,12 +35,45 @@ const (
 	MsgProjectCreated     = "Proyecto creado exitosamente"
 )
 
-// parseProjectForm is a provisional stub until the T015 implementation.
 func parseProjectForm(values url.Values) (ProjectForm, ProjectFormInput, map[string]string) {
-	return ProjectForm{
+	form := ProjectForm{
 		Name:      values.Get(ProjectNameField),
 		StartDate: values.Get(ProjectStartDateField),
 		EndDate:   values.Get(ProjectEndDateField),
-		MemberIDs: values[ProjectMembersField],
-	}, ProjectFormInput{}, map[string]string{}
+		MemberIDs: append([]string(nil), values[ProjectMembersField]...),
+	}
+	input := ProjectFormInput{Name: strings.TrimSpace(form.Name)}
+	fieldErrors := make(map[string]string)
+
+	parseDate := func(field, value, missingMessage string) time.Time {
+		if value == "" {
+			fieldErrors[field] = missingMessage
+			return time.Time{}
+		}
+		date, err := time.Parse("2006-01-02", value)
+		if err != nil || date.Format("2006-01-02") != value {
+			fieldErrors[field] = MsgInvalidDateFormat
+			return time.Time{}
+		}
+		return date
+	}
+
+	input.StartDate = parseDate(ProjectStartDateField, form.StartDate, MsgMissingStartDate)
+	input.EndDate = parseDate(ProjectEndDateField, form.EndDate, MsgMissingEndDate)
+
+	seen := make(map[int]struct{}, len(form.MemberIDs))
+	for _, rawID := range form.MemberIDs {
+		id, err := strconv.Atoi(rawID)
+		if err != nil || id <= 0 {
+			fieldErrors[ProjectMembersField] = MsgInvalidMember
+			continue
+		}
+		if _, exists := seen[id]; exists {
+			continue
+		}
+		seen[id] = struct{}{}
+		input.MemberIDs = append(input.MemberIDs, strconv.Itoa(id))
+	}
+
+	return form, input, fieldErrors
 }
