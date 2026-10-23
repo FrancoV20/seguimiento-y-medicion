@@ -5,6 +5,27 @@ través del `ProjectService` y el `ProjectStore` existentes. Las lecturas de pan
 tablas `projects`, `project_members` y `members`. Los integrantes se cargan con
 `db/seeds/members.sql`, que no es una migración.
 
+## Verificación de HU-01 (T001)
+
+- Paquete: `src/project`.
+- `ProjectService.CreateProject(req ProjectCreationRequest) (*ProjectCreationResult, error)`.
+- `ProjectStore` define `Create(p *Project) error` y `MemberExists(id int) (bool, error)`.
+- Errores y textos exactos: `ErrEmptyName` ("project name cannot be empty"),
+  `ErrMissingMembers` ("the member list is required"), `ErrInvalidPeriod`
+  ("La fecha de finalización debe ser posterior a la fecha de inicio"),
+  `ErrMemberNotFound` ("member does not exist") y `ErrDuplicateMember`
+  ("duplicate members are not allowed"). El servicio convierte identificadores no numéricos a
+  `ErrMemberNotFound`.
+- HU-01 no normaliza el nombre: rechaza únicamente `""`, acepta texto solo con espacios y no limita
+  su longitud en el servicio. La columna `projects.name` limita el almacenamiento a 255 caracteres.
+  Por decisión para cumplir esta spec sin modificar HU-01, el formulario de HU-21 recortará los
+  espacios extremos antes del alta y rechazará el resultado vacío con el texto exacto de
+  `ErrEmptyName`. La validación adicional de más de 255 caracteres sigue siendo la tarea extra T027.
+- El mensaje de éxito de `ProjectCreationResult` es "Proyecto creado exitosamente".
+- FIX-HU-01 está en `main` (merge `bb4e1e5`), rechaza fin igual o anterior al inicio y define el
+  texto de `ErrInvalidPeriod` indicado arriba. La migración `008` quedó aplicada en la base local
+  durante esta verificación (versión actual: 8).
+
 ## Tablas leídas (definidas por HU-01)
 
 - `members(id SERIAL PK, display_name VARCHAR(255) NOT NULL)`: catálogo global; el nombre no es
@@ -46,7 +67,8 @@ Resultado de parsear el envío para invocar el alta.
 - Una fecha vacía o con formato distinto de `AAAA-MM-DD` genera un error junto a su campo.
 - Un identificador no numérico genera un error junto al campo de integrantes.
 - Los identificadores repetidos se toman una sola vez.
-- Las demás reglas (nombre, coherencia de fechas, integrantes existentes) las aplica HU-01.
+- El nombre se recorta antes del alta; si queda vacío, se muestra `ErrEmptyName` sin invocar HU-01.
+- La coherencia de fechas e integrantes existentes la valida HU-01.
 
 ## ProjectRow
 
@@ -95,8 +117,7 @@ Mensajes de error por campo para `FormView` de HU-20b.
 - Formato de fecha inválido: "La fecha no tiene un formato válido" (`MsgInvalidDateFormat`).
 - Integrante no válido: "El integrante seleccionado no es válido" (`MsgInvalidMember`).
 - Sin integrantes cargados: "No hay integrantes disponibles" (`MsgNoMembersAvailable`).
-- Éxito: "Proyecto creado correctamente" (`MsgProjectCreated`; propuesta, salvo que HU-01 ya
-  defina otro texto).
+- Éxito: "Proyecto creado exitosamente" (`MsgProjectCreated`, coincide con el resultado de HU-01).
 - Falla de guardado: `MsgOperationFailed` de HU-20b.
 
 ## ProjectCatalog

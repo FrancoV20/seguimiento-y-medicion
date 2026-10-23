@@ -18,8 +18,8 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-01, HU-20a y HU-20b, y preparar los integrantes de prueba.
 
-- [ ] T001 Revisar HU-01: ruta del paquete, firmas de `ProjectService.CreateProject` y `ProjectStore`, tipos de error y mensajes exactos de validación, normalización del nombre, si limita el largo del nombre y texto del mensaje de éxito; confirmar que FIX-HU-01 está en `main` (el servicio rechaza fin igual o anterior al inicio y la migración nueva está aplicada) y tomar el texto de su mensaje de fechas; anotar el resultado en `specs/021-web-projects/data-model.md` y ajustar el mapeo de `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que FIX-HU-01, HU-20a y HU-20b (US1 y US2) están integradas: `Server.Register`, `Renderer.Page`, `Fail`, `RenderError`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T001 Revisar HU-01: ruta del paquete, firmas de `ProjectService.CreateProject` y `ProjectStore`, tipos de error y mensajes exactos de validación, normalización del nombre, si limita el largo del nombre y texto del mensaje de éxito; confirmar que FIX-HU-01 está en `main` (el servicio rechaza fin igual o anterior al inicio y la migración nueva está aplicada) y tomar el texto de su mensaje de fechas; anotar el resultado en `specs/021-web-projects/data-model.md` y ajustar el mapeo de `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que FIX-HU-01, HU-20a y HU-20b (US1 y US2) están integradas: `Server.Register`, `Renderer.Page`, `Fail`, `RenderError`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
 - [ ] T003 [P] Crear `db/seeds/members.sql` con los cinco integrantes del equipo, sin duplicar al ejecutarlo más de una vez
 - [ ] T004 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/021-web-projects/quickstart.md` `DATABASE_URL` (con la nota del puerto 5432 o 5433) y la carga de la semilla
 
@@ -32,7 +32,7 @@
 - [ ] T005 [P] Definir `ProjectRow`, `MemberOption` y la interfaz `ProjectCatalog` con `ListProjects` y `ListMembers` en `src/web/projects_catalog.go`
 - [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLProjectCatalog` con fixtures propias de dos proyectos con distinta cantidad de integrantes: cantidad correcta, orden descendente por `id`, proyecto sin integrantes en cero, catálogo ordenado por nombre y lista vacía sin error, en `src/web/postgres_project_catalog_integration_test.go`
 - [ ] T007 Implementar `PostgreSQLProjectCatalog` con `database/sql` y pgx en `src/web/postgres_project_catalog.go`
-- [ ] T008 [P] Definir los nombres de los campos del formulario (`nombre`, `fecha_inicio`, `fecha_fin`, `integrantes`) y los textos `MsgNoMembersAvailable` ("No hay integrantes disponibles"), `MsgMissingStartDate` ("Falta la fecha de inicio"), `MsgMissingEndDate` ("Falta la fecha de fin"), `MsgInvalidDateFormat` ("La fecha no tiene un formato válido"), `MsgInvalidMember` ("El integrante seleccionado no es válido") y `MsgProjectCreated` ("Proyecto creado correctamente") en `src/web/projects_form.go`
+- [ ] T008 [P] Definir los nombres de los campos del formulario (`nombre`, `fecha_inicio`, `fecha_fin`, `integrantes`) y los textos `MsgNoMembersAvailable` ("No hay integrantes disponibles"), `MsgMissingStartDate` ("Falta la fecha de inicio"), `MsgMissingEndDate` ("Falta la fecha de fin"), `MsgInvalidDateFormat` ("La fecha no tiene un formato válido"), `MsgInvalidMember` ("El integrante seleccionado no es válido") y `MsgProjectCreated` ("Proyecto creado exitosamente", texto real de HU-01) en `src/web/projects_form.go`
 
 **Checkpoint**: El catálogo PostgreSQL, los tipos y los textos están listos para las historias.
 
@@ -55,7 +55,7 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar el parseo del formulario (fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
+- [ ] T015 [US1] Implementar el parseo del formulario (recorte del nombre, fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
 - [ ] T016 [US1] Implementar los handlers `GET /proyectos` y `POST /proyectos` en `src/web/projects_handlers.go`: cargan el catálogo, invocan `ProjectService.CreateProject` y, si tiene éxito, usan `SetFlash` y la redirección 303
 - [ ] T017 [US1] Crear `projects.html` con el formulario (nombre, integrantes marcables, fechas) usando los parciales `alert.html` y `field.html`, y el aviso "No hay integrantes disponibles", en `src/web/templates/projects.html`
 - [ ] T018 [US1] Construir el `ProjectService` de HU-01 y el `PostgreSQLProjectCatalog` y registrar la sección "Proyectos" (`/proyectos`, sin requisitos de contexto) con `Server.Register` en `src/cmd/server/main.go`
