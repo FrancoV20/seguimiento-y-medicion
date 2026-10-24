@@ -394,6 +394,9 @@ func TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD(t *testing.T) {
 		t.Fatalf("no se pudo crear el segundo integrante BDD: %v", err)
 	}
 	t.Cleanup(func() {
+		if _, err := app.db.Exec(`DELETE FROM projects WHERE name LIKE $1`, app.projectPrefix+" %"); err != nil {
+			t.Errorf("no se pudieron limpiar los proyectos BDD: %v", err)
+		}
 		if _, err := app.db.Exec(`DELETE FROM members WHERE id = $1`, anotherMemberID); err != nil {
 			t.Errorf("no se pudo limpiar el segundo integrante BDD: %v", err)
 		}
