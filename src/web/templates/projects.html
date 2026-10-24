@@ -32,11 +32,31 @@
 {{if .Projects}}
 <section aria-labelledby="projects-list-title">
   <h2 id="projects-list-title">Proyectos</h2>
-  <ul>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Fecha de inicio</th>
+        <th scope="col">Fecha de fin</th>
+        <th scope="col">Integrantes</th>
+      </tr>
+    </thead>
+    <tbody>
     {{range .Projects}}
-    <li>{{.Name}}</li>
+      <tr>
+        <td>{{.Name}}</td>
+        <td>{{.StartDate.Format "02/01/2006"}}</td>
+        <td>{{.EndDate.Format "02/01/2006"}}</td>
+        <td>{{.MemberCount}}</td>
+      </tr>
     {{end}}
-  </ul>
+    </tbody>
+  </table>
+</section>
+{{else}}
+<section aria-labelledby="projects-list-title">
+  <h2 id="projects-list-title">Proyectos</h2>
+  <p>Aún no hay proyectos</p>
 </section>
 {{end}}
 {{end}}

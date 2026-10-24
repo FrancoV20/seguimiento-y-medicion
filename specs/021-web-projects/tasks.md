@@ -105,8 +105,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Agregar a `projects.html` la tabla de proyectos (nombre, fechas `dd/mm/aaaa`, cantidad de integrantes) y el estado vacío "Aún no hay proyectos", en `src/web/templates/projects.html`
-- [ ] T034 [US3] Usar `Fail` en `src/web/projects_handlers.go` cuando falla la lectura de proyectos o integrantes
+- [x] T033 [US3] Agregar a `projects.html` la tabla de proyectos (nombre, fechas `dd/mm/aaaa`, cantidad de integrantes) y el estado vacío "Aún no hay proyectos", en `src/web/templates/projects.html`
+- [x] T034 [US3] Usar `Fail` en `src/web/projects_handlers.go` cuando falla la lectura de proyectos o integrantes
 
 **Checkpoint**: US3 muestra el resultado del alta y orienta al equipo, sin errores internos ante una falla de lectura.
 
