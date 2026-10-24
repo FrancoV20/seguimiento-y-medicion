@@ -106,9 +106,20 @@ func newProjectsAppWithService(
 	if len(catalogOverride) > 0 {
 		catalog = catalogOverride[0]
 	}
+	return newProjectsAppWithTemplates(t, db, fx, service, catalog, projectsTestTemplates(t))
+}
 
+func newProjectsAppWithTemplates(
+	t *testing.T,
+	db *sql.DB,
+	fx *projectCatalogFixture,
+	service *project.ProjectService,
+	catalog ProjectCatalog,
+	templates fs.FS,
+) *projectsApp {
+	t.Helper()
 	srv := NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
-	srv.renderer.files = projectsTestTemplates(t)
+	srv.renderer.files = templates
 	srv.Use(CrossOriginGuard(srv.Renderer()))
 	if err := RegisterProjects(srv, service, catalog); err != nil {
 		t.Fatalf("no se pudo registrar la sección Proyectos: %v", err)
@@ -161,7 +172,7 @@ func TestProjects_EmptyListShowsMessageAndCreationForm(t *testing.T) {
 	fx := newProjectCatalogFixture(t, db)
 	service := project.NewProjectService(project.NewPostgreSQLProjectStore(db))
 	catalog := emptyProjectListCatalog{ProjectCatalog: NewPostgreSQLProjectCatalog(db)}
-	app := newProjectsAppWithService(t, db, fx, false, service, catalog)
+	app := newProjectsAppWithTemplates(t, db, fx, service, catalog, templateFiles)
 
 	resp, body := projectsGet(t, projectsTestClient(t, app.ts), app, "/proyectos")
 
@@ -170,6 +181,11 @@ func TestProjects_EmptyListShowsMessageAndCreationForm(t *testing.T) {
 	}
 	if !strings.Contains(body, "Aún no hay proyectos") {
 		t.Errorf("se esperaba el mensaje de lista vacía; respuesta: %s", body)
+	}
+	for _, field := range []string{ProjectNameField, ProjectStartDateField, ProjectEndDateField} {
+		if !strings.Contains(body, `name="`+field+`"`) {
+			t.Errorf("la lista vacía debía conservar el formulario; falta el campo %q", field)
+		}
 	}
 }
 
