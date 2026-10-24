@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-21
 
-**Status**: Draft
+**Status**: Approved
 
 **Input**: User description: "HU-14 / Actualización de Estado y Registro de Historias Completadas: Como Product Builder, quiero cambiar el estado de una historia de mi Sprint activo (En Sprint → En progreso → Hecho) desde el tablero web, para registrar cuáles fueron completadas. Depende de HU-02, HU-04, FIX-HU-04, HU-03, HU-20a y HU-20b."
 
@@ -22,7 +22,7 @@
 > Sprint activo del proyecto activo.
 >
 > **Punto que estaba "a definir"**: completar una historia sin horas registradas se permite con una
-> advertencia. Es una propuesta del equipo que se confirma al refinar.
+> advertencia. Es decisión del equipo.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -211,7 +211,7 @@ completados y sin cambios parciales ante errores.
   Sprint; ambos se calculan, no se guardan.
 - Completar sin horas registradas se permite con advertencia.
 - Orden de validación: historia del proyecto, Sprint activo, estado ya aplicado, estado esperado,
-  transición permitida.
+  transición permitida, estado real igual al origen de la acción.
 
 **Restricciones**:
 
@@ -235,8 +235,7 @@ completados y sin cambios parciales ante errores.
 | Falla de lectura | Página de error de HU-20a | 500 o 503 |
 | Sin proyecto activo válido | Mensaje de HU-20b | 303 |
 
-Los textos propios de HU-14 son una propuesta del equipo y se definen en un solo lugar
-(`board_form.go`).
+Los textos de los escenarios del Issue se respetan tal cual. Los de las respuestas 409, 422 y 500 y el de acción no válida los definió el equipo, no vienen del Issue, y se definen en un solo lugar (board_form.go).
 
 ### Key Entities *(include if feature involves data)*
 
@@ -289,7 +288,7 @@ Los textos propios de HU-14 son una propuesta del equipo y se definen en un solo
 | 5. Fuera de un Sprint activo | FR-008, FR-014 | T006, T023 | T028 | `src/sprint`, `board_form.go` |
 | 6. Marcar dos veces | FR-009, FR-017 | T006, T024 | T028 | `src/sprint`, `board_form.go` |
 | 7. Transición no permitida | FR-010, FR-015 | T005, T025 | T028 | `src/sprint`, `board_form.go` |
-| 8. Estado desactualizado | FR-011 | T007, T026 | T028 | `postgres_story_status_store.go`, `board_handlers.go` |
+| 8. Estado desactualizado | FR-011 | T007, T026, T026b, T026c | T028 | `postgres_story_status_store.go`, `board_handlers.go` |
 | 9. Error al guardar | FR-012, FR-018 | T027, T031 | T028 | `board_handlers.go` |
 | 10. Tablero del Sprint activo | FR-002 | T009, T032 | T037 | `postgres_board_catalog.go`, `board.html` |
 | 11. Acciones según el estado | FR-003 | T005, T033 | T037 | `src/sprint`, `board.html` |

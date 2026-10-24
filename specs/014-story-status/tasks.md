@@ -18,8 +18,8 @@
 
 **Purpose**: Confirmar lo que se reutiliza.
 
-- [ ] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04, HU-03 y HU-07: ruta del paquete de Sprint, constantes de los cuatro estados, qué asigna HU-04 al incorporar una historia (`sprint_story_assignments`, `active_sprint_id`, estado `'En Sprint'`), columna de historia en `effort_logs`, si `user_stories` exige otras columnas al actualizar, y que HU-07 cuenta como completadas las historias con estado `'Hecho'`; anotar el resultado en `specs/014-story-status/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parcial `alert.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04, HU-03 y HU-07: ruta del paquete de Sprint, constantes de los cuatro estados, qué asigna HU-04 al incorporar una historia (`sprint_story_assignments`, `active_sprint_id`, estado `'En Sprint'`), columna de historia en `effort_logs`, si `user_stories` exige otras columnas al actualizar, y que HU-07 cuenta como completadas las historias con estado `'Hecho'`; anotar el resultado en `specs/014-story-status/data-model.md` y ajustar `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, plantilla `alert` de `layout.html`, redirección 303 y protección contra envíos de otro origen
 - [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/014-story-status/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
 - [ ] T004 [P] Confirmar que las migraciones `002`, `003` y `004` en `main` coinciden con el esquema anotado en `specs/014-story-status/data-model.md` (cuatro estados admitidos) y avisar al equipo si cambiaron
 
@@ -29,12 +29,12 @@
 
 **Purpose**: Regla de transiciones, servicio, almacenamiento y catálogo, compartidos por las tres historias.
 
-- [ ] T005 [P] Escribir las pruebas unitarias de `CanTransition` (las tres permitidas; rechazadas En Sprint → Hecho, En progreso → En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas) y de `NextAction` por estado en `src/sprint/story_status_test.go`
-- [ ] T006 [P] Escribir las pruebas del servicio `ChangeStatus` contra PostgreSQL real con fixtures propias (dos proyectos; historias en cada estado; Sprint activo, Sprint finalizado y sin Sprint; con y sin horas): cada transición, advertencia de horas solo al completar sin horas, historia inexistente o de otro proyecto, fuera de Sprint activo, estado ya aplicado, estado esperado distinto, transición no permitida y el orden de validación, en `src/sprint/story_status_service_test.go`
+- [ ] T005 [P] Escribir las pruebas unitarias de `CanTransition` (las tres permitidas; rechazadas En Sprint → Hecho, En progreso → En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas) y de `NextAction` por estado, y de `ActionTransition` (origen y destino de `comenzar`, `completar` y `reabrir`; acción desconocida), en `src/sprint/story_status_test.go`
+- [ ] T006 [P] Escribir las pruebas del servicio `ChangeStatus` contra PostgreSQL real con fixtures propias (dos proyectos; historias en cada estado; Sprint activo, Sprint finalizado y sin Sprint; con y sin horas): cada transición, advertencia de horas solo al completar sin horas, historia inexistente o de otro proyecto, fuera de Sprint activo, estado ya aplicado, estado esperado distinto, transición no permitida y el orden de validación y la acción que no corresponde al estado (`comenzar` sobre Hecho, `reabrir` sobre En Sprint), en `src/sprint/story_status_service_test.go`
 - [ ] T007 [P] Escribir la prueba de integración de `PostgreSQLStoryStatusStore`: `FindStory` (estado, Sprint, activo, horas, aislamiento por proyecto) y `UpdateStatus` atómico (cambia con el estado esperado, no cambia con otro, no cambia si el Sprint está finalizado y, con dos cambios simultáneos, solo uno se aplica), en `src/sprint/postgres_story_status_store_integration_test.go`
 - [ ] T008 [P] Definir `BoardView`, `BoardStory`, la función pura de Story Points planificados y completados y la interfaz `BoardCatalog` en `src/web/board_catalog.go`
 - [ ] T009 [P] Escribir la prueba de integración de `PostgreSQLBoardCatalog` con fixtures propias (dos proyectos, Sprint activo con historias en los tres estados y una sin Story Points, Sprint finalizado, proyecto sin Sprint): Sprint del proyecto correcto, sin datos de otro proyecto, grupos, `hasEffort`, acción de cada historia y Story Points, en `src/web/postgres_board_catalog_integration_test.go`
-- [ ] T010 Definir en `src/sprint/story_status.go` los estados (reutilizando las constantes de HU-04 si existen), `CanTransition`, `NextAction`, los errores del dominio y la interfaz `StoryStatusStore`
+- [ ] T010 Definir en `src/sprint/story_status.go` los estados (reutilizando las constantes de HU-04 si existen), `CanTransition`, `NextAction`, `ActionTransition`, los errores del dominio y la interfaz `StoryStatusStore`
 - [ ] T011 Implementar el servicio `ChangeStatus` con el orden de validación de `data-model.md` y el resultado con la advertencia de horas en `src/sprint/story_status.go`
 - [ ] T012 Implementar `PostgreSQLStoryStatusStore` con `database/sql` y pgx y la sentencia atómica de `data-model.md` en `src/sprint/postgres_story_status_store.go`
 - [ ] T013 Implementar `PostgreSQLBoardCatalog` en `src/web/postgres_board_catalog.go`
@@ -61,7 +61,7 @@
 
 - [ ] T019 [US1] Implementar en `src/web/board_form.go` el armado del envío (`historia_id`, `accion`, `estado_actual`), la relación acción → destino y los textos de éxito
 - [ ] T020 [US1] Implementar los handlers `GET /tablero` y `POST /tablero/estado` en `src/web/board_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` (éxito o éxito con advertencia) y la redirección 303
-- [ ] T021 [US1] Crear `board.html` con los grupos por estado, una acción por historia (formulario con `historia_id`, `accion` y `estado_actual`) y los Story Points, usando el parcial `alert.html`, en `src/web/templates/board.html`
+- [ ] T021 [US1] Crear `board.html` con los grupos por estado, una acción por historia (formulario con `historia_id`, `accion` y `estado_actual`) y los Story Points, sin repetir el mensaje (lo muestra `layout.html` desde `PageData.Flash`), en `src/web/templates/board.html`
 - [ ] T022 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Tablero" (`/tablero`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 cambia el estado desde la web; HU-15, HU-07 y HU-25 ya tienen historias en "Hecho".
@@ -80,6 +80,8 @@
 - [ ] T024 [P] [US2] Escribir la prueba de handler de marcar dos veces: "La historia ya está en Hecho", sin cambios y Story Points completados sin duplicar, en `src/web/board_handlers_test.go`
 - [ ] T025 [P] [US2] Escribir la prueba de handler de transición no permitida enviada directamente ("No se puede pasar de En Sprint a Hecho") y de acción desconocida ("La acción no es válida"), sin cambios, en `src/web/board_handlers_test.go`
 - [ ] T026 [P] [US2] Escribir la prueba de handler de estado desactualizado: se cambia la historia por otro camino, se envía la acción con el `estado_actual` anterior y se rechaza con el mensaje y sin cambios, en `src/web/board_handlers_test.go`
+- [ ] T026b [P] [US2] Escribir la prueba de handler de `comenzar` sobre una historia "Hecho" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
+- [ ] T026c [P] [US2] Escribir la prueba de handler de `reabrir` sobre una historia "En Sprint" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
 - [ ] T027 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y sin cambios, en `src/web/board_handlers_test.go`
 - [ ] T028 [P] [US2] Escribir los escenarios BDD de fuera de un Sprint activo, marcar dos veces, transición no permitida, estado desactualizado y error al guardar en `test/web_board_bdd_test.go`
 
@@ -132,7 +134,7 @@
 - [ ] T048 Guardar en `specs/014-story-status/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/014-story-status/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
 - [ ] T049 Coordinar con quien tome HU-15 que las historias "Hecho" definen lo completado y que el cierre decide qué pasa con las no terminadas; con HU-07 y HU-25 que cuentan `'Hecho'`; con HU-23 que ambas pantallas leen el Sprint activo y conviene unificar el catálogo después; y con quien corrija HU-08 y HU-13 que los grupos son los cuatro estados
 - [ ] T050 Revisar trazabilidad de FR-001 a FR-018 y SC-001 a SC-007 en `specs/014-story-status/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T051 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Tablero"
+- [ ] T051 [P] Ejecutar `go vet ./...` y `gofmt -l` solo sobre los archivos nuevos de HU-14 (los archivos existentes están en CRLF y `gofmt -l` los marca), sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Tablero"
 - [ ] T052 Verificar a mano con la aplicación en ejecución los 13 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T053 Abrir el Pull Request desde `HU-14`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
@@ -203,7 +205,7 @@
 | FR-008 | T006, T023 |
 | FR-009 | T006, T024 |
 | FR-010 | T005, T025 |
-| FR-011 | T007, T026 |
+| FR-011 | T007, T026, T026b, T026c |
 | FR-012 | T027 |
 | FR-013 | T034, T035 |
 | FR-014 | T023, T045 |
@@ -212,7 +214,7 @@
 | FR-017 | T009, T015, T017, T024 |
 | FR-018 | T031, T041 |
 | SC-001 | T006, T014, T015, T017 |
-| SC-002 | T023, T025, T026 |
+| SC-002 | T023, T025, T026, T026b, T026c |
 | SC-003 | T015, T017, T024 |
 | SC-004 | T027 |
 | SC-005 | T006, T016 |

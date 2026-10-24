@@ -50,8 +50,8 @@ compartir una base.
 Las pruebas deben cubrir como mínimo:
 
 1. Regla de transiciones (unitaria): las tres permitidas, y rechazadas En Sprint → Hecho, En progreso →
-   En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas; `NextAction` de cada
-   estado.
+   En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas; `NextAction` y `ActionTransition`
+   de cada estado.
 2. Servicio y almacenamiento (PostgreSQL real):
    - comenzar, completar y reabrir actualizan el estado;
    - completar sin horas devuelve la advertencia; con horas, no;
@@ -59,6 +59,8 @@ Las pruebas deben cubrir como mínimo:
      cambios;
    - estado ya aplicado: no cambia y no es un error de almacenamiento;
    - estado esperado distinto del real: `ErrStatusChanged` y sin cambios;
+   - acción que no corresponde al estado real (`comenzar` sobre Hecho, `reabrir` sobre En Sprint):
+     `ErrStatusChanged` y sin cambios;
    - dos cambios simultáneos sobre la misma historia: solo uno se aplica.
 3. Handler (con `cookiejar` y proyecto activo elegido por el flujo de HU-20b):
    - cada acción válida: 303 a `/tablero`, mensaje una sola vez y estado nuevo; con dos proyectos, solo
