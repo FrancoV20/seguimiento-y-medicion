@@ -1,0 +1,84 @@
+﻿## T005 RED - CanTransition, NextAction y ActionTransition
+=== RUN   TestCanTransition_LasTresPermitidas
+=== RUN   TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso
+    story_status_test.go:17: CanTransition("En Sprint", "En progreso") = false, se esperaba true
+=== RUN   TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho
+    story_status_test.go:17: CanTransition("En progreso", "Hecho") = false, se esperaba true
+=== RUN   TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso
+    story_status_test.go:17: CanTransition("Hecho", "En progreso") = false, se esperaba true
+--- FAIL: TestCanTransition_LasTresPermitidas (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso (0.00s)
+=== RUN   TestCanTransition_RechazaCualquierOtroPar
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho
+--- PASS: TestCanTransition_RechazaCualquierOtroPar (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho (0.00s)
+=== RUN   TestNextAction_UnaAccionPorEstado
+=== RUN   TestNextAction_UnaAccionPorEstado/En_Sprint
+    story_status_test.go:62: NextAction("En Sprint") = ("", false), se esperaba ("comenzar", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/En_progreso
+    story_status_test.go:62: NextAction("En progreso") = ("", false), se esperaba ("completar", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/Hecho
+    story_status_test.go:62: NextAction("Hecho") = ("", false), se esperaba ("reabrir", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/Pendiente
+--- FAIL: TestNextAction_UnaAccionPorEstado (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/En_Sprint (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/En_progreso (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/Hecho (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/Pendiente (0.00s)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar
+    story_status_test.go:82: ActionTransition("comenzar") = ("", "", false), se esperaba ("En Sprint", "En progreso", true)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/completar
+    story_status_test.go:82: ActionTransition("completar") = ("", "", false), se esperaba ("En progreso", "Hecho", true)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir
+    story_status_test.go:82: ActionTransition("reabrir") = ("", "", false), se esperaba ("Hecho", "En progreso", true)
+--- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/completar (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir (0.00s)
+=== RUN   TestActionTransition_AccionDesconocida
+=== RUN   TestActionTransition_AccionDesconocida/accion_
+=== RUN   TestActionTransition_AccionDesconocida/accion_borrar
+--- PASS: TestActionTransition_AccionDesconocida (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_ (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_borrar (0.00s)
+=== RUN   TestAcciones_SonCoherentesConLaRegla
+=== RUN   TestAcciones_SonCoherentesConLaRegla/comenzar
+    story_status_test.go:108: ActionTransition("comenzar") no reconoce la acci├│n
+=== RUN   TestAcciones_SonCoherentesConLaRegla/completar
+    story_status_test.go:108: ActionTransition("completar") no reconoce la acci├│n
+=== RUN   TestAcciones_SonCoherentesConLaRegla/reabrir
+    story_status_test.go:108: ActionTransition("reabrir") no reconoce la acci├│n
+--- FAIL: TestAcciones_SonCoherentesConLaRegla (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/comenzar (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/completar (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/reabrir (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.473s
+FAIL
