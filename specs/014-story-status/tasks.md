@@ -20,8 +20,8 @@
 
 - [x] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04, HU-03 y HU-07: ruta del paquete de Sprint, constantes de los cuatro estados, qué asigna HU-04 al incorporar una historia (`sprint_story_assignments`, `active_sprint_id`, estado `'En Sprint'`), columna de historia en `effort_logs`, si `user_stories` exige otras columnas al actualizar, y que HU-07 cuenta como completadas las historias con estado `'Hecho'`; anotar el resultado en `specs/014-story-status/data-model.md` y ajustar `plan.md`
 - [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, plantilla `alert` de `layout.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/014-story-status/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar que las migraciones `002`, `003` y `004` en `main` coinciden con el esquema anotado en `specs/014-story-status/data-model.md` (cuatro estados admitidos) y avisar al equipo si cambiaron
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/014-story-status/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar que las migraciones `002`, `003` y `004` en `main` coinciden con el esquema anotado en `specs/014-story-status/data-model.md` (cuatro estados admitidos) y avisar al equipo si cambiaron
 
 ---
 
