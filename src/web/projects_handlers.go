@@ -1,7 +1,6 @@
 package web
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -72,8 +71,8 @@ func (h projectsHandlers) post(w http.ResponseWriter, r *http.Request) {
 		EndDate:   input.EndDate,
 	})
 	if err != nil {
-		if errors.Is(err, project.ErrInvalidPeriod) {
-			formView.AddError(ProjectEndDateField, err.Error())
+		if field, message, ok := projectFieldError(err); ok {
+			formView.AddError(field, message)
 			h.render(w, r, http.StatusUnprocessableEntity, data, formView, nil)
 			return
 		}

@@ -123,8 +123,9 @@ formulario.
   formato se rechaza como formato inválido aunque el navegador no lo haya impedido.
 - Un nombre con HTML o scripts se muestra como texto en la lista (regla de HU-20a/HU-20b).
 - Crear un proyecto no lo selecciona como proyecto activo (HU-20b: sin autoselección).
-- Un nombre de más de 255 caracteres se rechaza con un mensaje junto al campo en lugar de fallar
-  al guardar (extra, ver T027; no es criterio de aceptación).
+- Un nombre de más de 255 caracteres se rechaza con el mensaje "El nombre no puede superar los
+  255 caracteres" junto al campo en lugar de fallar al guardar (extra, ver T027; no es criterio
+  de aceptación).
 - La lista no tiene paginación; con muchos proyectos se muestra completa.
 - Recargar la página después de crear un proyecto no crea un segundo proyecto ni repite el mensaje
   (patrón de HU-20b, "Envío válido sin reenvío"; se prueba en T012).

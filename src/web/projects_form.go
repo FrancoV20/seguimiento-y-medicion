@@ -1,10 +1,14 @@
 package web
 
 import (
+	"errors"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 )
 
 type ProjectForm struct {
@@ -33,6 +37,7 @@ const (
 	MsgInvalidDateFormat  = "La fecha no tiene un formato válido"
 	MsgInvalidMember      = "El integrante seleccionado no es válido"
 	MsgProjectCreated     = "Proyecto creado exitosamente"
+	MsgProjectNameTooLong = "El nombre no puede superar los 255 caracteres"
 )
 
 func parseProjectForm(values url.Values) (ProjectForm, ProjectFormInput, map[string]string) {
@@ -44,6 +49,9 @@ func parseProjectForm(values url.Values) (ProjectForm, ProjectFormInput, map[str
 	}
 	input := ProjectFormInput{Name: strings.TrimSpace(form.Name)}
 	fieldErrors := make(map[string]string)
+	if utf8.RuneCountInString(input.Name) > 255 {
+		fieldErrors[ProjectNameField] = MsgProjectNameTooLong
+	}
 
 	parseDate := func(field, value, missingMessage string) time.Time {
 		if value == "" {
@@ -76,4 +84,21 @@ func parseProjectForm(values url.Values) (ProjectForm, ProjectFormInput, map[str
 	}
 
 	return form, input, fieldErrors
+}
+
+func projectFieldError(err error) (string, string, bool) {
+	switch {
+	case errors.Is(err, project.ErrEmptyName):
+		return ProjectNameField, project.ErrEmptyName.Error(), true
+	case errors.Is(err, project.ErrMissingMembers):
+		return ProjectMembersField, project.ErrMissingMembers.Error(), true
+	case errors.Is(err, project.ErrInvalidPeriod):
+		return ProjectEndDateField, project.ErrInvalidPeriod.Error(), true
+	case errors.Is(err, project.ErrMemberNotFound):
+		return ProjectMembersField, MsgInvalidMember, true
+	case errors.Is(err, project.ErrDuplicateMember):
+		return ProjectMembersField, project.ErrDuplicateMember.Error(), true
+	default:
+		return "", "", false
+	}
 }
