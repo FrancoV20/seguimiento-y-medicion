@@ -98,10 +98,10 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Escribir la prueba de handler de la lista: nombre, fechas, cantidad de integrantes y más recientes primero, con verificación de tiempo de respuesta, en `src/web/projects_handlers_test.go`
-- [ ] T030 [P] [US3] Escribir la prueba de handler sin proyectos: "Aún no hay proyectos" y el formulario, en `src/web/projects_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/projects_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir los escenarios BDD de lista y lista vacía en `test/web_projects_bdd_test.go`
+- [x] T029 [P] [US3] Escribir la prueba de handler de la lista: nombre, fechas, cantidad de integrantes y más recientes primero, con verificación de tiempo de respuesta, en `src/web/projects_handlers_test.go`
+- [x] T030 [P] [US3] Escribir la prueba de handler sin proyectos: "Aún no hay proyectos" y el formulario, en `src/web/projects_handlers_test.go`
+- [x] T031 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/projects_handlers_test.go`
+- [x] T032 [P] [US3] Escribir los escenarios BDD de lista y lista vacía en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 3
 

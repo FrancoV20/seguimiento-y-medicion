@@ -29,6 +29,8 @@ type webProjectsBDDApp struct {
 
 type noMembersBDDProjectCatalog struct{ web.ProjectCatalog }
 
+type noProjectsBDDProjectCatalog struct{ web.ProjectCatalog }
+
 type failingBDDProjectStore struct {
 	memberID int
 }
@@ -45,7 +47,11 @@ func (noMembersBDDProjectCatalog) ListMembers(_ context.Context) ([]web.MemberOp
 	return []web.MemberOption{}, nil
 }
 
-func newWebProjectsBDDApp(t *testing.T, noMembers, failSave bool) *webProjectsBDDApp {
+func (noProjectsBDDProjectCatalog) ListProjects(context.Context) ([]web.ProjectRow, error) {
+	return []web.ProjectRow{}, nil
+}
+
+func newWebProjectsBDDApp(t *testing.T, noMembers, failSave bool, noProjects ...bool) *webProjectsBDDApp {
 	t.Helper()
 
 	databaseURL := os.Getenv(web.EnvDatabaseURL)
@@ -74,6 +80,9 @@ func newWebProjectsBDDApp(t *testing.T, noMembers, failSave bool) *webProjectsBD
 	catalog := web.ProjectCatalog(web.NewPostgreSQLProjectCatalog(db))
 	if noMembers {
 		catalog = noMembersBDDProjectCatalog{ProjectCatalog: catalog}
+	}
+	if len(noProjects) > 0 && noProjects[0] {
+		catalog = noProjectsBDDProjectCatalog{ProjectCatalog: catalog}
 	}
 	srv := web.NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	srv.Use(web.CrossOriginGuard(srv.Renderer()))
@@ -104,6 +113,20 @@ func newWebProjectsBDDApp(t *testing.T, noMembers, failSave bool) *webProjectsBD
 	})
 	app.projectPrefix = projectPrefix
 	return app
+}
+
+func webProjectsBDDGet(t *testing.T, app *webProjectsBDDApp, path string) (*http.Response, string) {
+	t.Helper()
+	resp, err := app.client.Get(app.server.URL + path)
+	if err != nil {
+		t.Fatalf("GET %s: %v", path, err)
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("no se pudo leer la respuesta: %v", err)
+	}
+	return resp, string(body)
 }
 
 func webProjectsBDDPost(t *testing.T, app *webProjectsBDDApp, name, start, end string) (*http.Response, string) {
@@ -147,6 +170,19 @@ func countBDDProject(t *testing.T, db *sql.DB, name string) int {
 		t.Fatalf("no se pudo consultar el proyecto BDD: %v", err)
 	}
 	return count
+}
+
+func projectTableRow(body, projectName string) string {
+	namePosition := strings.Index(body, projectName)
+	if namePosition < 0 {
+		return ""
+	}
+	rowStart := strings.LastIndex(body[:namePosition], "<tr")
+	rowEnd := strings.Index(body[namePosition:], "</tr>")
+	if rowStart < 0 || rowEnd < 0 {
+		return ""
+	}
+	return body[rowStart : namePosition+rowEnd+len("</tr>")]
 }
 
 func TestWebProjects_CreateValidProject_BDD(t *testing.T) {
@@ -345,5 +381,98 @@ func TestWebProjects_SaveFailureShowsGenericError_BDD(t *testing.T) {
 	}
 	if count := countBDDProject(t, app.db, name); count != 0 {
 		t.Errorf("no debía persistirse el proyecto con falla de guardado, se encontraron %d", count)
+	}
+}
+
+func TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD(t *testing.T) {
+	app := newWebProjectsBDDApp(t, false, false)
+	anotherMemberName := app.projectPrefix + " segundo integrante"
+	var anotherMemberID int64
+	if err := app.db.QueryRow(
+		`INSERT INTO members (display_name) VALUES ($1) RETURNING id`, anotherMemberName,
+	).Scan(&anotherMemberID); err != nil {
+		t.Fatalf("no se pudo crear el segundo integrante BDD: %v", err)
+	}
+	t.Cleanup(func() {
+		if _, err := app.db.Exec(`DELETE FROM members WHERE id = $1`, anotherMemberID); err != nil {
+			t.Errorf("no se pudo limpiar el segundo integrante BDD: %v", err)
+		}
+	})
+
+	olderName := app.projectPrefix + " proyecto anterior"
+	newerName := app.projectPrefix + " proyecto reciente"
+	var olderID, newerID int64
+	for _, project := range []struct {
+		name          string
+		start, end    string
+		idDestination *int64
+	}{
+		{name: olderName, start: "2026-10-20", end: "2026-10-22", idDestination: &olderID},
+		{name: newerName, start: "2026-10-23", end: "2026-10-24", idDestination: &newerID},
+	} {
+		if err := app.db.QueryRow(
+			`INSERT INTO projects (name, start_date, end_date) VALUES ($1, $2, $3) RETURNING id`,
+			project.name, project.start, project.end,
+		).Scan(project.idDestination); err != nil {
+			t.Fatalf("no se pudo crear el proyecto BDD: %v", err)
+		}
+	}
+	for _, link := range []struct {
+		projectID, memberID int64
+	}{
+		{olderID, app.memberID},
+		{newerID, app.memberID},
+		{newerID, anotherMemberID},
+	} {
+		if _, err := app.db.Exec(
+			`INSERT INTO project_members (project_id, member_id) VALUES ($1, $2)`,
+			link.projectID, link.memberID,
+		); err != nil {
+			t.Fatalf("no se pudo asociar el integrante BDD: %v", err)
+		}
+	}
+
+	resp, body := webProjectsBDDGet(t, app, "/proyectos")
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200 para la lista, se obtuvo %d", resp.StatusCode)
+	}
+	for _, tc := range []struct {
+		name   string
+		values []string
+	}{
+		{name: olderName, values: []string{olderName, "20/10/2026", "22/10/2026", "1"}},
+		{name: newerName, values: []string{newerName, "23/10/2026", "24/10/2026", "2"}},
+	} {
+		row := projectTableRow(body, tc.name)
+		if row == "" {
+			t.Errorf("se esperaba una fila de tabla para %q; respuesta: %s", tc.name, body)
+			continue
+		}
+		for _, expected := range tc.values {
+			if !strings.Contains(row, expected) {
+				t.Errorf("la fila de %q debía incluir %q; fila: %s", tc.name, expected, row)
+			}
+		}
+	}
+	if strings.Index(body, newerName) < 0 || strings.Index(body, olderName) < 0 ||
+		strings.Index(body, newerName) >= strings.Index(body, olderName) {
+		t.Errorf("el proyecto más reciente debía aparecer primero; respuesta: %s", body)
+	}
+}
+
+func TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD(t *testing.T) {
+	app := newWebProjectsBDDApp(t, false, false, true)
+
+	resp, body := webProjectsBDDGet(t, app, "/proyectos")
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200 para la lista vacía, se obtuvo %d", resp.StatusCode)
+	}
+	if !strings.Contains(body, "Aún no hay proyectos") {
+		t.Errorf("se esperaba el mensaje de lista vacía; respuesta: %s", body)
+	}
+	for _, field := range []string{web.ProjectNameField, web.ProjectStartDateField, web.ProjectEndDateField} {
+		if !strings.Contains(body, `name="`+field+`"`) {
+			t.Errorf("la lista vacía debía conservar el formulario; falta %q", field)
+		}
 	}
 }

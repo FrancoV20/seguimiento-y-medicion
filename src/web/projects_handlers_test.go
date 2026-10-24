@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -14,6 +15,7 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 )
@@ -36,6 +38,14 @@ type projectsApp struct {
 
 type emptyProjectMembersCatalog struct{ ProjectCatalog }
 
+type emptyProjectListCatalog struct{ ProjectCatalog }
+
+type failingProjectCatalog struct {
+	ProjectCatalog
+	projectsErr error
+	membersErr  error
+}
+
 type failingCreateProjectStore struct {
 	memberID int
 }
@@ -50,6 +60,24 @@ func (s failingCreateProjectStore) MemberExists(id int) (bool, error) {
 
 func (emptyProjectMembersCatalog) ListMembers(context.Context) ([]MemberOption, error) {
 	return []MemberOption{}, nil
+}
+
+func (emptyProjectListCatalog) ListProjects(context.Context) ([]ProjectRow, error) {
+	return []ProjectRow{}, nil
+}
+
+func (c failingProjectCatalog) ListProjects(ctx context.Context) ([]ProjectRow, error) {
+	if c.projectsErr != nil {
+		return nil, c.projectsErr
+	}
+	return c.ProjectCatalog.ListProjects(ctx)
+}
+
+func (c failingProjectCatalog) ListMembers(ctx context.Context) ([]MemberOption, error) {
+	if c.membersErr != nil {
+		return nil, c.membersErr
+	}
+	return c.ProjectCatalog.ListMembers(ctx)
 }
 
 func newProjectsApp(t *testing.T, emptyMembers bool) *projectsApp {
@@ -67,12 +95,16 @@ func newProjectsAppWithService(
 	fx *projectCatalogFixture,
 	emptyMembers bool,
 	service *project.ProjectService,
+	catalogOverride ...ProjectCatalog,
 ) *projectsApp {
 	t.Helper()
 
 	var catalog ProjectCatalog = NewPostgreSQLProjectCatalog(db)
 	if emptyMembers {
 		catalog = emptyProjectMembersCatalog{ProjectCatalog: catalog}
+	}
+	if len(catalogOverride) > 0 {
+		catalog = catalogOverride[0]
 	}
 
 	srv := NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
@@ -85,6 +117,99 @@ func newProjectsAppWithService(
 	ts := httptest.NewServer(srv.Handler())
 	t.Cleanup(ts.Close)
 	return &projectsApp{db: db, ts: ts, fx: fx}
+}
+
+func TestProjects_ListShowsDataNewestFirstWithin500Milliseconds(t *testing.T) {
+	app := newProjectsApp(t, false)
+	client := projectsTestClient(t, app.ts)
+
+	started := time.Now()
+	resp, body := projectsGet(t, client, app, "/proyectos")
+	elapsed := time.Since(started)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200, se obtuvo %d", resp.StatusCode)
+	}
+	if elapsed >= 500*time.Millisecond {
+		t.Errorf("la respuesta debía tardar menos de 500 ms; tardó %s", elapsed)
+	}
+
+	for _, want := range app.fx.projects {
+		line := fmt.Sprintf("%s|%s|%s|%d",
+			want.name,
+			want.startDate.Format("2006-01-02"),
+			want.endDate.Format("2006-01-02"),
+			want.memberCount,
+		)
+		if !strings.Contains(body, line) {
+			t.Errorf("la lista debía mostrar los datos %q; respuesta: %s", line, body)
+		}
+	}
+
+	positionC := strings.Index(body, app.fx.projects[app.fx.projectC].name)
+	positionB := strings.Index(body, app.fx.projects[app.fx.projectB].name)
+	positionA := strings.Index(body, app.fx.projects[app.fx.projectA].name)
+	if positionC < 0 || positionB < 0 || positionA < 0 ||
+		!(positionC < positionB && positionB < positionA) {
+		t.Errorf("los proyectos más recientes debían aparecer primero; posiciones C=%d, B=%d, A=%d",
+			positionC, positionB, positionA)
+	}
+}
+
+func TestProjects_EmptyListShowsMessageAndCreationForm(t *testing.T) {
+	db := openContextTestDB(t)
+	fx := newProjectCatalogFixture(t, db)
+	service := project.NewProjectService(project.NewPostgreSQLProjectStore(db))
+	catalog := emptyProjectListCatalog{ProjectCatalog: NewPostgreSQLProjectCatalog(db)}
+	app := newProjectsAppWithService(t, db, fx, false, service, catalog)
+
+	resp, body := projectsGet(t, projectsTestClient(t, app.ts), app, "/proyectos")
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200 para la lista vacía, se obtuvo %d", resp.StatusCode)
+	}
+	if !strings.Contains(body, "Aún no hay proyectos") {
+		t.Errorf("se esperaba el mensaje de lista vacía; respuesta: %s", body)
+	}
+}
+
+func TestProjects_CatalogReadFailureShowsGenericErrorPage(t *testing.T) {
+	tests := []struct {
+		name        string
+		projectsErr error
+		membersErr  error
+	}{
+		{name: "lectura de proyectos", projectsErr: Unavailable(errors.New("SELECT secret_projects from src/web/private.go"))},
+		{name: "lectura de integrantes", membersErr: Unavailable(errors.New("SELECT secret_members from src/web/private.go"))},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			db := openContextTestDB(t)
+			fx := newProjectCatalogFixture(t, db)
+			service := project.NewProjectService(project.NewPostgreSQLProjectStore(db))
+			catalog := failingProjectCatalog{
+				ProjectCatalog: NewPostgreSQLProjectCatalog(db),
+				projectsErr:    tc.projectsErr,
+				membersErr:     tc.membersErr,
+			}
+			app := newProjectsAppWithService(t, db, fx, false, service, catalog)
+
+			resp, body := projectsGet(t, projectsTestClient(t, app.ts), app, "/proyectos")
+
+			if resp.StatusCode != http.StatusServiceUnavailable {
+				t.Errorf("se esperaba la página de servicio no disponible, se obtuvo %d", resp.StatusCode)
+			}
+			if !strings.Contains(body, TitleUnavailable) || !strings.Contains(body, MsgUnavailable) {
+				t.Errorf("se esperaba la página de error común; respuesta: %s", body)
+			}
+			for _, detail := range []string{"secret_projects", "secret_members", "src/web/private.go", "<form"} {
+				if strings.Contains(body, detail) {
+					t.Errorf("la respuesta no debía contener %q; respuesta: %s", detail, body)
+				}
+			}
+		})
+	}
 }
 
 func projectsTestTemplates(t *testing.T) fs.FS {
