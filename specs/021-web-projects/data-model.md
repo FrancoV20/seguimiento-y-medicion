@@ -170,3 +170,13 @@ una vez.
 
 - No es una migración: no lleva número, no tiene par `.down.sql` y no la ejecuta `migrate`.
 - Se ejecuta a mano una vez por base local (ver `quickstart.md`).
+
+## Revisión de errores y registros (T036)
+
+- Las respuestas de HU-21 muestran mensajes genéricos para fallas de guardado y delegan las fallas
+  de lectura a `Fail`; el detalle técnico no se incluye en el HTML.
+- `Fail` pertenece a la infraestructura compartida de HU-20a y registra el detalle técnico y la
+  ruta para diagnóstico. Este comportamiento se acepta según el contrato de HU-20a; HU-21 no lo
+  modifica.
+- `projects_handlers.go` y `projects_form.go` no registran errores ni valores de configuración y no
+  leen ni registran `DATABASE_URL`.

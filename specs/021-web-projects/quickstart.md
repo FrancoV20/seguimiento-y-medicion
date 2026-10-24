@@ -8,6 +8,9 @@
 - HU-01, FIX-HU-01, HU-20a y HU-20b (US1 y US2) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main` y aplicar las migraciones nuevas (la de FIX-HU-01 cambia la restricción de
   fechas de `projects`).
+- Las direcciones `DATABASE_URL` de esta guía son plantillas: reemplazá `USUARIO`, `CLAVE` y
+  `PUERTO` por los valores de tu entorno. No uses ni guardes credenciales personales en archivos
+  versionados.
 - Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml`
   o `docker-compose.override.yml` (por ejemplo 5432 o 5433). El Compose del repositorio publica
   PostgreSQL en 5433; consultar `docker compose port postgres 5432` y usar el puerto que devuelva:
@@ -18,11 +21,13 @@
 
 Desde la raíz del repositorio, iniciar PostgreSQL y confirmar su puerto publicado. Configurar
 `DATABASE_URL` con tus datos locales antes de aplicar las migraciones; no guardar claves personales
-en archivos del repositorio.
+en archivos del repositorio. Las cadenas de conexión son plantillas: reemplazá `USUARIO`, `CLAVE`
+y `PUERTO` por los valores de tu entorno. Por ejemplo:
 
 ```powershell
 docker compose up -d postgres
 docker compose port postgres 5432
+$env:DATABASE_URL = "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
 migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 

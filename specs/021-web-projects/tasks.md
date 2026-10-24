@@ -116,9 +116,9 @@
 
 **Purpose**: Validación final, evidencias, usabilidad, coordinación y trazabilidad.
 
-- [ ] T035 [P] Documentar en `specs/021-web-projects/quickstart.md` la semilla, la nota de puerto y el protocolo de la prueba de usabilidad
-- [ ] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
-- [ ] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T035 [P] Documentar en `specs/021-web-projects/quickstart.md` la semilla, la nota de puerto y el protocolo de la prueba de usabilidad
+- [x] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
+- [x] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
