@@ -41,7 +41,7 @@ type failingCreateProjectStore struct {
 }
 
 func (s failingCreateProjectStore) Create(*project.Project) error {
-	return fmt.Errorf("simulated project store failure")
+	return fmt.Errorf("simulated project store failure: INSERT INTO projects; src/project/service.go; C:\\private\\config")
 }
 
 func (s failingCreateProjectStore) MemberExists(id int) (bool, error) {
@@ -444,6 +444,11 @@ func TestProjects_SaveFailureShowsGenericErrorAndPreservesValues(t *testing.T) {
 	}
 	if !strings.Contains(body, MsgOperationFailed) {
 		t.Errorf("se esperaba %q; respuesta: %s", MsgOperationFailed, body)
+	}
+	for _, detail := range []string{"INSERT INTO projects", "src/project/service.go", `C:\private\config`} {
+		if strings.Contains(body, detail) {
+			t.Errorf("la respuesta no debía exponer detalles internos %q; respuesta: %s", detail, body)
+		}
 	}
 	if !strings.Contains(body, values.Get(ProjectNameField)) ||
 		!strings.Contains(body, values.Get(ProjectStartDateField)) ||

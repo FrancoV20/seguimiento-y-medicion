@@ -3,6 +3,7 @@ package web
 import (
 	"net/url"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -108,5 +109,39 @@ func TestParseProjectForm_DeduplicatesMemberIDsAndPreservesSubmittedValues(t *te
 	}
 	if !reflect.DeepEqual(input.MemberIDs, []string{"7", "9"}) {
 		t.Errorf("se esperaban identificadores únicos en la entrada, se obtuvo %v", input.MemberIDs)
+	}
+}
+
+func TestParseProjectForm_RejectsNamesLongerThan255Characters(t *testing.T) {
+	tests := []struct {
+		name      string
+		project   string
+		wantError string
+	}{
+		{name: "255 caracteres", project: strings.Repeat("á", 255)},
+		{name: "256 caracteres", project: strings.Repeat("á", 256), wantError: "El nombre no puede superar los 255 caracteres"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			values := url.Values{
+				ProjectNameField:      {tc.project},
+				ProjectStartDateField: {"2026-10-23"},
+				ProjectEndDateField:   {"2026-10-24"},
+				ProjectMembersField:   {"7"},
+			}
+
+			form, input, errors := parseProjectForm(values)
+
+			if errors[ProjectNameField] != tc.wantError {
+				t.Errorf("se esperaba error %q en nombre, se obtuvo %q", tc.wantError, errors[ProjectNameField])
+			}
+			if form.Name != tc.project {
+				t.Errorf("se debía conservar el nombre enviado")
+			}
+			if input.Name != tc.project {
+				t.Errorf("se esperaba conservar el nombre parseado, se obtuvo longitud %d", len(input.Name))
+			}
+		})
 	}
 }
