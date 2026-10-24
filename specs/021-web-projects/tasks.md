@@ -72,12 +72,12 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Escribir la prueba de handler, una por escenario (nombre vacío o solo espacios, fecha de fin anterior a la de inicio, sin integrantes marcados): mensajes de HU-01 junto a cada campo, datos conservados y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T020 [P] [US2] Escribir la prueba de handler con la fecha de inicio o de fin faltante: "Falta la fecha de inicio" o "Falta la fecha de fin" junto al campo, en `src/web/projects_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler con una fecha de formato inválido: mensaje junto al campo y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler con un integrante no numérico o inexistente: mensaje junto al campo de integrantes y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con un `ProjectStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y el proyecto no aparece en la lista, en `src/web/projects_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir los escenarios BDD de nombre vacío, fecha de fin anterior, fecha faltante, sin integrantes marcados, fecha con formato inválido, integrante inválido y falla de guardado en `test/web_projects_bdd_test.go`
+- [x] T019 [P] [US2] Escribir la prueba de handler, una por escenario (nombre vacío o solo espacios, fecha de fin anterior a la de inicio, sin integrantes marcados): mensajes de HU-01 junto a cada campo, datos conservados y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T020 [P] [US2] Escribir la prueba de handler con la fecha de inicio o de fin faltante: "Falta la fecha de inicio" o "Falta la fecha de fin" junto al campo, en `src/web/projects_handlers_test.go`
+- [x] T021 [P] [US2] Escribir la prueba de handler con una fecha de formato inválido: mensaje junto al campo y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler con un integrante no numérico o inexistente: mensaje junto al campo de integrantes y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con un `ProjectStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y el proyecto no aparece en la lista, en `src/web/projects_handlers_test.go`
+- [x] T024 [P] [US2] Escribir los escenarios BDD de nombre vacío, fecha de fin anterior, fecha faltante, sin integrantes marcados, fecha con formato inválido, integrante inválido y falla de guardado en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 2
 

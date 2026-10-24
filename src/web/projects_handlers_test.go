@@ -20,7 +20,6 @@ import (
 
 const projectsTestTemplate = `{{define "content"}}
 <h1>{{.Title}}</h1>
-{{if .Flash}}<p>{{.Flash.Text}}</p>{{end}}
 {{if .Form}}{{range $field, $message := .Form.Errors}}<p data-field="{{$field}}">{{$message}}</p>{{end}}{{end}}
 {{if .Data}}
   {{if .Data.Members}}{{range .Data.Members}}<span>{{.DisplayName}}</span>{{end}}{{else}}<p>{{.Data.NoMembers}}</p>{{end}}
@@ -37,6 +36,18 @@ type projectsApp struct {
 
 type emptyProjectMembersCatalog struct{ ProjectCatalog }
 
+type failingCreateProjectStore struct {
+	memberID int
+}
+
+func (s failingCreateProjectStore) Create(*project.Project) error {
+	return fmt.Errorf("simulated project store failure")
+}
+
+func (s failingCreateProjectStore) MemberExists(id int) (bool, error) {
+	return id == s.memberID, nil
+}
+
 func (emptyProjectMembersCatalog) ListMembers(context.Context) ([]MemberOption, error) {
 	return []MemberOption{}, nil
 }
@@ -46,6 +57,19 @@ func newProjectsApp(t *testing.T, emptyMembers bool) *projectsApp {
 
 	db := openContextTestDB(t)
 	fx := newProjectCatalogFixture(t, db)
+	service := project.NewProjectService(project.NewPostgreSQLProjectStore(db))
+	return newProjectsAppWithService(t, db, fx, emptyMembers, service)
+}
+
+func newProjectsAppWithService(
+	t *testing.T,
+	db *sql.DB,
+	fx *projectCatalogFixture,
+	emptyMembers bool,
+	service *project.ProjectService,
+) *projectsApp {
+	t.Helper()
+
 	var catalog ProjectCatalog = NewPostgreSQLProjectCatalog(db)
 	if emptyMembers {
 		catalog = emptyProjectMembersCatalog{ProjectCatalog: catalog}
@@ -54,7 +78,6 @@ func newProjectsApp(t *testing.T, emptyMembers bool) *projectsApp {
 	srv := NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	srv.renderer.files = projectsTestTemplates(t)
 	srv.Use(CrossOriginGuard(srv.Renderer()))
-	service := project.NewProjectService(project.NewPostgreSQLProjectStore(db))
 	if err := RegisterProjects(srv, service, catalog); err != nil {
 		t.Fatalf("no se pudo registrar la sección Proyectos: %v", err)
 	}
@@ -237,6 +260,201 @@ func TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission(t *te
 	}
 	if strings.Contains(responseBody, MsgProjectCreated) {
 		t.Errorf("no debía mostrarse éxito tras el envío rechazado")
+	}
+}
+
+func TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues(t *testing.T) {
+	tests := []struct {
+		name        string
+		field       string
+		message     string
+		makeForm    func(int64) url.Values
+		projectName string
+	}{
+		{
+			name:    "nombre vacío",
+			field:   ProjectNameField,
+			message: project.ErrEmptyName.Error(),
+			makeForm: func(memberID int64) url.Values {
+				return projectsTestValues("", memberID, "2026-10-23", "2026-10-24")
+			},
+			projectName: "",
+		},
+		{
+			name:    "nombre solo con espacios",
+			field:   ProjectNameField,
+			message: project.ErrEmptyName.Error(),
+			makeForm: func(memberID int64) url.Values {
+				return projectsTestValues("   ", memberID, "2026-10-23", "2026-10-24")
+			},
+			projectName: "   ",
+		},
+		{
+			name:    "fecha de fin anterior",
+			field:   ProjectEndDateField,
+			message: project.ErrInvalidPeriod.Error(),
+			makeForm: func(memberID int64) url.Values {
+				return projectsTestValues("HU21 fin anterior", memberID, "2026-10-24", "2026-10-23")
+			},
+			projectName: "HU21 fin anterior",
+		},
+		{
+			name:    "sin integrantes marcados",
+			field:   ProjectMembersField,
+			message: project.ErrMissingMembers.Error(),
+			makeForm: func(memberID int64) url.Values {
+				values := projectsTestValues("HU21 sin integrantes marcados", memberID, "2026-10-23", "2026-10-24")
+				values.Del(ProjectMembersField)
+				return values
+			},
+			projectName: "HU21 sin integrantes marcados",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			app := newProjectsApp(t, false)
+			values := tc.makeForm(app.fx.alphaOne)
+
+			resp, body := projectsPost(t, projectsTestClient(t, app.ts), app, values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("se esperaba 422, se obtuvo %d; respuesta: %s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, `data-field="`+tc.field+`"`) ||
+				!strings.Contains(body, tc.message) {
+				t.Errorf("se esperaba %q junto a %q; respuesta: %s", tc.message, tc.field, body)
+			}
+			if !strings.Contains(body, values.Get(ProjectNameField)) ||
+				!strings.Contains(body, values.Get(ProjectStartDateField)) ||
+				!strings.Contains(body, values.Get(ProjectEndDateField)) {
+				t.Errorf("se debían conservar los valores enviados; respuesta: %s", body)
+			}
+			if count := countProjectByName(t, app.db, tc.projectName); count != 0 {
+				t.Errorf("no debía persistirse el proyecto, se encontraron %d", count)
+			}
+			if strings.Contains(body, MsgProjectCreated) {
+				t.Errorf("no debía mostrarse éxito tras el rechazo")
+			}
+		})
+	}
+}
+
+func TestProjects_MissingDatesAreShownByFieldAndPreserveValues(t *testing.T) {
+	tests := []struct {
+		name    string
+		missing string
+		field   string
+		message string
+	}{
+		{name: "falta fecha de inicio", missing: ProjectStartDateField, field: ProjectStartDateField, message: MsgMissingStartDate},
+		{name: "falta fecha de fin", missing: ProjectEndDateField, field: ProjectEndDateField, message: MsgMissingEndDate},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			app := newProjectsApp(t, false)
+			values := projectsTestValues("HU21 fecha ausente", app.fx.alphaOne, "2026-10-23", "2026-10-24")
+			values.Del(tc.missing)
+
+			resp, body := projectsPost(t, projectsTestClient(t, app.ts), app, values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("se esperaba 422, se obtuvo %d; respuesta: %s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, `data-field="`+tc.field+`"`) ||
+				!strings.Contains(body, tc.message) {
+				t.Errorf("se esperaba %q junto a %q; respuesta: %s", tc.message, tc.field, body)
+			}
+			if !strings.Contains(body, values.Get(ProjectNameField)) ||
+				!strings.Contains(body, values.Get(ProjectStartDateField)) ||
+				!strings.Contains(body, values.Get(ProjectEndDateField)) {
+				t.Errorf("se debían conservar los valores enviados; respuesta: %s", body)
+			}
+			if count := countProjectByName(t, app.db, "HU21 fecha ausente"); count != 0 {
+				t.Errorf("no debía persistirse el proyecto, se encontraron %d", count)
+			}
+		})
+	}
+}
+
+func TestProjects_InvalidDateFormatIsShownByFieldAndPreservesValues(t *testing.T) {
+	app := newProjectsApp(t, false)
+	values := projectsTestValues("HU21 fecha con formato inválido", app.fx.alphaOne, "23/10/2026", "2026-10-24")
+
+	resp, body := projectsPost(t, projectsTestClient(t, app.ts), app, values)
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Errorf("se esperaba 422, se obtuvo %d; respuesta: %s", resp.StatusCode, body)
+	}
+	if !strings.Contains(body, `data-field="`+ProjectStartDateField+`"`) ||
+		!strings.Contains(body, MsgInvalidDateFormat) {
+		t.Errorf("se esperaba el error de formato junto a fecha_inicio; respuesta: %s", body)
+	}
+	if !strings.Contains(body, values.Get(ProjectNameField)) ||
+		!strings.Contains(body, values.Get(ProjectStartDateField)) {
+		t.Errorf("se debían conservar los valores enviados; respuesta: %s", body)
+	}
+	if count := countProjectByName(t, app.db, values.Get(ProjectNameField)); count != 0 {
+		t.Errorf("no debía persistirse el proyecto, se encontraron %d", count)
+	}
+}
+
+func TestProjects_InvalidMemberIsShownByFieldAndPreservesValues(t *testing.T) {
+	tests := []struct {
+		name     string
+		memberID string
+	}{
+		{name: "integrante no numérico", memberID: "no-numérico"},
+		{name: "integrante inexistente", memberID: "999999999"},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			app := newProjectsApp(t, false)
+			values := projectsTestValues("HU21 integrante inválido", app.fx.alphaOne, "2026-10-23", "2026-10-24")
+			values.Set(ProjectMembersField, tc.memberID)
+
+			resp, body := projectsPost(t, projectsTestClient(t, app.ts), app, values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("se esperaba 422, se obtuvo %d; respuesta: %s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, `data-field="`+ProjectMembersField+`"`) ||
+				!strings.Contains(body, MsgInvalidMember) {
+				t.Errorf("se esperaba %q junto a integrantes; respuesta: %s", MsgInvalidMember, body)
+			}
+			if !strings.Contains(body, tc.memberID) || !strings.Contains(body, values.Get(ProjectNameField)) {
+				t.Errorf("se debían conservar los valores enviados; respuesta: %s", body)
+			}
+			if count := countProjectByName(t, app.db, values.Get(ProjectNameField)); count != 0 {
+				t.Errorf("no debía persistirse el proyecto, se encontraron %d", count)
+			}
+		})
+	}
+}
+
+func TestProjects_SaveFailureShowsGenericErrorAndPreservesValues(t *testing.T) {
+	db := openContextTestDB(t)
+	fx := newProjectCatalogFixture(t, db)
+	store := failingCreateProjectStore{memberID: int(fx.alphaOne)}
+	service := project.NewProjectService(store)
+	app := newProjectsAppWithService(t, db, fx, false, service)
+	values := projectsTestValues("HU21 falla de guardado", fx.alphaOne, "2026-10-23", "2026-10-24")
+
+	resp, body := projectsPost(t, projectsTestClient(t, app.ts), app, values)
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Errorf("se esperaba 500, se obtuvo %d; respuesta: %s", resp.StatusCode, body)
+	}
+	if !strings.Contains(body, MsgOperationFailed) {
+		t.Errorf("se esperaba %q; respuesta: %s", MsgOperationFailed, body)
+	}
+	if !strings.Contains(body, values.Get(ProjectNameField)) ||
+		!strings.Contains(body, values.Get(ProjectStartDateField)) ||
+		!strings.Contains(body, values.Get(ProjectEndDateField)) {
+		t.Errorf("se debían conservar los valores enviados; respuesta: %s", body)
+	}
+	if strings.Contains(body, MsgProjectCreated) {
+		t.Errorf("no debía mostrarse éxito tras la falla")
+	}
+	if count := countProjectByName(t, app.db, values.Get(ProjectNameField)); count != 0 {
+		t.Errorf("no debía persistirse el proyecto, se encontraron %d", count)
 	}
 }
 
