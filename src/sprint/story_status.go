@@ -127,11 +127,40 @@ func NewStatusService(store StoryStatusStore) StatusService {
 	return StatusService{store: store}
 }
 
-var errNotImplemented = errors.New("HU-14: todavía no implementado")
-
 // ChangeStatus cambia el estado de una historia del Sprint activo. from y to son el origen y el
 // destino de la acción pedida; expected es el estado que la persona veía ("" si no se envió).
-// RED: esqueleto sin implementar.
+//
+// Orden de validación (cada rechazo tiene un motivo único): la historia es del proyecto, está en
+// un Sprint activo, no está ya en el destino, el estado esperado coincide con el real, el paso
+// real → destino está permitido y el estado real es el origen de la acción. Recién entonces se
+// cambia, de forma atómica (HU-14, T011).
 func (s StatusService) ChangeStatus(ctx context.Context, projectID, storyID int64, from, to, expected StoryStatus) (StatusResult, error) {
-	return StatusResult{}, errNotImplemented
+	state, err := s.store.FindStory(ctx, projectID, storyID)
+	if err != nil {
+		return StatusResult{}, err
+	}
+	if !state.SprintActive {
+		return StatusResult{}, ErrNotInActiveSprint
+	}
+	if state.Status == to {
+		return StatusResult{}, &AlreadyInStatusError{Status: to}
+	}
+	if expected != "" && expected != state.Status {
+		return StatusResult{}, ErrStatusChanged
+	}
+	if !CanTransition(state.Status, to) {
+		return StatusResult{}, &TransitionNotAllowedError{From: state.Status, To: to}
+	}
+	if state.Status != from {
+		return StatusResult{}, ErrStatusChanged
+	}
+
+	changed, err := s.store.UpdateStatus(ctx, storyID, from, to)
+	if err != nil {
+		return StatusResult{}, err
+	}
+	if !changed {
+		return StatusResult{}, ErrStatusChanged
+	}
+	return StatusResult{From: from, To: to, NoHoursWarning: to == Done && !state.HasEffort}, nil
 }
