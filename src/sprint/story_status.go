@@ -16,23 +16,45 @@ const (
 	ActionReopen   Action = "reabrir"
 )
 
+// storyStatusStep es un paso permitido del ciclo de vida de una historia del Sprint activo.
+type storyStatusStep struct{ from, to StoryStatus }
+
+// storyStatusSteps son los tres pasos permitidos (HU-14): En Sprint → En progreso → Hecho →
+// En progreso. Es la única fuente de la regla: las demás funciones salen de acá.
+var storyStatusSteps = map[Action]storyStatusStep{
+	ActionStart:    {from: EnSprint, to: InProgress},
+	ActionComplete: {from: InProgress, to: Done},
+	ActionReopen:   {from: Done, to: InProgress},
+}
+
 // CanTransition indica si una historia puede pasar de un estado a otro (HU-14, T010).
-// RED: esqueleto sin implementar.
+
 func CanTransition(from, to StoryStatus) bool {
+	for _, step := range storyStatusSteps {
+		if step.from == from && step.to == to {
+			return true
+		}
+	}
 	return false
 }
 
 // NextAction devuelve la única acción válida para un estado; ok es false si no hay (HU-14, T010).
-// RED: esqueleto sin implementar.
+
 func NextAction(status StoryStatus) (action Action, ok bool) {
+	for action, step := range storyStatusSteps {
+		if step.from == status {
+			return action, true
+		}
+	}
 	return "", false
 }
 
 // ActionTransition devuelve el estado de origen y el de destino de una acción; ok es false
 // si la acción no existe (HU-14, T010).
-// RED: esqueleto sin implementar.
+
 func ActionTransition(action Action) (from, to StoryStatus, ok bool) {
-	return "", "", false
+	step, ok := storyStatusSteps[action]
+	return step.from, step.to, ok
 }
 
 // Errores del dominio del cambio de estado (HU-14). Cualquier otro error es una falla de
