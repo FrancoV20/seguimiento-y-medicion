@@ -67,3 +67,13 @@ body {
 .picker-item label { cursor: pointer; }
 .app-context-links { margin-left: .75rem; font-size: .9em; }
 .app-context-links a { color: inherit; text-decoration: underline; }
+/* HU-14: Tablero */
+.board-summary { margin: 0 0 1rem; }
+.board-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; align-items: start; }
+.board-column { border: 1px solid rgba(128, 128, 128, .5); border-radius: .25rem; padding: .5rem 1rem 1rem; }
+.board-count { font-weight: normal; opacity: .75; }
+.board-list { list-style: none; margin: 0; padding: 0; }
+.board-card { border: 1px solid rgba(128, 128, 128, .5); border-radius: .25rem; padding: .5rem .75rem; margin: 0 0 .75rem; }
+.board-title { margin: 0 0 .25rem; font-weight: 600; }
+.board-meta { margin: 0 0 .5rem; opacity: .85; }
+.board-action { margin: 0; }

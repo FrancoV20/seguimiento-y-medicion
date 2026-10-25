@@ -59,10 +59,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implementar en `src/web/board_form.go` el armado del envío (`historia_id`, `accion`, `estado_actual`), la relación acción → destino y los textos de éxito
-- [ ] T020 [US1] Implementar los handlers `GET /tablero` y `POST /tablero/estado` en `src/web/board_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` (éxito o éxito con advertencia) y la redirección 303
-- [ ] T021 [US1] Crear `board.html` con los grupos por estado, una acción por historia (formulario con `historia_id`, `accion` y `estado_actual`) y los Story Points, sin repetir el mensaje (lo muestra `layout.html` desde `PageData.Flash`), en `src/web/templates/board.html`
-- [ ] T022 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Tablero" (`/tablero`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T019 [US1] Implementar en `src/web/board_form.go` el armado del envío (`historia_id`, `accion`, `estado_actual`), la relación acción → destino y los textos de éxito
+- [x] T020 [US1] Implementar los handlers `GET /tablero` y `POST /tablero/estado` en `src/web/board_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` (éxito o éxito con advertencia) y la redirección 303
+- [x] T021 [US1] Crear `board.html` con los grupos por estado, una acción por historia (formulario con `historia_id`, `accion` y `estado_actual`) y los Story Points, sin repetir el mensaje (lo muestra `layout.html` desde `PageData.Flash`), en `src/web/templates/board.html`
+- [x] T022 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Tablero" (`/tablero`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 cambia el estado desde la web; HU-15, HU-07 y HU-25 ya tienen historias en "Hecho".
 
