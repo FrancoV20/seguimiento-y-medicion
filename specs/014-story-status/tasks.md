@@ -51,10 +51,10 @@
 
 ### Tests for User Story 1
 
-- [ ] T014 [P] [US1] Escribir la prueba de handler de comenzar con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/tablero`, "La historia pasó a En progreso" una sola vez, estado nuevo y, con dos proyectos, solo en el activo, en `src/web/board_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de handler de completar con horas: "La historia pasó a Hecho", estado "Hecho" y Story Points completados actualizados, en `src/web/board_handlers_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de handler de completar sin horas: "La historia pasó a Hecho. Advertencia: no tiene horas reales registradas" en un solo mensaje, en `src/web/board_handlers_test.go`
-- [ ] T017 [P] [US1] Escribir la prueba de handler de reabrir: "La historia volvió a En progreso", estado "En progreso" y los Story Points dejan de contarse, en `src/web/board_handlers_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de handler de comenzar con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/tablero`, "La historia pasó a En progreso" una sola vez, estado nuevo y, con dos proyectos, solo en el activo, en `src/web/board_handlers_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de handler de completar con horas: "La historia pasó a Hecho", estado "Hecho" y Story Points completados actualizados, en `src/web/board_handlers_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de handler de completar sin horas: "La historia pasó a Hecho. Advertencia: no tiene horas reales registradas" en un solo mensaje, en `src/web/board_handlers_test.go`
+- [x] T017 [P] [US1] Escribir la prueba de handler de reabrir: "La historia volvió a En progreso", estado "En progreso" y los Story Points dejan de contarse, en `src/web/board_handlers_test.go`
 - [ ] T018 [P] [US1] Escribir los escenarios BDD de comenzar, completar, completar sin horas y reabrir en `test/web_board_bdd_test.go`
 
 ### Implementation for User Story 1
