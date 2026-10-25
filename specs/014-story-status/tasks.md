@@ -34,10 +34,10 @@
 - [x] T007 [P] Escribir la prueba de integración de `PostgreSQLStoryStatusStore`: `FindStory` (estado, Sprint, activo, horas, aislamiento por proyecto) y `UpdateStatus` atómico (cambia con el estado esperado, no cambia con otro, no cambia si el Sprint está finalizado y, con dos cambios simultáneos, solo uno se aplica), en `src/sprint/postgres_story_status_store_integration_test.go`
 - [x] T008 [P] Definir `BoardView`, `BoardStory`, la función pura de Story Points planificados y completados y la interfaz `BoardCatalog` en `src/web/board_catalog.go`
 - [x] T009 [P] Escribir la prueba de integración de `PostgreSQLBoardCatalog` con fixtures propias (dos proyectos, Sprint activo con historias en los tres estados y una sin Story Points, Sprint finalizado, proyecto sin Sprint): Sprint del proyecto correcto, sin datos de otro proyecto, grupos, `hasEffort`, acción de cada historia y Story Points, en `src/web/postgres_board_catalog_integration_test.go`
-- [ ] T010 Definir en `src/sprint/story_status.go` los estados (reutilizando las constantes de HU-04 si existen), `CanTransition`, `NextAction`, `ActionTransition`, los errores del dominio y la interfaz `StoryStatusStore`
-- [ ] T011 Implementar el servicio `ChangeStatus` con el orden de validación de `data-model.md` y el resultado con la advertencia de horas en `src/sprint/story_status.go`
-- [ ] T012 Implementar `PostgreSQLStoryStatusStore` con `database/sql` y pgx y la sentencia atómica de `data-model.md` en `src/sprint/postgres_story_status_store.go`
-- [ ] T013 Implementar `PostgreSQLBoardCatalog` en `src/web/postgres_board_catalog.go`
+- [x] T010 Definir en `src/sprint/story_status.go` los estados (reutilizando las constantes de HU-04 si existen), `CanTransition`, `NextAction`, `ActionTransition`, los errores del dominio y la interfaz `StoryStatusStore`
+- [x] T011 Implementar el servicio `ChangeStatus` con el orden de validación de `data-model.md` y el resultado con la advertencia de horas en `src/sprint/story_status.go`
+- [x] T012 Implementar `PostgreSQLStoryStatusStore` con `database/sql` y pgx y la sentencia atómica de `data-model.md` en `src/sprint/postgres_story_status_store.go`
+- [x] T013 Implementar `PostgreSQLBoardCatalog` en `src/web/postgres_board_catalog.go`
 
 **Checkpoint**: La regla, el servicio y los adaptadores están listos y probados contra PostgreSQL.
 
