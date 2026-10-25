@@ -82,3 +82,93 @@
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.473s
 FAIL
+
+## T006 RED - servicio ChangeStatus (PostgreSQL real)
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/comenzar
+    story_status_service_test.go:35: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/completar
+    story_status_service_test.go:35: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/reabrir
+    story_status_service_test.go:35: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+--- FAIL: TestChangeStatus_CadaTransicionActualizaElEstado (0.12s)
+    --- FAIL: TestChangeStatus_CadaTransicionActualizaElEstado/comenzar (0.05s)
+    --- FAIL: TestChangeStatus_CadaTransicionActualizaElEstado/completar (0.04s)
+    --- FAIL: TestChangeStatus_CadaTransicionActualizaElEstado/reabrir (0.03s)
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas
+    story_status_service_test.go:69: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas
+    story_status_service_test.go:69: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas
+    story_status_service_test.go:69: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas
+    story_status_service_test.go:69: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+--- FAIL: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras (0.14s)
+    --- FAIL: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas (0.04s)
+    --- FAIL: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas (0.03s)
+    --- FAIL: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas (0.04s)
+    --- FAIL: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas (0.03s)
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente
+    story_status_service_test.go:86: error = HU-14: todav├¡a no implementado, se esperaba la historia no existe
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto
+    story_status_service_test.go:95: error = HU-14: todav├¡a no implementado, se esperaba la historia no existe
+--- FAIL: TestChangeStatus_HistoriaInexistenteODeOtroProyecto (0.07s)
+    --- FAIL: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente (0.03s)
+    --- FAIL: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto (0.04s)
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint
+    story_status_service_test.go:109: error = HU-14: todav├¡a no implementado, se esperaba la historia no est├í asignada a un Sprint activo
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado
+    story_status_service_test.go:118: error = HU-14: todav├¡a no implementado, se esperaba la historia no est├í asignada a un Sprint activo
+--- FAIL: TestChangeStatus_FueraDeUnSprintActivo (0.06s)
+    --- FAIL: TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint (0.03s)
+    --- FAIL: TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado (0.03s)
+=== RUN   TestChangeStatus_YaEstaEnElEstadoPedido
+    story_status_service_test.go:130: error = HU-14: todav├¡a no implementado, se esperaba la historia ya est├í en ese estado
+--- FAIL: TestChangeStatus_YaEstaEnElEstadoPedido (0.04s)
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real
+    story_status_service_test.go:146: error = HU-14: todav├¡a no implementado, se esperaba el estado de la historia cambi├│
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica
+    story_status_service_test.go:154: ChangeStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+--- FAIL: TestChangeStatus_EstadoEsperadoDistintoDelReal (0.07s)
+    --- FAIL: TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real (0.03s)
+    --- FAIL: TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica (0.03s)
+=== RUN   TestChangeStatus_TransicionNoPermitida
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho
+    story_status_service_test.go:179: error = HU-14: todav├¡a no implementado, se esperaba la transici├│n de estado no est├í permitida
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint
+    story_status_service_test.go:179: error = HU-14: todav├¡a no implementado, se esperaba la transici├│n de estado no est├í permitida
+--- FAIL: TestChangeStatus_TransicionNoPermitida (0.07s)
+    --- FAIL: TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho (0.03s)
+    --- FAIL: TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint (0.03s)
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho
+    story_status_service_test.go:207: error = HU-14: todav├¡a no implementado, se esperaba el estado de la historia cambi├│
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint
+    story_status_service_test.go:207: error = HU-14: todav├¡a no implementado, se esperaba el estado de la historia cambi├│
+--- FAIL: TestChangeStatus_AccionQueNoCorrespondeAlEstado (0.07s)
+    --- FAIL: TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho (0.03s)
+    --- FAIL: TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint (0.03s)
+=== RUN   TestChangeStatus_OrdenDeValidacion
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint
+    story_status_service_test.go:241: error = HU-14: todav├¡a no implementado, se esperaba la historia no existe
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado
+    story_status_service_test.go:241: error = HU-14: todav├¡a no implementado, se esperaba la historia no est├í asignada a un Sprint activo
+=== RUN   TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado
+    story_status_service_test.go:241: error = HU-14: todav├¡a no implementado, se esperaba la historia ya est├í en ese estado
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transici├│n
+    story_status_service_test.go:241: error = HU-14: todav├¡a no implementado, se esperaba el estado de la historia cambi├│
+=== RUN   TestChangeStatus_OrdenDeValidacion/la_transici├│n_antes_que_el_origen_de_la_acci├│n
+    story_status_service_test.go:241: error = HU-14: todav├¡a no implementado, se esperaba la transici├│n de estado no est├í permitida
+--- FAIL: TestChangeStatus_OrdenDeValidacion (0.16s)
+    --- FAIL: TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint (0.03s)
+    --- FAIL: TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado (0.03s)
+    --- FAIL: TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado (0.03s)
+    --- FAIL: TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transici├│n (0.03s)
+    --- FAIL: TestChangeStatus_OrdenDeValidacion/la_transici├│n_antes_que_el_origen_de_la_acci├│n (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.669s
+FAIL
