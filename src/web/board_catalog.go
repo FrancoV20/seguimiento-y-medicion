@@ -61,6 +61,14 @@ type BoardCatalog interface {
 // BoardPoints calcula los Story Points planificados (todas las historias) y completados
 // (solo las Hecho). Una historia sin Story Points cuenta 0. Nunca se guardan (FR-017).
 func BoardPoints(stories []BoardStory) (planned, completed int) {
-	// RED (T008): esqueleto, se implementa en T013.
-	return 0, 0
+	for _, story := range stories {
+		if story.StoryPoints == nil {
+			continue // sin Story Points cuenta 0
+		}
+		planned += *story.StoryPoints
+		if story.Status == sprint.Done {
+			completed += *story.StoryPoints
+		}
+	}
+	return planned, completed
 }
