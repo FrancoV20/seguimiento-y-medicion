@@ -119,9 +119,9 @@
 - [x] T035 [P] Documentar en `specs/021-web-projects/quickstart.md` la semilla, la nota de puerto y el protocolo de la prueba de usabilidad
 - [x] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
 - [x] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
+- [x] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
 - [ ] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
 - [ ] T042 Coordinar con el responsable de HU-20b que la sección "Proyectos" (`/proyectos`) queda registrada para que su aviso "acceso a crear el primero" apunte a esta pantalla, y con quien tome HU-11 que esta lista es el punto de partida de la edición
 - [ ] T043 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/021-web-projects/tasks.md` y la tabla de trazabilidad de `spec.md`
