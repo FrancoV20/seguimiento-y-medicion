@@ -270,7 +270,7 @@ func TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError(t *testing.T) {
 	newCatSprint(t, db, soloFinalizado, "Finalizado")
 
 	casos := []struct {
-		nombre    string
+		nombre     string
 		proyectoID int64
 	}{
 		{"proyecto sin Sprints", sinSprints},
