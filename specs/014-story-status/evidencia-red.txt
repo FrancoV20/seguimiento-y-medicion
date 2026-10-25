@@ -172,3 +172,50 @@ FAIL
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.669s
 FAIL
+
+## T007 RED - PostgreSQLStoryStatusStore (PostgreSQL real)
+
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas
+    postgres_story_status_store_integration_test.go:41: FindStory() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas
+    postgres_story_status_store_integration_test.go:41: FindStory() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado
+    postgres_story_status_store_integration_test.go:41: FindStory() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint
+    postgres_story_status_store_integration_test.go:41: FindStory() devolvi├│ error: HU-14: todav├¡a no implementado
+--- FAIL: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras (0.14s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas (0.04s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas (0.04s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado (0.03s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint (0.03s)
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto
+    postgres_story_status_store_integration_test.go:66: error = HU-14: todav├¡a no implementado, se esperaba la historia no existe
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente
+    postgres_story_status_store_integration_test.go:75: error = HU-14: todav├¡a no implementado, se esperaba la historia no existe
+--- FAIL: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto (0.10s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto (0.06s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente (0.05s)
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado
+    postgres_story_status_store_integration_test.go:109: UpdateStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado
+    postgres_story_status_store_integration_test.go:109: UpdateStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_est├í_finalizado
+    postgres_story_status_store_integration_test.go:109: UpdateStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint
+    postgres_story_status_store_integration_test.go:109: UpdateStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+--- FAIL: TestPostgreSQLStoryStatusStore_UpdateStatus (0.15s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado (0.03s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado (0.05s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_est├í_finalizado (0.04s)
+    --- FAIL: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint (0.03s)
+=== RUN   TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica
+    postgres_story_status_store_integration_test.go:155: UpdateStatus() devolvi├│ error: HU-14: todav├¡a no implementado
+    postgres_story_status_store_integration_test.go:164: cambios aplicados = 0, se esperaba exactamente 1 de 10
+    postgres_story_status_store_integration_test.go:166: estado guardado de la historia = "En progreso", se esperaba "Hecho"
+--- FAIL: TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica (0.04s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.809s
+FAIL
