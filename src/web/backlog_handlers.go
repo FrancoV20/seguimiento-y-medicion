@@ -84,26 +84,22 @@ func (h *backlogHandlers) post(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := h.creator.CreateStory(request)
 	if err != nil {
-		if h.addDomainFieldError(form, err) {
+		if mapBacklogDomainError(form, err) {
 			h.render(w, r, http.StatusUnprocessableEntity, active.ProjectID, form.Form, form.Criteria)
 			return
 		}
-		if errors.Is(err, backlog.ErrPersistence) {
-			if data, readErr := h.pageData(r, active.ProjectID, form.Criteria); readErr != nil {
-				h.server.renderer.Fail(w, r, readErr)
-				return
-			} else {
-				h.server.renderer.PageStatus(w, r, http.StatusInternalServerError, "backlog.html",
-					PageData{
-						Title: "Backlog",
-						Form:  form.Form,
-						Data:  data,
-						Flash: &Flash{Kind: FlashError, Text: MsgOperationFailed},
-					})
-			}
+		data, readErr := h.pageData(r, active.ProjectID, form.Criteria, form.Form)
+		if readErr != nil {
+			h.server.renderer.Fail(w, r, readErr)
 			return
 		}
-		h.server.renderer.Fail(w, r, err)
+		h.server.renderer.PageStatus(w, r, http.StatusInternalServerError, "backlog.html",
+			PageData{
+				Title: "Backlog",
+				Form:  form.Form,
+				Data:  data,
+				Flash: &Flash{Kind: FlashError, Text: MsgOperationFailed},
+			})
 		return
 	}
 
@@ -117,31 +113,6 @@ func (h *backlogHandlers) post(w http.ResponseWriter, r *http.Request) {
 	RedirectSeeOther(w, r, backlogPath)
 }
 
-func (h *backlogHandlers) addDomainFieldError(parsed *backlogForm, err error) bool {
-	form := parsed.Form
-	switch {
-	case errors.Is(err, backlog.ErrTitleRequired):
-		form.AddError(BacklogFieldTitle, backlog.ErrTitleRequired.Error())
-	case errors.Is(err, backlog.ErrDescriptionRequired):
-		form.AddError(BacklogFieldDescription, backlog.ErrDescriptionRequired.Error())
-	case errors.Is(err, backlog.ErrInvalidPriority):
-		form.AddError(BacklogFieldPriority, backlog.ErrInvalidPriority.Error())
-	case errors.Is(err, backlog.ErrAcceptanceCriteriaRequired):
-		form.AddError(BacklogFieldCriterion, backlog.ErrAcceptanceCriteriaRequired.Error())
-	case errors.Is(err, backlog.ErrInvalidStoryPoints):
-		form.AddError(BacklogFieldStoryPoints, MsgInvalidStoryPoints)
-	case errors.Is(err, backlog.ErrInvalidEstimatedHours):
-		message := MsgInvalidEstimatedHours
-		if parsed.EstimatedHours != nil && *parsed.EstimatedHours > 9999.99 {
-			message = MsgHoursTooLarge
-		}
-		form.AddError(BacklogFieldEstimatedHours, message)
-	default:
-		return false
-	}
-	return true
-}
-
 func (h *backlogHandlers) render(
 	w http.ResponseWriter,
 	r *http.Request,
@@ -150,7 +121,7 @@ func (h *backlogHandlers) render(
 	form *FormView,
 	criteria []string,
 ) {
-	data, err := h.pageData(r, projectID, criteria)
+	data, err := h.pageData(r, projectID, criteria, form)
 	if err != nil {
 		h.server.renderer.Fail(w, r, err)
 		return
@@ -162,7 +133,12 @@ func (h *backlogHandlers) render(
 	})
 }
 
-func (h *backlogHandlers) pageData(r *http.Request, projectID int64, criteria []string) (backlogPageData, error) {
+func (h *backlogHandlers) pageData(
+	r *http.Request,
+	projectID int64,
+	criteria []string,
+	form *FormView,
+) (backlogPageData, error) {
 	stories, err := h.catalog.ListStories(r.Context(), projectID)
 	if err != nil {
 		return backlogPageData{}, err
@@ -199,9 +175,11 @@ func (h *backlogHandlers) pageData(r *http.Request, projectID int64, criteria []
 		fields = []backlogCriterionField{{Index: 0}}
 	}
 	return backlogPageData{
-		Stories:     rows,
-		Criteria:    fields,
-		Priorities:  backlogPriorities(),
-		StoryPoints: backlogStoryPointValues(),
+		Stories:            rows,
+		Criteria:           fields,
+		Priorities:         backlogPriorities(),
+		StoryPoints:        backlogStoryPointValues(),
+		InvalidPriority:    invalidBacklogPriority(form.Values[BacklogFieldPriority]),
+		InvalidStoryPoints: invalidBacklogStoryPoints(form.Values[BacklogFieldStoryPoints]),
 	}, nil
 }

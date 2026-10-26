@@ -94,6 +94,24 @@ func hu22CountStories(t *testing.T, app *hu22BacklogApp, projectID int64) int {
 	return count
 }
 
+func hu22AssertNoInternalDetails(t *testing.T, body string) {
+	t.Helper()
+	for _, forbidden := range []string{
+		"simulated database failure",
+		"SELECT ",
+		"INSERT INTO ",
+		"UPDATE ",
+		"DELETE FROM ",
+		"backlog_handlers.go",
+		"src\\web\\",
+		"/src/web/",
+	} {
+		if strings.Contains(body, forbidden) {
+			t.Errorf("response leaked internal detail %q", forbidden)
+		}
+	}
+}
+
 func hu22AssertCreatedStory(t *testing.T, app *hu22BacklogApp, projectID int64, title string, points *int, hours *float64) {
 	t.Helper()
 	var (
@@ -540,6 +558,7 @@ func TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues(t *t
 			if !strings.Contains(body, tt.wantRetained) {
 				t.Errorf("response did not retain submitted value %q", tt.wantRetained)
 			}
+			hu22AssertNoInternalDetails(t, body)
 			if got := hu22CountStories(t, app, app.fx.projectA); got != 0 {
 				t.Errorf("invalid submission created %d stories, want 0", got)
 			}
@@ -576,6 +595,7 @@ func TestBacklogHandler_StoreFailureReturns500AndKeepsFormValues(t *testing.T) {
 	if strings.Contains(body, MsgStoryCreated) || strings.Contains(body, MsgStoryCreatedMissingPoints) {
 		t.Error("persistence failure response contains a success message")
 	}
+	hu22AssertNoInternalDetails(t, body)
 	if store.createCalls != 1 {
 		t.Errorf("store CreateStory calls = %d, want 1", store.createCalls)
 	}

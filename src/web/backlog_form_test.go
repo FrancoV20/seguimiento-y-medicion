@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 )
 
 func TestParseBacklogFormDefaultsActionAndFiltersAcceptanceCriteria(t *testing.T) {
@@ -143,6 +145,57 @@ func TestParseBacklogFormOptionalStoryPointsAndEstimatedHours(t *testing.T) {
 				t.Errorf("hours field error present = %t, want %t", hasHoursError, tt.wantHoursErr)
 			}
 		})
+	}
+}
+
+func TestBacklogFormOptionsMatchHU02Validation(t *testing.T) {
+	wantPriorities := []string{
+		string(backlog.PriorityHigh),
+		string(backlog.PriorityMedium),
+		string(backlog.PriorityLow),
+	}
+	if !reflect.DeepEqual(backlogPriorities(), wantPriorities) {
+		t.Fatalf("priorities = %#v, want %#v", backlogPriorities(), wantPriorities)
+	}
+	wantStoryPoints := []int{1, 2, 3, 5, 8, 13, 21, 34, 55, 89}
+	if !reflect.DeepEqual(backlogStoryPointValues(), wantStoryPoints) {
+		t.Fatalf("Story Points = %#v, want %#v", backlogStoryPointValues(), wantStoryPoints)
+	}
+
+	newRequest := func(priority backlog.Priority, points *int) backlog.CreateStoryRequest {
+		return backlog.CreateStoryRequest{
+			ProjectID:          1,
+			Title:              "Historia válida",
+			Description:        "Descripción válida",
+			Priority:           priority,
+			AcceptanceCriteria: []string{"Criterio válido"},
+			StoryPoints:        points,
+		}
+	}
+	for _, priority := range backlogPriorities() {
+		store := backlog.NewInMemoryBacklogStore(1)
+		if _, err := backlog.NewBacklogService(store).CreateStory(
+			newRequest(backlog.Priority(priority), backlogFormIntPointer(5)),
+		); err != nil {
+			t.Errorf("HU-02 rejected listed priority %q: %v", priority, err)
+		}
+	}
+	for _, points := range backlogStoryPointValues() {
+		store := backlog.NewInMemoryBacklogStore(1)
+		if _, err := backlog.NewBacklogService(store).CreateStory(
+			newRequest(backlog.PriorityHigh, backlogFormIntPointer(points)),
+		); err != nil {
+			t.Errorf("HU-02 rejected listed Story Points %d: %v", points, err)
+		}
+	}
+
+	store := backlog.NewInMemoryBacklogStore(1)
+	if _, err := backlog.NewBacklogService(store).CreateStory(newRequest("Urgente", backlogFormIntPointer(5))); err == nil {
+		t.Error("HU-02 accepted invalid priority")
+	}
+	store = backlog.NewInMemoryBacklogStore(1)
+	if _, err := backlog.NewBacklogService(store).CreateStory(newRequest(backlog.PriorityHigh, backlogFormIntPointer(4))); err == nil {
+		t.Error("HU-02 accepted Story Points outside the allowed series")
 	}
 }
 

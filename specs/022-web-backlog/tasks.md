@@ -87,10 +87,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T031 [US2] Implementar el mapeo de los errores de HU-02 a los campos del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/backlog_form.go`
-- [ ] T032 [US2] Implementar en `src/web/backlog_handlers.go` la respuesta 422 para errores de validación y 500 para fallas de guardado, conservando los valores en `FormView`
-- [ ] T033 [US2] Definir en `src/web/backlog_form.go` las opciones del formulario: prioridad (`Alta`, `Media`, `Baja`) y Story Points (1, 2, 3, 5, 8, 13, 21, 34, 55, 89) según la migración `002`, y escribir en `src/web/backlog_form_test.go` una prueba que verifique que HU-02 acepta cada opción y rechaza un valor fuera de la lista
-- [ ] T034 [US2] Verificar en `src/web/backlog_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T031 [US2] Implementar el mapeo de los errores de HU-02 a los campos del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/backlog_form.go`
+- [x] T032 [US2] Implementar en `src/web/backlog_handlers.go` la respuesta 422 para errores de validación y 500 para fallas de guardado, conservando los valores en `FormView`
+- [x] T033 [US2] Definir en `src/web/backlog_form.go` las opciones del formulario: prioridad (`Alta`, `Media`, `Baja`) y Story Points (1, 2, 3, 5, 8, 13, 21, 34, 55, 89) según la migración `002`, y escribir en `src/web/backlog_form_test.go` una prueba que verifique que HU-02 acepta cada opción y rechaza un valor fuera de la lista
+- [x] T034 [US2] Verificar en `src/web/backlog_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 informa cada error junto a su campo, conserva los datos y no deja historias inválidas, falsos éxitos ni guardados sin proyecto.
 

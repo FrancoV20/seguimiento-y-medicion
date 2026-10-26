@@ -19,6 +19,7 @@
       <select id="prioridad" name="prioridad"{{if index .Form.Errors "prioridad"}} aria-invalid="true" aria-describedby="prioridad-error"{{end}}>
         <option value="">Seleccioná una prioridad</option>
         {{range .Data.Priorities}}<option value="{{.}}"{{if eq . (index $.Form.Values "prioridad")}} selected{{end}}>{{.}}</option>{{end}}
+        {{with .Data.InvalidPriority}}<option value="{{.}}" selected>{{.}}</option>{{end}}
       </select>
       {{with index .Form.Errors "prioridad"}}<p class="field-error" id="prioridad-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
     </div>
@@ -28,6 +29,7 @@
       <select id="story_points" name="story_points"{{if index .Form.Errors "story_points"}} aria-invalid="true" aria-describedby="story_points-error"{{end}}>
         <option value="">Sin estimar</option>
         {{range .Data.StoryPoints}}<option value="{{.}}"{{if eq (printf "%d" .) (index $.Form.Values "story_points")}} selected{{end}}>{{.}}</option>{{end}}
+        {{with .Data.InvalidStoryPoints}}<option value="{{.}}" selected>{{.}}</option>{{end}}
       </select>
       {{with index .Form.Errors "story_points"}}<p class="field-error" id="story_points-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
     </div>

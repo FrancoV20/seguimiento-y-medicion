@@ -1,6 +1,7 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -46,10 +47,12 @@ type backlogCriterionField struct {
 }
 
 type backlogPageData struct {
-	Stories     []backlogStoryView
-	Criteria    []backlogCriterionField
-	Priorities  []string
-	StoryPoints []int
+	Stories            []backlogStoryView
+	Criteria           []backlogCriterionField
+	Priorities         []string
+	StoryPoints        []int
+	InvalidPriority    string
+	InvalidStoryPoints string
 }
 
 type backlogStoryView struct {
@@ -114,6 +117,33 @@ func parseBacklogForm(r *http.Request) *backlogForm {
 	return parsed
 }
 
+func mapBacklogDomainError(form *backlogForm, err error) bool {
+	if form == nil || form.Form == nil {
+		return false
+	}
+	switch {
+	case errors.Is(err, backlog.ErrTitleRequired):
+		form.Form.AddError(BacklogFieldTitle, backlog.ErrTitleRequired.Error())
+	case errors.Is(err, backlog.ErrDescriptionRequired):
+		form.Form.AddError(BacklogFieldDescription, backlog.ErrDescriptionRequired.Error())
+	case errors.Is(err, backlog.ErrInvalidPriority):
+		form.Form.AddError(BacklogFieldPriority, backlog.ErrInvalidPriority.Error())
+	case errors.Is(err, backlog.ErrAcceptanceCriteriaRequired):
+		form.Form.AddError(BacklogFieldCriterion, backlog.ErrAcceptanceCriteriaRequired.Error())
+	case errors.Is(err, backlog.ErrInvalidStoryPoints):
+		form.Form.AddError(BacklogFieldStoryPoints, MsgInvalidStoryPoints)
+	case errors.Is(err, backlog.ErrInvalidEstimatedHours):
+		message := MsgInvalidEstimatedHours
+		if form.EstimatedHours != nil && *form.EstimatedHours > 9999.99 {
+			message = MsgHoursTooLarge
+		}
+		form.Form.AddError(BacklogFieldEstimatedHours, message)
+	default:
+		return false
+	}
+	return true
+}
+
 // applyAction mutates only the displayed criterion fields. It returns true only for save.
 func (f *backlogForm) applyAction() bool {
 	if f == nil {
@@ -144,4 +174,26 @@ func backlogPriorities() []string {
 
 func backlogStoryPointValues() []int {
 	return []int{1, 2, 3, 5, 8, 13, 21, 34, 55, 89}
+}
+
+func invalidBacklogPriority(value string) string {
+	for _, priority := range backlogPriorities() {
+		if value == priority {
+			return ""
+		}
+	}
+	return value
+}
+
+func invalidBacklogStoryPoints(value string) string {
+	points, err := strconv.Atoi(value)
+	if err != nil {
+		return value
+	}
+	for _, allowed := range backlogStoryPointValues() {
+		if points == allowed && strconv.Itoa(points) == value {
+			return ""
+		}
+	}
+	return value
 }
