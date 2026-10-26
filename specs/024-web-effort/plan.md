@@ -140,16 +140,20 @@ RequiresMember: true}`. El proyecto y el integrante se obtienen del servidor.
 7. Error de HU-03 que sea una violación o una historia fuera del Sprint (por ejemplo, el Sprint se cerró): 422 junto al
    campo que corresponda. Cualquier otro error: `MsgOperationFailed` con la pantalla y 500.
 
-### Mapeo de errores de HU-03 a campos (a completar con los nombres de T001)
+### Mapeo de errores de HU-03 a campos (verificado en T001)
 
 | Error de HU-03 | Campo | Mensaje |
 | --- | --- | --- |
-| Horas inválidas (negativas, cero, más de 24, no numéricas) | `horas` | El de HU-03 ("el valor de horas no es válido") |
-| Actividad vacía | `actividad` | El de HU-03 |
-| Fecha faltante | `fecha` | El de HU-03 |
-| Integrante no especificado | (general) | El de HU-03 |
-| Historia fuera del Sprint activo | `historia` | "La historia no pertenece al Sprint activo" |
-| Cualquier otro | (general) | `MsgOperationFailed` |
+| `ErrInvalidHours` (negativas, cero, más de 24, más de dos decimales, no numéricas) | `horas` | "El valor de horas no es válido" |
+| `ErrActivityRequired` | `actividad` | "La descripción de la actividad es obligatoria" |
+| `ErrDateRequired` | `fecha` | "La fecha es requerida" |
+| `ErrDateInFuture` | `fecha` | "La fecha no puede ser posterior a la fecha actual" |
+| `ErrMemberRequired` | (general) | "Se debe especificar el integrante responsable" |
+| `ErrStoryNotInSprint` (el Sprint se cerró en el medio) | `historia` | "La historia no está asignada a un Sprint activo" |
+| Historia fuera del Sprint activo del proyecto (control de la web) | `historia` | "La historia no pertenece al Sprint activo" |
+| `ErrStorage` o cualquier otro | (general) | `MsgOperationFailed` |
+
+> HU-03 sí valida que la fecha no sea futura (`ErrDateInFuture`); la pantalla muestra ese mensaje junto a `fecha`.
 
 ### Contratos que consume
 
