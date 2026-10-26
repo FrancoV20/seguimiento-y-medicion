@@ -29,10 +29,10 @@
 
 **Purpose**: Tipos, catálogo de solo lectura y textos compartidos por las historias.
 
-- [ ] T005 [P] Definir `SprintView`, `SprintStoryRow`, `StoryOption` y la interfaz `SprintCatalog` con `ActiveSprint` y `ListStoryOptions` en `src/web/sprints_catalog.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLSprintCatalog` con fixtures propias (dos proyectos; historias pendientes, asignadas, en progreso y hechas; un Sprint activo con asignaciones y una historia con horas registradas; un Sprint finalizado): Sprint activo del proyecto correcto, ningún dato de otro proyecto, `hasEffort`, disponibilidad y motivo de cada historia y sin Sprint activo, en `src/web/postgres_sprint_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLSprintCatalog` con `database/sql` y pgx en `src/web/postgres_sprint_catalog.go`
-- [ ] T008 [P] Definir los nombres de los campos (`objetivo`, `fecha_inicio`, `fecha_fin`, `historia`, `historia_id`), los textos propios en un solo lugar de `src/web/sprints_form.go` (`MsgSprintCreated`, `MsgSprintWithoutStories`, `MsgStoriesAdded`, `MsgStoryRemoved`, `MsgSelectAtLeastOneStory`, `MsgNoActiveSprint`, `MsgMissingStartDate`, `MsgMissingEndDate`, `MsgInvalidDateFormat`) y la interfaz `SprintActions`; el de Sprint activo existente y los de HU-04 se reutilizan
+- [X] T005 [P] Definir `SprintView`, `SprintStoryRow`, `StoryOption` y la interfaz `SprintCatalog` con `ActiveSprint` y `ListStoryOptions` en `src/web/sprints_catalog.go`
+- [X] T006 [P] Escribir la prueba de integración de `PostgreSQLSprintCatalog` con fixtures propias (dos proyectos; historias pendientes, asignadas, en progreso y hechas; un Sprint activo con asignaciones y una historia con horas registradas; un Sprint finalizado): Sprint activo del proyecto correcto, ningún dato de otro proyecto, `hasEffort`, disponibilidad y motivo de cada historia y sin Sprint activo, en `src/web/postgres_sprint_catalog_integration_test.go`
+- [X] T007 Implementar `PostgreSQLSprintCatalog` con `database/sql` y pgx en `src/web/postgres_sprint_catalog.go`
+- [X] T008 [P] Definir los nombres de los campos (`objetivo`, `fecha_inicio`, `fecha_fin`, `historia`, `historia_id`), los textos propios en un solo lugar de `src/web/sprints_form.go` (`MsgSprintCreated`, `MsgSprintWithoutStories`, `MsgStoriesAdded`, `MsgStoryRemoved`, `MsgSelectAtLeastOneStory`, `MsgNoActiveSprint`, `MsgMissingStartDate`, `MsgMissingEndDate`, `MsgInvalidDateFormat`) y la interfaz `SprintActions`; el de Sprint activo existente y los de HU-04 se reutilizan
 
 **Checkpoint**: El catálogo PostgreSQL, los tipos y los textos están listos para las historias.
 
@@ -46,12 +46,12 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [P] [US1] Escribir pruebas unitarias del armado del formulario (fechas `AAAA-MM-DD` válidas, formato inválido, campo ausente, identificadores repetidos quitados, no numéricos, campo de identificador de Sprint ignorado, valores conservados) en `src/web/sprints_form_test.go`
-- [ ] T010 [P] [US1] Escribir la prueba de handler de creación exitosa con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/sprints`, "Sprint creado correctamente" una sola vez, "Sprint 1" activo con Goal y fechas, historias en "En Sprint" y, con dos proyectos, solo en el activo, en `src/web/sprints_handlers_test.go`
-- [ ] T011 [P] [US1] Escribir la prueba de handler sin historias marcadas: el Sprint se crea con "Sprint creado correctamente. Todavía no tiene historias asignadas", en `src/web/sprints_handlers_test.go`
-- [ ] T012 [P] [US1] Escribir la prueba de handler con un Sprint activo existente: no se ofrece el formulario de creación, se informa "Ya hay un Sprint activo (Sprint N)" y un `POST /sprints` igualmente recibido responde 409 con el mismo mensaje, sin crear nada ni consumir un número de Sprint, en `src/web/sprints_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo Sprint ni se repite el mensaje, en `src/web/sprints_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir los escenarios BDD de crear con historias, Sprint sin historias y ya hay un Sprint activo en `test/web_sprints_bdd_test.go`
+- [X] T009 [P] [US1] Escribir pruebas unitarias del armado del formulario (fechas `AAAA-MM-DD` válidas, formato inválido, campo ausente, identificadores repetidos quitados, no numéricos, campo de identificador de Sprint ignorado, valores conservados) en `src/web/sprints_form_test.go`
+- [X] T010 [P] [US1] Escribir la prueba de handler de creación exitosa con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/sprints`, "Sprint creado correctamente" una sola vez, "Sprint 1" activo con Goal y fechas, historias en "En Sprint" y, con dos proyectos, solo en el activo, en `src/web/sprints_handlers_test.go`
+- [X] T011 [P] [US1] Escribir la prueba de handler sin historias marcadas: el Sprint se crea con "Sprint creado correctamente. Todavía no tiene historias asignadas", en `src/web/sprints_handlers_test.go`
+- [X] T012 [P] [US1] Escribir la prueba de handler con un Sprint activo existente: no se ofrece el formulario de creación, se informa "Ya hay un Sprint activo (Sprint N)" y un `POST /sprints` igualmente recibido responde 409 con el mismo mensaje, sin crear nada ni consumir un número de Sprint, en `src/web/sprints_handlers_test.go`
+- [X] T013 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo Sprint ni se repite el mensaje, en `src/web/sprints_handlers_test.go`
+- [X] T014 [P] [US1] Escribir los escenarios BDD de crear con historias, Sprint sin historias y ya hay un Sprint activo en `test/web_sprints_bdd_test.go`
 
 ### Implementation for User Story 1
 
