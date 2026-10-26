@@ -76,20 +76,20 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir la prueba de handler de historia sin Sprint o de un Sprint finalizado, y de historia inexistente, no numérica o de otro proyecto: mensajes y códigos de la spec, sin cambios, y un campo de proyecto enviado se ignora, en `src/web/board_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de handler de marcar dos veces: "La historia ya está en Hecho", sin cambios y Story Points completados sin duplicar, en `src/web/board_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir la prueba de handler de transición no permitida enviada directamente ("No se puede pasar de En Sprint a Hecho") y de acción desconocida ("La acción no es válida"), sin cambios, en `src/web/board_handlers_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba de handler de estado desactualizado: se cambia la historia por otro camino, se envía la acción con el `estado_actual` anterior y se rechaza con el mensaje y sin cambios, en `src/web/board_handlers_test.go`
-- [ ] T026b [P] [US2] Escribir la prueba de handler de `comenzar` sobre una historia "Hecho" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
-- [ ] T026c [P] [US2] Escribir la prueba de handler de `reabrir` sobre una historia "En Sprint" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y sin cambios, en `src/web/board_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler de historia sin Sprint o de un Sprint finalizado, y de historia inexistente, no numérica o de otro proyecto: mensajes y códigos de la spec, sin cambios, y un campo de proyecto enviado se ignora, en `src/web/board_handlers_test.go`
+- [x] T024 [P] [US2] Escribir la prueba de handler de marcar dos veces: "La historia ya está en Hecho", sin cambios y Story Points completados sin duplicar, en `src/web/board_handlers_test.go`
+- [x] T025 [P] [US2] Escribir la prueba de handler de transición no permitida enviada directamente ("No se puede pasar de En Sprint a Hecho") y de acción desconocida ("La acción no es válida"), sin cambios, en `src/web/board_handlers_test.go`
+- [x] T026 [P] [US2] Escribir la prueba de handler de estado desactualizado: se cambia la historia por otro camino, se envía la acción con el `estado_actual` anterior y se rechaza con el mensaje y sin cambios, en `src/web/board_handlers_test.go`
+- [x] T026b [P] [US2] Escribir la prueba de handler de `comenzar` sobre una historia "Hecho" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
+- [x] T026c [P] [US2] Escribir la prueba de handler de `reabrir` sobre una historia "En Sprint" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
+- [x] T027 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y sin cambios, en `src/web/board_handlers_test.go`
 - [ ] T028 [P] [US2] Escribir los escenarios BDD de fuera de un Sprint activo, marcar dos veces, transición no permitida, estado desactualizado y error al guardar en `test/web_board_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implementar en `src/web/board_form.go` el mapeo de los errores del dominio a mensajes con `{estado}`, `{origen}` y `{destino}`, y `MsgOperationFailed` para cualquier otro
-- [ ] T030 [US2] Implementar en `src/web/board_handlers.go` las respuestas 409, 422 y 500 con el tablero y el mensaje, y el 303 con advertencia para el estado ya aplicado
-- [ ] T031 [US2] Verificar en `src/web/board_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T029 [US2] Implementar en `src/web/board_form.go` el mapeo de los errores del dominio a mensajes con `{estado}`, `{origen}` y `{destino}`, y `MsgOperationFailed` para cualquier otro
+- [x] T030 [US2] Implementar en `src/web/board_handlers.go` las respuestas 409, 422 y 500 con el tablero y el mensaje, y el 303 con advertencia para el estado ya aplicado
+- [x] T031 [US2] Verificar en `src/web/board_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 mantiene los estados y los Story Points coherentes ante cualquier error o conflicto.
 

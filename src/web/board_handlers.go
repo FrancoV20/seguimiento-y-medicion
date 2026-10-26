@@ -66,22 +66,33 @@ func (h *boardHandlers) show(w http.ResponseWriter, r *http.Request) {
 	h.render(w, r, http.StatusOK, nil)
 }
 
-// changeStatus aplica una acción del Tablero y redirige con 303 (POST /tablero/estado).
+// changeStatus aplica una acción del Tablero (POST /tablero/estado). Un cambio válido o un estado
+// ya aplicado redirigen con 303; los rechazos muestran el Tablero con el mensaje y su código.
 func (h *boardHandlers) changeStatus(w http.ResponseWriter, r *http.Request) {
-	failure := &Flash{Kind: FlashError, Text: MsgOperationFailed}
-	form, ok := parseBoardForm(r)
-	if !ok {
-		// US2 (T029 y T030) distingue historia inexistente de acción no válida.
-		h.render(w, r, http.StatusInternalServerError, failure)
+	form, problem := parseBoardForm(r)
+	switch problem {
+	case boardFormBadStory:
+		h.render(w, r, http.StatusUnprocessableEntity, &Flash{Kind: FlashError, Text: MsgBoardStoryNotFound})
+		return
+	case boardFormBadAction:
+		h.render(w, r, http.StatusUnprocessableEntity, &Flash{Kind: FlashError, Text: MsgBoardInvalidAction})
 		return
 	}
+
 	from, to, _ := sprint.ActionTransition(form.Action)
 	result, err := h.changer.ChangeStatus(r.Context(), projectIDFrom(r), form.StoryID, from, to, form.Expected)
 	if err != nil {
-		// US2 (T029 y T030) traduce los errores del dominio; el detalle técnico solo va al registro.
-		h.server.logger.Error("no se pudo cambiar el estado de la historia",
-			"historia", form.StoryID, "accion", string(form.Action), "detalle", err.Error())
-		h.render(w, r, http.StatusInternalServerError, failure)
+		outcome := boardOutcomeFor(err)
+		if outcome.internal {
+			h.server.logger.Error("no se pudo cambiar el estado de la historia",
+				"historia", form.StoryID, "accion", string(form.Action), "detalle", err.Error())
+		}
+		if outcome.redirect {
+			SetFlash(w, r, outcome.flash.Kind, outcome.flash.Text)
+			RedirectSeeOther(w, r, pathBoard)
+			return
+		}
+		h.render(w, r, outcome.status, &outcome.flash)
 		return
 	}
 	SetFlash(w, r, FlashSuccess, boardSuccessMessage(result))
