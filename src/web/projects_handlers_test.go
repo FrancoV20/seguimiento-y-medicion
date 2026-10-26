@@ -289,6 +289,17 @@ func countProjectByName(t *testing.T, db *sql.DB, name string) int {
 	return count
 }
 
+func uniqueProjectsTestName(t *testing.T, app *projectsApp, suffix string) string {
+	t.Helper()
+	name := fmt.Sprintf("HU21 handler %d %s", time.Now().UnixNano(), suffix)
+	t.Cleanup(func() {
+		if _, err := app.db.Exec(`DELETE FROM projects WHERE name = $1`, name); err != nil {
+			t.Errorf("no se pudo limpiar el proyecto de prueba %q: %v", name, err)
+		}
+	})
+	return name
+}
+
 func TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject(t *testing.T) {
 	app := newProjectsApp(t, false)
 	client := projectsTestClient(t, app.ts)
@@ -300,7 +311,7 @@ func TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActi
 		{Name: CookieProject, Value: fmt.Sprint(app.fx.projectA), Path: "/"},
 		{Name: CookieMember, Value: fmt.Sprint(app.fx.alphaOne), Path: "/"},
 	})
-	const name = "HU21 handler creación exitosa"
+	name := uniqueProjectsTestName(t, app, "creación exitosa")
 	values := projectsTestValues(name, app.fx.alphaOne, "2026-10-23", "2026-10-24")
 
 	resp, _ := projectsPost(t, client, app, values)
@@ -332,7 +343,7 @@ func TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActi
 func TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted(t *testing.T) {
 	app := newProjectsApp(t, false)
 	client := projectsTestClient(t, app.ts)
-	const equalName = "HU21 handler fechas iguales"
+	equalName := uniqueProjectsTestName(t, app, "fechas iguales")
 	values := projectsTestValues(equalName, app.fx.alphaOne, "2026-10-23", "2026-10-23")
 
 	resp, body := projectsPost(t, client, app, values)
@@ -350,7 +361,7 @@ func TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted(t *testing.T) {
 		t.Errorf("no se debía crear el proyecto con fechas iguales, se encontraron %d", count)
 	}
 
-	const nextDayName = "HU21 handler fecha posterior"
+	nextDayName := uniqueProjectsTestName(t, app, "fecha posterior")
 	nextDay := projectsTestValues(nextDayName, app.fx.alphaOne, "2026-10-23", "2026-10-24")
 	accepted, _ := projectsPost(t, client, app, nextDay)
 	if accepted.StatusCode != http.StatusSeeOther {
@@ -364,7 +375,7 @@ func TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted(t *testing.T) {
 func TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash(t *testing.T) {
 	app := newProjectsApp(t, false)
 	client := projectsTestClient(t, app.ts)
-	const name = "HU21 handler recarga"
+	name := uniqueProjectsTestName(t, app, "recarga")
 	resp, _ := projectsPost(t, client, app,
 		projectsTestValues(name, app.fx.alphaOne, "2026-10-23", "2026-10-24"))
 	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/proyectos" {
