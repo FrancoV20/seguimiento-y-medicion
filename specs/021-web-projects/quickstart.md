@@ -106,9 +106,9 @@ En la Sprint Review, con 5 personas que no hayan visto la pantalla:
 
 ## Manual breve de usuario
 
-Agregar al manual breve de usuario del repositorio (en la ruta que acordó el equipo) la sección
-"Gestión de Proyectos": cómo crear un proyecto, qué significa cada mensaje de error y que la fecha
-de fin debe ser posterior a la de inicio. Incluir una captura de la pantalla.
+El manual breve de usuario está en [docs/manual-usuario.md](../../docs/manual-usuario.md). Incluye
+la sección "Gestión de Proyectos", instrucciones de alta, explicación de los mensajes de error,
+la regla de fechas y una captura de la pantalla.
 
 ## Acceptance evidence
 
