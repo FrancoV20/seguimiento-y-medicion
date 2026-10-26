@@ -1,6 +1,7 @@
 package web
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"net/http"
@@ -17,12 +18,19 @@ type hu22BacklogApp struct {
 }
 
 func newHU22BacklogApp(t *testing.T) *hu22BacklogApp {
+	return newHU22BacklogAppWithStore(t, func(app *ctxApp) backlog.BacklogStore {
+		return backlog.NewPostgreSQLBacklogStore(app.db)
+	})
+}
+
+func newHU22BacklogAppWithStore(t *testing.T, storeFactory func(*ctxApp) backlog.BacklogStore) *hu22BacklogApp {
 	t.Helper()
 
 	app := newCtxApp(t, nil)
+	store := storeFactory(app)
 	if err := RegisterBacklog(
 		app.srv,
-		backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(app.db)),
+		backlog.NewBacklogService(store),
 		NewPostgreSQLStoryCatalog(app.db),
 	); err != nil {
 		t.Fatalf("register Backlog routes: %v", err)
@@ -35,6 +43,19 @@ func newHU22BacklogApp(t *testing.T) *hu22BacklogApp {
 	})
 
 	return &hu22BacklogApp{ctxApp: app, client: app.client(false)}
+}
+
+type hu22FailingBacklogStore struct {
+	createCalls int
+}
+
+func (s *hu22FailingBacklogStore) ProjectIsActive(int64) (bool, error) {
+	return true, nil
+}
+
+func (s *hu22FailingBacklogStore) CreateStory(_ int64, _ backlog.UserStory) (backlog.UserStory, error) {
+	s.createCalls++
+	return backlog.UserStory{}, errors.New("simulated database failure")
 }
 
 func (a *hu22BacklogApp) chooseProject(t *testing.T, projectID int64) {
@@ -368,5 +389,242 @@ func TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash(t *testing.T) 
 	}
 	if got := hu22CountStories(t, app, app.fx.projectA); got != 1 {
 		t.Errorf("story count after refreshing GET = %d, want 1", got)
+	}
+}
+
+func TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues(t *testing.T) {
+	app := newHU22BacklogApp(t)
+	app.chooseProject(t, app.fx.projectA)
+
+	tests := []struct {
+		name         string
+		field        string
+		value        string
+		message      string
+		mutate       func(url.Values)
+		wantRetained string
+	}{
+		{
+			name:    "no acceptance criteria",
+			field:   BacklogFieldCriterion,
+			message: backlog.ErrAcceptanceCriteriaRequired.Error(),
+			mutate: func(values url.Values) {
+				values[BacklogFieldCriterion] = []string{"", "   "}
+			},
+			wantRetained: `value="   "`,
+		},
+		{
+			name:    "empty title",
+			field:   BacklogFieldTitle,
+			value:   "   ",
+			message: backlog.ErrTitleRequired.Error(),
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldTitle, "   ")
+			},
+			wantRetained: `value="   "`,
+		},
+		{
+			name:    "empty description",
+			field:   BacklogFieldDescription,
+			value:   "   ",
+			message: backlog.ErrDescriptionRequired.Error(),
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldDescription, "   ")
+			},
+			wantRetained: ">   </textarea>",
+		},
+		{
+			name:    "invalid priority",
+			field:   BacklogFieldPriority,
+			value:   "Urgente",
+			message: backlog.ErrInvalidPriority.Error(),
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldPriority, "Urgente")
+			},
+			wantRetained: "Urgente",
+		},
+		{
+			name:    "invalid Story Points",
+			field:   BacklogFieldStoryPoints,
+			value:   "4",
+			message: MsgInvalidStoryPoints,
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldStoryPoints, "4")
+			},
+			wantRetained: "value=\"4\"",
+		},
+		{
+			name:    "non numeric Story Points",
+			field:   BacklogFieldStoryPoints,
+			value:   "abc",
+			message: MsgInvalidStoryPoints,
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldStoryPoints, "abc")
+			},
+			wantRetained: "abc",
+		},
+	}
+
+	for _, invalid := range []string{"4", "0", "-1", "abc"} {
+		tests = append(tests, struct {
+			name         string
+			field        string
+			value        string
+			message      string
+			mutate       func(url.Values)
+			wantRetained string
+		}{
+			name:         "Story Points " + invalid,
+			field:        BacklogFieldStoryPoints,
+			value:        invalid,
+			message:      MsgInvalidStoryPoints,
+			wantRetained: invalid,
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldStoryPoints, invalid)
+			},
+		})
+	}
+	for _, invalid := range []string{"0", "-1", "abc", "1,555"} {
+		tests = append(tests, struct {
+			name         string
+			field        string
+			value        string
+			message      string
+			mutate       func(url.Values)
+			wantRetained string
+		}{
+			name:         "estimated hours " + invalid,
+			field:        BacklogFieldEstimatedHours,
+			value:        invalid,
+			message:      MsgInvalidEstimatedHours,
+			wantRetained: `value="` + invalid + `"`,
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldEstimatedHours, invalid)
+			},
+		})
+	}
+	for _, invalid := range []string{"10000", "9999,995"} {
+		tests = append(tests, struct {
+			name         string
+			field        string
+			value        string
+			message      string
+			mutate       func(url.Values)
+			wantRetained string
+		}{
+			name:         "estimated hours above maximum " + invalid,
+			field:        BacklogFieldEstimatedHours,
+			value:        invalid,
+			message:      MsgHoursTooLarge,
+			wantRetained: `value="` + invalid + `"`,
+			mutate: func(values url.Values) {
+				values.Set(BacklogFieldEstimatedHours, invalid)
+			},
+		})
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			values := hu22ValidValues("HU22 invalid " + tt.name)
+			tt.mutate(values)
+
+			resp, body := app.submit(t, values)
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST status = %d, want 422; body=%s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, tt.message) {
+				t.Errorf("response does not contain HU-02 error %q", tt.message)
+			}
+			if !strings.Contains(body, tt.wantRetained) {
+				t.Errorf("response did not retain submitted value %q", tt.wantRetained)
+			}
+			if got := hu22CountStories(t, app, app.fx.projectA); got != 0 {
+				t.Errorf("invalid submission created %d stories, want 0", got)
+			}
+		})
+	}
+}
+
+func TestBacklogHandler_StoreFailureReturns500AndKeepsFormValues(t *testing.T) {
+	store := &hu22FailingBacklogStore{}
+	app := newHU22BacklogAppWithStore(t, func(*ctxApp) backlog.BacklogStore {
+		return store
+	})
+	app.chooseProject(t, app.fx.projectA)
+	values := hu22ValidValues("HU22 persistence failure")
+	values.Set(BacklogFieldDescription, "Descripción que debe conservarse")
+	values[BacklogFieldCriterion] = []string{"Criterio que debe conservarse"}
+
+	resp, body := app.submit(t, values)
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("POST status = %d, want 500; body=%s", resp.StatusCode, body)
+	}
+	for _, want := range []string{
+		MsgOperationFailed,
+		`value="HU22 persistence failure"`,
+		">Descripción que debe conservarse</textarea>",
+		`value="Criterio que debe conservarse"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("failure response does not contain retained value/message %q", want)
+		}
+	}
+	if strings.Contains(body, MsgStoryCreated) || strings.Contains(body, MsgStoryCreatedMissingPoints) {
+		t.Error("persistence failure response contains a success message")
+	}
+	if store.createCalls != 1 {
+		t.Errorf("store CreateStory calls = %d, want 1", store.createCalls)
+	}
+	if got := hu22CountStories(t, app, app.fx.projectA); got != 0 {
+		t.Errorf("failed persistence created %d stories, want 0", got)
+	}
+}
+
+func TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave(t *testing.T) {
+	app := newHU22BacklogApp(t)
+	tests := []struct {
+		name    string
+		cookies []*http.Cookie
+	}{
+		{name: "no project selected"},
+		{name: "malformed project cookie", cookies: []*http.Cookie{{Name: CookieProject, Value: "invalid", Path: "/"}}},
+		{name: "deleted project", cookies: []*http.Cookie{idCookie(CookieProject, math.MaxInt64)}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := app.ctxApp.client(false)
+			if len(tt.cookies) > 0 {
+				app.setCookies(t, client, tt.cookies...)
+			}
+			values := hu22ValidValues("HU22 unauthorized " + tt.name)
+			values.Set("proyecto_id", id64(app.fx.projectA))
+
+			resp, _ := app.post(t, client, "/backlog", values)
+			defer resp.Body.Close()
+
+			wantLocation := "/contexto/proyecto?volver_a=%2Fbacklog"
+			if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != wantLocation {
+				t.Fatalf("POST status/location = %d/%q, want 303 %q",
+					resp.StatusCode, resp.Header.Get("Location"), wantLocation)
+			}
+			selectionResp, selectionBody := app.get(t, client, "/contexto/proyecto")
+			defer selectionResp.Body.Close()
+			if selectionResp.StatusCode != http.StatusOK {
+				t.Fatalf("project selection status = %d, want 200", selectionResp.StatusCode)
+			}
+			if !strings.Contains(selectionBody, MsgProjectRequired) {
+				t.Errorf("project selection page does not show %q", MsgProjectRequired)
+			}
+			for _, projectID := range []int64{app.fx.projectA, app.fx.projectB} {
+				if got := hu22CountStories(t, app, projectID); got != 0 {
+					t.Errorf("unauthorized POST created %d stories in project %d", got, projectID)
+				}
+			}
+		})
 	}
 }

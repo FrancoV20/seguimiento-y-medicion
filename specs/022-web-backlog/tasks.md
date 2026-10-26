@@ -75,15 +75,15 @@
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Escribir la prueba de handler sin ningún criterio con texto: error de HU-02 junto al campo de criterios, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con título vacío y, por separado, con descripción vacía (también con solo espacios): mensajes de HU-02 junto a cada campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de handler con una prioridad fuera de Alta, Media y Baja (envío manipulado): mensaje de HU-02 junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir la prueba de handler con Story Points fuera de la lista (envío manipulado, por ejemplo `4`, `0`, `-1` y `abc`): mensaje junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba de handler con horas estimadas inválidas (`0`, `-1`, `abc` y `1,555`): "El valor de horas no es válido" junto al campo, datos conservados, ninguna historia creada y sin redondeo silencioso, en `src/web/backlog_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir la prueba de handler con horas estimadas por encima del máximo (`10000` y `9999,995`): "Las horas estimadas no pueden superar 9999,99" junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
-- [ ] T028 [P] [US2] Escribir la prueba de handler con un `StoryStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y la historia no aparece en el Backlog, en `src/web/backlog_handlers_test.go`
-- [ ] T029 [P] [US2] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): el guardado queda bloqueado, se redirige a la selección de proyecto con el mensaje de HU-20b, no se guarda nada y un campo de proyecto enviado en el formulario se ignora, en `src/web/backlog_handlers_test.go`
-- [ ] T030 [P] [US2] Escribir los escenarios BDD de sin criterios, título vacío, descripción vacía, prioridad inválida, Story Points inválidos, horas inválidas, horas por encima del máximo y falla de guardado en `test/web_backlog_bdd_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler sin ningún criterio con texto: error de HU-02 junto al campo de criterios, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con título vacío y, por separado, con descripción vacía (también con solo espacios): mensajes de HU-02 junto a cada campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
+- [x] T024 [P] [US2] Escribir la prueba de handler con una prioridad fuera de Alta, Media y Baja (envío manipulado): mensaje de HU-02 junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
+- [x] T025 [P] [US2] Escribir la prueba de handler con Story Points fuera de la lista (envío manipulado, por ejemplo `4`, `0`, `-1` y `abc`): mensaje junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
+- [x] T026 [P] [US2] Escribir la prueba de handler con horas estimadas inválidas (`0`, `-1`, `abc` y `1,555`): "El valor de horas no es válido" junto al campo, datos conservados, ninguna historia creada y sin redondeo silencioso, en `src/web/backlog_handlers_test.go`
+- [x] T027 [P] [US2] Escribir la prueba de handler con horas estimadas por encima del máximo (`10000` y `9999,995`): "Las horas estimadas no pueden superar 9999,99" junto al campo, datos conservados y ninguna historia creada, en `src/web/backlog_handlers_test.go`
+- [x] T028 [P] [US2] Escribir la prueba de handler con un `StoryStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y la historia no aparece en el Backlog, en `src/web/backlog_handlers_test.go`
+- [x] T029 [P] [US2] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): el guardado queda bloqueado, se redirige a la selección de proyecto con el mensaje de HU-20b, no se guarda nada y un campo de proyecto enviado en el formulario se ignora, en `src/web/backlog_handlers_test.go`
+- [x] T030 [P] [US2] Escribir los escenarios BDD de sin criterios, título vacío, descripción vacía, prioridad inválida, Story Points inválidos, horas inválidas, horas por encima del máximo y falla de guardado en `test/web_backlog_bdd_test.go`
 
 ### Implementation for User Story 2
 

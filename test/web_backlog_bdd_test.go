@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -28,6 +29,10 @@ type hu22BDDApp struct {
 }
 
 func newHU22BDDApp(t *testing.T) *hu22BDDApp {
+	return newHU22BDDAppWithStore(t, nil)
+}
+
+func newHU22BDDAppWithStore(t *testing.T, store backlog.BacklogStore) *hu22BDDApp {
 	t.Helper()
 
 	databaseURL := os.Getenv(web.EnvDatabaseURL)
@@ -64,9 +69,12 @@ func newHU22BDDApp(t *testing.T) *hu22BDDApp {
 	server := web.NewServer(logger)
 	server.Use(web.CrossOriginGuard(server.Renderer()))
 	web.RegisterContext(server, web.NewPostgreSQLContextStore(db))
+	if store == nil {
+		store = backlog.NewPostgreSQLBacklogStore(db)
+	}
 	if err := web.RegisterBacklog(
 		server,
-		backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(db)),
+		backlog.NewBacklogService(store),
 		web.NewPostgreSQLStoryCatalog(db),
 	); err != nil {
 		t.Fatalf("register HU-22 BDD Backlog routes: %v", err)
@@ -87,6 +95,16 @@ func newHU22BDDApp(t *testing.T) *hu22BDDApp {
 	app := &hu22BDDApp{db: db, server: ts, client: client, projectID: projectID}
 	app.selectProject(t)
 	return app
+}
+
+type hu22BDDFailingBacklogStore struct{}
+
+func (hu22BDDFailingBacklogStore) ProjectIsActive(int64) (bool, error) {
+	return true, nil
+}
+
+func (hu22BDDFailingBacklogStore) CreateStory(int64, backlog.UserStory) (backlog.UserStory, error) {
+	return backlog.UserStory{}, errors.New("simulated database failure")
 }
 
 func (a *hu22BDDApp) request(t *testing.T, method, path string, values url.Values) (*http.Response, string) {
@@ -368,4 +386,202 @@ func TestWebBacklogBDD_CommaDecimalHours(t *testing.T) {
 			t.Errorf("stored estimated hours = %v (valid %t), want 1.5", got.Float64, got.Valid)
 		}
 	})
+}
+
+func TestWebBacklogBDD_InvalidFormSubmissions(t *testing.T) {
+	tests := []struct {
+		name         string
+		field        string
+		value        string
+		message      string
+		retainedHTML string
+		mutate       func(url.Values)
+	}{
+		{
+			name:         "Given criterios sin texto, When guardo, Then recibo el error de HU-02 y no se crea la historia",
+			field:        web.BacklogFieldCriterion,
+			message:      backlog.ErrAcceptanceCriteriaRequired.Error(),
+			retainedHTML: `value="   "`,
+			mutate: func(values url.Values) {
+				values[web.BacklogFieldCriterion] = []string{"", "   "}
+			},
+		},
+		{
+			name:         "Given el título vacío, When guardo, Then recibo el error junto al título",
+			field:        web.BacklogFieldTitle,
+			value:        "   ",
+			message:      backlog.ErrTitleRequired.Error(),
+			retainedHTML: `value="   "`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldTitle, "   ")
+			},
+		},
+		{
+			name:         "Given la descripción vacía, When guardo, Then recibo el error junto a la descripción",
+			field:        web.BacklogFieldDescription,
+			value:        "   ",
+			message:      backlog.ErrDescriptionRequired.Error(),
+			retainedHTML: ">   </textarea>",
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldDescription, "   ")
+			},
+		},
+		{
+			name:         "Given una prioridad manipulada, When guardo, Then recibo el error de HU-02",
+			field:        web.BacklogFieldPriority,
+			value:        "Urgente",
+			message:      backlog.ErrInvalidPriority.Error(),
+			retainedHTML: `value="Urgente"`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldPriority, "Urgente")
+			},
+		},
+		{
+			name:         "Given Story Points fuera de Fibonacci, When guardo, Then recibo el error de HU-22",
+			field:        web.BacklogFieldStoryPoints,
+			value:        "4",
+			message:      web.MsgInvalidStoryPoints,
+			retainedHTML: `value="4"`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldStoryPoints, "4")
+			},
+		},
+		{
+			name:         "Given Story Points no numéricos, When guardo, Then recibo el error de HU-22",
+			field:        web.BacklogFieldStoryPoints,
+			value:        "abc",
+			message:      web.MsgInvalidStoryPoints,
+			retainedHTML: `value="abc"`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldStoryPoints, "abc")
+			},
+		},
+		{
+			name:         "Given horas estimadas inválidas, When guardo, Then recibo el error de HU-17",
+			field:        web.BacklogFieldEstimatedHours,
+			value:        "1,555",
+			message:      web.MsgInvalidEstimatedHours,
+			retainedHTML: `value="1,555"`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldEstimatedHours, "1,555")
+			},
+		},
+		{
+			name:         "Given horas estimadas por encima del máximo, When guardo, Then recibo el mensaje de límite",
+			field:        web.BacklogFieldEstimatedHours,
+			value:        "9999,995",
+			message:      web.MsgHoursTooLarge,
+			retainedHTML: `value="9999,995"`,
+			mutate: func(values url.Values) {
+				values.Set(web.BacklogFieldEstimatedHours, "9999,995")
+			},
+		},
+	}
+
+	app := newHU22BDDApp(t)
+	for i, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			values := app.validStoryValues(fmt.Sprintf("HU22 BDD invalid %d %d", time.Now().UnixNano(), i))
+			tt.mutate(values)
+
+			resp, body := app.request(t, http.MethodPost, "/backlog", values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST status = %d, want 422; body=%s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, tt.message) {
+				t.Errorf("response does not contain error message %q", tt.message)
+			}
+			if !strings.Contains(body, `id="`+tt.field+`-error"`) {
+				t.Errorf("error message is not associated with field %q", tt.field)
+			}
+			if !strings.Contains(body, tt.retainedHTML) {
+				t.Errorf("form did not retain submitted value %q", tt.retainedHTML)
+			}
+			if got := app.storyCount(t); got != 0 {
+				t.Errorf("invalid form created %d stories, want 0", got)
+			}
+		})
+	}
+	for _, invalid := range []string{"0", "-1", "abc"} {
+		t.Run("Given horas "+invalid+", When guardo, Then el valor se rechaza sin guardar", func(t *testing.T) {
+			values := app.validStoryValues(fmt.Sprintf("HU22 BDD invalid hours %s %d", invalid, time.Now().UnixNano()))
+			values.Set(web.BacklogFieldEstimatedHours, invalid)
+			resp, body := app.request(t, http.MethodPost, "/backlog", values)
+
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST status = %d, want 422; body=%s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, web.MsgInvalidEstimatedHours) ||
+				!strings.Contains(body, `value="`+invalid+`"`) {
+				t.Errorf("response did not show the hours error and retain %q", invalid)
+			}
+			if got := app.storyCount(t); got != 0 {
+				t.Errorf("invalid hours created %d stories, want 0", got)
+			}
+		})
+	}
+	for _, invalid := range []string{"0", "-1"} {
+		t.Run("Given Story Points "+invalid+", When guardo, Then el valor se rechaza sin guardar", func(t *testing.T) {
+			values := app.validStoryValues(fmt.Sprintf("HU22 BDD invalid points %s %d", invalid, time.Now().UnixNano()))
+			values.Set(web.BacklogFieldStoryPoints, invalid)
+			resp, body := app.request(t, http.MethodPost, "/backlog", values)
+
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST status = %d, want 422; body=%s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, web.MsgInvalidStoryPoints) ||
+				!strings.Contains(body, `value="`+invalid+`"`) {
+				t.Errorf("response did not show the Story Points error and submitted value %q", invalid)
+			}
+			if got := app.storyCount(t); got != 0 {
+				t.Errorf("invalid Story Points created %d stories, want 0", got)
+			}
+		})
+	}
+	for _, invalid := range []string{"10000", "9999,995"} {
+		t.Run("Given horas "+invalid+", When guardo, Then se informa el máximo permitido", func(t *testing.T) {
+			values := app.validStoryValues(fmt.Sprintf("HU22 BDD above max %s %d", invalid, time.Now().UnixNano()))
+			values.Set(web.BacklogFieldEstimatedHours, invalid)
+			resp, body := app.request(t, http.MethodPost, "/backlog", values)
+
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST status = %d, want 422; body=%s", resp.StatusCode, body)
+			}
+			if !strings.Contains(body, web.MsgHoursTooLarge) ||
+				!strings.Contains(body, `value="`+invalid+`"`) {
+				t.Errorf("response did not show the maximum-hours error and retain %q", invalid)
+			}
+			if got := app.storyCount(t); got != 0 {
+				t.Errorf("over-limit hours created %d stories, want 0", got)
+			}
+		})
+	}
+}
+
+func TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm(t *testing.T) {
+	app := newHU22BDDAppWithStore(t, hu22BDDFailingBacklogStore{})
+	values := app.validStoryValues("HU22 BDD failed persistence")
+	values.Set(web.BacklogFieldDescription, "Descripción conservada")
+	values[web.BacklogFieldCriterion] = []string{"Criterio conservado"}
+
+	resp, body := app.request(t, http.MethodPost, "/backlog", values)
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("POST status = %d, want 500; body=%s", resp.StatusCode, body)
+	}
+	for _, want := range []string{
+		web.MsgOperationFailed,
+		`value="HU22 BDD failed persistence"`,
+		">Descripción conservada</textarea>",
+		`value="Criterio conservado"`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("response does not contain generic error or retained value %q", want)
+		}
+	}
+	if strings.Contains(body, web.MsgStoryCreated) {
+		t.Error("persistence failure response contains a success message")
+	}
+	if got := app.storyCount(t); got != 0 {
+		t.Errorf("failed persistence created %d stories, want 0", got)
+	}
 }
