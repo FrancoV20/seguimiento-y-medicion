@@ -143,3 +143,9 @@ historia, la ejecución final y la cobertura:
 go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/023-web-sprints/evidencia-pruebas.txt
 go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/023-web-sprints/cobertura.txt
 ```
+
+## Con `docker-compose.yml` y `docker-compose.override.yml`, PostgreSQL publica el puerto `5433` del host hacia el `5432` del contenedor. Usa el puerto del host en `DATABASE_URL`:
+
+  ```powershell
+  $env:DATABASE_URL = "postgres://postgres:060204@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+  ```

@@ -217,3 +217,24 @@ Interfaz mínima de escritura que declara HU-23 y satisfacen el servicio y el st
 
 - Las firmas exactas se toman de HU-04 en T001; los handlers dependen de esta interfaz y no del tipo
   concreto.
+
+## Contrato de HU-04 confirmado (T001)
+
+- **Servicio**: `NewService(store SprintStore) Service`. El servicio expone `CreateSprint(ctx context.Context, request SprintCreationRequest, project Project, stories []UserStory) (SprintCreationResult, error)`. El resultado contiene el Sprint persistido y una advertencia opcional.
+- **Asignación y remoción**: el servicio no expone `AssignStories` ni `RemoveStory`. Son operaciones de `SprintStore`: `AssignStories(ctx, sprintID, storyIDs) error` y `RemoveStory(ctx, sprintID, storyID) error`. El dominio también tiene las funciones puras `AssignStoryToSprint` y `RemoveStoryFromSprint`.
+- **Un solo Sprint activo**: el sentinel es `ErrActiveSprintExists`, cuyo mensaje base es `"ya hay un Sprint activo en el proyecto"`. Se devuelve un `*ActiveSprintExistsError` con número de Sprint; su mensaje concreto es `"ya hay un Sprint activo (Sprint N)"` y `errors.Is(err, ErrActiveSprintExists)` lo reconoce. PostgreSQL verifica esta regla bloqueando la fila del proyecto dentro de la transacción.
+- **Otros errores de dominio**: `ErrGoalRequired` ("el Sprint Goal es obligatorio"), `ErrInvalidSprintPeriod` ("el período del Sprint no es válido"), `ErrStoryNotAvailable` ("la historia no está disponible para asignación"), `ErrProjectNotFound` ("el proyecto no existe") y `ErrActiveSprintConflict` ("la historia ya está asignada a un Sprint"). Los errores tipados de asignación pueden incluir el ID de historia y número de Sprint.
+- **IDs repetidos**: `normalizeStoryIDs` ordena una copia de la lista y rechaza IDs no positivos o duplicados con `ErrStoryNotAvailable`. Durante `CreateSprint`, un ID repetido se devuelve envuelto en ese sentinel con el detalle `"historia duplicada <ID>"`; también se rechazan historias duplicadas en la lista recibida del backlog.
+- **Efectos de asignar y quitar**: al asignar, el store inserta en `sprint_story_assignments` y actualiza `user_stories.status` a `'En Sprint'` junto con `active_sprint_id`, en una transacción. Al quitar, elimina la asociación y actualiza la historia a `'Pendiente'` con `active_sprint_id = NULL`, también en una transacción.
+- **Horas registradas**: el dominio actual no puede consultarlas. `UserStory` no contiene información de esfuerzo y `RemoveStory` no consulta `effort_logs`; `CanRemoveStory(status, hasEffort)` tampoco está implementada actualmente en `src/sprint`. La validación y consulta previstas corresponden a T047.
+
+## Verificación de migraciones 003 y 004 (T004)
+
+La migración 003 confirma que `effort_logs.story_id` existe y referencia `user_stories(id)`, como supone el catálogo. La tabla también contiene `id BIGSERIAL`, `member_id INTEGER`, `work_date DATE`, `activity TEXT`, `hours NUMERIC(5,2)` con restricción `0 < hours <= 24`, `created_at TIMESTAMPTZ` e índices por `story_id` y `member_id`. El modelo actual no contradice esto, pero describe la tabla de forma resumida.
+
+La migración 004 coincide con el esquema documentado: `sprints` tiene `id BIGSERIAL`, `project_id BIGINT`, `number INTEGER`, Goal y fechas, estados `'Activo'`/`'Finalizado'`, `end_date > start_date` y unicidad `(project_id, number)`. `sprint_story_assignments` tiene PK `(sprint_id, story_id)` y `UNIQUE (story_id)`. `user_stories.active_sprint_id` referencia `sprints(id)` con `ON DELETE SET NULL`, y el check de estado incluye `'En Sprint'`.
+
+**Ajustes documentales**:
+- La nota general «Los identificadores son BIGINT» es demasiado amplia: `projects.id` y `members.id` son `SERIAL`, y `effort_logs.member_id` es `INTEGER`. Conviene limitar la nota BIGINT a los IDs de Sprint/historias y sus asociaciones; indicar que `member_id` es INTEGER.
+- Añadir al esquema la acción `ON DELETE SET NULL` de `user_stories.active_sprint_id`.
+- La migración 004 no impone unicidad de Sprint activo mediante un índice o constraint; esa regla se protege en HU-04 mediante bloqueo transaccional de la fila del proyecto.
