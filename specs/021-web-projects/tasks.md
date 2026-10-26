@@ -122,10 +122,10 @@
 - [x] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [x] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
-- [ ] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
+- [x] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
 - [x] T042 Coordinar con el responsable de HU-20b que la sección "Proyectos" (`/proyectos`) queda registrada para que su aviso "acceso a crear el primero" apunte a esta pantalla, y con quien tome HU-11 que esta lista es el punto de partida de la edición
 - [x] T043 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/021-web-projects/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T044 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
+- [X] T044 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
 - [x] T045 [P] Actualizar el manual breve de usuario con la pantalla "Gestión de Proyectos" (ver `quickstart.md`)
 - [x] T046 Verificar a mano con la aplicación en ejecución los 12 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T047 Abrir el Pull Request desde `HU-21`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
