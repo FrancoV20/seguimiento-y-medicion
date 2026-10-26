@@ -103,17 +103,17 @@
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Escribir la prueba de handler de la vista: Sprint, grupos por estado, Story Points completados de planificados, historia sin Story Points como "Sin estimar", solo el Sprint activo del proyecto activo y tiempo de respuesta, en `src/web/board_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de handler de las acciones según el estado: "En Sprint" solo "Comenzar", "En progreso" solo "Completar" y "Hecho" solo "Reabrir", en `src/web/board_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo" y ninguna acción, en `src/web/board_handlers_test.go`
-- [ ] T035 [P] [US3] Escribir la prueba de handler con un Sprint sin historias: "El Sprint no tiene historias asignadas", en `src/web/board_handlers_test.go`
-- [ ] T036 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un tablero incompleto, en `src/web/board_handlers_test.go`
+- [x] T032 [P] [US3] Escribir la prueba de handler de la vista: Sprint, grupos por estado, Story Points completados de planificados, historia sin Story Points como "Sin estimar", solo el Sprint activo del proyecto activo y tiempo de respuesta, en `src/web/board_handlers_test.go`
+- [x] T033 [P] [US3] Escribir la prueba de handler de las acciones según el estado: "En Sprint" solo "Comenzar", "En progreso" solo "Completar" y "Hecho" solo "Reabrir", en `src/web/board_handlers_test.go`
+- [x] T034 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo" y ninguna acción, en `src/web/board_handlers_test.go`
+- [x] T035 [P] [US3] Escribir la prueba de handler con un Sprint sin historias: "El Sprint no tiene historias asignadas", en `src/web/board_handlers_test.go`
+- [x] T036 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un tablero incompleto, en `src/web/board_handlers_test.go`
 - [ ] T037 [P] [US3] Escribir los escenarios BDD de tablero del Sprint activo, acciones según el estado, sin Sprint activo y Sprint sin historias en `test/web_board_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T038 [US3] Completar `board.html` con los estados vacíos ("No hay un Sprint activo", "El Sprint no tiene historias asignadas") y la presentación del progreso en `src/web/templates/board.html`
-- [ ] T039 [US3] Usar `Fail` en `src/web/board_handlers.go` cuando falla la lectura del Sprint o de las historias
+- [x] T038 [US3] Completar `board.html` con los estados vacíos ("No hay un Sprint activo", "El Sprint no tiene historias asignadas") y la presentación del progreso en `src/web/templates/board.html`
+- [x] T039 [US3] Usar `Fail` en `src/web/board_handlers.go` cuando falla la lectura del Sprint o de las historias
 
 **Checkpoint**: US3 muestra el avance del Sprint y las acciones disponibles de cada historia.
 

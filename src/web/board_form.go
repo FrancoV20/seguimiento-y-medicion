@@ -33,6 +33,12 @@ const (
 	MsgBoardStatusChanged     = "El estado de la historia cambió; revise el estado actual y vuelva a intentarlo"
 )
 
+// Textos de los estados vacíos del Tablero (escenarios del Issue, tal cual).
+const (
+	MsgBoardNoActiveSprint       = "No hay un Sprint activo"
+	MsgBoardSprintWithoutStories = "El Sprint no tiene historias asignadas"
+)
+
 func boardAlreadyInStatusMessage(status sprint.StoryStatus) string {
 	return fmt.Sprintf("La historia ya está en %s", status)
 }

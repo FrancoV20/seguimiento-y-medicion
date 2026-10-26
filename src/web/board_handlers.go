@@ -22,8 +22,11 @@ type boardHandlers struct {
 
 // boardPageData son los datos de board.html.
 type boardPageData struct {
-	View  BoardView
-	Found bool
+	View           BoardView
+	Found          bool // hay un Sprint activo
+	HasStories     bool // el Sprint activo tiene historias en alguna columna
+	NoActiveSprint string
+	NoStories      string
 }
 
 // RegisterBoard registra la sección "Tablero" (GET /tablero y POST /tablero/estado), que
@@ -54,10 +57,22 @@ func (h *boardHandlers) render(w http.ResponseWriter, r *http.Request, status in
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
+	hasStories := false
+	for _, group := range view.Groups {
+		if len(group.Stories) > 0 {
+			hasStories = true
+		}
+	}
 	h.server.renderer.PageStatus(w, r, status, "board.html", PageData{
 		Title: TitleBoard,
 		Flash: flash,
-		Data:  boardPageData{View: view, Found: found},
+		Data: boardPageData{
+			View:           view,
+			Found:          found,
+			HasStories:     hasStories,
+			NoActiveSprint: MsgBoardNoActiveSprint,
+			NoStories:      MsgBoardSprintWithoutStories,
+		},
 	})
 }
 

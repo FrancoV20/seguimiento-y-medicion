@@ -1,11 +1,13 @@
 {{define "content"}}
 <h1>Tablero</h1>
-{{with .Data}}{{if .Found}}
+{{with .Data}}
+{{if .Found}}
 <section class="board-summary">
   <h2>{{.View.Label}}</h2>
   <p class="board-goal">{{.View.Goal}}</p>
-  <p class="board-points">Story Points completados: <strong>{{.View.CompletedPoints}} de {{.View.PlannedPoints}}</strong></p>
+  {{if .HasStories}}<p class="board-points">Story Points completados: <strong>{{.View.CompletedPoints}} de {{.View.PlannedPoints}}</strong></p>{{end}}
 </section>
+{{if .HasStories}}
 <div class="board-columns">
   {{range .View.Groups}}
   <section class="board-column">
@@ -31,5 +33,11 @@
   </section>
   {{end}}
 </div>
-{{end}}{{end}}
+{{else}}
+<p class="muted">{{.NoStories}}</p>
+{{end}}
+{{else}}
+<p class="muted">{{.NoActiveSprint}}</p>
+{{end}}
+{{end}}
 {{end}}
