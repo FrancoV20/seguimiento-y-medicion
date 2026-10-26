@@ -29,10 +29,10 @@
 
 **Purpose**: Tipos, catálogo de solo lectura y textos compartidos por las historias.
 
-- [ ] T005 [P] Definir `StoryRow` (con `id`) y la interfaz `StoryCatalog` con `ListStories(ctx, projectID)` en `src/web/backlog_catalog.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLStoryCatalog` con fixtures propias de dos proyectos con historias: solo las del proyecto pedido, orden descendente por `id`, Story Points y horas ausentes y proyecto sin historias sin error, en `src/web/postgres_story_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLStoryCatalog` con `database/sql` y pgx en `src/web/postgres_story_catalog.go`
-- [ ] T008 [P] Definir los nombres de los campos del formulario (`titulo`, `descripcion`, `prioridad`, `story_points`, `horas_estimadas`, `criterio`, `accion`) y los textos propios en un solo lugar de `src/web/backlog_form.go`: `MsgStoryCreated` ("Historia creada correctamente"), `MsgStoryCreatedMissingPoints` ("Historia creada correctamente. Falta completar la estimación de Story Points"), `MsgInvalidStoryPoints` ("Los Story Points no son un valor válido") y `MsgHoursTooLarge` ("Las horas estimadas no pueden superar 9999,99"); los de HU-02 se reutilizan si ya existen
+- [x] T005 [P] Definir `StoryRow` (con `id`) y la interfaz `StoryCatalog` con `ListStories(ctx, projectID)` en `src/web/backlog_catalog.go`
+- [x] T006 [P] Escribir la prueba de integración de `PostgreSQLStoryCatalog` con fixtures propias de dos proyectos con historias: solo las del proyecto pedido, orden descendente por `id`, Story Points y horas ausentes y proyecto sin historias sin error, en `src/web/postgres_story_catalog_integration_test.go`
+- [x] T007 Implementar `PostgreSQLStoryCatalog` con `database/sql` y pgx en `src/web/postgres_story_catalog.go`
+- [x] T008 [P] Definir los nombres de los campos del formulario (`titulo`, `descripcion`, `prioridad`, `story_points`, `horas_estimadas`, `criterio`, `accion`) y los textos propios en un solo lugar de `src/web/backlog_form.go`: `MsgStoryCreated` ("Historia creada correctamente"), `MsgStoryCreatedMissingPoints` ("Historia creada correctamente. Falta completar la estimación de Story Points"), `MsgInvalidStoryPoints` ("Los Story Points no son un valor válido") y `MsgHoursTooLarge` ("Las horas estimadas no pueden superar 9999,99"); los de HU-02 se reutilizan si ya existen
 
 **Checkpoint**: El catálogo PostgreSQL, los tipos y los textos están listos para las historias.
 
