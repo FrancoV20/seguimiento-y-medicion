@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-03, HU-04, HU-20a y HU-20b.
 
-- [ ] T001 Revisar HU-03 en `main`: ruta del paquete de esfuerzo y firma del servicio de registro (entrada, tipo de las horas, resultado); errores y mensajes exactos de horas inválidas, actividad vacía, fecha requerida e integrante no especificado; si ya existe una validación que devuelve todas las violaciones; qué historias acepta (solo las del Sprint activo del proyecto, y si incluye "Hecho"); si verifica el proyecto; esquema de `effort_logs` (columnas de historia, integrante, fecha, actividad y horas, tipo de las horas); identificadores ya definidos en el paquete `web` por HU-14, HU-15, HU-17, HU-21, HU-22 y HU-23 y cómo formatean horas HU-17 y HU-22; anotar el resultado en `specs/024-web-effort/data-model.md` y ajustar el mapeo de `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `Section.RequiresProject` y `Section.RequiresMember` aplicados también a `POST`, `ActiveContextFrom` con identificador y nombre del integrante, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303, regreso a la pantalla tras identificarse y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/024-web-effort/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar que la migración `003` (`effort_logs`) y las de HU-04 en `main` coinciden con el esquema anotado en `specs/024-web-effort/data-model.md` y avisar al equipo si cambiaron
+- [X] T001 Revisar HU-03 en `main`: ruta del paquete de esfuerzo y firma del servicio de registro (entrada, tipo de las horas, resultado); errores y mensajes exactos de horas inválidas, actividad vacía, fecha requerida e integrante no especificado; si ya existe una validación que devuelve todas las violaciones; qué historias acepta (solo las del Sprint activo del proyecto, y si incluye "Hecho"); si verifica el proyecto; esquema de `effort_logs` (columnas de historia, integrante, fecha, actividad y horas, tipo de las horas); identificadores ya definidos en el paquete `web` por HU-14, HU-15, HU-17, HU-21, HU-22 y HU-23 y cómo formatean horas HU-17 y HU-22; anotar el resultado en `specs/024-web-effort/data-model.md` y ajustar el mapeo de `plan.md`
+- [X] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `Section.RequiresProject` y `Section.RequiresMember` aplicados también a `POST`, `ActiveContextFrom` con identificador y nombre del integrante, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303, regreso a la pantalla tras identificarse y protección contra envíos de otro origen — `HU-24` parte de `main` (750b2b7): HU-20a y HU-20b integradas
+- [X] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/024-web-effort/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [X] T004 [P] Confirmar que la migración `003` (`effort_logs`) y las de HU-04 en `main` coinciden con el esquema anotado en `specs/024-web-effort/data-model.md` y avisar al equipo si cambiaron
 
 ---
 
@@ -29,14 +29,14 @@
 
 **Purpose**: Catálogo de solo lectura, formulario y adaptador de HU-03, compartidos por las historias.
 
-- [ ] T005 [P] Definir `EffortSprint`, `EffortStoryRow`, `EffortEntryRow`, `EffortHistory` y la interfaz `EffortCatalog` con `ActiveSprintStories` y `StoryHistory` en `src/web/effort_catalog.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLEffortCatalog` con fixtures propias (dos proyectos, cada uno con un Sprint activo; un Sprint finalizado; historias "Pendiente", "En Sprint", "En progreso" y "Hecho"; registros de dos integrantes con distintas fechas): solo historias del Sprint activo del proyecto, horas acumuladas y cero sin registros, historial con integrante, fecha, actividad y horas, orden más reciente primero, total igual a la suma, historia ajena "no encontrada", proyecto sin Sprint activo y el de mayor número con dos activos, en `src/web/postgres_effort_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLEffortCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_effort_catalog.go`
-- [ ] T008 [P] Escribir las pruebas unitarias del armado del formulario: fecha vacía, con formato inválido y válida; historia vacía y no numérica; horas con coma y con punto, negativas, cero, vacías, con letras y en formato científico; actividad con espacios; valores devueltos tal como llegaron; un error por campo al combinar los propios con los de HU-03, en `src/web/effort_form_test.go`
-- [ ] T009 [P] Escribir la prueba del adaptador sobre el servicio real de HU-03: `Validate` devuelve todas las violaciones juntas con su campo y el mensaje exacto de HU-03, `Register` registra una carga válida y devuelve los errores de HU-03 (integrante faltante, historia fuera del Sprint), en `src/web/effort_actions_test.go`
-- [ ] T010 Si T001 muestra que HU-03 no ofrece una validación que devuelva todas las violaciones, escribir su prueba y agregar la función en el dominio de HU-03 junto a sus reglas, sin cambiar el comportamiento del registro; si ya existe, escribir solo la prueba de T009 contra ella y avisar a quien mantiene HU-03
-- [ ] T011 Implementar en `src/web/effort_form.go` los nombres de los campos (`historia`, `fecha`, `actividad`, `horas`), los textos propios en un solo lugar (`MsgEffortRecorded`, `MsgEffortSelectStory`, `MsgEffortStoryNotInSprint`, `MsgEffortInvalidDate`, `MsgEffortNoSprint`, `MsgEffortNoEntries`), el armado del envío y la unión de errores con un error por campo
-- [ ] T012 Implementar en `src/web/effort_actions.go` la interfaz `EffortActions` y su adaptador sobre el servicio de HU-03 (`Validate` y `Register`), usando los errores y mensajes de HU-03 sin copiarlos
+- [X] T005 [P] Definir `EffortSprint`, `EffortStoryRow`, `EffortEntryRow`, `EffortHistory` y la interfaz `EffortCatalog` con `ActiveSprintStories` y `StoryHistory` en `src/web/effort_catalog.go`
+- [X] T006 [P] Escribir la prueba de integración de `PostgreSQLEffortCatalog` con fixtures propias (dos proyectos, cada uno con un Sprint activo; un Sprint finalizado; historias "Pendiente", "En Sprint", "En progreso" y "Hecho"; registros de dos integrantes con distintas fechas): solo historias del Sprint activo del proyecto, horas acumuladas y cero sin registros, historial con integrante, fecha, actividad y horas, orden más reciente primero, total igual a la suma, historia ajena "no encontrada", proyecto sin Sprint activo y el de mayor número con dos activos, en `src/web/postgres_effort_catalog_integration_test.go`
+- [X] T007 Implementar `PostgreSQLEffortCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_effort_catalog.go`
+- [X] T008 [P] Escribir las pruebas unitarias del armado del formulario: fecha vacía, con formato inválido y válida; historia vacía y no numérica; horas con coma y con punto, negativas, cero, vacías, con letras y en formato científico; actividad con espacios; valores devueltos tal como llegaron; un error por campo al combinar los propios con los de HU-03, en `src/web/effort_form_test.go`
+- [X] T009 [P] Escribir la prueba del adaptador sobre el servicio real de HU-03: `Validate` devuelve todas las violaciones juntas con su campo y el mensaje exacto de HU-03, `Register` registra una carga válida y devuelve los errores de HU-03 (integrante faltante, historia fuera del Sprint), en `src/web/effort_actions_test.go`
+- [X] T010 Si T001 muestra que HU-03 no ofrece una validación que devuelva todas las violaciones, escribir su prueba y agregar la función en el dominio de HU-03 junto a sus reglas, sin cambiar el comportamiento del registro; si ya existe, escribir solo la prueba de T009 contra ella y avisar a quien mantiene HU-03 — **No hizo falta código en HU-03**: `effort.ValidateInput` ya devuelve todas las violaciones; se agregó solo la prueba (`effort_actions_test.go`)
+- [X] T011 Implementar en `src/web/effort_form.go` los nombres de los campos (`historia`, `fecha`, `actividad`, `horas`), los textos propios en un solo lugar (`MsgEffortRecorded`, `MsgEffortSelectStory`, `MsgEffortStoryNotInSprint`, `MsgEffortInvalidDate`, `MsgEffortNoSprint`, `MsgEffortNoEntries`), el armado del envío y la unión de errores con un error por campo
+- [X] T012 Implementar en `src/web/effort_actions.go` la interfaz `EffortActions` y su adaptador sobre el servicio de HU-03 (`Validate` y `Register`), usando los errores y mensajes de HU-03 sin copiarlos
 
 **Checkpoint**: El catálogo PostgreSQL, el formulario y el adaptador están listos y probados contra el servicio y la base reales.
 
@@ -50,19 +50,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Escribir la prueba de handler de carga exitosa con `cookiejar` y proyecto e integrante elegidos por el flujo de HU-20b: 303 a `/esfuerzo?historia=ID`, "Esfuerzo registrado correctamente" una sola vez, registro con el integrante identificado, fecha, actividad y horas, acumulado actualizado y un campo de integrante enviado ignorado, en `src/web/effort_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de handler de la fecha de hoy por defecto con un reloj fijo y de las horas con coma y con punto, en `src/web/effort_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de handler del selector y la lista: solo historias del Sprint activo del proyecto (sin "Pendiente", sin Sprint finalizado, sin otro proyecto), con estado y horas acumuladas, en `src/web/effort_handlers_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de handler sin Sprint activo: `GET` con "No hay un Sprint activo" y sin formulario, y `POST` con 409 y nada registrado, en `src/web/effort_handlers_test.go`
-- [ ] T017 [P] [US1] Escribir la prueba de handler sin integrante identificado: redirección de HU-20b, regreso a `/esfuerzo` tras identificarse y nada registrado; un `POST` directo sin integrante lo rechaza HU-03 sin registrar, en `src/web/effort_handlers_test.go`
-- [ ] T018 [P] [US1] Escribir los escenarios BDD de carga exitosa, historias disponibles, sin Sprint activo y sin integrante identificado en `test/web_effort_bdd_test.go`
+- [X] T013 [P] [US1] Escribir la prueba de handler de carga exitosa con `cookiejar` y proyecto e integrante elegidos por el flujo de HU-20b: 303 a `/esfuerzo?historia=ID`, "Esfuerzo registrado correctamente" una sola vez, registro con el integrante identificado, fecha, actividad y horas, acumulado actualizado y un campo de integrante enviado ignorado, en `src/web/effort_handlers_test.go`
+- [X] T014 [P] [US1] Escribir la prueba de handler de la fecha de hoy por defecto con un reloj fijo y de las horas con coma y con punto, en `src/web/effort_handlers_test.go`
+- [X] T015 [P] [US1] Escribir la prueba de handler del selector y la lista: solo historias del Sprint activo del proyecto (sin "Pendiente", sin Sprint finalizado, sin otro proyecto), con estado y horas acumuladas, en `src/web/effort_handlers_test.go`
+- [X] T016 [P] [US1] Escribir la prueba de handler sin Sprint activo: `GET` con "No hay un Sprint activo" y sin formulario, y `POST` con 409 y nada registrado, en `src/web/effort_handlers_test.go`
+- [X] T017 [P] [US1] Escribir la prueba de handler sin integrante identificado: redirección de HU-20b, regreso a `/esfuerzo` tras identificarse y nada registrado; un `POST` directo sin integrante lo rechaza HU-03 sin registrar, en `src/web/effort_handlers_test.go`
+- [X] T018 [P] [US1] Escribir los escenarios BDD de carga exitosa, historias disponibles, sin Sprint activo y sin integrante identificado en `test/web_effort_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implementar el handler `GET /esfuerzo` en `src/web/effort_handlers.go`: lee las historias del Sprint activo del proyecto, arma la vista con la fecha de hoy y la historia elegida y usa `Fail` si falla la lectura
-- [ ] T020 [US1] Implementar el camino exitoso de `POST /esfuerzo` en `src/web/effort_handlers.go`: arma el envío, llama a HU-03 con el proyecto y el integrante del contexto, usa `SetFlash` y redirige con 303 a `/esfuerzo?historia=ID`
-- [ ] T021 [US1] Crear `effort.html` con la lista de historias y sus horas acumuladas (con enlace por historia), el formulario (historia, fecha, actividad, horas) y el estado "No hay un Sprint activo", usando los parciales `alert.html` y `field.html`, en `src/web/templates/effort.html`
-- [ ] T022 [US1] Construir el catálogo y el adaptador de HU-03 y registrar la sección "Registro de esfuerzo" (`/esfuerzo`, `RequiresProject: true`, `RequiresMember: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [X] T019 [US1] Implementar el handler `GET /esfuerzo` en `src/web/effort_handlers.go`: lee las historias del Sprint activo del proyecto, arma la vista con la fecha de hoy y la historia elegida y usa `Fail` si falla la lectura
+- [X] T020 [US1] Implementar el camino exitoso de `POST /esfuerzo` en `src/web/effort_handlers.go`: arma el envío, llama a HU-03 con el proyecto y el integrante del contexto, usa `SetFlash` y redirige con 303 a `/esfuerzo?historia=ID`
+- [X] T021 [US1] Crear `effort.html` con la lista de historias y sus horas acumuladas (con enlace por historia), el formulario (historia, fecha, actividad, horas) y el estado "No hay un Sprint activo", usando los parciales `alert.html` y `field.html`, en `src/web/templates/effort.html`
+- [X] T022 [US1] Construir el catálogo y el adaptador de HU-03 y registrar la sección "Registro de esfuerzo" (`/esfuerzo`, `RequiresProject: true`, `RequiresMember: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 registra esfuerzo desde la web; HU-07 y HU-25 ya tienen horas reales cargadas desde el navegador.
 
@@ -76,18 +76,18 @@
 
 ### Tests for User Story 2
 
-- [ ] T023 [P] [US2] Escribir la prueba de handler de errores juntos: historia vacía, fecha vacía, actividad vacía y horas en cero a la vez, con los cuatro mensajes (los de HU-03 tomados de sus constantes) junto a su campo, datos conservados, 422 y nada registrado, en `src/web/effort_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de handler de horas inválidas (negativas, cero, mayores de 24, con letras, vacías) y de fecha con formato inválido, cada una con su mensaje junto al campo, en `src/web/effort_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir la prueba de handler de historia no disponible (de otro proyecto, "Pendiente", de un Sprint finalizado, inexistente, no numérica): error junto a `historia`, datos conservados y nada registrado, en `src/web/effort_handlers_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada registrado, en `src/web/effort_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir la prueba de handler del Sprint cerrado entre abrir y enviar: HU-03 rechaza y el error aparece junto a `historia` sin registrar, en `src/web/effort_handlers_test.go`
-- [ ] T028 [P] [US2] Escribir los escenarios BDD de errores juntos, historia no disponible y falla de almacenamiento en `test/web_effort_bdd_test.go`
+- [X] T023 [P] [US2] Escribir la prueba de handler de errores juntos: historia vacía, fecha vacía, actividad vacía y horas en cero a la vez, con los cuatro mensajes (los de HU-03 tomados de sus constantes) junto a su campo, datos conservados, 422 y nada registrado, en `src/web/effort_handlers_test.go`
+- [X] T024 [P] [US2] Escribir la prueba de handler de horas inválidas (negativas, cero, mayores de 24, con letras, vacías) y de fecha con formato inválido, cada una con su mensaje junto al campo, en `src/web/effort_handlers_test.go`
+- [X] T025 [P] [US2] Escribir la prueba de handler de historia no disponible (de otro proyecto, "Pendiente", de un Sprint finalizado, inexistente, no numérica): error junto a `historia`, datos conservados y nada registrado, en `src/web/effort_handlers_test.go`
+- [X] T026 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada registrado, en `src/web/effort_handlers_test.go`
+- [X] T027 [P] [US2] Escribir la prueba de handler del Sprint cerrado entre abrir y enviar: HU-03 rechaza y el error aparece junto a `historia` sin registrar, en `src/web/effort_handlers_test.go`
+- [X] T028 [P] [US2] Escribir los escenarios BDD de errores juntos, historia no disponible y falla de almacenamiento en `test/web_effort_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] Implementar en `src/web/effort_form.go` y `src/web/effort_actions.go` el mapeo de los errores de HU-03 a campos y mensajes, con `MsgOperationFailed` para cualquier otro
-- [ ] T030 [US2] Implementar en `src/web/effort_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo
-- [ ] T031 [US2] Verificar en `src/web/effort_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [X] T029 [US2] Implementar en `src/web/effort_form.go` y `src/web/effort_actions.go` el mapeo de los errores de HU-03 a campos y mensajes, con `MsgOperationFailed` para cualquier otro
+- [X] T030 [US2] Implementar en `src/web/effort_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo
+- [X] T031 [US2] Verificar en `src/web/effort_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 evita cargas inválidas, muestra todos los errores y mantiene los datos.
 
@@ -101,16 +101,16 @@
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Escribir la prueba de handler del historial: integrante, fecha, actividad y horas, más recientes primero, total igual a la suma y coincidente con la lista, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/effort_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de handler de la historia sin registros: "Todavía no hay horas registradas en esta historia" y total en cero, en `src/web/effort_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de handler de un `historia` no numérico, inexistente o de otro proyecto en la dirección: se ignora y se muestra la pantalla sin historial, en `src/web/effort_handlers_test.go`
-- [ ] T035 [P] [US3] Escribir la prueba de handler de una actividad con `<script>`: se muestra como texto en el historial, en `src/web/effort_handlers_test.go`
-- [ ] T036 [P] [US3] Escribir los escenarios BDD de historial de la historia e historia sin registros en `test/web_effort_bdd_test.go`
+- [X] T032 [P] [US3] Escribir la prueba de handler del historial: integrante, fecha, actividad y horas, más recientes primero, total igual a la suma y coincidente con la lista, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/effort_handlers_test.go`
+- [X] T033 [P] [US3] Escribir la prueba de handler de la historia sin registros: "Todavía no hay horas registradas en esta historia" y total en cero, en `src/web/effort_handlers_test.go`
+- [X] T034 [P] [US3] Escribir la prueba de handler de un `historia` no numérico, inexistente o de otro proyecto en la dirección: se ignora y se muestra la pantalla sin historial, en `src/web/effort_handlers_test.go`
+- [X] T035 [P] [US3] Escribir la prueba de handler de una actividad con `<script>`: se muestra como texto en el historial, en `src/web/effort_handlers_test.go`
+- [X] T036 [P] [US3] Escribir los escenarios BDD de historial de la historia e historia sin registros en `test/web_effort_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Completar `effort.html` con el historial (integrante, fecha, actividad, horas y total) y el mensaje de historia sin registros en `src/web/templates/effort.html`
-- [ ] T038 [US3] Usar `Fail` en `src/web/effort_handlers.go` cuando falla la lectura del historial y escribir su prueba con un catálogo que falla
+- [X] T037 [US3] Completar `effort.html` con el historial (integrante, fecha, actividad, horas y total) y el mensaje de historia sin registros en `src/web/templates/effort.html`
+- [X] T038 [US3] Usar `Fail` en `src/web/effort_handlers.go` cuando falla la lectura del historial y escribir su prueba con un catálogo que falla
 
 **Checkpoint**: US3 muestra el historial y el acumulado de cada historia.
 
@@ -120,19 +120,19 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T039 [P] Documentar en `specs/024-web-effort/quickstart.md` los pasos para probar a mano con un Sprint con historias y un integrante identificado, y la nota de puerto
-- [ ] T040 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/effort_handlers.go` y `src/web/effort_form.go`
-- [ ] T041 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T042 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T043 [P] Escribir la prueba de handler de recarga después de guardar: no se registra una segunda carga ni se repite el mensaje, en `src/web/effort_handlers_test.go`
-- [ ] T044 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se registra nada, en `src/web/effort_handlers_test.go`
-- [ ] T045 [P] Escribir la prueba de handler con un catálogo que falla al leer las historias: página de error de HU-20a y no una pantalla incompleta, en `src/web/effort_handlers_test.go`
-- [ ] T046 Guardar en `specs/024-web-effort/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T047 Guardar en `specs/024-web-effort/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/024-web-effort/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
-- [ ] T048 Coordinar con HU-07 y HU-25 que las horas se siguen leyendo de `effort_logs` sin cambios; con HU-23 que quitar una historia con horas registradas sigue bloqueado; con HU-14 que completar una historia sin horas ya se puede evitar cargando horas desde la web; con HU-15 que las historias devueltas dejan de aparecer en el selector; y con quien mantiene HU-03 el cambio de T010 si hizo falta
-- [ ] T049 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/024-web-effort/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T050 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Registro de esfuerzo"
-- [ ] T051 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md`
+- [X] T039 [P] Documentar en `specs/024-web-effort/quickstart.md` los pasos para probar a mano con un Sprint con historias y un integrante identificado, y la nota de puerto
+- [X] T040 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/effort_handlers.go` y `src/web/effort_form.go`
+- [ ] T041 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local — Pendiente en la PC del equipo (Docker Desktop); las pruebas se corrieron contra PostgreSQL 16 local
+- [ ] T042 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md` — Lo ejecuta Alejandro en su PC
+- [X] T043 [P] Escribir la prueba de handler de recarga después de guardar: no se registra una segunda carga ni se repite el mensaje, en `src/web/effort_handlers_test.go`
+- [X] T044 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se registra nada, en `src/web/effort_handlers_test.go`
+- [X] T045 [P] Escribir la prueba de handler con un catálogo que falla al leer las historias: página de error de HU-20a y no una pantalla incompleta, en `src/web/effort_handlers_test.go`
+- [ ] T046 Guardar en `specs/024-web-effort/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando — Lo ejecuta Alejandro en su PC
+- [ ] T047 Guardar en `specs/024-web-effort/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/024-web-effort/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos — Lo ejecuta Alejandro en su PC
+- [ ] T048 Coordinar con HU-07 y HU-25 que las horas se siguen leyendo de `effort_logs` sin cambios; con HU-23 que quitar una historia con horas registradas sigue bloqueado; con HU-14 que completar una historia sin horas ya se puede evitar cargando horas desde la web; con HU-15 que las historias devueltas dejan de aparecer en el selector; y con quien mantiene HU-03 el cambio de T010 si hizo falta — Pendiente: mensaje al equipo preparado en el Pull Request
+- [X] T049 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/024-web-effort/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [ ] T050 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Registro de esfuerzo" — `go vet` limpio y `gofmt -l` sin diferencias en los archivos de HU-24 (los de HU-20b ya traían diferencias de formato); el repositorio no tiene pipeline de GitHub Actions; el manual breve quedó en `quickstart.md` para copiarlo a `docs/manual-usuario.md` cuando se integre HU-21
+- [ ] T051 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md` — Lo verifica Alejandro en el navegador
 - [ ] T052 Abrir el Pull Request desde `HU-24`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---

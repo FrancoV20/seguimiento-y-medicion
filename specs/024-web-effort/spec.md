@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-22
 
-**Status**: Draft
+**Status**: Implementada (pendiente de revisión en el Pull Request)
 
 **Input**: User description: "HU-24 / Interfaz Web de Registro de Esfuerzo (presenta HU-03): Como Product Builder, quiero registrar mis horas desde un formulario web, para cargar el esfuerzo sin comandos. Depende de HU-03, HU-04, FIX-HU-04, HU-20a y HU-20b."
 
@@ -99,8 +99,9 @@ total; con una historia sin registros, verificar el mensaje.
 - Si el Sprint se cierra entre que se abre el formulario y se envía, HU-03 rechaza la carga y el error se muestra
   junto al campo de historia.
 - Una historia en "Hecho" del Sprint activo se ofrece y acepta cargas, igual que HU-03 (T001 lo confirma).
-- La fecha por defecto es la del día del servidor; no se valida contra las fechas del Sprint ni contra el futuro
-  porque HU-03 no lo exige.
+- La fecha por defecto es la del día del servidor; no se valida contra las fechas del Sprint. Una fecha futura la
+  rechaza HU-03 ("La fecha no puede ser posterior a la fecha actual") y se muestra junto a la fecha (verificado en
+  T001).
 - Dos envíos iguales registran dos cargas: no hay detección de duplicados (HU-03 no la define). Recargar la página
   después de guardar no reenvía nada (HU-20b).
 - Las horas con coma o con punto se aceptan; un valor que no es número se informa con el mensaje de HU-03 de
@@ -197,6 +198,8 @@ El integrante y el proyecto no son campos: salen del contexto del servidor.
 | Historia no seleccionada | "Seleccione una historia" | 422 |
 | Historia fuera del Sprint activo | "La historia no pertenece al Sprint activo" | 422 |
 | Fecha con formato inválido | "La fecha no es válida" | 422 |
+| Fecha posterior a hoy | El de HU-03 | 422 |
+| Sprint cerrado entre abrir y enviar | El de HU-03 junto a la historia | 422 |
 | Sin Sprint activo al enviar | "No hay un Sprint activo" | 409 |
 | Sin integrante identificado | Mensaje de HU-20b | 303 |
 | Falla de guardado | "La operación no pudo completarse" | 500 |
@@ -245,16 +248,17 @@ Los textos propios de HU-24 son una propuesta del equipo y se definen en un solo
 
 | Escenario del Issue | Requisitos | Tests | BDD | Código |
 |---|---|---|---|---|
-| 1. Carga exitosa | FR-002, FR-003, FR-005, FR-008 | T013, T014 | T018 | `effort_handlers.go`, `effort.html` |
-| 2. Errores juntos | FR-006 | T008, T009, T023, T024 | T028 | `effort_form.go`, `effort_actions.go` |
-| 3. Historial de la historia | FR-009 | T006, T032 | T036 | `postgres_effort_catalog.go`, `effort.html` |
-| 4. Historia sin registros | FR-010 | T033 | T036 | `effort.html` |
-| 5. Historias disponibles | FR-004, FR-016 | T006, T015 | T018 | `postgres_effort_catalog.go` |
-| 6. Sin Sprint activo | FR-011 | T016 | T018 | `effort_handlers.go`, `effort.html` |
-| 7. Sin integrante identificado | FR-001, FR-008 | T017 | T018 | `src/cmd/server/main.go` |
-| 8. Historia no disponible | FR-007 | T025, T027 | T028 | `effort_form.go`, `effort_handlers.go` |
-| 9. Falla de almacenamiento | FR-012, FR-014 | T026, T031 | T028 | `effort_handlers.go` |
-| (HU-20b) Recarga sin reenviar | FR-005 | T043 | | `effort_handlers.go` |
-| (HU-20b) Sin proyecto activo | FR-016 | T044 | | `effort_handlers.go` |
-| (HU-20b) HTML como texto | FR-015 | T035 | | `effort.html` |
-| (HU-20a) Error al leer | FR-013 | T038, T045 | | `effort_handlers.go` |
+| 1. Carga exitosa | FR-002, FR-003, FR-005, FR-008 | T013 `TestEffort_CargaExitosa_...`, T014 `TestEffort_FechaDeHoyPorDefecto...` | T018 `TestEscenarioEsfuerzo_CargaExitosa` | `effort_handlers.go`, `effort.html` |
+| 2. Errores juntos | FR-006 | T008 `effort_form_test.go`, T009 `effort_actions_test.go`, T023 `TestEffort_VariosErroresJuntos...`, T024 `TestEffort_HorasYFechaInvalidas` | T028 `TestEscenarioEsfuerzo_ErroresJuntos` | `effort_form.go`, `effort_actions.go` |
+| 3. Historial de la historia | FR-009 | T006 `TestPostgreSQLEffortCatalog_StoryHistory_...`, T032 `TestEffort_HistorialDeLaHistoria...` | T036 `TestEscenarioEsfuerzo_HistorialDeLaHistoria` | `postgres_effort_catalog.go`, `effort.html` |
+| 4. Historia sin registros | FR-010 | T033 `TestEffort_HistoriaSinRegistros` | T036 `TestEscenarioEsfuerzo_HistoriaSinRegistros` | `effort.html` |
+| 5. Historias disponibles | FR-004, FR-016 | T006 `TestPostgreSQLEffortCatalog_ActiveSprintStories_...`, T015 `TestEffort_SelectorYLista...` | T018 `TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo` | `postgres_effort_catalog.go` |
+| 6. Sin Sprint activo | FR-011 | T016 `TestEffort_SinSprintActivo` | T018 `TestEscenarioEsfuerzo_SinSprintActivo` | `effort_handlers.go`, `effort.html` |
+| 7. Sin integrante identificado | FR-001, FR-008 | T017 `TestEffort_SinIntegranteIdentificado` | T018 `TestEscenarioEsfuerzo_SinIntegranteIdentificado` | `effort_handlers.go` (`EffortSection`), `src/cmd/server/main.go` |
+| 8. Historia no disponible | FR-007 | T025 `TestEffort_HistoriaNoDisponible`, T027 `TestEffort_SprintCerradoEntreAbrirYEnviar`, `TestEffort_NoSePuedeCargarEnHistoriasDeOtroProyecto` | T028 `TestEscenarioEsfuerzo_HistoriaNoDisponible` | `effort_form.go`, `effort_handlers.go` |
+| 9. Falla de almacenamiento | FR-012, FR-014 | T026 `TestEffort_FallaDeGuardado`, T031 `assertNoInternals` | T028 `TestEscenarioEsfuerzo_FallaDeAlmacenamiento` | `effort_handlers.go` |
+| (HU-20b) Recarga sin reenviar | FR-005 | T043 (en `TestEffort_CargaExitosa_...`) | | `effort_handlers.go` |
+| (HU-20b) Sin proyecto activo | FR-016 | T044 `TestEffort_SinProyectoActivoValido` | | `effort_handlers.go` |
+| (HU-20b) HTML como texto | FR-015 | T035 `TestEffort_ActividadConScriptSeMuestraComoTexto` | | `effort.html` |
+| (HU-20a) Error al leer | FR-013 | T038 `TestEffort_FallaAlLeerElHistorial`, T045 `TestEffort_FallaAlLeerLasHistorias` | | `effort_handlers.go` |
+| (HU-20b) Envío de otro origen | FR-008 | `TestEffort_EnvioDeOtroOrigenSeRechaza` | | `CrossOriginGuard` (HU-20b) |
