@@ -83,7 +83,7 @@
 - [x] T026b [P] [US2] Escribir la prueba de handler de `comenzar` sobre una historia "Hecho" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
 - [x] T026c [P] [US2] Escribir la prueba de handler de `reabrir` sobre una historia "En Sprint" enviada sin `estado_actual`: 409 con el mensaje de estado desactualizado y sin cambios, en `src/web/board_handlers_test.go`
 - [x] T027 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y sin cambios, en `src/web/board_handlers_test.go`
-- [ ] T028 [P] [US2] Escribir los escenarios BDD de fuera de un Sprint activo, marcar dos veces, transición no permitida, estado desactualizado y error al guardar en `test/web_board_bdd_test.go`
+- [x] T028 [P] [US2] Escribir los escenarios BDD de fuera de un Sprint activo, marcar dos veces, transición no permitida, estado desactualizado y error al guardar en `test/web_board_bdd_test.go`
 
 ### Implementation for User Story 2
 
@@ -108,7 +108,7 @@
 - [x] T034 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo" y ninguna acción, en `src/web/board_handlers_test.go`
 - [x] T035 [P] [US3] Escribir la prueba de handler con un Sprint sin historias: "El Sprint no tiene historias asignadas", en `src/web/board_handlers_test.go`
 - [x] T036 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un tablero incompleto, en `src/web/board_handlers_test.go`
-- [ ] T037 [P] [US3] Escribir los escenarios BDD de tablero del Sprint activo, acciones según el estado, sin Sprint activo y Sprint sin historias en `test/web_board_bdd_test.go`
+- [x] T037 [P] [US3] Escribir los escenarios BDD de tablero del Sprint activo, acciones según el estado, sin Sprint activo y Sprint sin historias en `test/web_board_bdd_test.go`
 
 ### Implementation for User Story 3
 
@@ -123,20 +123,20 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T040 [P] Documentar en `specs/014-story-status/quickstart.md` los pasos para probar a mano con un Sprint activo y la nota de puerto
-- [ ] T041 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/board_handlers.go` y `src/web/board_form.go`
-- [ ] T042 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T043 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T044 [P] Escribir la prueba de handler de recarga después de un cambio: no se repite el cambio ni el mensaje, en `src/web/board_handlers_test.go`
-- [ ] T045 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cambia nada, en `src/web/board_handlers_test.go`
-- [ ] T046 [P] Verificar que `T036` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura en `src/web/postgres_board_catalog.go`
-- [ ] T047 Guardar en `specs/014-story-status/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T048 Guardar en `specs/014-story-status/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/014-story-status/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
-- [ ] T049 Coordinar con quien tome HU-15 que las historias "Hecho" definen lo completado y que el cierre decide qué pasa con las no terminadas; con HU-07 y HU-25 que cuentan `'Hecho'`; con HU-23 que ambas pantallas leen el Sprint activo y conviene unificar el catálogo después; y con quien corrija HU-08 y HU-13 que los grupos son los cuatro estados
-- [ ] T050 Revisar trazabilidad de FR-001 a FR-018 y SC-001 a SC-007 en `specs/014-story-status/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T051 [P] Ejecutar `go vet ./...` y `gofmt -l` solo sobre los archivos nuevos de HU-14 (los archivos existentes están en CRLF y `gofmt -l` los marca), sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Tablero"
-- [ ] T052 Verificar a mano con la aplicación en ejecución los 13 escenarios del Issue y la lista de `quickstart.md`
-- [ ] T053 Abrir el Pull Request desde `HU-14`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [x] T040 [P] Documentar en `specs/014-story-status/quickstart.md` los pasos para probar a mano con un Sprint activo y la nota de puerto
+- [x] T041 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/board_handlers.go` y `src/web/board_form.go`
+- [x] T042 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T043 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T044 [P] Escribir la prueba de handler de recarga después de un cambio: no se repite el cambio ni el mensaje, en `src/web/board_handlers_test.go`
+- [x] T045 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cambia nada, en `src/web/board_handlers_test.go`
+- [x] T046 [P] Verificar que `T036` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura en `src/web/postgres_board_catalog.go`
+- [x] T047 Guardar en `specs/014-story-status/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T048 Guardar en `specs/014-story-status/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/014-story-status/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
+- [x] T049 Coordinar con quien tome HU-15 que las historias "Hecho" definen lo completado y que el cierre decide qué pasa con las no terminadas; con HU-07 y HU-25 que cuentan `'Hecho'`; con HU-23 que ambas pantallas leen el Sprint activo y conviene unificar el catálogo después; y con quien corrija HU-08 y HU-13 que los grupos son los cuatro estados
+- [x] T050 Revisar trazabilidad de FR-001 a FR-018 y SC-001 a SC-007 en `specs/014-story-status/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T051 [P] Ejecutar `go vet ./...` y `gofmt -l` solo sobre los archivos nuevos de HU-14 (los archivos existentes están en CRLF y `gofmt -l` los marca), sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Tablero"
+- [x] T052 Verificar a mano con la aplicación en ejecución los 13 escenarios del Issue y la lista de `quickstart.md`
+- [] T053 Abrir el Pull Request desde `HU-14`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 
@@ -220,3 +220,18 @@
 | SC-005 | T006, T016 |
 | SC-006 | T007 |
 | SC-007 | Verificación de tiempo en T032 |
+
+## Dónde está cada prueba (desviaciones respecto a lo indicado en las tareas)
+
+| Tareas | Archivo |
+|---|---|
+| T005 | src/sprint/story_status_test.go |
+| T006 | src/sprint/story_status_service_test.go |
+| T007 | src/sprint/postgres_story_status_store_integration_test.go |
+| T008 | src/web/board_catalog_test.go (tarea agregada: prueba de la función pura de Story Points) |
+| T009 | src/web/postgres_board_catalog_integration_test.go |
+| T014 a T017 | src/web/board_handlers_test.go |
+| T023 a T027, T026b, T026c, T031 | src/web/board_handlers_rejections_test.go |
+| T032 a T036 | src/web/board_view_test.go |
+| T044, T045 | src/web/board_context_test.go |
+| T018, T028, T037 | test/web_board_bdd_test.go |
