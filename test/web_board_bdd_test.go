@@ -1,10 +1,14 @@
 package test
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"maps"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -27,10 +31,20 @@ type tableroApp struct {
 
 func nuevaTableroApp(t *testing.T) *tableroApp {
 	t.Helper()
+	return nuevaTableroAppConAlmacen(t, nil)
+}
+
+// nuevaTableroAppConAlmacen permite reemplazar el almacenamiento (para simular fallas de guardado).
+func nuevaTableroAppConAlmacen(t *testing.T, envolver func(sprint.StoryStatusStore) sprint.StoryStatusStore) *tableroApp {
+	t.Helper()
 	f := nuevaSeleccionFixture(t)
 	srv := web.NewServer(silencioso())
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(f.db))
-	servicio := sprint.NewStatusService(sprint.NewPostgreSQLStoryStatusStore(f.db))
+	var almacen sprint.StoryStatusStore = sprint.NewPostgreSQLStoryStatusStore(f.db)
+	if envolver != nil {
+		almacen = envolver(almacen)
+	}
+	servicio := sprint.NewStatusService(almacen)
 	if err := web.RegisterBoard(srv, servicio, web.NewPostgreSQLBoardCatalog(f.db)); err != nil {
 		t.Fatalf("no se pudo registrar el Tablero: %v", err)
 	}
@@ -221,5 +235,238 @@ func TestEscenarioTablero_ReabrirUnaHistoria(t *testing.T) {
 	}
 	if !strings.Contains(pantalla, "0 de 8") {
 		t.Errorf("los Story Points completados debían volver a 0 de 8")
+	}
+}
+
+// presionarConCuerpo es como presionar pero devuelve también la pantalla de la respuesta.
+func (a *tableroApp) presionarConCuerpo(t *testing.T, c *http.Client, historia int64, accion, estadoActual string) (*http.Response, string) {
+	t.Helper()
+	resp, err := c.PostForm(a.servidor.URL+"/tablero/estado", url.Values{
+		"historia_id": {idTexto(historia)}, "accion": {accion}, "estado_actual": {estadoActual},
+	})
+	if err != nil {
+		t.Fatalf("POST /tablero/estado: %v", err)
+	}
+	return resp, formCuerpo(t, resp)
+}
+
+// historiaSinSprint crea una historia Pendiente del proyecto que no está en ningún Sprint.
+func (a *tableroApp) historiaSinSprint(t *testing.T) int64 {
+	t.Helper()
+	return a.insertar(t, `INSERT INTO user_stories (project_id, title, description, priority, story_points, status)
+		VALUES ($1, 'Historia BDD sin Sprint', 'Historia BDD', 'Media', 2, 'Pendiente') RETURNING id`, a.proyecto)
+}
+
+// almacenQueFalla lee con el almacenamiento real pero falla al guardar.
+type almacenQueFalla struct{ sprint.StoryStatusStore }
+
+func (almacenQueFalla) UpdateStatus(context.Context, int64, sprint.StoryStatus, sprint.StoryStatus) (bool, error) {
+	return false, errors.New("falla simulada de guardado")
+}
+
+// accionDeTablero encuentra, en cada formulario de acción, la historia y la acción que ofrece.
+var accionDeTablero = regexp.MustCompile(`name="historia_id" value="(\d+)">\s*<input type="hidden" name="accion" value="(\w+)">`)
+
+// US2 - Escenario: Historia fuera de un Sprint activo (FR-008, SC-002).
+func TestEscenarioTablero_FueraDeUnSprintActivo(t *testing.T) {
+	// Dado una historia sin Sprint
+	app := nuevaTableroApp(t)
+	historia := app.historiaSinSprint(t)
+	navegador := app.navegador(t)
+
+	// Cuando se intenta cambiar su estado
+	resp, pantalla := app.presionarConCuerpo(t, navegador, historia, "comenzar", "")
+
+	// Entonces se rechaza con "La historia no está asignada a un Sprint activo" y el estado no cambia
+	if resp.StatusCode != http.StatusConflict || !strings.Contains(pantalla, "La historia no está asignada a un Sprint activo") {
+		t.Errorf("se esperaba 409 con el mensaje de fuera de un Sprint activo, se obtuvo %d", resp.StatusCode)
+	}
+	if estado := app.estadoDe(t, historia); estado != "Pendiente" {
+		t.Errorf("estado = %q, se esperaba \"Pendiente\"", estado)
+	}
+}
+
+// US2 - Escenario: Marcar dos veces (FR-009, SC-003).
+func TestEscenarioTablero_MarcarDosVeces(t *testing.T) {
+	// Dado una historia que ya está en "Hecho"
+	app := nuevaTableroApp(t)
+	historia := app.historia(t, "Hecho", 8)
+	navegador := app.navegador(t)
+
+	// Cuando se envía otra vez la acción de completarla
+	app.presionar(t, navegador, historia, "completar", "En progreso")
+
+	// Entonces veo "La historia ya está en Hecho", el estado no cambia y los Story Points
+	// completados no se duplican
+	pantalla := app.abrirTablero(t, navegador)
+	if !strings.Contains(pantalla, "La historia ya está en Hecho") {
+		t.Errorf("debía verse \"La historia ya está en Hecho\"")
+	}
+	if estado := app.estadoDe(t, historia); estado != "Hecho" {
+		t.Errorf("estado = %q, se esperaba \"Hecho\"", estado)
+	}
+	if !strings.Contains(pantalla, "8 de 8") {
+		t.Errorf("los Story Points completados no debían duplicarse (8 de 8)")
+	}
+}
+
+// US2 - Escenario: Transición no permitida (FR-010, SC-002).
+func TestEscenarioTablero_TransicionNoPermitida(t *testing.T) {
+	// Dado una historia "En Sprint"
+	app := nuevaTableroApp(t)
+	historia := app.historia(t, "En Sprint", 3)
+	navegador := app.navegador(t)
+
+	// Cuando se intenta pasarla directamente a "Hecho"
+	resp, pantalla := app.presionarConCuerpo(t, navegador, historia, "completar", "En Sprint")
+
+	// Entonces se rechaza con "No se puede pasar de En Sprint a Hecho" y el estado no cambia
+	if resp.StatusCode != http.StatusConflict || !strings.Contains(pantalla, "No se puede pasar de En Sprint a Hecho") {
+		t.Errorf("se esperaba 409 con el mensaje de transición no permitida, se obtuvo %d", resp.StatusCode)
+	}
+	if estado := app.estadoDe(t, historia); estado != "En Sprint" {
+		t.Errorf("estado = %q, se esperaba \"En Sprint\"", estado)
+	}
+}
+
+// US2 - Escenario: Estado desactualizado (FR-011, SC-002, SC-006).
+func TestEscenarioTablero_EstadoDesactualizado(t *testing.T) {
+	// Dado que otra persona cambió el estado de la historia mientras yo tenía el tablero abierto
+	app := nuevaTableroApp(t)
+	historia := app.historia(t, "En Sprint", 3)
+	navegador := app.navegador(t)
+	if _, err := app.db.Exec(`UPDATE user_stories SET status = 'Hecho' WHERE id = $1`, historia); err != nil {
+		t.Fatalf("no se pudo simular el cambio de otra persona: %v", err)
+	}
+
+	// Cuando presiono una acción
+	resp, pantalla := app.presionarConCuerpo(t, navegador, historia, "comenzar", "En Sprint")
+
+	// Entonces no se cambia nada y veo el mensaje de estado desactualizado
+	if resp.StatusCode != http.StatusConflict ||
+		!strings.Contains(pantalla, "El estado de la historia cambió; revise el estado actual y vuelva a intentarlo") {
+		t.Errorf("se esperaba 409 con el mensaje de estado desactualizado, se obtuvo %d", resp.StatusCode)
+	}
+	if estado := app.estadoDe(t, historia); estado != "Hecho" {
+		t.Errorf("estado = %q, se esperaba \"Hecho\" (el de la otra persona)", estado)
+	}
+}
+
+// US2 - Escenario: Error al guardar (FR-012, FR-018, SC-004).
+func TestEscenarioTablero_ErrorAlGuardar(t *testing.T) {
+	// Dado una transición válida
+	app := nuevaTableroAppConAlmacen(t, func(real sprint.StoryStatusStore) sprint.StoryStatusStore {
+		return almacenQueFalla{StoryStatusStore: real}
+	})
+	historia := app.historia(t, "En progreso", 3)
+	navegador := app.navegador(t)
+
+	// Cuando falla el guardado
+	resp, pantalla := app.presionarConCuerpo(t, navegador, historia, "completar", "En progreso")
+
+	// Entonces veo "La operación no pudo completarse", el estado no cambia y no veo mensaje de éxito
+	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(pantalla, "La operación no pudo completarse") {
+		t.Errorf("se esperaba 500 con \"La operación no pudo completarse\", se obtuvo %d", resp.StatusCode)
+	}
+	if strings.Contains(pantalla, "alert-success") || strings.Contains(pantalla, "falla simulada") {
+		t.Errorf("no debe verse éxito ni el detalle técnico")
+	}
+	if estado := app.estadoDe(t, historia); estado != "En progreso" {
+		t.Errorf("estado = %q, se esperaba \"En progreso\"", estado)
+	}
+}
+
+// US3 - Escenario: Tablero del Sprint activo (FR-002, SC-007).
+func TestEscenarioTablero_TableroDelSprintActivo(t *testing.T) {
+	// Dado un Sprint activo con historias en distintos estados
+	app := nuevaTableroApp(t)
+	app.historia(t, "En Sprint", 3)
+	app.historia(t, "En progreso", 5)
+	app.historia(t, "Hecho", 8)
+	navegador := app.navegador(t)
+
+	// Cuando abro "Tablero"
+	pantalla := app.abrirTablero(t, navegador)
+
+	// Entonces veo el identificador del Sprint, las historias agrupadas por estado y los Story
+	// Points completados sobre los planificados
+	for _, esperado := range []string{
+		"Sprint 1", "Objetivo BDD",
+		`En Sprint <span class="board-count">(1)</span>`,
+		`En progreso <span class="board-count">(1)</span>`,
+		`Hecho <span class="board-count">(1)</span>`,
+		"Historia BDD En Sprint", "Historia BDD En progreso", "Historia BDD Hecho",
+		"8 de 16",
+	} {
+		if !strings.Contains(pantalla, esperado) {
+			t.Errorf("falta %q en el Tablero", esperado)
+		}
+	}
+}
+
+// US3 - Escenario: Acciones según el estado (FR-003).
+func TestEscenarioTablero_AccionesSegunElEstado(t *testing.T) {
+	// Dado historias en distintos estados
+	app := nuevaTableroApp(t)
+	enSprint := app.historia(t, "En Sprint", 3)
+	enProgreso := app.historia(t, "En progreso", 5)
+	hecha := app.historia(t, "Hecho", 8)
+	navegador := app.navegador(t)
+
+	// Cuando abro "Tablero"
+	pantalla := app.abrirTablero(t, navegador)
+
+	// Entonces las "En Sprint" ofrecen solo "Comenzar", las "En progreso" solo "Completar" y las
+	// "Hecho" solo "Reabrir"
+	obtenidas := map[string]string{}
+	formularios := accionDeTablero.FindAllStringSubmatch(pantalla, -1)
+	for _, f := range formularios {
+		obtenidas[f[1]] = f[2]
+	}
+	esperadas := map[string]string{
+		idTexto(enSprint): "comenzar", idTexto(enProgreso): "completar", idTexto(hecha): "reabrir",
+	}
+	if len(formularios) != 3 || !maps.Equal(obtenidas, esperadas) {
+		t.Errorf("acciones ofrecidas = %v (%d formularios), se esperaba %v", obtenidas, len(formularios), esperadas)
+	}
+}
+
+// US3 - Escenario: Sin Sprint activo (FR-013).
+func TestEscenarioTablero_SinSprintActivo(t *testing.T) {
+	// Dado un proyecto sin Sprint activo
+	app := nuevaTableroApp(t)
+	app.historia(t, "Hecho", 8)
+	navegador := app.navegador(t)
+	if _, err := app.db.Exec(`UPDATE sprints SET status = 'Finalizado' WHERE id = $1`, app.sprintID); err != nil {
+		t.Fatalf("no se pudo finalizar el Sprint: %v", err)
+	}
+
+	// Cuando abro "Tablero"
+	pantalla := app.abrirTablero(t, navegador)
+
+	// Entonces veo "No hay un Sprint activo" y ninguna acción
+	if !strings.Contains(pantalla, "No hay un Sprint activo") {
+		t.Errorf("debía verse \"No hay un Sprint activo\"")
+	}
+	if strings.Contains(pantalla, `name="accion"`) {
+		t.Errorf("sin Sprint activo no debe haber acciones")
+	}
+}
+
+// US3 - Escenario: Sprint sin historias (FR-013).
+func TestEscenarioTablero_SprintSinHistorias(t *testing.T) {
+	// Dado un Sprint activo sin historias asignadas
+	app := nuevaTableroApp(t)
+	navegador := app.navegador(t)
+
+	// Cuando abro "Tablero"
+	pantalla := app.abrirTablero(t, navegador)
+
+	// Entonces veo el Sprint y "El Sprint no tiene historias asignadas"
+	if !strings.Contains(pantalla, "Sprint 1") || !strings.Contains(pantalla, "El Sprint no tiene historias asignadas") {
+		t.Errorf("debía verse el Sprint con el mensaje de que no tiene historias")
+	}
+	if strings.Contains(pantalla, `name="accion"`) {
+		t.Errorf("un Sprint sin historias no ofrece acciones")
 	}
 }
