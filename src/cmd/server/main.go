@@ -14,6 +14,7 @@ import (
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -69,12 +70,21 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
 
+	// Inicialización y Registro de Backlog (HU-22)
 	backlogService := backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(database))
 	storyCatalog := web.NewPostgreSQLStoryCatalog(database)
 	if err := web.RegisterBacklog(srv, backlogService, storyCatalog); err != nil {
 		_ = ln.Close()
 		_ = database.Close()
 		return fail(err.Error())
+	}
+	// Inicialización y Registro de Proyectos (HU-21)
+	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
+	projectCatalog := web.NewPostgreSQLProjectCatalog(database)
+	if err := web.RegisterProjects(srv, projectService, projectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Proyectos")
 	}
 
 	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
