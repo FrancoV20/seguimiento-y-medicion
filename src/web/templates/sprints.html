@@ -1,0 +1,63 @@
+{{define "content"}}
+<section class="sprints-page" aria-labelledby="sprints-title">
+  <h1 id="sprints-title">Sprints</h1>
+
+  {{if .Data.Notice}}
+  <p class="sprint-notice">{{.Data.Notice}}</p>
+  {{end}}
+
+  {{if .Data.HasActive}}
+  <section class="active-sprint" aria-labelledby="active-sprint-title">
+    <h2 id="active-sprint-title">{{.Data.Active.Label}}</h2>
+    <p><strong>Sprint Goal:</strong> {{.Data.Active.Goal}}</p>
+    <p><strong>Inicio:</strong> {{.Data.Active.StartDate.Format "02/01/2006"}}</p>
+    <p><strong>Fin:</strong> {{.Data.Active.EndDate.Format "02/01/2006"}}</p>
+
+    {{if .Data.Active.Stories}}
+    <table>
+      <thead>
+        <tr><th>Historia</th><th>Story Points</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        {{range .Data.Active.Stories}}
+        <tr>
+          <td>{{.Title}}</td>
+          <td>{{if .StoryPoints}}{{.StoryPoints}}{{else}}—{{end}}</td>
+          <td>{{.Status}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <p>Este Sprint todavía no tiene historias asignadas.</p>
+    {{end}}
+  </section>
+  {{else}}
+  <form method="post" action="/sprints">
+    {{template "field" (.Form.Field "objetivo" "Sprint Goal" "text")}}
+    {{template "field" (.Form.Field "fecha_inicio" "Fecha de inicio" "date")}}
+    {{template "field" (.Form.Field "fecha_fin" "Fecha de fin" "date")}}
+
+    <fieldset class="picker-list">
+      <legend>Historias del Backlog</legend>
+      {{if .Data.BacklogEmpty}}
+      <p>El Backlog no tiene historias.</p>
+      {{else}}
+        {{range .Data.StoryOptions}}
+        <div class="picker-item">
+          <label>
+            <input type="checkbox" name="historia" value="{{.ID}}"{{if .Selected}} checked{{end}}{{if not .Available}} disabled{{end}}>
+            {{.Title}} ({{.Priority}})
+          </label>
+          {{if not .Available}}<span class="unavailable-reason">{{.UnavailableReason}}</span>{{end}}
+        </div>
+        {{end}}
+      {{end}}
+      {{with .Form.Errors.historia}}<p class="field-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+    </fieldset>
+
+    <button type="submit">Crear Sprint</button>
+  </form>
+  {{end}}
+</section>
+{{end}}

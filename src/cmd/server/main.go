@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -35,7 +36,7 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail(err.Error())
 	}
 
-	srv := web.NewServer(logger)	
+	srv := web.NewServer(logger)
 	// La protección contra envíos de otro origen va primero (HU-20b, T025).
 	srv.Use(web.CrossOriginGuard(srv.Renderer()))
 	ln, err := srv.Listen(cfg.Addr)
@@ -67,11 +68,52 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	}
 	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
-	
-	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
+
+	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
+	if err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+	sprintService := sprint.NewService(sprintStore)
+	sprintCatalog := web.NewPostgreSQLSprintCatalog(database)
+	sprintActions := sprintActionsAdapter{service: sprintService, store: sprintStore}
+	if err := web.RegisterSprints(srv, sprintCatalog, sprintActions); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+
+	if err := srv.Serve(ctx, ln, func() {
+		_ = sprintStore.Close()
+		_ = database.Close()
+	}); err != nil {
 		return fail(err.Error())
 	}
 	return 0
+}
+
+type sprintActionsAdapter struct {
+	service sprint.Service
+	store   sprint.SprintStore
+}
+
+func (a sprintActionsAdapter) CreateSprint(
+	ctx context.Context,
+	request sprint.SprintCreationRequest,
+	project sprint.Project,
+	stories []sprint.UserStory,
+) (sprint.SprintCreationResult, error) {
+	return a.service.CreateSprint(ctx, request, project, stories)
+}
+
+func (a sprintActionsAdapter) AssignStories(ctx context.Context, sprintID int64, storyIDs []int64) error {
+	return a.store.AssignStories(ctx, sprintID, storyIDs)
+}
+
+func (a sprintActionsAdapter) RemoveStory(ctx context.Context, sprintID, storyID int64) error {
+	return a.store.RemoveStory(ctx, sprintID, storyID)
 }
 
 // unwrapAll devuelve el error más interno, para registrar el detalle técnico.
