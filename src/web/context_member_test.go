@@ -85,7 +85,7 @@ func TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun(t *
 		t.Fatalf("se esperaba 303 a /libre, se obtuvo %d a %q", resp.StatusCode, resp.Header.Get("Location"))
 	}
 	ck := cookieDe(resp, CookieMember)
-	if ck == nil || ck.Value != id64(fx.ana) || !ck.HttpOnly || !ck.Expires.IsZero() || ck.MaxAge != 0 {
+	if ck == nil || ck.Value != SignedContextValue(CookieMember, fx.ana) || !ck.HttpOnly || !ck.Expires.IsZero() || ck.MaxAge != 0 {
 		t.Errorf("la cookie del integrante debía ser de sesión y HttpOnly: %+v", ck)
 	}
 	for _, ruta := range []string{"/libre", "/prueba/resultado"} {

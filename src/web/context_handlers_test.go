@@ -50,7 +50,7 @@ func registerDatos(s *Server) {
 }
 
 func idCookie(name string, id int64) *http.Cookie {
-	return &http.Cookie{Name: name, Value: strconv.FormatInt(id, 10), Path: "/"}
+	return &http.Cookie{Name: name, Value: SignedContextValue(name, id), Path: "/"} // firmada (HU-26)
 }
 
 func (a *ctxApp) setCookies(t *testing.T, c *http.Client, cookies ...*http.Cookie) {
@@ -385,7 +385,7 @@ func TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503(t *testing.T) {
 	if touches(resp, CookieProject) {
 		t.Errorf("una caída transitoria no debe borrar la selección")
 	}
-	if v := app.cookieValue(c, CookieProject); v != id64(app.fx.projectA) {
+	if v := app.cookieValue(c, CookieProject); v != SignedContextValue(CookieProject, app.fx.projectA) {
 		t.Errorf("la selección debía conservarse, quedó %q", v)
 	}
 	// Sin cookies de contexto no hace falta la base: la página se muestra normalmente.

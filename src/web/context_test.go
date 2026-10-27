@@ -39,7 +39,8 @@ func TestReadIDCookie_Valores(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			req := httptest.NewRequest(http.MethodGet, "/", nil)
-			req.AddCookie(&http.Cookie{Name: CookieProject, Value: tc.value})
+			// HU-26: el valor viaja firmado; parseID sigue rechazando los valores inválidos.
+			req.AddCookie(&http.Cookie{Name: CookieProject, Value: cookieSigner.Load().Sign(CookieProject, tc.value)})
 
 			id, present := readIDCookie(req, CookieProject)
 
@@ -64,8 +65,8 @@ func TestSetContextCookie_AtributosDeSesion(t *testing.T) {
 		t.Fatalf("se esperaba 1 cookie, hay %d", len(cookies))
 	}
 	c := cookies[0]
-	if c.Name != CookieMember || c.Value != "42" {
-		t.Errorf("cookie inesperada: %s=%s", c.Name, c.Value)
+	if v, ok := verifyContextValue(CookieMember, c.Value); c.Name != CookieMember || !ok || v != "42" {
+		t.Errorf("cookie inesperada (se esperaba 42 firmado): %s=%s", c.Name, c.Value)
 	}
 	if !c.HttpOnly || c.SameSite != http.SameSiteLaxMode || c.Path != "/" {
 		t.Errorf("faltan HttpOnly, SameSite=Lax o Path=/: %+v", c)

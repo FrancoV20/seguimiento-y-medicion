@@ -308,8 +308,8 @@ func TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActi
 		t.Fatal(err)
 	}
 	client.Jar.SetCookies(baseURL, []*http.Cookie{
-		{Name: CookieProject, Value: fmt.Sprint(app.fx.projectA), Path: "/"},
-		{Name: CookieMember, Value: fmt.Sprint(app.fx.alphaOne), Path: "/"},
+		idCookie(CookieProject, app.fx.projectA),
+		idCookie(CookieMember, app.fx.alphaOne),
 	})
 	name := uniqueProjectsTestName(t, app, "creación exitosa")
 	values := projectsTestValues(name, app.fx.alphaOne, "2026-10-23", "2026-10-24")
