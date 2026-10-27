@@ -10,9 +10,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"sync/atomic"
 	"testing"
 	"time"
+	"sync/atomic"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -206,9 +206,7 @@ func TestEscenarioContexto_SeleccionQueSeMantiene(t *testing.T) {
 
 // US3 - Escenario: Sin proyectos (FR-010).
 func TestEscenarioContexto_SinProyectos(t *testing.T) {
-	vacio := func(real web.ContextStore, _ *seleccionFixture) web.ContextStore {
-		return listaFija{ContextStore: real}
-	}
+	vacio := func(real web.ContextStore, _ *seleccionFixture) web.ContextStore { return listaFija{ContextStore: real} }
 
 	t.Run("sin la sección Proyectos", func(t *testing.T) {
 		// Dado que no existen proyectos
@@ -368,7 +366,6 @@ func TestEscenarioContexto_SesionNuevaPideElegirDeNuevo(t *testing.T) {
 		t.Errorf("en una sesión nueva debía pedirse elegir el proyecto")
 	}
 }
-
 // --- US4 y US5: identificación del integrante y secciones que requieren contexto (T043, T050) ---
 
 // seccionesApp es el servidor real con secciones de prueba: Libre (sin requisitos), Con proyecto

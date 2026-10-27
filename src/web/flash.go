@@ -1,10 +1,10 @@
 package web
 
 import (
-	"context"
 	"net/http"
 	"net/url"
 	"unicode/utf8"
+	"context"
 )
 
 // CookieFlash es la cookie del mensaje de una sola vista (HU-20b).
@@ -88,7 +88,6 @@ func flashFromRequest(r *http.Request) *Flash {
 	}
 	return &Flash{Kind: kind, Text: text}
 }
-
 type pendingFlashKey struct{}
 
 // withPendingFlash lleva una advertencia detectada en esta solicitud (por ejemplo, un

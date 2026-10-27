@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-01, HU-20a y HU-20b, y preparar los integrantes de prueba.
 
-- [ ] T001 Revisar HU-01: ruta del paquete, firmas de `ProjectService.CreateProject` y `ProjectStore`, tipos de error y mensajes exactos de validación, normalización del nombre, si limita el largo del nombre y texto del mensaje de éxito; confirmar que FIX-HU-01 está en `main` (el servicio rechaza fin igual o anterior al inicio y la migración nueva está aplicada) y tomar el texto de su mensaje de fechas; anotar el resultado en `specs/021-web-projects/data-model.md` y ajustar el mapeo de `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que FIX-HU-01, HU-20a y HU-20b (US1 y US2) están integradas: `Server.Register`, `Renderer.Page`, `Fail`, `RenderError`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Crear `db/seeds/members.sql` con los cinco integrantes del equipo, sin duplicar al ejecutarlo más de una vez
-- [ ] T004 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/021-web-projects/quickstart.md` `DATABASE_URL` (con la nota del puerto 5432 o 5433) y la carga de la semilla
+- [x] T001 Revisar HU-01: ruta del paquete, firmas de `ProjectService.CreateProject` y `ProjectStore`, tipos de error y mensajes exactos de validación, normalización del nombre, si limita el largo del nombre y texto del mensaje de éxito; confirmar que FIX-HU-01 está en `main` (el servicio rechaza fin igual o anterior al inicio y la migración nueva está aplicada) y tomar el texto de su mensaje de fechas; anotar el resultado en `specs/021-web-projects/data-model.md` y ajustar el mapeo de `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que FIX-HU-01, HU-20a y HU-20b (US1 y US2) están integradas: `Server.Register`, `Renderer.Page`, `Fail`, `RenderError`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T003 [P] Crear `db/seeds/members.sql` con los cinco integrantes del equipo, sin duplicar al ejecutarlo más de una vez
+- [x] T004 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/021-web-projects/quickstart.md` `DATABASE_URL` (con la nota del puerto 5432 o 5433) y la carga de la semilla
 
 ---
 
@@ -29,10 +29,10 @@
 
 **Purpose**: Tipos, catálogo de solo lectura y formulario compartidos por las historias.
 
-- [ ] T005 [P] Definir `ProjectRow`, `MemberOption` y la interfaz `ProjectCatalog` con `ListProjects` y `ListMembers` en `src/web/projects_catalog.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLProjectCatalog` con fixtures propias de dos proyectos con distinta cantidad de integrantes: cantidad correcta, orden descendente por `id`, proyecto sin integrantes en cero, catálogo ordenado por nombre y lista vacía sin error, en `src/web/postgres_project_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLProjectCatalog` con `database/sql` y pgx en `src/web/postgres_project_catalog.go`
-- [ ] T008 [P] Definir los nombres de los campos del formulario (`nombre`, `fecha_inicio`, `fecha_fin`, `integrantes`) y los textos `MsgNoMembersAvailable` ("No hay integrantes disponibles"), `MsgMissingStartDate` ("Falta la fecha de inicio"), `MsgMissingEndDate` ("Falta la fecha de fin"), `MsgInvalidDateFormat` ("La fecha no tiene un formato válido"), `MsgInvalidMember` ("El integrante seleccionado no es válido") y `MsgProjectCreated` ("Proyecto creado correctamente") en `src/web/projects_form.go`
+- [x] T005 [P] Definir `ProjectRow`, `MemberOption` y la interfaz `ProjectCatalog` con `ListProjects` y `ListMembers` en `src/web/projects_catalog.go`
+- [x] T006 [P] Escribir la prueba de integración de `PostgreSQLProjectCatalog` con fixtures propias de dos proyectos con distinta cantidad de integrantes: cantidad correcta, orden descendente por `id`, proyecto sin integrantes en cero, catálogo ordenado por nombre y lista vacía sin error, en `src/web/postgres_project_catalog_integration_test.go`
+- [x] T007 Implementar `PostgreSQLProjectCatalog` con `database/sql` y pgx en `src/web/postgres_project_catalog.go`
+- [x] T008 [P] Definir los nombres de los campos del formulario (`nombre`, `fecha_inicio`, `fecha_fin`, `integrantes`) y los textos `MsgNoMembersAvailable` ("No hay integrantes disponibles"), `MsgMissingStartDate` ("Falta la fecha de inicio"), `MsgMissingEndDate` ("Falta la fecha de fin"), `MsgInvalidDateFormat` ("La fecha no tiene un formato válido"), `MsgInvalidMember` ("El integrante seleccionado no es válido") y `MsgProjectCreated` ("Proyecto creado exitosamente", texto real de HU-01) en `src/web/projects_form.go`
 
 **Checkpoint**: El catálogo PostgreSQL, los tipos y los textos están listos para las historias.
 
@@ -46,19 +46,19 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [P] [US1] Escribir pruebas unitarias del parseo del formulario (fechas válidas, formato inválido, campo ausente, identificadores repetidos, valores conservados) en `src/web/projects_form_test.go`
-- [ ] T010 [P] [US1] Escribir la prueba de handler de alta exitosa: respuesta 303 a `/proyectos`, mensaje de éxito una sola vez, proyecto en la lista con sus datos y sin cambiar el proyecto activo, en `src/web/projects_handlers_test.go`
-- [ ] T011 [P] [US1] Escribir la prueba de handler con la misma fecha de inicio y de fin: se rechaza con el mensaje de fechas de HU-01 (FIX-HU-01) junto a `fecha_fin`, datos conservados y ningún proyecto creado; y con la fecha de fin un día posterior: se crea, en `src/web/projects_handlers_test.go`
-- [ ] T012 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo proyecto ni se repite el mensaje, en `src/web/projects_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler sin integrantes cargados: "No hay integrantes disponibles", y un envío directo no crea el proyecto, en `src/web/projects_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir los escenarios BDD de alta exitosa, fecha de fin igual a la de inicio (rechazo) y sin integrantes disponibles en `test/web_projects_bdd_test.go`
+- [x] T009 [P] [US1] Escribir pruebas unitarias del parseo del formulario (fechas válidas, formato inválido, campo ausente, identificadores repetidos, valores conservados) en `src/web/projects_form_test.go`
+- [x] T010 [P] [US1] Escribir la prueba de handler de alta exitosa: respuesta 303 a `/proyectos`, mensaje de éxito una sola vez, proyecto en la lista con sus datos y sin cambiar el proyecto activo, en `src/web/projects_handlers_test.go`
+- [x] T011 [P] [US1] Escribir la prueba de handler con la misma fecha de inicio y de fin: se rechaza con el mensaje de fechas de HU-01 (FIX-HU-01) junto a `fecha_fin`, datos conservados y ningún proyecto creado; y con la fecha de fin un día posterior: se crea, en `src/web/projects_handlers_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler de recarga después de crear: no se crea un segundo proyecto ni se repite el mensaje, en `src/web/projects_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler sin integrantes cargados: "No hay integrantes disponibles", y un envío directo no crea el proyecto, en `src/web/projects_handlers_test.go`
+- [x] T014 [P] [US1] Escribir los escenarios BDD de alta exitosa, fecha de fin igual a la de inicio (rechazo) y sin integrantes disponibles en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar el parseo del formulario (fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
-- [ ] T016 [US1] Implementar los handlers `GET /proyectos` y `POST /proyectos` en `src/web/projects_handlers.go`: cargan el catálogo, invocan `ProjectService.CreateProject` y, si tiene éxito, usan `SetFlash` y la redirección 303
-- [ ] T017 [US1] Crear `projects.html` con el formulario (nombre, integrantes marcables, fechas) usando los parciales `alert.html` y `field.html`, y el aviso "No hay integrantes disponibles", en `src/web/templates/projects.html`
-- [ ] T018 [US1] Construir el `ProjectService` de HU-01 y el `PostgreSQLProjectCatalog` y registrar la sección "Proyectos" (`/proyectos`, sin requisitos de contexto) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T015 [US1] Implementar el parseo del formulario (recorte del nombre, fechas `AAAA-MM-DD`, identificadores sin repetidos, valores conservados) en `src/web/projects_form.go`
+- [x] T016 [US1] Implementar los handlers `GET /proyectos` y `POST /proyectos` en `src/web/projects_handlers.go`: cargan el catálogo, invocan `ProjectService.CreateProject` y, si tiene éxito, usan `SetFlash` y la redirección 303
+- [x] T017 [US1] Crear `projects.html` con el formulario (nombre, integrantes marcables, fechas) usando los parciales `alert.html` y `field.html`, y el aviso "No hay integrantes disponibles", en `src/web/templates/projects.html`
+- [x] T018 [US1] Construir el `ProjectService` de HU-01 y el `PostgreSQLProjectCatalog` y registrar la sección "Proyectos" (`/proyectos`, sin requisitos de contexto) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 crea proyectos desde la web con las reglas de HU-01; HU-22 a HU-25 ya tienen proyectos con los que trabajar.
 
@@ -72,19 +72,19 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Escribir la prueba de handler, una por escenario (nombre vacío o solo espacios, fecha de fin anterior a la de inicio, sin integrantes marcados): mensajes de HU-01 junto a cada campo, datos conservados y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T020 [P] [US2] Escribir la prueba de handler con la fecha de inicio o de fin faltante: "Falta la fecha de inicio" o "Falta la fecha de fin" junto al campo, en `src/web/projects_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler con una fecha de formato inválido: mensaje junto al campo y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler con un integrante no numérico o inexistente: mensaje junto al campo de integrantes y ningún proyecto creado, en `src/web/projects_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con un `ProjectStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y el proyecto no aparece en la lista, en `src/web/projects_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir los escenarios BDD de nombre vacío, fecha de fin anterior, fecha faltante, sin integrantes marcados, fecha con formato inválido, integrante inválido y falla de guardado en `test/web_projects_bdd_test.go`
+- [x] T019 [P] [US2] Escribir la prueba de handler, una por escenario (nombre vacío o solo espacios, fecha de fin anterior a la de inicio, sin integrantes marcados): mensajes de HU-01 junto a cada campo, datos conservados y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T020 [P] [US2] Escribir la prueba de handler con la fecha de inicio o de fin faltante: "Falta la fecha de inicio" o "Falta la fecha de fin" junto al campo, en `src/web/projects_handlers_test.go`
+- [x] T021 [P] [US2] Escribir la prueba de handler con una fecha de formato inválido: mensaje junto al campo y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler con un integrante no numérico o inexistente: mensaje junto al campo de integrantes y ningún proyecto creado, en `src/web/projects_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con un `ProjectStore` que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y el proyecto no aparece en la lista, en `src/web/projects_handlers_test.go`
+- [x] T024 [P] [US2] Escribir los escenarios BDD de nombre vacío, fecha de fin anterior, fecha faltante, sin integrantes marcados, fecha con formato inválido, integrante inválido y falla de guardado en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Implementar el mapeo de los errores de HU-01 a los campos del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/projects_form.go`
-- [ ] T026 [US2] Implementar en `src/web/projects_handlers.go` la respuesta 422 para errores de validación y 500 para fallas de guardado, conservando los valores en `FormView`
-- [ ] T027 [US2] [Extra] Rechazar un nombre de más de 255 caracteres con un mensaje junto al campo, si HU-01 no lo valida (según T001), en `src/web/projects_form.go` y su prueba en `src/web/projects_form_test.go`
-- [ ] T028 [US2] Verificar en `src/web/projects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T025 [US2] Implementar el mapeo de los errores de HU-01 a los campos del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/projects_form.go`
+- [x] T026 [US2] Implementar en `src/web/projects_handlers.go` la respuesta 422 para errores de validación y 500 para fallas de guardado, conservando los valores en `FormView`
+- [x] T027 [US2] [Extra] Rechazar un nombre de más de 255 caracteres con un mensaje junto al campo, si HU-01 no lo valida (según T001), en `src/web/projects_form.go` y su prueba en `src/web/projects_form_test.go`
+- [x] T028 [US2] Verificar en `src/web/projects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 informa cada error junto a su campo, conserva los datos y no deja proyectos inválidos ni falsos éxitos.
 
@@ -98,15 +98,15 @@
 
 ### Tests for User Story 3
 
-- [ ] T029 [P] [US3] Escribir la prueba de handler de la lista: nombre, fechas, cantidad de integrantes y más recientes primero, con verificación de tiempo de respuesta, en `src/web/projects_handlers_test.go`
-- [ ] T030 [P] [US3] Escribir la prueba de handler sin proyectos: "Aún no hay proyectos" y el formulario, en `src/web/projects_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/projects_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir los escenarios BDD de lista y lista vacía en `test/web_projects_bdd_test.go`
+- [x] T029 [P] [US3] Escribir la prueba de handler de la lista: nombre, fechas, cantidad de integrantes y más recientes primero, con verificación de tiempo de respuesta, en `src/web/projects_handlers_test.go`
+- [x] T030 [P] [US3] Escribir la prueba de handler sin proyectos: "Aún no hay proyectos" y el formulario, en `src/web/projects_handlers_test.go`
+- [x] T031 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/projects_handlers_test.go`
+- [x] T032 [P] [US3] Escribir los escenarios BDD de lista y lista vacía en `test/web_projects_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T033 [US3] Agregar a `projects.html` la tabla de proyectos (nombre, fechas `dd/mm/aaaa`, cantidad de integrantes) y el estado vacío "Aún no hay proyectos", en `src/web/templates/projects.html`
-- [ ] T034 [US3] Usar `Fail` en `src/web/projects_handlers.go` cuando falla la lectura de proyectos o integrantes
+- [x] T033 [US3] Agregar a `projects.html` la tabla de proyectos (nombre, fechas `dd/mm/aaaa`, cantidad de integrantes) y el estado vacío "Aún no hay proyectos", en `src/web/templates/projects.html`
+- [x] T034 [US3] Usar `Fail` en `src/web/projects_handlers.go` cuando falla la lectura de proyectos o integrantes
 
 **Checkpoint**: US3 muestra el resultado del alta y orienta al equipo, sin errores internos ante una falla de lectura.
 
@@ -116,18 +116,18 @@
 
 **Purpose**: Validación final, evidencias, usabilidad, coordinación y trazabilidad.
 
-- [ ] T035 [P] Documentar en `specs/021-web-projects/quickstart.md` la semilla, la nota de puerto y el protocolo de la prueba de usabilidad
-- [ ] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
-- [ ] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
-- [ ] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
-- [ ] T042 Coordinar con el responsable de HU-20b que la sección "Proyectos" (`/proyectos`) queda registrada para que su aviso "acceso a crear el primero" apunte a esta pantalla, y con quien tome HU-11 que esta lista es el punto de partida de la edición
-- [ ] T043 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/021-web-projects/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T044 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
-- [ ] T045 [P] Actualizar el manual breve de usuario con la pantalla "Gestión de Proyectos" (ver `quickstart.md`)
-- [ ] T046 Verificar a mano con la aplicación en ejecución los 12 escenarios del Issue y la lista de `quickstart.md`
+- [x] T035 [P] Documentar en `specs/021-web-projects/quickstart.md` la semilla, la nota de puerto y el protocolo de la prueba de usabilidad
+- [x] T036 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/projects_handlers.go` y `src/web/projects_form.go`
+- [x] T037 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T038 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T039 Guardar en `specs/021-web-projects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T040 Guardar en `specs/021-web-projects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/021-web-projects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
+- [x] T041 Hacer la prueba de usabilidad de SC-003 y SC-004 en la Sprint Review y registrar los resultados en `specs/021-web-projects/evidencia-usabilidad.txt`
+- [x] T042 Coordinar con el responsable de HU-20b que la sección "Proyectos" (`/proyectos`) queda registrada para que su aviso "acceso a crear el primero" apunte a esta pantalla, y con quien tome HU-11 que esta lista es el punto de partida de la edición
+- [x] T043 Revisar trazabilidad de FR-001 a FR-017 y SC-001 a SC-007 en `specs/021-web-projects/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [X] T044 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
+- [x] T045 [P] Actualizar el manual breve de usuario con la pantalla "Gestión de Proyectos" (ver `quickstart.md`)
+- [x] T046 Verificar a mano con la aplicación en ejecución los 12 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T047 Abrir el Pull Request desde `HU-21`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
