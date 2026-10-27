@@ -1,0 +1,378 @@
+﻿Evidencia RED de HU-14: salida de las pruebas en el commit donde se escribieron, antes de implementar.
+
+## T005 - regla de transiciones y acciones (commit 0d68bea)
+=== RUN   TestCanTransition_LasTresPermitidas
+=== RUN   TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso
+    story_status_test.go:17: CanTransition("En Sprint", "En progreso") = false, se esperaba true
+=== RUN   TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho
+    story_status_test.go:17: CanTransition("En progreso", "Hecho") = false, se esperaba true
+=== RUN   TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso
+    story_status_test.go:17: CanTransition("Hecho", "En progreso") = false, se esperaba true
+--- FAIL: TestCanTransition_LasTresPermitidas (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho (0.00s)
+    --- FAIL: TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso (0.00s)
+=== RUN   TestCanTransition_RechazaCualquierOtroPar
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho
+--- PASS: TestCanTransition_RechazaCualquierOtroPar (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho (0.00s)
+=== RUN   TestNextAction_UnaAccionPorEstado
+=== RUN   TestNextAction_UnaAccionPorEstado/En_Sprint
+    story_status_test.go:62: NextAction("En Sprint") = ("", false), se esperaba ("comenzar", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/En_progreso
+    story_status_test.go:62: NextAction("En progreso") = ("", false), se esperaba ("completar", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/Hecho
+    story_status_test.go:62: NextAction("Hecho") = ("", false), se esperaba ("reabrir", true)
+=== RUN   TestNextAction_UnaAccionPorEstado/Pendiente
+--- FAIL: TestNextAction_UnaAccionPorEstado (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/En_Sprint (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/En_progreso (0.00s)
+    --- FAIL: TestNextAction_UnaAccionPorEstado/Hecho (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/Pendiente (0.00s)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar
+    story_status_test.go:82: ActionTransition("comenzar") = ("", "", false), se esperaba ("En Sprint", "En progreso", true)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/completar
+    story_status_test.go:82: ActionTransition("completar") = ("", "", false), se esperaba ("En progreso", "Hecho", true)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir
+    story_status_test.go:82: ActionTransition("reabrir") = ("", "", false), se esperaba ("Hecho", "En progreso", true)
+--- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/completar (0.00s)
+    --- FAIL: TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir (0.00s)
+=== RUN   TestActionTransition_AccionDesconocida
+=== RUN   TestActionTransition_AccionDesconocida/accion_
+=== RUN   TestActionTransition_AccionDesconocida/accion_borrar
+--- PASS: TestActionTransition_AccionDesconocida (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_ (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_borrar (0.00s)
+=== RUN   TestAcciones_SonCoherentesConLaRegla
+=== RUN   TestAcciones_SonCoherentesConLaRegla/comenzar
+    story_status_test.go:108: ActionTransition("comenzar") no reconoce la acción
+=== RUN   TestAcciones_SonCoherentesConLaRegla/completar
+    story_status_test.go:108: ActionTransition("completar") no reconoce la acción
+=== RUN   TestAcciones_SonCoherentesConLaRegla/reabrir
+    story_status_test.go:108: ActionTransition("reabrir") no reconoce la acción
+--- FAIL: TestAcciones_SonCoherentesConLaRegla (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/comenzar (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/completar (0.00s)
+    --- FAIL: TestAcciones_SonCoherentesConLaRegla/reabrir (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.228s
+FAIL
+
+## T006 - servicio ChangeStatus (PostgreSQL real) (commit e5c028f)
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/comenzar
+    story_status_service_test.go:29: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/completar
+    story_status_service_test.go:29: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/reabrir
+    story_status_service_test.go:29: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_CadaTransicionActualizaElEstado (0.00s)
+    --- SKIP: TestChangeStatus_CadaTransicionActualizaElEstado/comenzar (0.00s)
+    --- SKIP: TestChangeStatus_CadaTransicionActualizaElEstado/completar (0.00s)
+    --- SKIP: TestChangeStatus_CadaTransicionActualizaElEstado/reabrir (0.00s)
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas
+    story_status_service_test.go:60: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas
+    story_status_service_test.go:60: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas
+    story_status_service_test.go:60: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas
+    story_status_service_test.go:60: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras (0.00s)
+    --- SKIP: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas (0.00s)
+    --- SKIP: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas (0.00s)
+    --- SKIP: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas (0.00s)
+    --- SKIP: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas (0.00s)
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente
+    story_status_service_test.go:81: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto
+    story_status_service_test.go:89: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_HistoriaInexistenteODeOtroProyecto (0.00s)
+    --- SKIP: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente (0.00s)
+    --- SKIP: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto (0.00s)
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint
+    story_status_service_test.go:103: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado
+    story_status_service_test.go:113: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_FueraDeUnSprintActivo (0.00s)
+    --- SKIP: TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint (0.00s)
+    --- SKIP: TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado (0.00s)
+=== RUN   TestChangeStatus_YaEstaEnElEstadoPedido
+    story_status_service_test.go:125: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- SKIP: TestChangeStatus_YaEstaEnElEstadoPedido (0.00s)
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real
+    story_status_service_test.go:141: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica
+    story_status_service_test.go:150: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_EstadoEsperadoDistintoDelReal (0.00s)
+    --- SKIP: TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real (0.00s)
+    --- SKIP: TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica (0.00s)
+=== RUN   TestChangeStatus_TransicionNoPermitida
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho
+    story_status_service_test.go:174: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint
+    story_status_service_test.go:174: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_TransicionNoPermitida (0.00s)
+    --- SKIP: TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho (0.00s)
+    --- SKIP: TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint (0.00s)
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho
+    story_status_service_test.go:202: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint
+    story_status_service_test.go:202: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_AccionQueNoCorrespondeAlEstado (0.00s)
+    --- SKIP: TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho (0.00s)
+    --- SKIP: TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint (0.00s)
+=== RUN   TestChangeStatus_OrdenDeValidacion
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint
+    story_status_service_test.go:233: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado
+    story_status_service_test.go:233: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado
+    story_status_service_test.go:233: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transición
+    story_status_service_test.go:233: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestChangeStatus_OrdenDeValidacion/la_transición_antes_que_el_origen_de_la_acción
+    story_status_service_test.go:233: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestChangeStatus_OrdenDeValidacion (0.00s)
+    --- SKIP: TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint (0.00s)
+    --- SKIP: TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado (0.00s)
+    --- SKIP: TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado (0.00s)
+    --- SKIP: TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transición (0.00s)
+    --- SKIP: TestChangeStatus_OrdenDeValidacion/la_transición_antes_que_el_origen_de_la_acción (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.389s
+
+## T007 - PostgreSQLStoryStatusStore (PostgreSQL real) (commit c13e44c)
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas
+    postgres_story_status_store_integration_test.go:26: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas
+    postgres_story_status_store_integration_test.go:26: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado
+    postgres_story_status_store_integration_test.go:26: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint
+    postgres_story_status_store_integration_test.go:26: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint (0.00s)
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto
+    postgres_story_status_store_integration_test.go:59: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente
+    postgres_story_status_store_integration_test.go:69: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente (0.00s)
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado
+    postgres_story_status_store_integration_test.go:97: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado
+    postgres_story_status_store_integration_test.go:97: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_está_finalizado
+    postgres_story_status_store_integration_test.go:97: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint
+    postgres_story_status_store_integration_test.go:97: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_está_finalizado (0.00s)
+    --- SKIP: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint (0.00s)
+=== RUN   TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica
+    postgres_story_status_store_integration_test.go:121: DATABASE_URL no está definida; se omite la prueba PostgreSQL
+--- SKIP: TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.051s
+
+## T008 - puntos planificados y completados (commit 187b9e8)
+=== RUN   TestBoardPoints_PlanificadosYCompletados
+=== RUN   TestBoardPoints_PlanificadosYCompletados/sin_historias
+=== RUN   TestBoardPoints_PlanificadosYCompletados/planificados_suman_todas_y_completados_solo_las_Hecho
+    board_catalog_test.go:45: BoardPoints() = (0, 0), se esperaba (16, 8)
+=== RUN   TestBoardPoints_PlanificadosYCompletados/una_historia_sin_Story_Points_cuenta_0
+    board_catalog_test.go:45: BoardPoints() = (0, 0), se esperaba (5, 5)
+=== RUN   TestBoardPoints_PlanificadosYCompletados/En_Sprint_y_En_progreso_no_suman_a_completados
+    board_catalog_test.go:45: BoardPoints() = (0, 0), se esperaba (8, 0)
+=== RUN   TestBoardPoints_PlanificadosYCompletados/todas_Hecho:_completados_igual_a_planificados
+    board_catalog_test.go:45: BoardPoints() = (0, 0), se esperaba (15, 15)
+--- FAIL: TestBoardPoints_PlanificadosYCompletados (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/sin_historias (0.00s)
+    --- FAIL: TestBoardPoints_PlanificadosYCompletados/planificados_suman_todas_y_completados_solo_las_Hecho (0.00s)
+    --- FAIL: TestBoardPoints_PlanificadosYCompletados/una_historia_sin_Story_Points_cuenta_0 (0.00s)
+    --- FAIL: TestBoardPoints_PlanificadosYCompletados/En_Sprint_y_En_progreso_no_suman_a_completados (0.00s)
+    --- FAIL: TestBoardPoints_PlanificadosYCompletados/todas_Hecho:_completados_igual_a_planificados (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	2.282s
+FAIL
+
+## T009 - PostgreSQLBoardCatalog (PostgreSQL real) (commit e18e53c)
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado
+    postgres_board_catalog_integration_test.go:142: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado (0.00s)
+=== RUN   TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError
+    postgres_board_catalog_integration_test.go:266: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError (0.00s)
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoSinHistorias
+    postgres_board_catalog_integration_test.go:295: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestPostgreSQLBoardCatalog_SprintActivoSinHistorias (0.00s)
+=== RUN   TestPostgreSQLBoardCatalog_FallaDeLecturaEsUnError
+    postgres_board_catalog_integration_test.go:321: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestPostgreSQLBoardCatalog_FallaDeLecturaEsUnError (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	2.610s
+
+## T014-T017 - cambiar el estado desde el Tablero (commit 10b1b9e)
+=== RUN   TestTablero_ComenzarPasaLaHistoriaAEnProgreso
+    board_handlers_test.go:114: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ComenzarPasaLaHistoriaAEnProgreso (0.00s)
+=== RUN   TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos
+    board_handlers_test.go:141: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos (0.00s)
+=== RUN   TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje
+    board_handlers_test.go:171: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje (0.00s)
+=== RUN   TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos
+    board_handlers_test.go:193: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	2.231s
+
+## T023-T027 y T031 - rechazos y errores (commit acfa2dd)
+=== RUN   TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza
+    board_handlers_rejections_test.go:57: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza (0.00s)
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste
+    board_handlers_rejections_test.go:85: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste (0.00s)
+=== RUN   TestTablero_ElProyectoDelFormularioSeIgnora
+    board_handlers_rejections_test.go:113: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ElProyectoDelFormularioSeIgnora (0.00s)
+=== RUN   TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos
+    board_handlers_rejections_test.go:135: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos (0.00s)
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida
+    board_handlers_rejections_test.go:171: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_TransicionNoPermitidaYAccionDesconocida (0.00s)
+=== RUN   TestTablero_EstadoDesactualizadoNoCambiaNada
+    board_handlers_rejections_test.go:196: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_EstadoDesactualizadoNoCambiaNada (0.00s)
+=== RUN   TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto
+    board_handlers_rejections_test.go:215: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto (0.00s)
+=== RUN   TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado
+    board_handlers_rejections_test.go:242: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado (0.00s)
+=== RUN   TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos
+    board_handlers_rejections_test.go:257: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos (0.00s)
+=== RUN   TestTablero_ComenzarPasaLaHistoriaAEnProgreso
+    board_handlers_test.go:114: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ComenzarPasaLaHistoriaAEnProgreso (0.00s)
+=== RUN   TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos
+    board_handlers_test.go:141: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos (0.00s)
+=== RUN   TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje
+    board_handlers_test.go:171: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje (0.00s)
+=== RUN   TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos
+    board_handlers_test.go:193: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	2.134s
+
+## T032-T036 - vista del Tablero y estados vacios (commit 035adfd)
+=== RUN   TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza
+    board_handlers_rejections_test.go:57: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza (0.00s)
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste
+    board_handlers_rejections_test.go:85: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste (0.00s)
+=== RUN   TestTablero_ElProyectoDelFormularioSeIgnora
+    board_handlers_rejections_test.go:113: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ElProyectoDelFormularioSeIgnora (0.00s)
+=== RUN   TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos
+    board_handlers_rejections_test.go:135: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos (0.00s)
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida
+    board_handlers_rejections_test.go:171: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_TransicionNoPermitidaYAccionDesconocida (0.00s)
+=== RUN   TestTablero_EstadoDesactualizadoNoCambiaNada
+    board_handlers_rejections_test.go:196: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_EstadoDesactualizadoNoCambiaNada (0.00s)
+=== RUN   TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto
+    board_handlers_rejections_test.go:215: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto (0.00s)
+=== RUN   TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado
+    board_handlers_rejections_test.go:242: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado (0.00s)
+=== RUN   TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos
+    board_handlers_rejections_test.go:257: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos (0.00s)
+=== RUN   TestTablero_ComenzarPasaLaHistoriaAEnProgreso
+    board_handlers_test.go:114: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ComenzarPasaLaHistoriaAEnProgreso (0.00s)
+=== RUN   TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos
+    board_handlers_test.go:141: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos (0.00s)
+=== RUN   TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje
+    board_handlers_test.go:171: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje (0.00s)
+=== RUN   TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos
+    board_handlers_test.go:193: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos (0.00s)
+=== RUN   TestTablero_MuestraElSprintActivoConSusHistoriasPorEstado
+    board_view_test.go:38: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_MuestraElSprintActivoConSusHistoriasPorEstado (0.00s)
+=== RUN   TestTablero_TituloConHTMLSeVeComoTexto
+    board_view_test.go:82: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_TituloConHTMLSeVeComoTexto (0.00s)
+=== RUN   TestTablero_RespondeEnMenosDe500ms
+    board_view_test.go:96: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_RespondeEnMenosDe500ms (0.00s)
+=== RUN   TestTablero_CadaHistoriaOfreceSoloLaAccionDeSuEstado
+    board_view_test.go:118: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_CadaHistoriaOfreceSoloLaAccionDeSuEstado (0.00s)
+=== RUN   TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion
+    board_view_test.go:149: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion (0.00s)
+=== RUN   TestTablero_SprintSinHistoriasMuestraElMensaje
+    board_view_test.go:182: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_SprintSinHistoriasMuestraElMensaje (0.00s)
+=== RUN   TestTablero_FallaDeLecturaMuestraLaPaginaDeError
+    board_view_test.go:204: DATABASE_URL no definida: se omite la prueba de integración
+--- SKIP: TestTablero_FallaDeLecturaMuestraLaPaginaDeError (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	4.180s

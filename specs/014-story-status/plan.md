@@ -17,15 +17,14 @@ lectura propio (`PostgreSQLBoardCatalog`), una sección con `RequiresProject: tr
 arman el envío, llaman al servicio y traducen sus errores. No agrega migraciones y no modifica HU-20a
 ni HU-20b.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta del paquete `src/sprint`, los nombres de las constantes de estado (cuatro) y si FIX-HU-04
->    dejó errores o constantes reutilizables.
-> 2. Que HU-07 considera completada una historia con `status = 'Hecho'` y cuenta sus `story_points`.
-> 3. La columna de historia en `effort_logs` (se supone `story_id`) y que `user_stories` no exija
->    otras columnas (por ejemplo `updated_at`) al cambiar el estado.
-> 4. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` para `POST`,
->    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parciales `alert.html`, redirección 303 y
->    protección contra envíos de otro origen.
+> **Verificado en T001 y T002 (24/10/2026)**:
+> 1. Paquete `src/sprint`; constantes `Pendiente`, `EnSprint`, `InProgress` y `Done` (tipo `StoryStatus`).
+>    FIX-HU-04 dejó `ErrActiveSprintExists` y `ErrActiveSprintConflict`, que no se reutilizan.
+> 2. HU-07 (`src/metrics`) cuenta como completada la historia con estado `'Hecho'`.
+> 3. `effort_logs.story_id`; `user_stories` no exige otras columnas al cambiar `status`.
+> 4. HU-20a y HU-20b en `main`: `Server.Register`, `RequireContext`, `ActiveContextFrom`, `SetFlash`,
+>    `MsgOperationFailed`, `RedirectSeeOther`, `CrossOriginGuard`, `Renderer.PageStatus`, `RenderError` y
+>    `Fail`. El mensaje lo muestra `layout.html` desde `PageData.Flash`.
 
 ## Technical Context
 
@@ -114,7 +113,7 @@ paquete `src/web` (pantalla), uno por responsabilidad. Se edita `src/cmd/server/
 el servicio y el catálogo y registrar la sección. La ubicación exacta del paquete de Sprint se confirma
 en T001.
 
-### Direcciones y campos (propuestos)
+### Direcciones y campos
 
 | Método | Dirección | Efecto |
 | --- | --- | --- |
@@ -141,7 +140,8 @@ misma función del dominio (`NextAction`).
 1. Si no hay proyecto activo válido, HU-20b redirige con 303 a la selección de proyecto.
 2. Validar `accion` (una de las tres) y `historia_id` numérico; si no, 422.
 3. Llamar al servicio con el proyecto de `ActiveContext`: historia del proyecto, Sprint activo, estado
-   ya aplicado, estado esperado, transición permitida, cambio atómico, advertencia de horas.
+   ya aplicado, estado esperado, transición permitida, origen de la acción, cambio atómico,
+   advertencia de horas.
 4. Éxito: `SetFlash` de éxito (o de éxito con advertencia en un solo mensaje) y redirección 303.
 5. Estado ya aplicado: `SetFlash` de advertencia y 303.
 6. Error del dominio: tablero con el mensaje y 409 (o 422 si la historia no existe).
@@ -161,7 +161,7 @@ misma función del dominio (`NextAction`).
 ### Contratos que consume
 
 - De HU-20a: `Server.Register(section, routes)`, `Renderer.Page`, `Fail` y `RenderError`.
-- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303, el parcial `alert.html`, la
+- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303, la plantilla `alert` de `layout.html`, la
   protección contra envíos de otro origen, `ActiveContextFrom` y `RequireContext`.
 - De HU-04 y FIX-HU-04: el esquema (`sprints`, `sprint_story_assignments`, estados) y la regla de un solo
   Sprint activo; no se llama a su servicio.

@@ -1,0 +1,43 @@
+{{define "content"}}
+<h1>Tablero</h1>
+{{with .Data}}
+{{if .Found}}
+<section class="board-summary">
+  <h2>{{.View.Label}}</h2>
+  <p class="board-goal">{{.View.Goal}}</p>
+  {{if .HasStories}}<p class="board-points">Story Points completados: <strong>{{.View.CompletedPoints}} de {{.View.PlannedPoints}}</strong></p>{{end}}
+</section>
+{{if .HasStories}}
+<div class="board-columns">
+  {{range .View.Groups}}
+  <section class="board-column">
+    <h2>{{.Status}} <span class="board-count">({{len .Stories}})</span></h2>
+    {{if .Stories}}
+    <ul class="board-list">
+      {{range .Stories}}
+      <li class="board-card">
+        <p class="board-title">{{.Title}}</p>
+        <p class="board-meta">{{if .StoryPoints}}{{.StoryPoints}} Story Points{{else}}Sin estimar{{end}}</p>
+        {{if .Action}}
+        <form class="board-action" method="post" action="/tablero/estado">
+          <input type="hidden" name="historia_id" value="{{.ID}}">
+          <input type="hidden" name="accion" value="{{.Action}}">
+          <input type="hidden" name="estado_actual" value="{{.Status}}">
+          <button type="submit">{{.ActionLabel}}</button>
+        </form>
+        {{end}}
+      </li>
+      {{end}}
+    </ul>
+    {{end}}
+  </section>
+  {{end}}
+</div>
+{{else}}
+<p class="muted">{{.NoStories}}</p>
+{{end}}
+{{else}}
+<p class="muted">{{.NoActiveSprint}}</p>
+{{end}}
+{{end}}
+{{end}}

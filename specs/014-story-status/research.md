@@ -34,6 +34,7 @@
   visible.
 - **Alternatives considered**: Bloquear (descartada: obliga a cargar horas antes de poder avanzar, y
   HU-24 todavía no existe).
+- **Estado**: decisión del equipo, confirmada.
 
 ## Decision 5: Cambio atómico con estado esperado
 
@@ -45,9 +46,13 @@
 ## Decision 6: Orden de validación
 
 - **Decision**: (1) la historia existe en el proyecto, (2) está en un Sprint activo, (3) ya está en el
-  destino, (4) el estado esperado coincide, (5) la transición está permitida, (6) cambio atómico.
+  destino, (4) si llegó `estado_actual`, coincide con el real, (5) la transición real → destino está
+  permitida, (6) el estado real es el origen de la acción, (7) cambio atómico.
 - **Rationale**: Cada rechazo tiene un motivo único y un caso fuera del Sprint nunca se confunde con uno
   de transición; marcar dos veces es idempotente y no un error.
+  El paso 6 cierra el caso de `comenzar` y `reabrir`, que comparten destino "En progreso": cada acción
+  exige su origen y, si no coincide, se rechaza con el mensaje de estado desactualizado, sin mensajes
+  nuevos.
 
 ## Decision 7: Acciones como identificadores
 
@@ -55,6 +60,8 @@
   (`estado_actual`), no el estado destino.
 - **Rationale**: El navegador no elige el destino; el servidor lo deduce de la acción y rechaza todo lo
   demás. `estado_actual` permite detectar un tablero desactualizado.
+  Cada acción lleva implícitos su origen y su destino; el botón que se presiona implica el estado que
+  la persona veía.
 
 ## Decision 8: Sin identificación de integrante
 
