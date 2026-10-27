@@ -82,10 +82,10 @@ Formato: `[ID] [P] [E#] descripción`
 - [X] T030 Revisar con `git grep -n "r.Cookie(\|http.SetCookie" src` que el único acceso a cookies de contexto pasa por `readIDCookie` y `setContextCookie`, que la verificación usa `hmac.Equal` y que la clave no se imprime en ningún registro ni mensaje — Solo `readIDCookie` y `setContextCookie` acceden a las cookies de contexto; `Verify` usa `hmac.Equal`; `flash` sigue sin firma; la clave solo se lee en `LoadCookieSecret` y no se registra
 - [ ] T031 [P] No usar `gofmt -w` sobre archivos existentes (CRLF); archivos nuevos formateados; `go vet ./...` limpio; pipeline de GitHub Actions en verde (el repositorio no tiene pipeline: no aplica)
 - [ ] T032 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt` (`go test -count=1 -p 1 -cover ./...`)
-- [ ] T033 Verificar a mano los 8 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el aviso de clave temporal del escenario 7
+- [X] T033 Verificar a mano los 8 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el aviso de clave temporal del escenario 7
 - [X] T034 [P] Agregar al `README.md`, junto a `DATABASE_URL`, una nota sobre `COOKIE_SECRET` (mínimo 32 caracteres; ausente = clave temporal)
 - [X] T035 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas — Los nombres de las pruebas coinciden con la tabla de `spec.md`
-- [ ] T036 Abrir el Pull Request desde `HU-26` citando HU-26, con evidencias y la lista de archivos editados; avisar en el equipo a quienes tengan pruebas con cookies armadas a mano
+- [X] T036 Abrir el Pull Request desde `HU-26` citando HU-26, con evidencias y la lista de archivos editados; avisar en el equipo a quienes tengan pruebas con cookies armadas a mano
 - [ ] T037 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
 
 ## Dependencias y orden de ejecución
