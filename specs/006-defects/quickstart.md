@@ -7,9 +7,14 @@
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
 - HU-02, HU-04, FIX-HU-04, HU-20a y HU-20b (completa) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main`.
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml` o
-  `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada. El compose base publica PostgreSQL en el puerto `5433` del host
+  (`5432` dentro del contenedor); `docker-compose.override.yml` puede cambiarlo. Consultar el puerto efectivo con
+  `docker compose port postgres 5432` y configurar la URL en la sesión de PowerShell, sin escribir las
+  credenciales personales en el repositorio:
+
+  ```powershell
+  $env:DATABASE_URL = "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
+  ```
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
 
 ## Run the application
@@ -31,7 +36,6 @@ Para probar a mano hace falta un proyecto con un Sprint activo y al menos una hi
 3. Abrir `http://localhost:8080/defectos`.
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
 

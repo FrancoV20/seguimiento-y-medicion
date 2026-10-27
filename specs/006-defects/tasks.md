@@ -18,9 +18,9 @@
 
 **Purpose**: Confirmar lo que se reutiliza.
 
-- [ ] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04 y HU-15: ruta de los paquetes de historias y Sprints, nombres de tablas y columnas (`sprints.status` con `'Activo'` y `'Finalizado'`, `user_stories.project_id`, `title`, `status`), tipo de los identificadores, que no existan paquetes ni nombres de defectos (`git grep -n -i defect`), cómo cierra HU-15 el Sprint (bloqueo de la fila) y los identificadores del paquete `web` para que los de prefijo `Defect` no choquen; anotar el resultado en `specs/006-defects/data-model.md` y ajustar `plan.md`
+- [x] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04 y HU-15: ruta de los paquetes de historias y Sprints, nombres de tablas y columnas (`sprints.status` con `'Activo'` y `'Finalizado'`, `user_stories.project_id`, `title`, `status`), tipo de los identificadores, que no existan paquetes ni nombres de defectos (`git grep -n -i defect`), cómo cierra HU-15 el Sprint (bloqueo de la fila) y los identificadores del paquete `web` para que los de prefijo `Defect` no choquen; anotar el resultado en `specs/006-defects/data-model.md` y ajustar `plan.md`
 - [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET` y `POST`, `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/006-defects/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/006-defects/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
 - [ ] T004 [P] Confirmar el último número de migración en `main` y que nadie más haya tomado el siguiente (HU-15 usa `sprint_story_results`); avisar al equipo si cambió
 
 ---

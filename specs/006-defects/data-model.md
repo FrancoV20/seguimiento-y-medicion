@@ -12,7 +12,7 @@ migración ajena. Se verifica en T001 y T004.
 -- NNN_create_defects.up.sql
 CREATE TABLE defects (
     id                   BIGSERIAL PRIMARY KEY,
-    project_id           BIGINT      NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    project_id           INTEGER     NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     story_id             BIGINT      NOT NULL REFERENCES user_stories(id) ON DELETE CASCADE,
     description          TEXT        NOT NULL CHECK (length(btrim(description)) BETWEEN 1 AND 1000),
     severity             VARCHAR(20) NOT NULL CHECK (severity IN ('Crítica', 'Alta', 'Media', 'Baja')),
@@ -32,9 +32,20 @@ CREATE INDEX idx_defects_resolution ON defects (resolution_sprint_id);
 DROP TABLE defects;
 ```
 
-> **A verificar (T001 y T004)**: que `projects`, `sprints` y `user_stories` tengan `id BIGINT` y que `sprints.status`
-> use `'Activo'` y `'Finalizado'`. Si `ON DELETE SET NULL` de `resolution_sprint_id` choca con el `CHECK` al borrar
-> un Sprint, se cambia a `ON DELETE CASCADE` y se anota acá.
+> **Pendiente (T004)**: confirmar el número de migración con el equipo y quien esté trabajando en HU-15.
+> Verificar en PostgreSQL que `ON DELETE SET NULL` de `resolution_sprint_id` conviva con el `CHECK` al borrar un
+> Sprint; si no, cambiarlo a `ON DELETE CASCADE` y anotar el resultado acá.
+
+## Verificación contra `main` (T001)
+
+- `projects.id` es `SERIAL` (`INTEGER`); `user_stories.id` y `sprints.id` son `BIGSERIAL` (`BIGINT`). Los modelos
+  Go actuales representan los identificadores como `int64`. Por eso `defects.project_id` usa `INTEGER`, mientras
+  que las referencias a historias y Sprints usan `BIGINT`.
+- `sprints.status` admite `'Activo'` y `'Finalizado'`. La migración 004 amplía los estados de historias con
+  `'En Sprint'`; los otros estados relevantes son `'Pendiente'`, `'En progreso'` y `'Hecho'`.
+- El código de `main` no contiene una operación de cierre de Sprint: los `FOR UPDATE` encontrados corresponden a
+  asignación y remoción de historias. El contrato de cierre de HU-15 (`FOR UPDATE` sobre la fila del Sprint)
+  queda pendiente de verificar contra esa historia; no se debe inferir de esos otros bloqueos.
 
 ## Esquema usado
 
@@ -45,7 +56,7 @@ DROP TABLE defects;
 
 Notas:
 
-- Los identificadores son `BIGINT`; en Go se usan como `int64`.
+- `projects.id` es `INTEGER`; las claves de historias, Sprints y defectos son `BIGINT`. En Go se usan como `int64`.
 - `user_stories.project_id` no tiene borrado en cascada; las pruebas borran primero las historias (los defectos caen
   en cascada) y después el proyecto.
 
