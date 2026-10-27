@@ -65,7 +65,7 @@ SELECT project_id, 'Historia de prueba HU-24', 'Descripción', 'Alta', 'En Sprin
 
 ## Manual breve de usuario: "Registro de esfuerzo"
 
-> Al integrar HU-21, copiar esta sección en `docs/manual-usuario.md`.
+> Copiada a `docs/manual-usuario.md` al integrar `main` con HU-21.
 
 - **Para qué sirve**: cargar las horas que trabajaste en una historia del Sprint activo, sin usar comandos.
 - **Antes de empezar**: elegí el proyecto ("Elegir proyecto") e identificate ("Identificarme"). Las horas quedan

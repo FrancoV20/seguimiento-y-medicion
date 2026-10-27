@@ -8,22 +8,31 @@
 - HU-01, FIX-HU-01, HU-20a y HU-20b (US1 y US2) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main` y aplicar las migraciones nuevas (la de FIX-HU-01 cambia la restricción de
   fechas de `projects`).
+- Las direcciones `DATABASE_URL` de esta guía son plantillas: reemplazá `USUARIO`, `CLAVE` y
+  `PUERTO` por los valores de tu entorno. No uses ni guardes credenciales personales en archivos
+  versionados.
 - Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml`
-  o `docker-compose.override.yml` (por ejemplo 5432 o 5433):
+  o `docker-compose.override.yml` (por ejemplo 5432 o 5433). El Compose del repositorio publica
+  PostgreSQL en 5433; consultar `docker compose port postgres 5432` y usar el puerto que devuelva:
   `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
 
 ## Run the application
 
-Desde la raíz del repositorio, iniciar PostgreSQL y aplicar migraciones:
+Desde la raíz del repositorio, iniciar PostgreSQL y confirmar su puerto publicado. Configurar
+`DATABASE_URL` con tus datos locales antes de aplicar las migraciones; no guardar claves personales
+en archivos del repositorio. Las cadenas de conexión son plantillas: reemplazá `USUARIO`, `CLAVE`
+y `PUERTO` por los valores de tu entorno. Por ejemplo:
 
 ```powershell
 docker compose up -d postgres
+docker compose port postgres 5432
+$env:DATABASE_URL = "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
 migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Cargar los integrantes de prueba (una vez por base local; se puede repetir sin duplicar). Ajustar
-`USUARIO` al de tu base:
+Cargar los cinco integrantes del equipo (una vez por base local; el script se puede volver a ejecutar
+sin duplicar integrantes). Ajustar `USUARIO` al configurado en tu base:
 
 ```powershell
 Get-Content -Encoding UTF8 db/seeds/members.sql | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
@@ -97,9 +106,9 @@ En la Sprint Review, con 5 personas que no hayan visto la pantalla:
 
 ## Manual breve de usuario
 
-Agregar al manual breve de usuario del repositorio (en la ruta que acordó el equipo) la sección
-"Gestión de Proyectos": cómo crear un proyecto, qué significa cada mensaje de error y que la fecha
-de fin debe ser posterior a la de inicio. Incluir una captura de la pantalla.
+El manual breve de usuario está en [docs/manual-usuario.md](../../docs/manual-usuario.md). Incluye
+la sección "Gestión de Proyectos", instrucciones de alta, explicación de los mensajes de error,
+la regla de fechas y una captura de la pantalla.
 
 ## Acceptance evidence
 

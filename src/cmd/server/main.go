@@ -14,6 +14,7 @@ import (
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -68,6 +69,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	}
 	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
+
+	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
+	projectCatalog := web.NewPostgreSQLProjectCatalog(database)
+	if err := web.RegisterProjects(srv, projectService, projectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Proyectos")
+	}
 
 	// Registro de esfuerzo: registra con el servicio de HU-03 y lee con su catálogo (HU-24, T022).
 	effortService := effort.NewService(effort.NewPostgreSQLEffortStore(database), nil)

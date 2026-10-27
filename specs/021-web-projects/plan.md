@@ -8,18 +8,20 @@
 
 Implementar la pantalla "Gestión de Proyectos" como páginas generadas por el servidor: una sola
 ruta `/proyectos` que muestra el formulario de alta y la lista de proyectos. El handler no
-duplica reglas de negocio: valida solo el formato del envío (fechas `AAAA-MM-DD`, identificadores
-de integrantes, duplicados), delega el alta en el caso de uso de HU-01 y traduce sus errores a
-mensajes junto a cada campo. Un adaptador `PostgreSQLProjectCatalog` propio de HU-21 lee la lista
-de proyectos y el catálogo de integrantes. Los integrantes se cargan con un script semilla. No
-agrega migraciones ni modifica HU-20a ni HU-20b. La regla de fechas (fin posterior al inicio) es
-de HU-01 con **FIX-HU-01**, que debe estar en `main` antes de integrar esta historia.
+duplica las reglas de negocio: valida el formato del envío (fechas `AAAA-MM-DD` e identificadores
+de integrantes), quita integrantes repetidos, recorta el nombre según la spec y rechaza un nombre
+vacío con el texto exacto de HU-01; luego delega el alta en el caso de uso de HU-01 y traduce sus
+errores a mensajes junto a cada campo. Un adaptador `PostgreSQLProjectCatalog` propio de HU-21 lee
+la lista de proyectos y el catálogo de integrantes. Los integrantes se cargan con un script
+semilla. No agrega migraciones ni modifica HU-20a ni HU-20b. La regla de fechas (fin posterior al
+inicio) es de HU-01 con **FIX-HU-01**, que está en `main`.
 
 > **Supuestos a verificar antes de implementar (T001 y T002)**:
 > 1. La ruta del paquete de HU-01 y las firmas de `ProjectService.CreateProject` y `ProjectStore`
->    (el servicio recibe los integrantes como texto y los convierte a enteros).
-> 2. Los tipos de error de HU-01 y sus mensajes exactos, la normalización del nombre y el texto
->    del mensaje de éxito.
+>    (el servicio recibe los integrantes como texto y los convierte a enteros); verificado en T001.
+> 2. Los tipos de error y mensajes exactos de HU-01, el comportamiento del nombre y el mensaje de
+>    éxito; verificado en T001. HU-21 recorta el nombre y rechaza el resultado vacío para cumplir la
+>    spec, sin modificar HU-01.
 > 3. HU-20a y HU-20b (US1 y US2) están en `main`: `Server.Register`, `Renderer.Page`, `Fail`,
 >    `RenderError`, `SetFlash`, `FormView`, los parciales `alert.html` y `field.html`, y la
 >    protección contra envíos de otro origen.
@@ -126,7 +128,8 @@ como `Section{Name: "Proyectos", Path: "/proyectos"}`, sin
 ### Flujo del POST
 
 1. Leer el formulario y dejar los valores en `FormView` para conservarlos.
-2. Parsear las fechas (`AAAA-MM-DD`) y los identificadores de integrantes, quitando repetidos.
+2. Recortar el nombre; si queda vacío, asociar a `nombre` el mensaje exacto de `ErrEmptyName`.
+   Parsear las fechas (`AAAA-MM-DD`) y los identificadores de integrantes, quitando repetidos.
    Un valor inválido genera un error junto a su campo.
 3. Si no hubo errores de formato, invocar `ProjectService.CreateProject` (HU-01).
 4. Éxito: `SetFlash` de éxito y redirección 303 a `/proyectos`.
@@ -135,11 +138,11 @@ como `Section{Name: "Proyectos", Path: "/proyectos"}`, sin
 6. Cualquier otro error: `MsgOperationFailed` con los datos conservados y respuesta 500. Si la
    lectura de la lista o de los integrantes también falla, se usa `Fail`.
 
-### Mapeo de errores de HU-01 a campos (se confirma en T001)
+### Mapeo de errores de HU-01 a campos (verificado en T001)
 
 | Error de HU-01 | Campo |
 | --- | --- |
-| Nombre obligatorio | `nombre` |
+| Nombre vacío luego de recortar espacios | `nombre` (`ErrEmptyName`: "project name cannot be empty"; HU-21 valida antes de invocar HU-01) |
 | Fecha de fin anterior o igual a la de inicio (FIX-HU-01) | `fecha_fin` |
 | Falta una fecha | La fecha faltante |
 | Sin integrantes o integrante inexistente | `integrantes` |

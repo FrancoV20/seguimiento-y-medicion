@@ -1,0 +1,63 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+
+{{with .Data}}
+{{if .NoMembers}}
+<p class="muted">{{.NoMembers}}</p>
+{{else}}
+<form method="post" action="/proyectos">
+  {{template "field" ($.Form.Field "nombre" "Nombre del proyecto" "text")}}
+
+  <fieldset class="picker-list{{if $.Form.Errors.integrantes}} field-invalid{{end}}">
+    <legend>Integrantes</legend>
+    {{range .Members}}
+    <div class="picker-item">
+      <label>
+        <input type="checkbox" name="integrantes" value="{{.ID}}"{{if index $.Data.SelectedMembers (printf "%d" .ID)}} checked{{end}}>
+        {{.DisplayName}}
+      </label>
+    </div>
+    {{end}}
+    {{with $.Form.Errors.integrantes}}
+    <p class="field-error"><span class="field-error-label">Error:</span> {{.}}</p>
+    {{end}}
+  </fieldset>
+
+  {{template "field" ($.Form.Field "fecha_inicio" "Fecha de inicio" "date")}}
+  {{template "field" ($.Form.Field "fecha_fin" "Fecha de fin" "date")}}
+  <button type="submit">Crear</button>
+</form>
+{{end}}
+
+{{if .Projects}}
+<section aria-labelledby="projects-list-title">
+  <h2 id="projects-list-title">Proyectos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Nombre</th>
+        <th scope="col">Fecha de inicio</th>
+        <th scope="col">Fecha de fin</th>
+        <th scope="col">Integrantes</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .Projects}}
+      <tr>
+        <td>{{.Name}}</td>
+        <td>{{.StartDate.Format "02/01/2006"}}</td>
+        <td>{{.EndDate.Format "02/01/2006"}}</td>
+        <td>{{.MemberCount}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+</section>
+{{else}}
+<section aria-labelledby="projects-list-title">
+  <h2 id="projects-list-title">Proyectos</h2>
+  <p>Aún no hay proyectos</p>
+</section>
+{{end}}
+{{end}}
+{{end}}
