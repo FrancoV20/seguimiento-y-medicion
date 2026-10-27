@@ -132,7 +132,7 @@
 - [X] T048 Coordinar con HU-07 y HU-25 que las horas se siguen leyendo de `effort_logs` sin cambios; con HU-23 que quitar una historia con horas registradas sigue bloqueado; con HU-14 que completar una historia sin horas ya se puede evitar cargando horas desde la web; con HU-15 que las historias devueltas dejan de aparecer en el selector; y con quien mantiene HU-03 el cambio de T010 si hizo falta — Ver `coordinacion.md` (incluye el mensaje para el equipo)
 - [X] T049 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/024-web-effort/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [X] T050 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Registro de esfuerzo" — `go vet` limpio; `gofmt -l` sin diferencias en los archivos de HU-24 (23 archivos de HU-20b ya traían diferencias y esta historia no los modifica); el repositorio no tiene pipeline de GitHub Actions; sección "Registro de esfuerzo" agregada a `docs/manual-usuario.md` al integrar `main` (HU-21)
-- [ ] T051 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md` — Lo verifica Alejandro en el navegador
+- [X] T051 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md` — Lo verifica Alejandro en el navegador
 - [ ] T052 Abrir el Pull Request desde `HU-24`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
