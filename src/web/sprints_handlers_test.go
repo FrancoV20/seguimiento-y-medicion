@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"io"
 	"io/fs"
@@ -10,6 +11,7 @@ import (
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -517,6 +519,32 @@ func TestSprintsHandler_PostRedirectGetDoesNotCreateDuplicateOrRepeatFlash(t *te
 	}
 }
 
+func TestSprintsHandler_AssignStoriesRouteContract(t *testing.T) {
+	const projectID = 506
+	active := &SprintView{ID: 56, Number: 1, Label: "Sprint 1", Goal: "Sprint activo"}
+	app := newSprintHandlerTestApp(t,
+		map[int64]string{projectID: "Proyecto asignación"},
+		map[int64][]StoryOption{projectID: sprintHandlerOptions(projectID, 52)},
+		map[int64]*SprintView{projectID: active},
+	)
+	app.selectProject(t, projectID)
+
+	response, err := app.client.PostForm(app.server.URL+"/sprints/historias", url.Values{
+		FieldStory: {"52"},
+	})
+	if err != nil {
+		t.Fatalf("POST /sprints/historias: %v", err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/sprints" {
+		t.Fatalf("se esperaba 303 a /sprints para agregar historias; status=%d location=%q", response.StatusCode, response.Header.Get("Location"))
+	}
+	_, body := app.get(t)
+	if !strings.Contains(body, MsgStoriesAdded) {
+		t.Errorf("la respuesta posterior debía mostrar %q: %s", MsgStoriesAdded, body)
+	}
+}
+
 func TestSprintsHandler_ListDisablesUnavailableStoriesWithReason(t *testing.T) {
 	const projectID = 606
 	options := []StoryOption{
@@ -811,3 +839,248 @@ var _ ContextStore = sprintHandlerContextStore{}
 var _ SprintCatalog = (*sprintHandlerCatalog)(nil)
 var _ SprintActions = (*sprintHandlerActions)(nil)
 var _ fs.FS = fstest.MapFS{}
+
+type sprintAssignmentDBFixture struct {
+	db             *sql.DB
+	store          *sprint.PostgreSQLSprintStore
+	server         *httptest.Server
+	client         *http.Client
+	projectID      int64
+	otherProjectID int64
+	activeSprintID int64
+	storyIDs       []int64
+}
+
+type sprintAssignmentActions struct {
+	service sprint.Service
+	store   sprint.SprintStore
+}
+
+func (a sprintAssignmentActions) CreateSprint(
+	ctx context.Context,
+	request sprint.SprintCreationRequest,
+	project sprint.Project,
+	stories []sprint.UserStory,
+) (sprint.SprintCreationResult, error) {
+	return a.service.CreateSprint(ctx, request, project, stories)
+}
+
+func (a sprintAssignmentActions) AssignStories(ctx context.Context, sprintID int64, storyIDs []int64) error {
+	return a.store.AssignStories(ctx, sprintID, storyIDs)
+}
+
+func (a sprintAssignmentActions) RemoveStory(ctx context.Context, sprintID, storyID int64) error {
+	return a.store.RemoveStory(ctx, sprintID, storyID)
+}
+
+func newSprintAssignmentDBFixture(t *testing.T, withOtherProject bool) *sprintAssignmentDBFixture {
+	t.Helper()
+	db := openSprintCatalogTestDB(t)
+	store, err := sprint.NewPostgreSQLSprintStore(os.Getenv(EnvDatabaseURL))
+	if err != nil {
+		t.Fatalf("no se pudo abrir SprintStore PostgreSQL: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.Close(); err != nil {
+			t.Errorf("no se pudo cerrar SprintStore: %v", err)
+		}
+	})
+
+	fixture := &sprintAssignmentDBFixture{db: db, store: store}
+	stamp := time.Now().UnixNano()
+	insertProject := func(name string) int64 {
+		t.Helper()
+		var projectID int64
+		err := db.QueryRow(`
+			INSERT INTO projects (name, start_date, end_date, status)
+			VALUES ($1, DATE '2026-01-01', DATE '2026-12-31', 'Activo')
+			RETURNING id`, name).Scan(&projectID)
+		if err != nil {
+			t.Fatalf("no se pudo crear el proyecto de prueba: %v", err)
+		}
+		return projectID
+	}
+	fixture.projectID = insertProject(fmt.Sprintf("HU23 asignación A %d", stamp))
+	if withOtherProject {
+		fixture.otherProjectID = insertProject(fmt.Sprintf("HU23 asignación B %d", stamp))
+	}
+	t.Cleanup(func() {
+		for _, storyID := range fixture.storyIDs {
+			_, _ = db.Exec(`DELETE FROM user_stories WHERE id = $1`, storyID)
+		}
+		for _, projectID := range []int64{fixture.projectID, fixture.otherProjectID} {
+			if projectID != 0 {
+				_, _ = db.Exec(`DELETE FROM projects WHERE id = $1`, projectID)
+			}
+		}
+	})
+
+	created, err := store.CreateSprint(context.Background(), sprint.Sprint{
+		ProjectID: fixture.projectID,
+		Goal:      "Sprint de integración HU-23",
+		StartDate: time.Date(2026, 11, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 11, 14, 0, 0, 0, 0, time.UTC),
+	})
+	if err != nil {
+		t.Fatalf("no se pudo preparar el Sprint activo: %v", err)
+	}
+	fixture.activeSprintID = created.ID
+
+	insertStory := func(projectID int64, title string) int64 {
+		t.Helper()
+		var storyID int64
+		err := db.QueryRow(`
+			INSERT INTO user_stories (project_id, title, description, priority, status)
+			VALUES ($1, $2, 'Historia de prueba para asignar', 'Media', 'Pendiente')
+			RETURNING id`, projectID, title).Scan(&storyID)
+		if err != nil {
+			t.Fatalf("no se pudo crear la historia de prueba: %v", err)
+		}
+		fixture.storyIDs = append(fixture.storyIDs, storyID)
+		return storyID
+	}
+	insertStory(fixture.projectID, fmt.Sprintf("HU23 historia A1 %d", stamp))
+	insertStory(fixture.projectID, fmt.Sprintf("HU23 historia A2 %d", stamp))
+	if withOtherProject {
+		insertStory(fixture.otherProjectID, fmt.Sprintf("HU23 historia ajena %d", stamp))
+	}
+
+	server := NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
+	RegisterContext(server, NewPostgreSQLContextStore(db))
+	catalog := NewPostgreSQLSprintCatalog(db)
+	service := sprint.NewService(store)
+	actions := sprintAssignmentActions{service: service, store: store}
+	if err := RegisterSprints(server, catalog, actions); err != nil {
+		t.Fatalf("no se pudo registrar la sección Sprints: %v", err)
+	}
+	ts := httptest.NewServer(server.Handler())
+	fixture.server = ts
+	t.Cleanup(ts.Close)
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		t.Fatalf("no se pudo crear el cookie jar: %v", err)
+	}
+	fixture.client = &http.Client{
+		Jar:           jar,
+		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse },
+	}
+	response, err := fixture.client.PostForm(ts.URL+pathSelectProject, url.Values{
+		"proyecto_id": {strconv.FormatInt(fixture.projectID, 10)},
+		"volver_a":    {"/sprints"},
+	})
+	if err != nil {
+		t.Fatalf("no se pudo seleccionar el proyecto de prueba: %v", err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("seleccionar proyecto: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
+	return fixture
+}
+
+func (f *sprintAssignmentDBFixture) post(t *testing.T, values url.Values) (*http.Response, string) {
+	t.Helper()
+	response, err := f.client.PostForm(f.server.URL+"/sprints/historias", values)
+	if err != nil {
+		t.Fatalf("POST /sprints/historias: %v", err)
+	}
+	return response, sprintHandlerReadBody(t, response)
+}
+
+func (f *sprintAssignmentDBFixture) getSprints(t *testing.T) (*http.Response, string) {
+	t.Helper()
+	response, err := f.client.Get(f.server.URL + "/sprints")
+	if err != nil {
+		t.Fatalf("GET /sprints: %v", err)
+	}
+	return response, sprintHandlerReadBody(t, response)
+}
+
+func (f *sprintAssignmentDBFixture) storyState(t *testing.T, storyID int64) (string, sql.NullInt64, int) {
+	t.Helper()
+	var status string
+	var activeSprintID sql.NullInt64
+	var assignments int
+	err := f.db.QueryRow(`
+		SELECT us.status, us.active_sprint_id,
+		       (SELECT count(*) FROM sprint_story_assignments a WHERE a.story_id = us.id)
+		FROM user_stories us WHERE us.id = $1`, storyID).Scan(&status, &activeSprintID, &assignments)
+	if err != nil {
+		t.Fatalf("no se pudo leer el estado de la historia %d: %v", storyID, err)
+	}
+	return status, activeSprintID, assignments
+}
+
+func TestSprintsHandler_AssignStoriesPersistsAllAndShowsFlash(t *testing.T) {
+	fixture := newSprintAssignmentDBFixture(t, false)
+	response, _ := fixture.post(t, url.Values{FieldStory: {
+		strconv.FormatInt(fixture.storyIDs[0], 10),
+		strconv.FormatInt(fixture.storyIDs[1], 10),
+	}})
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/sprints" {
+		t.Fatalf("se esperaba 303 a /sprints; estado=%d location=%q", response.StatusCode, response.Header.Get("Location"))
+	}
+
+	_, body := fixture.getSprints(t)
+	if count := strings.Count(body, MsgStoriesAdded); count != 1 {
+		t.Errorf("el mensaje exacto debía aparecer una vez; count=%d body=%s", count, body)
+	}
+	for _, storyID := range fixture.storyIDs {
+		status, activeSprintID, assignments := fixture.storyState(t, storyID)
+		if status != string(sprint.EnSprint) || !activeSprintID.Valid || activeSprintID.Int64 != fixture.activeSprintID || assignments != 1 {
+			t.Errorf("la historia %d debía quedar asignada en PostgreSQL: status=%q activeSprintID=%v assignments=%d",
+				storyID, status, activeSprintID, assignments)
+		}
+	}
+	_, reloadedBody := fixture.getSprints(t)
+	if strings.Contains(reloadedBody, MsgStoriesAdded) {
+		t.Error("el flash de éxito debe mostrarse una sola vez")
+	}
+}
+
+func TestSprintsHandler_AssignStoriesWithoutSelectionShowsMessageAndDoesNotMutate(t *testing.T) {
+	fixture := newSprintAssignmentDBFixture(t, false)
+	response, body := fixture.post(t, url.Values{})
+	if response.StatusCode != http.StatusUnprocessableEntity {
+		t.Errorf("sin selección se esperaba 422, se obtuvo %d", response.StatusCode)
+	}
+	if !strings.Contains(body, MsgSelectAtLeastOneStory) {
+		t.Errorf("falta el mensaje exacto %q: %s", MsgSelectAtLeastOneStory, body)
+	}
+	for _, storyID := range fixture.storyIDs {
+		status, activeSprintID, assignments := fixture.storyState(t, storyID)
+		if status != string(sprint.Pendiente) || activeSprintID.Valid || assignments != 0 {
+			t.Errorf("sin selección no debe mutarse la historia %d: status=%q activeSprintID=%v assignments=%d",
+				storyID, status, activeSprintID, assignments)
+		}
+	}
+	_, body = fixture.getSprints(t)
+	if strings.Contains(body, MsgStoriesAdded) {
+		t.Error("sin historias marcadas no debe aparecer el mensaje de éxito")
+	}
+}
+
+func TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically(t *testing.T) {
+	fixture := newSprintAssignmentDBFixture(t, true)
+	availableID, foreignID := fixture.storyIDs[0], fixture.storyIDs[2]
+	response, body := fixture.post(t, url.Values{FieldStory: {
+		strconv.FormatInt(availableID, 10),
+		strconv.FormatInt(foreignID, 10),
+	}})
+	if response.StatusCode != http.StatusConflict && response.StatusCode != http.StatusUnprocessableEntity {
+		t.Errorf("una historia ajena debía rechazarse con 409 o 422, se obtuvo %d", response.StatusCode)
+	}
+	if !strings.Contains(body, sprint.ErrStoryNotAvailable.Error()) || !strings.Contains(body, strconv.FormatInt(foreignID, 10)) {
+		t.Errorf("la respuesta debía identificar la historia no disponible con el mensaje de HU-04: %s", body)
+	}
+	for _, storyID := range []int64{availableID, foreignID} {
+		status, activeSprintID, assignments := fixture.storyState(t, storyID)
+		if status != string(sprint.Pendiente) || activeSprintID.Valid || assignments != 0 {
+			t.Errorf("el rechazo debía ser atómico para historia %d: status=%q activeSprintID=%v assignments=%d",
+				storyID, status, activeSprintID, assignments)
+		}
+	}
+	if strings.Contains(body, MsgStoriesAdded) {
+		t.Error("el rechazo no debe mostrar confirmación de asignación")
+	}
+}

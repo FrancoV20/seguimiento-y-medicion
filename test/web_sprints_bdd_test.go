@@ -9,6 +9,7 @@ import (
 	"net/http/cookiejar"
 	"net/http/httptest"
 	"net/url"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -470,5 +471,187 @@ func TestWebSprintsBDD_NoActiveSprintShowsCreationForm(t *testing.T) {
 		if !strings.Contains(body, expected) {
 			t.Errorf("la pantalla sin Sprint debía contener %q: %s", expected, body)
 		}
+	}
+}
+
+type sprintAssignmentBDDAdapter struct {
+	service sprint.Service
+	store   sprint.SprintStore
+}
+
+func (a sprintAssignmentBDDAdapter) CreateSprint(
+	ctx context.Context,
+	request sprint.SprintCreationRequest,
+	project sprint.Project,
+	stories []sprint.UserStory,
+) (sprint.SprintCreationResult, error) {
+	return a.service.CreateSprint(ctx, request, project, stories)
+}
+
+func (a sprintAssignmentBDDAdapter) AssignStories(ctx context.Context, sprintID int64, storyIDs []int64) error {
+	return a.store.AssignStories(ctx, sprintID, storyIDs)
+}
+
+func (a sprintAssignmentBDDAdapter) RemoveStory(ctx context.Context, sprintID, storyID int64) error {
+	return a.store.RemoveStory(ctx, sprintID, storyID)
+}
+
+type sprintAssignmentBDDApp struct {
+	fixture *seleccionFixture
+	server  *httptest.Server
+	client  *http.Client
+	store   sprint.SprintStore
+	sprint  sprint.Sprint
+	storyID int64
+}
+
+func newSprintAssignmentBDDApp(t *testing.T) *sprintAssignmentBDDApp {
+	t.Helper()
+	fixture := nuevaSeleccionFixture(t)
+	store, err := sprint.NewPostgreSQLSprintStore(os.Getenv(web.EnvDatabaseURL))
+	if err != nil {
+		t.Fatalf("no se pudo abrir SprintStore PostgreSQL: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := store.Close(); err != nil {
+			t.Errorf("no se pudo cerrar SprintStore: %v", err)
+		}
+	})
+
+	activeSprint, err := store.CreateSprint(context.Background(), sprint.Sprint{
+		ProjectID: fixture.proyectoA,
+		Goal:      "Sprint activo para BDD",
+		StartDate: time.Date(2026, 11, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, 11, 14, 0, 0, 0, 0, time.UTC),
+	})
+	if err != nil {
+		t.Fatalf("no se pudo crear el Sprint activo de fixture: %v", err)
+	}
+	var storyID int64
+	if err := fixture.db.QueryRow(`
+		INSERT INTO user_stories (project_id, title, description, priority, status)
+		VALUES ($1, $2, $3, 'Media', 'Pendiente') RETURNING id`,
+		fixture.proyectoA,
+		fmt.Sprintf("BDD HU23 historia disponible %d", time.Now().UnixNano()),
+		"Historia pendiente para probar su asignación desde la web",
+	).Scan(&storyID); err != nil {
+		t.Fatalf("no se pudo crear la historia de fixture: %v", err)
+	}
+	t.Cleanup(func() {
+		if _, err := fixture.db.Exec(`DELETE FROM user_stories WHERE id = $1`, storyID); err != nil {
+			t.Errorf("no se pudo limpiar la historia BDD: %v", err)
+		}
+	})
+
+	server := web.NewServer(silencioso())
+	web.RegisterContext(server, web.NewPostgreSQLContextStore(fixture.db))
+	catalog := web.NewPostgreSQLSprintCatalog(fixture.db)
+	actions := sprintAssignmentBDDAdapter{service: sprint.NewService(store), store: store}
+	if err := web.RegisterSprints(server, catalog, actions); err != nil {
+		t.Fatalf("no se pudo registrar la sección Sprints: %v", err)
+	}
+	ts := httptest.NewServer(server.Handler())
+	t.Cleanup(ts.Close)
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		t.Fatalf("no se pudo crear el cookie jar: %v", err)
+	}
+	client := &http.Client{Jar: jar, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
+	response, err := client.PostForm(ts.URL+"/contexto/proyecto", url.Values{
+		"proyecto_id": {fmt.Sprintf("%d", fixture.proyectoA)},
+		"volver_a":    {"/sprints"},
+	})
+	if err != nil {
+		t.Fatalf("no se pudo seleccionar el proyecto de BDD: %v", err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("seleccionar proyecto: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
+	return &sprintAssignmentBDDApp{
+		fixture: fixture,
+		server:  ts,
+		client:  client,
+		store:   store,
+		sprint:  activeSprint,
+		storyID: storyID,
+	}
+}
+
+func (a *sprintAssignmentBDDApp) assign(t *testing.T, storyIDs ...string) (*http.Response, string) {
+	t.Helper()
+	values := url.Values{}
+	for _, storyID := range storyIDs {
+		values.Add(web.FieldStory, storyID)
+	}
+	response, err := a.client.PostForm(a.server.URL+"/sprints/historias", values)
+	if err != nil {
+		t.Fatalf("POST /sprints/historias: %v", err)
+	}
+	return response, sprintBDDReadBody(t, response)
+}
+
+func (a *sprintAssignmentBDDApp) getSprints(t *testing.T) (*http.Response, string) {
+	t.Helper()
+	response, err := a.client.Get(a.server.URL + "/sprints")
+	if err != nil {
+		t.Fatalf("GET /sprints: %v", err)
+	}
+	return response, sprintBDDReadBody(t, response)
+}
+
+func (a *sprintAssignmentBDDApp) storyState(t *testing.T) (string, int64, int) {
+	t.Helper()
+	var status string
+	var activeSprintID int64
+	var assignments int
+	err := a.fixture.db.QueryRow(`
+		SELECT us.status, COALESCE(us.active_sprint_id, 0),
+		       (SELECT count(*) FROM sprint_story_assignments WHERE story_id = us.id)
+		FROM user_stories us WHERE us.id = $1`, a.storyID).Scan(&status, &activeSprintID, &assignments)
+	if err != nil {
+		t.Fatalf("no se pudo consultar la historia persistida: %v", err)
+	}
+	return status, activeSprintID, assignments
+}
+
+func TestWebSprintsBDD_AddAvailableStory(t *testing.T) {
+	// Given: un Sprint activo y una historia disponible en el Backlog del proyecto.
+	app := newSprintAssignmentBDDApp(t)
+
+	// When: marco la historia y solicito agregarla al Sprint activo.
+	response, _ := app.assign(t, fmt.Sprintf("%d", app.storyID))
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/sprints" {
+		t.Fatalf("se esperaba 303 a /sprints; estado=%d location=%q", response.StatusCode, response.Header.Get("Location"))
+	}
+
+	// Then: veo una única confirmación y PostgreSQL refleja la asociación y estado.
+	_, body := app.getSprints(t)
+	if count := strings.Count(body, web.MsgStoriesAdded); count != 1 {
+		t.Errorf("el mensaje exacto debía aparecer una vez; count=%d body=%s", count, body)
+	}
+	status, activeSprintID, assignments := app.storyState(t)
+	if status != string(sprint.EnSprint) || activeSprintID != app.sprint.ID || assignments != 1 {
+		t.Errorf("historia no asignada en PostgreSQL: status=%q activeSprintID=%d assignments=%d", status, activeSprintID, assignments)
+	}
+}
+
+func TestWebSprintsBDD_AddWithoutSelection(t *testing.T) {
+	// Given: un Sprint activo y una historia pendiente sin marcar.
+	app := newSprintAssignmentBDDApp(t)
+
+	// When: envío la acción de agregar sin seleccionar historias.
+	response, body := app.assign(t)
+	if response.StatusCode != http.StatusUnprocessableEntity {
+		t.Errorf("se esperaba 422 sin selección, se obtuvo %d", response.StatusCode)
+	}
+
+	// Then: aparece el mensaje exacto y la fila de PostgreSQL no cambia.
+	if !strings.Contains(body, web.MsgSelectAtLeastOneStory) {
+		t.Errorf("falta el mensaje %q: %s", web.MsgSelectAtLeastOneStory, body)
+	}
+	status, activeSprintID, assignments := app.storyState(t)
+	if status != string(sprint.Pendiente) || activeSprintID != 0 || assignments != 0 {
+		t.Errorf("la BD no debía mutar sin selección: status=%q activeSprintID=%d assignments=%d", status, activeSprintID, assignments)
 	}
 }
