@@ -1,2 +1,87 @@
 {{define "content"}}
 <h1>Backlog</h1>
+
+<section aria-labelledby="create-story-heading">
+  <h2 id="create-story-heading">Crear historia</h2>
+  <form method="post" action="/backlog">
+    <button type="submit" name="accion" value="guardar" style="position:absolute;left:-10000px">Guardar</button>
+
+    {{template "field" (.Form.Field "titulo" "Título" "text")}}
+
+    <div class="field{{if index .Form.Errors "descripcion"}} field-invalid{{end}}">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion"{{if index .Form.Errors "descripcion"}} aria-invalid="true" aria-describedby="descripcion-error"{{end}}>{{index .Form.Values "descripcion"}}</textarea>
+      {{with index .Form.Errors "descripcion"}}<p class="field-error" id="descripcion-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+    </div>
+
+    <div class="field{{if index .Form.Errors "prioridad"}} field-invalid{{end}}">
+      <label for="prioridad">Prioridad</label>
+      <select id="prioridad" name="prioridad"{{if index .Form.Errors "prioridad"}} aria-invalid="true" aria-describedby="prioridad-error"{{end}}>
+        <option value="">Seleccioná una prioridad</option>
+        {{with .Data.InvalidPriority}}<option value="{{.}}" selected>{{.}}</option>{{end}}
+        {{range .Data.Priorities}}<option value="{{.}}"{{if eq . (index $.Form.Values "prioridad")}} selected{{end}}>{{.}}</option>{{end}}
+      </select>
+      {{with index .Form.Errors "prioridad"}}<p class="field-error" id="prioridad-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+    </div>
+
+    <div class="field{{if index .Form.Errors "story_points"}} field-invalid{{end}}">
+      <label for="story_points">Story Points</label>
+      <select id="story_points" name="story_points"{{if index .Form.Errors "story_points"}} aria-invalid="true" aria-describedby="story_points-error"{{end}}>
+        <option value="">Sin estimar</option>
+        {{with .Data.InvalidStoryPoints}}<option value="{{.}}" selected>{{.}}</option>{{end}}
+        {{range .Data.StoryPoints}}<option value="{{.}}"{{if eq (printf "%d" .) (index $.Form.Values "story_points")}} selected{{end}}>{{.}}</option>{{end}}
+      </select>
+      {{with index .Form.Errors "story_points"}}<p class="field-error" id="story_points-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+    </div>
+
+    {{template "field" (.Form.Field "horas_estimadas" "Horas estimadas" "text")}}
+
+    <fieldset>
+      <legend>Criterios de aceptación</legend>
+      {{range .Data.Criteria}}
+      <div class="criterion-field">
+        <label for="criterio-{{.Index}}">Criterio</label>
+        <input type="text" id="criterio-{{.Index}}" name="criterio" value="{{.Value}}"{{if index $.Form.Errors "criterio"}} aria-invalid="true" aria-describedby="criterio-error"{{end}}>
+        <button type="submit" name="accion" value="quitar_criterio:{{.Index}}">Quitar</button>
+      </div>
+      {{end}}
+      {{with index .Form.Errors "criterio"}}<p class="field-error" id="criterio-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+      <button type="submit" name="accion" value="agregar_criterio">Agregar criterio</button>
+    </fieldset>
+
+    <button type="submit" name="accion" value="guardar">Guardar</button>
+  </form>
+</section>
+
+<section aria-labelledby="stories-heading">
+  <h2 id="stories-heading">Historias</h2>
+  {{if .Data.Stories}}
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Identificador</th>
+        <th scope="col">Título</th>
+        <th scope="col">Prioridad</th>
+        <th scope="col">Story Points</th>
+        <th scope="col">Horas estimadas</th>
+        <th scope="col">Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Data.Stories}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Title}}</td>
+        <td>{{.Priority}}</td>
+        <td>{{.StoryPoints}}</td>
+        <td>{{.EstimatedHours}}</td>
+        <td>{{.Status}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <p>Aún no hay historias</p>
+  {{end}}
+</section>
+{{end}}

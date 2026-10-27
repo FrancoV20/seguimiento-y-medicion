@@ -111,8 +111,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T039 [US3] Agregar a `backlog.html` la tabla de historias (identificador, título, prioridad, Story Points y horas estimadas, cada uno o "Sin estimar", y estado) y el estado vacío "Aún no hay historias", en `src/web/templates/backlog.html`
-- [ ] T040 [US3] Usar `Fail` en `src/web/backlog_handlers.go` cuando falla la lectura de las historias
+- [x] T039 [US3] Agregar a `backlog.html` la tabla de historias (identificador, título, prioridad, Story Points y horas estimadas, cada uno o "Sin estimar", y estado) y el estado vacío "Aún no hay historias", en `src/web/templates/backlog.html`
+- [x] T040 [US3] Usar `Fail` en `src/web/backlog_handlers.go` cuando falla la lectura de las historias
 
 **Checkpoint**: US3 muestra el resultado de la carga y orienta a quien planifica, sin errores internos ante una falla de lectura.
 
