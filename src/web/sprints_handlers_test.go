@@ -999,17 +999,6 @@ func (f *sprintAssignmentDBFixture) remove(t *testing.T, storyID int64) (*http.R
 	return response, sprintHandlerReadBody(t, response)
 }
 
-func (f *sprintAssignmentDBFixture) remove(t *testing.T, storyID int64) (*http.Response, string) {
-	t.Helper()
-	response, err := f.client.PostForm(f.server.URL+"/sprints/historias/quitar", url.Values{
-		FieldStoryID: {strconv.FormatInt(storyID, 10)},
-	})
-	if err != nil {
-		t.Fatalf("POST /sprints/historias/quitar: %v", err)
-	}
-	return response, sprintHandlerReadBody(t, response)
-}
-
 func (f *sprintAssignmentDBFixture) getSprints(t *testing.T) (*http.Response, string) {
 	t.Helper()
 	response, err := f.client.Get(f.server.URL + "/sprints")

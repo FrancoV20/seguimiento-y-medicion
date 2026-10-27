@@ -144,10 +144,10 @@
 
 ### Tests for User Story 5
 
-- [ ] T043 [P] [US5] Escribir en `src/sprint` las pruebas de la regla de quitar: función pura `CanRemoveStory(status, hasEffort)` con su motivo ("Ya está en progreso", "Ya está hecha", "Tiene horas registradas"), y `RemoveStory` que rechaza con error tipado una historia en progreso, hecha, con horas, de otro Sprint o inexistente y acepta una "En Sprint" sin horas devolviéndola a "Pendiente" (incluye la prueba de integración contra PostgreSQL de la consulta de horas si T047 agrega una al store)
-- [ ] T044 [P] [US5] Escribir la prueba de handler de quitar una historia "En Sprint" sin horas: "Historia quitada del Sprint", sale del Sprint, vuelve a "Pendiente" y vuelve a estar disponible en la lista, en `src/web/sprints_handlers_test.go`
-- [ ] T045 [P] [US5] Escribir la prueba de handler con una historia en progreso, hecha o con horas registradas: "Quitar" deshabilitado con el motivo en la vista y un envío directo rechazado con el motivo y sin cambios; una historia de otro proyecto o Sprint rechazada, en `src/web/sprints_handlers_test.go`
-- [ ] T046 [P] [US5] Escribir los escenarios BDD de quitar una historia, historia que no se puede quitar e intento de quitarla en `test/web_sprints_bdd_test.go`
+- [X] T043 [P] [US5] Escribir en `src/sprint` las pruebas de la regla de quitar: función pura `CanRemoveStory(status, hasEffort)` con su motivo ("Ya está en progreso", "Ya está hecha", "Tiene horas registradas"), y `RemoveStory` que rechaza con error tipado una historia en progreso, hecha, con horas, de otro Sprint o inexistente y acepta una "En Sprint" sin horas devolviéndola a "Pendiente" (incluye la prueba de integración contra PostgreSQL de la consulta de horas si T047 agrega una al store)
+- [X] T044 [P] [US5] Escribir la prueba de handler de quitar una historia "En Sprint" sin horas: "Historia quitada del Sprint", sale del Sprint, vuelve a "Pendiente" y vuelve a estar disponible en la lista, en `src/web/sprints_handlers_test.go`
+- [X] T045 [P] [US5] Escribir la prueba de handler con una historia en progreso, hecha o con horas registradas: "Quitar" deshabilitado con el motivo en la vista y un envío directo rechazado con el motivo y sin cambios; una historia de otro proyecto o Sprint rechazada, en `src/web/sprints_handlers_test.go`
+- [X] T046 [P] [US5] Escribir los escenarios BDD de quitar una historia, historia que no se puede quitar e intento de quitarla en `test/web_sprints_bdd_test.go`
 
 ### Implementation for User Story 5
 
