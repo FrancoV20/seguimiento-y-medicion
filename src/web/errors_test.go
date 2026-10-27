@@ -142,9 +142,7 @@ func TestErrores_NoExponenDetallesInternos(t *testing.T) {
 	detalle := "SELECT * FROM projects WHERE id = 1; C:/repo/src/web/server.go:42 " + databaseURL + " goroutine 7 [running]"
 	s := servidorConRutasDeError()
 	s.HandleFunc("GET /interno", func(w http.ResponseWriter, r *http.Request) { s.Renderer().Fail(w, r, errors.New(detalle)) })
-	s.HandleFunc("GET /base", func(w http.ResponseWriter, r *http.Request) {
-		s.Renderer().Fail(w, r, Unavailable(errors.New(detalle)))
-	})
+	s.HandleFunc("GET /base", func(w http.ResponseWriter, r *http.Request) { s.Renderer().Fail(w, r, Unavailable(errors.New(detalle))) })
 	s.HandleFunc("GET /no-esta", func(w http.ResponseWriter, r *http.Request) { s.Renderer().Fail(w, r, NotFound(errors.New(detalle))) })
 	s.HandleFunc("GET /panico", func(http.ResponseWriter, *http.Request) { panic(detalle) })
 	h := s.Handler()

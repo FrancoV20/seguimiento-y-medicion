@@ -95,9 +95,7 @@ func TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable(t *testing.T) {
 	if _, err := admin.ExecContext(ctx, "CREATE DATABASE "+name); err != nil {
 		t.Fatalf("no se pudo crear la base descartable (el usuario necesita permiso CREATEDB): %v", err)
 	}
-	t.Cleanup(func() {
-		_, _ = admin.ExecContext(context.Background(), "DROP DATABASE IF EXISTS "+name+" WITH (FORCE)")
-	})
+	t.Cleanup(func() { _, _ = admin.ExecContext(context.Background(), "DROP DATABASE IF EXISTS "+name+" WITH (FORCE)") })
 
 	u, err := url.Parse(raw)
 	if err != nil {
