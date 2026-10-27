@@ -12,9 +12,12 @@ Esta feature **no crea tablas ni migraciones**. Usa `user_stories`, `sprint_stor
   `'Finalizado'`.
 - `effort_logs`: horas de HU-03, con referencia a la historia.
 
-> **A verificar (T001 y T004)**: nombre de la columna de historia en `effort_logs` (se supone
-> `story_id`), que `status` admita los cuatro valores y que no haya otras columnas obligatorias al
-> actualizar.
+> **Verificado en T001 (24/10/2026)**: `effort_logs.story_id` existe (migración 003); `user_stories.status`
+> admite los cuatro valores (`chk_user_stories_status`, migración 004); cambiar `status` no exige otras
+> columnas. HU-04 asigna con un `INSERT` en `sprint_story_assignments` y un `UPDATE` que deja
+> `status = 'En Sprint'` y `active_sprint_id` con el Sprint; al quitar, borra la asignación y deja
+> `'Pendiente'` y `active_sprint_id` en NULL. HU-14 no toca `active_sprint_id`. T004 lo vuelve a
+> confirmar antes de implementar.
 
 ## StoryStatus y transiciones
 
@@ -91,9 +94,10 @@ WHERE us.id = $1 AND us.status = $2
 
 ## ChangeStatus (servicio)
 
-`ChangeStatus(ctx, projectID, storyID, target, expected)`: aplica el orden de validación (historia del
-proyecto, Sprint activo, ya aplicado, estado esperado, transición permitida, cambio atómico) y devuelve
-un `StatusResult` o un error del dominio. `expected` es opcional.
+`ChangeStatus` recibe el proyecto, la historia, el origen y el destino de la acción, y el estado
+esperado (opcional). Aplica el orden de validación: historia del proyecto, Sprint activo, ya aplicado,
+estado esperado, transición permitida, estado real igual al origen de la acción y cambio atómico.
+Devuelve un `StatusResult` o un error del dominio.
 
 ## BoardForm
 
@@ -105,7 +109,8 @@ Datos del envío de `POST /tablero/estado`.
 
 ### Rules
 
-- `accion` válida: `comenzar` (destino `En progreso`), `completar` (`Hecho`) o `reabrir` (`En progreso`).
+- `accion` válida: `comenzar` (En Sprint → En progreso), `completar` (En progreso → Hecho) o `reabrir`
+  (Hecho → En progreso).
 - `historia_id` numérico; los demás valores se rechazan sin llamar al servicio.
 
 ## BoardView

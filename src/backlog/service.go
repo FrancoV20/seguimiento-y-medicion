@@ -1,6 +1,9 @@
 package backlog
 
-import "strings"
+import (
+	"math"
+	"strings"
+)
 
 const (
 	MsgStoryCreated       = "Historia registrada en el Product Backlog."
@@ -17,12 +20,19 @@ func NewBacklogService(store BacklogStore) *BacklogService {
 	return &BacklogService{store: store}
 }
 
-// maxEstimatedHours es el límite de la columna NUMERIC(6,2) de user_stories.estimated_hours.
-const maxEstimatedHours = 10000
+// maxEstimatedHours es el máximo que admite NUMERIC(6,2) sin redondeo ni overflow.
+const maxEstimatedHours = 9999.99
 
-// validEstimatedHours acepta nil (sin horas estimadas) o un valor en (0, 10000).
+// validEstimatedHours acepta nil o un valor positivo con hasta dos decimales dentro del máximo.
 func validEstimatedHours(h *float64) bool {
-	return h == nil || (*h > 0 && *h < maxEstimatedHours)
+	if h == nil {
+		return true
+	}
+	value := *h
+	if math.IsNaN(value) || math.IsInf(value, 0) || value <= 0 || value > maxEstimatedHours {
+		return false
+	}
+	return math.Round(value*100)/100 == value
 }
 
 // CreateStory valida la solicitud y registra la historia en estado Pendiente (T017, T018, T025, T037).
