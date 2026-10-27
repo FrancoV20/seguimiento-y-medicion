@@ -186,6 +186,9 @@ func TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje(t *testing.T) {
 	if n := strings.Count(body, `class="alert `); n != 1 {
 		t.Errorf("la advertencia debía venir en un solo mensaje, hay %d", n)
 	}
+	if !strings.Contains(body, "alert-warning") || strings.Contains(body, "alert-success") {
+		t.Errorf("completar sin horas debe verse como advertencia, no como éxito")
+	}
 }
 
 // FR-007, FR-017 (SC-003): reabrir vuelve a En progreso y los Story Points dejan de contarse.

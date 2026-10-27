@@ -206,6 +206,9 @@ func TestEscenarioTablero_CompletarSinHorasRegistradas(t *testing.T) {
 	if n := strings.Count(pantalla, `class="alert `); n != 1 {
 		t.Errorf("debía ser un solo mensaje, hay %d", n)
 	}
+	if !strings.Contains(pantalla, "alert-warning") || strings.Contains(pantalla, "alert-success") {
+		t.Errorf("completar sin horas debe verse como advertencia, no como éxito")
+	}
 	if estado := app.estadoDe(t, historia); estado != "Hecho" {
 		t.Errorf("estado = %q, se esperaba \"Hecho\"", estado)
 	}
