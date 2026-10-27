@@ -97,6 +97,15 @@ func boardSuccessMessage(result sprint.StatusResult) string {
 	}
 }
 
+// boardSuccessFlash arma el mensaje del cambio válido; con la advertencia de horas es una advertencia.
+func boardSuccessFlash(result sprint.StatusResult) Flash {
+	kind := FlashSuccess
+	if result.To == sprint.Done && result.NoHoursWarning {
+		kind = FlashWarning
+	}
+	return Flash{Kind: kind, Text: boardSuccessMessage(result)}
+}
+
 // boardOutcome es la respuesta que corresponde a un error del cambio de estado.
 type boardOutcome struct {
 	status   int   // código HTTP cuando se muestra el Tablero con el mensaje

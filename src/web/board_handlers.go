@@ -110,6 +110,7 @@ func (h *boardHandlers) changeStatus(w http.ResponseWriter, r *http.Request) {
 		h.render(w, r, outcome.status, &outcome.flash)
 		return
 	}
-	SetFlash(w, r, FlashSuccess, boardSuccessMessage(result))
+	flash := boardSuccessFlash(result)
+	SetFlash(w, r, flash.Kind, flash.Text)
 	RedirectSeeOther(w, r, pathBoard)
 }
