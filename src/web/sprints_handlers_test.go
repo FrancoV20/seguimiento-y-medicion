@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -987,6 +988,28 @@ func (f *sprintAssignmentDBFixture) post(t *testing.T, values url.Values) (*http
 	return response, sprintHandlerReadBody(t, response)
 }
 
+func (f *sprintAssignmentDBFixture) remove(t *testing.T, storyID int64) (*http.Response, string) {
+	t.Helper()
+	response, err := f.client.PostForm(f.server.URL+"/sprints/historias/quitar", url.Values{
+		FieldStoryID: {strconv.FormatInt(storyID, 10)},
+	})
+	if err != nil {
+		t.Fatalf("POST /sprints/historias/quitar: %v", err)
+	}
+	return response, sprintHandlerReadBody(t, response)
+}
+
+func (f *sprintAssignmentDBFixture) remove(t *testing.T, storyID int64) (*http.Response, string) {
+	t.Helper()
+	response, err := f.client.PostForm(f.server.URL+"/sprints/historias/quitar", url.Values{
+		FieldStoryID: {strconv.FormatInt(storyID, 10)},
+	})
+	if err != nil {
+		t.Fatalf("POST /sprints/historias/quitar: %v", err)
+	}
+	return response, sprintHandlerReadBody(t, response)
+}
+
 func (f *sprintAssignmentDBFixture) getSprints(t *testing.T) (*http.Response, string) {
 	t.Helper()
 	response, err := f.client.Get(f.server.URL + "/sprints")
@@ -1083,4 +1106,120 @@ func TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically(
 	if strings.Contains(body, MsgStoriesAdded) {
 		t.Error("el rechazo no debe mostrar confirmación de asignación")
 	}
+}
+
+func TestSprintsHandler_RemoveStoryReturnsItToBacklog(t *testing.T) {
+	fixture := newSprintAssignmentDBFixture(t, false)
+	storyID := fixture.storyIDs[0]
+	if err := fixture.store.AssignStories(context.Background(), fixture.activeSprintID, []int64{storyID}); err != nil {
+		t.Fatalf("no se pudo asignar la historia al Sprint de prueba: %v", err)
+	}
+
+	response, _ := fixture.remove(t, storyID)
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/sprints" {
+		t.Fatalf("se esperaba 303 a /sprints; estado=%d location=%q", response.StatusCode, response.Header.Get("Location"))
+	}
+	_, body := fixture.getSprints(t)
+	if count := strings.Count(body, MsgStoryRemoved); count != 1 {
+		t.Errorf("el mensaje exacto debía aparecer una vez; count=%d body=%s", count, body)
+	}
+	status, activeSprintID, assignments := fixture.storyState(t, storyID)
+	if status != string(sprint.Pendiente) || activeSprintID.Valid || assignments != 0 {
+		t.Errorf("la historia debía volver al Backlog en PostgreSQL: status=%q activeSprintID=%v assignments=%d", status, activeSprintID, assignments)
+	}
+	if !strings.Contains(body, fmt.Sprintf(`name="historia" value="%d"`, storyID)) {
+		t.Errorf("la historia devuelta debía estar disponible en el listado: %s", body)
+	}
+}
+
+func TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories(t *testing.T) {
+	fixture := newSprintAssignmentDBFixture(t, true)
+	progressID, doneID, foreignID := fixture.storyIDs[0], fixture.storyIDs[1], fixture.storyIDs[2]
+	var effortStoryID int64
+	if err := fixture.db.QueryRow(`
+		INSERT INTO user_stories (project_id, title, description, priority, status)
+		VALUES ($1, 'Historia con esfuerzo HU23', 'Historia para validar horas', 'Media', 'Pendiente')
+		RETURNING id`, fixture.projectID).Scan(&effortStoryID); err != nil {
+		t.Fatalf("no se pudo crear la historia con esfuerzo: %v", err)
+	}
+	fixture.storyIDs = append(fixture.storyIDs, effortStoryID)
+	if err := fixture.store.AssignStories(context.Background(), fixture.activeSprintID, []int64{progressID, doneID, effortStoryID}); err != nil {
+		t.Fatalf("no se pudieron asignar las historias de prueba: %v", err)
+	}
+	if _, err := fixture.db.Exec(`UPDATE user_stories SET status = $1 WHERE id = $2`, sprint.InProgress, progressID); err != nil {
+		t.Fatalf("no se pudo marcar la historia En progreso: %v", err)
+	}
+	if _, err := fixture.db.Exec(`UPDATE user_stories SET status = $1 WHERE id = $2`, sprint.Done, doneID); err != nil {
+		t.Fatalf("no se pudo marcar la historia Hecha: %v", err)
+	}
+	var memberID int64
+	if err := fixture.db.QueryRow(`INSERT INTO members (display_name) VALUES ('HU23 esfuerzo quitar') RETURNING id`).Scan(&memberID); err != nil {
+		t.Fatalf("no se pudo crear el integrante para esfuerzo: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = fixture.db.Exec(`DELETE FROM effort_logs WHERE member_id = $1`, memberID)
+		_, _ = fixture.db.Exec(`DELETE FROM members WHERE id = $1`, memberID)
+	})
+	if _, err := fixture.db.Exec(`
+		INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
+		VALUES ($1, $2, CURRENT_DATE, 'Trabajo realizado', 1.5)`, effortStoryID, memberID); err != nil {
+		t.Fatalf("no se pudo registrar esfuerzo: %v", err)
+	}
+
+	_, body := fixture.getSprints(t)
+	blockedStories := []struct{ title, reason string }{
+		{fmt.Sprintf("Historia %d del proyecto %d", progressID, fixture.projectID), "Ya está en progreso"},
+		{fmt.Sprintf("Historia %d del proyecto %d", doneID, fixture.projectID), "Ya está hecha"},
+		{"Historia con esfuerzo HU23", "Tiene horas registradas"},
+	}
+	for _, blocked := range blockedStories {
+		assertSprintStoryRemoveDisabled(t, body, blocked.title, blocked.reason)
+	}
+
+	for _, test := range []struct {
+		storyID int64
+		reason  string
+	}{
+		{progressID, "Ya está en progreso"},
+		{doneID, "Ya está hecha"},
+		{effortStoryID, "Tiene horas registradas"},
+		{foreignID, sprint.ErrStoryNotAvailable.Error()},
+	} {
+		response, responseBody := fixture.remove(t, test.storyID)
+		if response.StatusCode != http.StatusConflict {
+			t.Errorf("quitar historia %d: se esperaba 409, se obtuvo %d", test.storyID, response.StatusCode)
+		}
+		if !strings.Contains(responseBody, test.reason) {
+			t.Errorf("quitar historia %d debía informar %q: %s", test.storyID, test.reason, responseBody)
+		}
+		status, activeSprintID, assignments := fixture.storyState(t, test.storyID)
+		if test.storyID == foreignID {
+			if status != string(sprint.Pendiente) || activeSprintID.Valid || assignments != 0 {
+				t.Errorf("la historia extranjera no debía cambiar: status=%q activeSprintID=%v assignments=%d", status, activeSprintID, assignments)
+			}
+			continue
+		}
+		if !activeSprintID.Valid || activeSprintID.Int64 != fixture.activeSprintID || assignments != 1 {
+			t.Errorf("el rechazo debía conservar la asignación de %d: activeSprintID=%v assignments=%d", test.storyID, activeSprintID, assignments)
+		}
+		if test.storyID == progressID && status != string(sprint.InProgress) || test.storyID == doneID && status != string(sprint.Done) || test.storyID == effortStoryID && status != string(sprint.EnSprint) {
+			t.Errorf("el rechazo debía conservar el estado de %d: %q", test.storyID, status)
+		}
+	}
+}
+
+func assertSprintStoryRemoveDisabled(t *testing.T, body, title, reason string) {
+	t.Helper()
+	rows := regexp.MustCompile(`(?s)<tr\b[^>]*>.*?</tr>`).FindAllString(body, -1)
+	for _, row := range rows {
+		if !strings.Contains(row, title) {
+			continue
+		}
+		button := regexp.MustCompile(`(?s)<button\b[^>]*\bdisabled\b[^>]*>\s*Quitar\s*</button>`)
+		if !button.MatchString(row) || !strings.Contains(row, reason) {
+			t.Errorf("la fila %q debe tener Quitar deshabilitado con %q: %s", title, reason, row)
+		}
+		return
+	}
+	t.Errorf("no se encontró la fila de la historia %q", title)
 }

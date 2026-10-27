@@ -591,6 +591,17 @@ func (a *sprintAssignmentBDDApp) assign(t *testing.T, storyIDs ...string) (*http
 	return response, sprintBDDReadBody(t, response)
 }
 
+func (a *sprintAssignmentBDDApp) remove(t *testing.T, storyID int64) (*http.Response, string) {
+	t.Helper()
+	response, err := a.client.PostForm(a.server.URL+"/sprints/historias/quitar", url.Values{
+		web.FieldStoryID: {fmt.Sprintf("%d", storyID)},
+	})
+	if err != nil {
+		t.Fatalf("POST /sprints/historias/quitar: %v", err)
+	}
+	return response, sprintBDDReadBody(t, response)
+}
+
 func (a *sprintAssignmentBDDApp) getSprints(t *testing.T) (*http.Response, string) {
 	t.Helper()
 	response, err := a.client.Get(a.server.URL + "/sprints")
@@ -653,5 +664,59 @@ func TestWebSprintsBDD_AddWithoutSelection(t *testing.T) {
 	status, activeSprintID, assignments := app.storyState(t)
 	if status != string(sprint.Pendiente) || activeSprintID != 0 || assignments != 0 {
 		t.Errorf("la BD no debía mutar sin selección: status=%q activeSprintID=%d assignments=%d", status, activeSprintID, assignments)
+	}
+}
+
+func TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog(t *testing.T) {
+	// Given: una historia Pendiente asignada al Sprint activo.
+	app := newSprintAssignmentBDDApp(t)
+	if err := app.store.AssignStories(context.Background(), app.sprint.ID, []int64{app.storyID}); err != nil {
+		t.Fatalf("no se pudo asignar la historia al Sprint de prueba: %v", err)
+	}
+
+	// When: quito la historia desde la pantalla web.
+	response, _ := app.remove(t, app.storyID)
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/sprints" {
+		t.Fatalf("se esperaba 303 a /sprints; estado=%d location=%q", response.StatusCode, response.Header.Get("Location"))
+	}
+
+	// Then: veo una sola confirmación y PostgreSQL devuelve la historia al Backlog.
+	_, body := app.getSprints(t)
+	if count := strings.Count(body, web.MsgStoryRemoved); count != 1 {
+		t.Errorf("el mensaje debía mostrarse una vez; count=%d body=%s", count, body)
+	}
+	status, activeSprintID, assignments := app.storyState(t)
+	if status != string(sprint.Pendiente) || activeSprintID != 0 || assignments != 0 {
+		t.Errorf("la historia debía volver a Pendiente sin asociación: status=%q activeSprintID=%d assignments=%d", status, activeSprintID, assignments)
+	}
+	if !strings.Contains(body, fmt.Sprintf(`name="historia" value="%d"`, app.storyID)) {
+		t.Errorf("la historia devuelta debía estar disponible en el listado: %s", body)
+	}
+}
+
+func TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission(t *testing.T) {
+	// Given: una historia En progreso que sigue asignada al Sprint activo.
+	app := newSprintAssignmentBDDApp(t)
+	if err := app.store.AssignStories(context.Background(), app.sprint.ID, []int64{app.storyID}); err != nil {
+		t.Fatalf("no se pudo asignar la historia al Sprint de prueba: %v", err)
+	}
+	if _, err := app.fixture.db.Exec(`UPDATE user_stories SET status = $1 WHERE id = $2`, sprint.InProgress, app.storyID); err != nil {
+		t.Fatalf("no se pudo poner la historia En progreso: %v", err)
+	}
+
+	// When: abro la pantalla e intento quitarla igualmente con un POST directo.
+	_, page := app.getSprints(t)
+	response, body := app.remove(t, app.storyID)
+
+	// Then: el botón queda deshabilitado con el motivo y el envío no altera la BD.
+	if !strings.Contains(page, "Ya está en progreso") || !strings.Contains(page, "disabled") {
+		t.Errorf("la vista debía deshabilitar Quitar con el motivo exacto: %s", page)
+	}
+	if response.StatusCode != http.StatusConflict || !strings.Contains(body, "Ya está en progreso") {
+		t.Errorf("el POST directo debía rechazarse con 409 y el motivo: status=%d body=%s", response.StatusCode, body)
+	}
+	status, activeSprintID, assignments := app.storyState(t)
+	if status != string(sprint.InProgress) || activeSprintID != app.sprint.ID || assignments != 1 {
+		t.Errorf("el rechazo debía conservar la historia en el Sprint: status=%q activeSprintID=%d assignments=%d", status, activeSprintID, assignments)
 	}
 }
