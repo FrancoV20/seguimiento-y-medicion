@@ -55,10 +55,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implementar el armado del formulario (fechas, identificadores sin repetidos, valores conservados) en `src/web/sprints_form.go`
-- [ ] T016 [US1] Implementar los handlers `GET /sprints` y `POST /sprints` en `src/web/sprints_handlers.go`: consultan el Sprint activo para decidir si ofrecen el formulario, invocan la creación de HU-04 con el proyecto de `ActiveContext` (la regla de un solo Sprint activo la aplica el dominio) y usan `SetFlash` (éxito o advertencia) y la redirección 303
-- [ ] T017 [US1] Crear `sprints.html` con el formulario de creación (Sprint Goal, fechas y lista de historias con casillas, deshabilitadas con el motivo) y sin campo de identificador, usando los parciales `alert.html` y `field.html`, en `src/web/templates/sprints.html`
-- [ ] T018 [US1] Construir el servicio de HU-04 y el `PostgreSQLSprintCatalog` y registrar la sección "Sprints" (`/sprints`, `RequiresProject: true`) con las rutas de la pantalla mediante `Server.Register` en `src/cmd/server/main.go`
+- [X] T015 [US1] Implementar el armado del formulario (fechas, identificadores sin repetidos, valores conservados) en `src/web/sprints_form.go`
+- [X] T016 [US1] Implementar los handlers `GET /sprints` y `POST /sprints` en `src/web/sprints_handlers.go`: consultan el Sprint activo para decidir si ofrecen el formulario, invocan la creación de HU-04 con el proyecto de `ActiveContext` (la regla de un solo Sprint activo la aplica el dominio) y usan `SetFlash` (éxito o advertencia) y la redirección 303
+- [X] T017 [US1] Crear `sprints.html` con el formulario de creación (Sprint Goal, fechas y lista de historias con casillas, deshabilitadas con el motivo) y sin campo de identificador, usando los parciales `alert.html` y `field.html`, en `src/web/templates/sprints.html`
+- [X] T018 [US1] Construir el servicio de HU-04 y el `PostgreSQLSprintCatalog` y registrar la sección "Sprints" (`/sprints`, `RequiresProject: true`) con las rutas de la pantalla mediante `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 crea Sprints desde la web con las reglas de HU-04; HU-14, HU-24 y HU-25 ya tienen un Sprint activo con historias.
 
@@ -72,13 +72,13 @@
 
 ### Tests for User Story 2
 
-- [ ] T019 [P] [US2] Escribir la prueba de handler de la lista: las historias asignadas a un Sprint y las no pendientes aparecen deshabilitadas con el motivo ("Ya está asignada al Sprint N" o "No está pendiente"), en `src/web/sprints_handlers_test.go`
-- [ ] T020 [P] [US2] Escribir la prueba de handler con una historia que dejó de estar disponible mientras se armaba el formulario: no se crea el Sprint, se informa cuál con el mensaje de HU-04, los datos y las marcas se conservan y no se consume un número, en `src/web/sprints_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler con Goal vacío (también con solo espacios) y con fecha de fin anterior y, por separado, igual a la de inicio: mensajes de HU-04 junto a cada campo, datos y marcas conservados y ningún Sprint creado, en `src/web/sprints_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler con cada fecha faltante ("Falta la fecha de inicio", "Falta la fecha de fin") y con una de formato inválido ("La fecha no tiene un formato válido"): mensaje junto al campo y ningún Sprint creado, en `src/web/sprints_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y sin Sprint ni asignaciones parciales, en `src/web/sprints_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): el guardado queda bloqueado, se redirige a la selección de proyecto con el mensaje de HU-20b, no se guarda nada, y un campo de proyecto o de Sprint enviado en el formulario se ignora, en `src/web/sprints_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir los escenarios BDD de historia no disponible (en la lista y al guardar), Goal vacío, fecha de fin anterior o igual, fecha faltante, formato de fecha inválido y falla de guardado en `test/web_sprints_bdd_test.go`
+- [X] T019 [P] [US2] Escribir la prueba de handler de la lista: las historias asignadas a un Sprint y las no pendientes aparecen deshabilitadas con el motivo ("Ya está asignada al Sprint N" o "No está pendiente"), en `src/web/sprints_handlers_test.go`
+- [X] T020 [P] [US2] Escribir la prueba de handler con una historia que dejó de estar disponible mientras se armaba el formulario: no se crea el Sprint, se informa cuál con el mensaje de HU-04, los datos y las marcas se conservan y no se consume un número, en `src/web/sprints_handlers_test.go`
+- [X] T021 [P] [US2] Escribir la prueba de handler con Goal vacío (también con solo espacios) y con fecha de fin anterior y, por separado, igual a la de inicio: mensajes de HU-04 junto a cada campo, datos y marcas conservados y ningún Sprint creado, en `src/web/sprints_handlers_test.go`
+- [X] T022 [P] [US2] Escribir la prueba de handler con cada fecha faltante ("Falta la fecha de inicio", "Falta la fecha de fin") y con una de formato inválido ("La fecha no tiene un formato válido"): mensaje junto al campo y ningún Sprint creado, en `src/web/sprints_handlers_test.go`
+- [X] T023 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", datos conservados, sin mensaje de éxito y sin Sprint ni asignaciones parciales, en `src/web/sprints_handlers_test.go`
+- [X] T024 [P] [US2] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): el guardado queda bloqueado, se redirige a la selección de proyecto con el mensaje de HU-20b, no se guarda nada, y un campo de proyecto o de Sprint enviado en el formulario se ignora, en `src/web/sprints_handlers_test.go`
+- [X] T025 [P] [US2] Escribir los escenarios BDD de historia no disponible (en la lista y al guardar), Goal vacío, fecha de fin anterior o igual, fecha faltante, formato de fecha inválido y falla de guardado en `test/web_sprints_bdd_test.go`
 
 ### Implementation for User Story 2
 

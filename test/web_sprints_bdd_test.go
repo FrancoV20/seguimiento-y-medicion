@@ -53,6 +53,7 @@ func (c *sprintBDDCatalog) ListStoryOptions(_ context.Context, projectID int64) 
 type sprintBDDActions struct {
 	catalog     *sprintBDDCatalog
 	createCalls int
+	createError error
 }
 
 func (a *sprintBDDActions) CreateSprint(
@@ -65,6 +66,15 @@ func (a *sprintBDDActions) CreateSprint(
 		return sprint.SprintCreationResult{}, &sprint.ActiveSprintExistsError{Number: active.Number}
 	}
 	a.createCalls++
+	if a.createError != nil {
+		return sprint.SprintCreationResult{}, a.createError
+	}
+	if strings.TrimSpace(request.Goal) == "" {
+		return sprint.SprintCreationResult{}, sprint.ErrGoalRequired
+	}
+	if request.StartDate.IsZero() || request.EndDate.IsZero() || !request.EndDate.After(request.StartDate) {
+		return sprint.SprintCreationResult{}, sprint.ErrInvalidSprintPeriod
+	}
 	sprintID := int64(900 + a.createCalls)
 	created := sprint.Sprint{
 		ID:        sprintID,
@@ -268,4 +278,135 @@ func TestWebSprintsBDD_ExistingActiveSprintBlocksAnother(t *testing.T) {
 	if app.actions.createCalls != 0 {
 		t.Errorf("no debía guardarse otro Sprint; llamadas=%d", app.actions.createCalls)
 	}
+}
+
+func TestWebSprintsBDD_UnavailableStoryAndValidationErrors(t *testing.T) {
+	t.Run("historia no disponible en la lista y al guardar", func(t *testing.T) {
+		const projectID, storyID = 701, 71
+		unavailable := web.StoryOption{
+			ID: storyID, Title: "Historia ya asignada", Status: sprint.EnSprint,
+			AssignedSprintNumber: 2, Available: false, UnavailableReason: "Ya está asignada al Sprint 2",
+		}
+		app := newSprintBDDApp(t, projectID, "Proyecto con historia asignada", nil, []web.StoryOption{unavailable})
+		app.chooseProject(t, projectID)
+
+		// Given: la historia ya aparece deshabilitada con el motivo del Sprint que la contiene.
+		_, list := app.getSprints(t)
+		if !strings.Contains(list, "Ya está asignada al Sprint 2") || !strings.Contains(list, "disabled") {
+			t.Errorf("la lista debía deshabilitar la historia con su motivo: %s", list)
+		}
+
+		// When: la historia se vuelve no disponible después de abrir el formulario.
+		app.actions.createError = fmt.Errorf("%w: historia %d", sprint.ErrStoryNotAvailable, storyID)
+		response, body := app.postCreate(t, url.Values{
+			web.FieldGoal:      {"Planificar historias disponibles"},
+			web.FieldStartDate: {"2026-11-01"},
+			web.FieldEndDate:   {"2026-11-14"},
+			web.FieldStory:     {"71"},
+		})
+
+		// Then: no se crea, se identifica la historia y se conservan campos y selección.
+		if response.StatusCode != http.StatusConflict {
+			t.Errorf("se esperaba 409, se obtuvo %d", response.StatusCode)
+		}
+		storyError := `<p class="field-error"><span class="field-error-label">Error:</span> la historia no está disponible para asignación: historia 71</p>`
+		if !strings.Contains(body, storyError) {
+			t.Errorf("el motivo exacto debía mostrarse junto al campo de historias: %s", body)
+		}
+		for _, expected := range []string{"Planificar historias disponibles", "2026-11-01", "2026-11-14", `name="historia" value="71" checked`} {
+			if !strings.Contains(body, expected) {
+				t.Errorf("la respuesta debía mostrar/conservar %q: %s", expected, body)
+			}
+		}
+		if app.catalog.active[projectID] != nil {
+			t.Error("no debía quedar un Sprint creado tras rechazar la historia")
+		}
+	})
+
+	validationCases := []struct {
+		name          string
+		goal          string
+		startDate     string
+		endDate       string
+		errorID       string
+		expectedError string
+	}{
+		{name: "Goal vacío", goal: "", startDate: "2026-11-01", endDate: "2026-11-14", errorID: "objetivo-error", expectedError: sprint.ErrGoalRequired.Error()},
+		{name: "Goal con espacios", goal: " \t ", startDate: "2026-11-01", endDate: "2026-11-14", errorID: "objetivo-error", expectedError: sprint.ErrGoalRequired.Error()},
+		{name: "fecha de fin anterior", goal: "Sprint válido", startDate: "2026-11-01", endDate: "2026-10-31", errorID: "fecha_fin-error", expectedError: sprint.ErrInvalidSprintPeriod.Error()},
+		{name: "fecha de fin igual", goal: "Sprint válido", startDate: "2026-11-01", endDate: "2026-11-01", errorID: "fecha_fin-error", expectedError: sprint.ErrInvalidSprintPeriod.Error()},
+		{name: "falta fecha de inicio", goal: "Sprint válido", startDate: "", endDate: "2026-11-14", errorID: "fecha_inicio-error", expectedError: web.MsgMissingStartDate},
+		{name: "falta fecha de fin", goal: "Sprint válido", startDate: "2026-11-01", endDate: "", errorID: "fecha_fin-error", expectedError: web.MsgMissingEndDate},
+		{name: "formato de fecha inválido", goal: "Sprint válido", startDate: "01/11/2026", endDate: "2026-11-14", errorID: "fecha_inicio-error", expectedError: web.MsgInvalidDateFormat},
+	}
+	for _, tc := range validationCases {
+		t.Run(tc.name, func(t *testing.T) {
+			const projectID, storyID = 702, 72
+			app := newSprintBDDApp(t, projectID, "Proyecto de validación", nil, []web.StoryOption{{
+				ID: storyID, Title: "Historia a conservar", Status: sprint.Pendiente, Available: true,
+			}})
+			app.chooseProject(t, projectID)
+
+			// Given: un formulario con el dato inválido y los demás datos ingresados.
+			response, body := app.postCreate(t, url.Values{
+				web.FieldGoal:      {tc.goal},
+				web.FieldStartDate: {tc.startDate},
+				web.FieldEndDate:   {tc.endDate},
+				web.FieldStory:     {"72"},
+			})
+
+			// When: el servidor procesa la solicitud.
+			if response.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("se esperaba 422, se obtuvo %d: %s", response.StatusCode, body)
+			}
+
+			// Then: informa el error, conserva los valores y no presenta éxito.
+			if !strings.Contains(body, tc.expectedError) {
+				t.Errorf("falta el mensaje %q: %s", tc.expectedError, body)
+			}
+			expectedFieldError := `<p class="field-error" id="` + tc.errorID + `"><span class="field-error-label">Error:</span> ` + tc.expectedError + `</p>`
+			if !strings.Contains(body, expectedFieldError) {
+				t.Errorf("el mensaje debía renderizarse exactamente junto al campo %q: %s", tc.errorID, body)
+			}
+			for _, value := range []string{tc.goal, tc.startDate, tc.endDate} {
+				if value != "" && !strings.Contains(body, value) {
+					t.Errorf("no se conservó el valor %q: %s", value, body)
+				}
+			}
+			if !strings.Contains(body, `name="historia" value="72" checked`) {
+				t.Errorf("la casilla marcada debía conservarse tras el rechazo: %s", body)
+			}
+			if strings.Contains(body, web.MsgSprintCreated) || strings.Contains(body, "alert-success") || app.catalog.active[projectID] != nil {
+				t.Error("un error de validación no debe producir éxito ni crear un Sprint")
+			}
+		})
+	}
+
+	t.Run("falla el guardado", func(t *testing.T) {
+		const projectID = 703
+		app := newSprintBDDApp(t, projectID, "Proyecto de persistencia", nil, []web.StoryOption{{
+			ID: 73, Title: "Historia de persistencia", Status: sprint.Pendiente, Available: true,
+		}})
+		app.chooseProject(t, projectID)
+		app.actions.createError = fmt.Errorf("postgres: INSERT INTO sprints internal detail")
+
+		// Given: un formulario válido y una falla interna durante el guardado.
+		response, body := app.postCreate(t, url.Values{
+			web.FieldGoal:      {"Conservar ante falla"},
+			web.FieldStartDate: {"2026-11-01"},
+			web.FieldEndDate:   {"2026-11-14"},
+			web.FieldStory:     {"73"},
+		})
+
+		// When / Then: se informa el error genérico y nunca se confirma el éxito.
+		if response.StatusCode != http.StatusInternalServerError {
+			t.Errorf("se esperaba 500, se obtuvo %d", response.StatusCode)
+		}
+		if !strings.Contains(body, web.MsgOperationFailed) || strings.Contains(body, "internal detail") || strings.Contains(body, web.MsgSprintCreated) || strings.Contains(body, "alert-success") {
+			t.Errorf("se esperaba solo el error genérico, se obtuvo: %s", body)
+		}
+		if !strings.Contains(body, "Conservar ante falla") || !strings.Contains(body, `name="historia" value="73" checked`) || app.catalog.active[projectID] != nil {
+			t.Error("los datos deben conservarse y el Sprint no debe quedar creado")
+		}
+	})
 }
