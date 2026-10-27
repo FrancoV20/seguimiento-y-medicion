@@ -105,3 +105,41 @@ func TestClearContextCookie_Expira(t *testing.T) {
 		t.Errorf("al borrar se conservan HttpOnly y Path=/ para que el navegador la reemplace: %+v", c)
 	}
 }
+
+// HU-26, T014: readIDCookie trata cualquier firma inválida como cookie manipulada: (0, true).
+func TestReadIDCookie_FirmaInvalidaEsManipulada(t *testing.T) {
+	withCookieSecret(t, "clave-de-prueba-de-32-caracteres!")
+	signer := cookieSigner.Load()
+	other := NewCookieSigner([]byte("otra-clave-distinta-de-32-caracteres"))
+	firmaDe7 := signer.Sign(CookieProject, "7")
+
+	cases := map[string]string{
+		"valor cambiado":               "8" + firmaDe7[1:],
+		"sin firma (formato anterior)": "7",
+		"vacío":                        "",
+		"solo punto":                   ".",
+		"firma vacía":                  "7.",
+		"valor vacío":                  ".abc",
+		"texto":                        "abc",
+		"firma de otra cookie":         signer.Sign(CookieMember, "7"),
+		"firma de otra clave":          other.Sign(CookieProject, "7"),
+		"firmado pero no numérico":     signer.Sign(CookieProject, "abc"),
+		"firmado pero negativo":        signer.Sign(CookieProject, "-1"),
+		"firmado con cero adelante":    signer.Sign(CookieProject, "05"),
+	}
+	for name, value := range cases {
+		t.Run(name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			req.AddCookie(&http.Cookie{Name: CookieProject, Value: value})
+			if id, present := readIDCookie(req, CookieProject); id != 0 || !present {
+				t.Errorf("%q: se esperaba (0, true), se obtuvo (%d, %v)", value, id, present)
+			}
+		})
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	req.AddCookie(&http.Cookie{Name: CookieProject, Value: firmaDe7})
+	if id, present := readIDCookie(req, CookieProject); id != 7 || !present {
+		t.Errorf("firma correcta: se esperaba (7, true), se obtuvo (%d, %v)", id, present)
+	}
+}

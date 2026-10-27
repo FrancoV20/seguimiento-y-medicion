@@ -1,7 +1,7 @@
 ﻿=== RUN   TestMigraciones_VersionUnicaYParUpDown
 --- PASS: TestMigraciones_VersionUnicaYParUpDown (0.00s)
 === RUN   TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable
---- PASS: TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable (0.33s)
+--- PASS: TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable (0.30s)
 === RUN   TestLatestVersion_DevuelveLaMayorVersionDeLosUp
 --- PASS: TestLatestVersion_DevuelveLaMayorVersionDeLosUp (0.00s)
 === RUN   TestLatestVersion_NombreInvalidoFalla
@@ -9,7 +9,7 @@
 === RUN   TestLatestVersion_LeeLasMigracionesDelRepositorio
 --- PASS: TestLatestVersion_LeeLasMigracionesDelRepositorio (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.077s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.094s
 === RUN   TestCreateStory_ConHorasEstimadasLasConserva
 --- PASS: TestCreateStory_ConHorasEstimadasLasConserva (0.00s)
 === RUN   TestCreateStory_SinHorasEstimadasSePermite
@@ -21,17 +21,17 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.077s
 === RUN   TestCreateStory_HorasEstimadasHasta9999ConDosDecimalesSePermiten
 --- PASS: TestCreateStory_HorasEstimadasHasta9999ConDosDecimalesSePermiten (0.00s)
 === RUN   TestPostgreSQLBacklogStore_PersisteHistoriaCriteriosYAsociacion
---- PASS: TestPostgreSQLBacklogStore_PersisteHistoriaCriteriosYAsociacion (0.06s)
+--- PASS: TestPostgreSQLBacklogStore_PersisteHistoriaCriteriosYAsociacion (0.08s)
 === RUN   TestPostgreSQLBacklogStore_SinStoryPointsGuardaNull
 --- PASS: TestPostgreSQLBacklogStore_SinStoryPointsGuardaNull (0.03s)
 === RUN   TestPostgreSQLBacklogStore_ErrorEnCriterioNoDejaPersistenciaParcial
---- PASS: TestPostgreSQLBacklogStore_ErrorEnCriterioNoDejaPersistenciaParcial (0.03s)
+--- PASS: TestPostgreSQLBacklogStore_ErrorEnCriterioNoDejaPersistenciaParcial (0.02s)
 === RUN   TestPostgreSQLBacklogStore_ProyectoInexistenteNoEstaActivo
 --- PASS: TestPostgreSQLBacklogStore_ProyectoInexistenteNoEstaActivo (0.01s)
 === RUN   TestPostgreSQLBacklogStore_PersisteHorasEstimadas
---- PASS: TestPostgreSQLBacklogStore_PersisteHorasEstimadas (0.03s)
+--- PASS: TestPostgreSQLBacklogStore_PersisteHorasEstimadas (0.02s)
 === RUN   TestPostgreSQLBacklogStore_SinHorasEstimadasGuardaNull
---- PASS: TestPostgreSQLBacklogStore_SinHorasEstimadasGuardaNull (0.04s)
+--- PASS: TestPostgreSQLBacklogStore_SinHorasEstimadasGuardaNull (0.02s)
 === RUN   TestCreateStory_AltaValidaQuedaPendienteYAsociadaAlProyecto
 --- PASS: TestCreateStory_AltaValidaQuedaPendienteYAsociadaAlProyecto (0.00s)
 === RUN   TestCreateStory_SinStoryPointsSeCreaConAlerta
@@ -67,11 +67,11 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.077s
 === RUN   TestValidateStoryPoints_PermiteAusenciaDeEstimacion
 --- PASS: TestValidateStoryPoints_PermiteAusenciaDeEstimacion (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.094s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.022s
 === RUN   TestRun_ClaveCortaNoArranca
---- PASS: TestRun_ClaveCortaNoArranca (0.00s)
+--- PASS: TestRun_ClaveCortaNoArranca (0.01s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.079s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.077s
 === RUN   TestParseHoursValid
 === RUN   TestParseHoursValid/4
 === RUN   TestParseHoursValid/0.5
@@ -138,8 +138,8 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.079s
 === RUN   TestPostgresStoryAcceptsEffort/historia_en_Sprint_finalizado
 === RUN   TestPostgresStoryAcceptsEffort/historia_inexistente
 === RUN   TestPostgresStoryAcceptsEffort/identificador_no_num├®rico
---- PASS: TestPostgresStoryAcceptsEffort (0.11s)
-    --- PASS: TestPostgresStoryAcceptsEffort/historia_en_Sprint_activo (0.01s)
+--- PASS: TestPostgresStoryAcceptsEffort (0.08s)
+    --- PASS: TestPostgresStoryAcceptsEffort/historia_en_Sprint_activo (0.00s)
     --- PASS: TestPostgresStoryAcceptsEffort/historia_sin_Sprint (0.00s)
     --- PASS: TestPostgresStoryAcceptsEffort/historia_en_Sprint_finalizado (0.00s)
     --- PASS: TestPostgresStoryAcceptsEffort/historia_inexistente (0.00s)
@@ -150,18 +150,18 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.079s
 === RUN   TestPostgresMemberBelongsToStoryProject/integrante_inexistente
 === RUN   TestPostgresMemberBelongsToStoryProject/integrante_no_num├®rico
 === RUN   TestPostgresMemberBelongsToStoryProject/historia_inexistente
---- PASS: TestPostgresMemberBelongsToStoryProject (0.05s)
+--- PASS: TestPostgresMemberBelongsToStoryProject (0.04s)
     --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_del_proyecto (0.00s)
     --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_de_otro_proyecto (0.00s)
     --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_inexistente (0.00s)
     --- PASS: TestPostgresMemberBelongsToStoryProject/integrante_no_num├®rico (0.00s)
     --- PASS: TestPostgresMemberBelongsToStoryProject/historia_inexistente (0.00s)
 === RUN   TestPostgresSaveEntryAccumulates
---- PASS: TestPostgresSaveEntryAccumulates (0.07s)
+--- PASS: TestPostgresSaveEntryAccumulates (0.04s)
 === RUN   TestPostgresSaveEntryFailureLeavesNoPartialData
 --- PASS: TestPostgresSaveEntryFailureLeavesNoPartialData (0.05s)
 === RUN   TestPostgresCheckConstraintRejectsOutOfRangeHours
---- PASS: TestPostgresCheckConstraintRejectsOutOfRangeHours (0.05s)
+--- PASS: TestPostgresCheckConstraintRejectsOutOfRangeHours (0.04s)
 === RUN   TestLogEffortRegistersHoursAndAccumulates
 --- PASS: TestLogEffortRegistersHoursAndAccumulates (0.00s)
 === RUN   TestLogEffortSuccessiveEntriesAccumulate
@@ -289,7 +289,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.079s
 === RUN   TestValidateInputAccumulatesAllErrors
 --- PASS: TestValidateInputAccumulatesAllErrors (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.197s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.151s
 === RUN   TestCalculateDeviation
 === RUN   TestCalculateDeviation/positive_deviation
 === RUN   TestCalculateDeviation/negative_deviation
@@ -315,7 +315,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.197s
     --- PASS: TestCalculateMetricsWithInvalidSprintDoesNotPersistOrChangeStatus/negative_actual_hours (0.00s)
     --- PASS: TestCalculateMetricsWithInvalidSprintDoesNotPersistOrChangeStatus/invalid_story_points (0.00s)
 === RUN   TestPostgreSQLMetricsStoreLoadsAndSavesMetrics
---- PASS: TestPostgreSQLMetricsStoreLoadsAndSavesMetrics (0.12s)
+--- PASS: TestPostgreSQLMetricsStoreLoadsAndSavesMetrics (0.14s)
 === RUN   TestCalculateMetricsVelocityUsesOnlyCompletedStories
 --- PASS: TestCalculateMetricsVelocityUsesOnlyCompletedStories (0.00s)
 === RUN   TestCalculateMetricsTotalsAndPersistsCompletedStoryEffort
@@ -333,9 +333,9 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.197s
     --- PASS: TestCalculateMetricsStoreErrorsDoNotExposeInternalDetails/load_failure (0.00s)
     --- PASS: TestCalculateMetricsStoreErrorsDoNotExposeInternalDetails/save_failure (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.026s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.099s
 === RUN   TestPostgreSQLProjectStore_Create_Integration
---- PASS: TestPostgreSQLProjectStore_Create_Integration (0.17s)
+--- PASS: TestPostgreSQLProjectStore_Create_Integration (0.12s)
 === RUN   TestNewProject_RejectsMissingRequiredFields
 === RUN   TestNewProject_RejectsMissingRequiredFields/rejects_empty_project_name
 === RUN   TestNewProject_RejectsMissingRequiredFields/rejects_missing_members
@@ -344,8 +344,8 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.026s
     --- PASS: TestNewProject_RejectsMissingRequiredFields/rejects_missing_members (0.00s)
 === RUN   TestNewProject_RejectsInvalidDates
 === RUN   TestNewProject_RejectsInvalidDates/rejects_end_date_before_start_date
---- PASS: TestNewProject_RejectsInvalidDates (0.01s)
-    --- PASS: TestNewProject_RejectsInvalidDates/rejects_end_date_before_start_date (0.01s)
+--- PASS: TestNewProject_RejectsInvalidDates (0.00s)
+    --- PASS: TestNewProject_RejectsInvalidDates/rejects_end_date_before_start_date (0.00s)
 === RUN   TestNewProject_SuccessInitialState
 --- PASS: TestNewProject_SuccessInitialState (0.00s)
 === RUN   TestProjectService_CreateProject_Success
@@ -375,7 +375,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.026s
 === RUN   TestProjectService_CreateProject_StoreCreateFailure
 --- PASS: TestProjectService_CreateProject_StoreCreateFailure (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.084s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	2.965s
 === RUN   TestServicio_SegundoSprintActivoSeRechazaConSuNumero
 --- PASS: TestServicio_SegundoSprintActivoSeRechazaConSuNumero (0.00s)
 === RUN   TestServicio_RechazoNoDejaHuecosEnLaNumeracion
@@ -409,19 +409,19 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.084s
     --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/ya_hay_un_Sprint_activo (0.00s)
     --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/persistencia (0.00s)
 === RUN   TestPostgreSQLSprintStore_UnSoloSprintActivoYNumeracionSinHuecos
---- PASS: TestPostgreSQLSprintStore_UnSoloSprintActivoYNumeracionSinHuecos (0.08s)
+--- PASS: TestPostgreSQLSprintStore_UnSoloSprintActivoYNumeracionSinHuecos (0.10s)
 === RUN   TestPostgreSQLSprintStore_LaReglaEsPorProyecto
 --- PASS: TestPostgreSQLSprintStore_LaReglaEsPorProyecto (0.08s)
 === RUN   TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo
---- PASS: TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo (0.04s)
+--- PASS: TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo (0.05s)
 === RUN   TestPostgreSQLSprintStore_EstadosYMensajeDeHistoriaAsignada
---- PASS: TestPostgreSQLSprintStore_EstadosYMensajeDeHistoriaAsignada (0.07s)
+--- PASS: TestPostgreSQLSprintStore_EstadosYMensajeDeHistoriaAsignada (0.04s)
 === RUN   TestPostgreSQLSprintStoreCreateSprintAndSequence
---- PASS: TestPostgreSQLSprintStoreCreateSprintAndSequence (0.06s)
+--- PASS: TestPostgreSQLSprintStoreCreateSprintAndSequence (0.05s)
 === RUN   TestPostgreSQLSprintStoreCreatesSprintWithoutStoryAssignments
 --- PASS: TestPostgreSQLSprintStoreCreatesSprintWithoutStoryAssignments (0.02s)
 === RUN   TestPostgreSQLSprintStoreAssignmentConflictRollsBack
---- PASS: TestPostgreSQLSprintStoreAssignmentConflictRollsBack (0.04s)
+--- PASS: TestPostgreSQLSprintStoreAssignmentConflictRollsBack (0.05s)
 === RUN   TestFormatSprintID
 --- PASS: TestFormatSprintID (0.00s)
 === RUN   TestFormatSprintIDRejectsNonPositiveNumber
@@ -483,7 +483,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.084s
 === RUN   TestMemorySprintStoreInvalidCreationDoesNotConsumeSprintNumber
 --- PASS: TestMemorySprintStoreInvalidCreationDoesNotConsumeSprintNumber (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.285s
 === RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas
 === RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/pagina
 === RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/form
@@ -532,30 +532,30 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/add_criterion
 === RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/remove_selected_criterion
 === RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/cannot_remove_last_criterion
---- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave (0.13s)
-    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/add_criterion (0.04s)
-    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/remove_selected_criterion (0.05s)
-    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/cannot_remove_last_criterion (0.04s)
+--- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave (0.11s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/add_criterion (0.03s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/remove_selected_criterion (0.03s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/cannot_remove_last_criterion (0.05s)
 === RUN   TestBacklogHandler_EnterSubmitsSaveAction
---- PASS: TestBacklogHandler_EnterSubmitsSaveAction (0.07s)
+--- PASS: TestBacklogHandler_EnterSubmitsSaveAction (0.03s)
 === RUN   TestBacklogHandler_IgnoresBlankAcceptanceCriteria
 --- PASS: TestBacklogHandler_IgnoresBlankAcceptanceCriteria (0.04s)
 === RUN   TestBacklogHandler_MissingStoryPointsCreatesStoryWithWarning
---- PASS: TestBacklogHandler_MissingStoryPointsCreatesStoryWithWarning (0.05s)
+--- PASS: TestBacklogHandler_MissingStoryPointsCreatesStoryWithWarning (0.04s)
 === RUN   TestBacklogHandler_MissingEstimatedHoursCreatesStoryWithoutWarning
---- PASS: TestBacklogHandler_MissingEstimatedHoursCreatesStoryWithoutWarning (0.09s)
+--- PASS: TestBacklogHandler_MissingEstimatedHoursCreatesStoryWithoutWarning (0.04s)
 === RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours
 === RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/8
 === RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1,5
 === RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1.5
 === RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/9999,99
---- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours (0.29s)
-    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/8 (0.08s)
-    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1,5 (0.06s)
-    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1.5 (0.06s)
+--- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours (0.24s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/8 (0.04s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1,5 (0.04s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1.5 (0.07s)
     --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/9999,99 (0.08s)
 === RUN   TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash
---- PASS: TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash (0.06s)
+--- PASS: TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash (0.05s)
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/no_acceptance_criteria
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_title
@@ -573,8 +573,8 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_1,555
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_10000
 === RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_9999,995
---- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues (0.06s)
-    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/no_acceptance_criteria (0.00s)
+--- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues (0.07s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/no_acceptance_criteria (0.01s)
     --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_title (0.00s)
     --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_description (0.00s)
     --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/invalid_priority (0.00s)
@@ -596,12 +596,12 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/no_project_selected
 === RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/malformed_project_cookie
 === RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/deleted_project
---- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave (0.06s)
+--- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave (0.05s)
     --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/no_project_selected (0.01s)
     --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/malformed_project_cookie (0.00s)
     --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/deleted_project (0.00s)
 === RUN   TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst
---- PASS: TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst (0.05s)
+--- PASS: TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst (0.07s)
 === RUN   TestBacklogHandler_GetShowsEmptyStateWhenProjectHasNoStories
 --- PASS: TestBacklogHandler_GetShowsEmptyStateWhenProjectHasNoStories (0.06s)
 === RUN   TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog
@@ -624,7 +624,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestContexto_ErroresNoExponenDetallesInternos/lectura_con_la_selecci├│n_guardada
 === RUN   TestContexto_ErroresNoExponenDetallesInternos/lista_de_proyectos
 === RUN   TestContexto_ErroresNoExponenDetallesInternos/elegir_un_proyecto
---- PASS: TestContexto_ErroresNoExponenDetallesInternos (0.04s)
+--- PASS: TestContexto_ErroresNoExponenDetallesInternos (0.05s)
     --- PASS: TestContexto_ErroresNoExponenDetallesInternos/lectura_con_la_selecci├│n_guardada (0.00s)
     --- PASS: TestContexto_ErroresNoExponenDetallesInternos/lista_de_proyectos (0.00s)
     --- PASS: TestContexto_ErroresNoExponenDetallesInternos/elegir_un_proyecto (0.00s)
@@ -633,13 +633,13 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestSeccion_ElDestinoConservaLaConsulta
 --- PASS: TestSeccion_ElDestinoConservaLaConsulta (0.04s)
 === RUN   TestSeccion_SinRequisitosSeMuestraSinProyecto
---- PASS: TestSeccion_SinRequisitosSeMuestraSinProyecto (0.06s)
+--- PASS: TestSeccion_SinRequisitosSeMuestraSinProyecto (0.04s)
 === RUN   TestSeccion_ConProyectoYSinIntegranteLaSeccionDeProyectoSeMuestra
---- PASS: TestSeccion_ConProyectoYSinIntegranteLaSeccionDeProyectoSeMuestra (0.04s)
+--- PASS: TestSeccion_ConProyectoYSinIntegranteLaSeccionDeProyectoSeMuestra (0.05s)
 === RUN   TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve
---- PASS: TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve (0.04s)
+--- PASS: TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve (0.06s)
 === RUN   TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen
---- PASS: TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen (0.03s)
+--- PASS: TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen (0.04s)
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/https://otro.com
@@ -649,8 +649,8 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//contexto/proyecto
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/javascript:alert(1)
 === RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/backlog
---- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio (0.06s)
-    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com (0.01s)
+--- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio (0.04s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com (0.00s)
     --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/https://otro.com (0.00s)
     --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/\\otro.com (0.00s)
     --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//\otro.com (0.00s)
@@ -659,19 +659,19 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
     --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/javascript:alert(1) (0.00s)
     --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/backlog (0.00s)
 === RUN   TestContexto_SinSeleccionNoSeAutoselecciona
---- PASS: TestContexto_SinSeleccionNoSeAutoselecciona (0.05s)
+--- PASS: TestContexto_SinSeleccionNoSeAutoselecciona (0.04s)
 === RUN   TestContexto_ListaDeProyectosPermiteElegir
 --- PASS: TestContexto_ListaDeProyectosPermiteElegir (0.05s)
 === RUN   TestContexto_ElegirProyectoMuestraSuNombreYSusDatos
---- PASS: TestContexto_ElegirProyectoMuestraSuNombreYSusDatos (0.04s)
+--- PASS: TestContexto_ElegirProyectoMuestraSuNombreYSusDatos (0.06s)
 === RUN   TestContexto_ElegirSinDestinoVuelveAlInicio
---- PASS: TestContexto_ElegirSinDestinoVuelveAlInicio (0.03s)
+--- PASS: TestContexto_ElegirSinDestinoVuelveAlInicio (0.05s)
 === RUN   TestContexto_CambiarDeProyectoLimpiaElIntegrante
---- PASS: TestContexto_CambiarDeProyectoLimpiaElIntegrante (0.03s)
+--- PASS: TestContexto_CambiarDeProyectoLimpiaElIntegrante (0.05s)
 === RUN   TestContexto_VolverAElegirElMismoProyectoConservaElIntegrante
---- PASS: TestContexto_VolverAElegirElMismoProyectoConservaElIntegrante (0.04s)
+--- PASS: TestContexto_VolverAElegirElMismoProyectoConservaElIntegrante (0.05s)
 === RUN   TestContexto_SesionNuevaPideElegirDeNuevo
---- PASS: TestContexto_SesionNuevaPideElegirDeNuevo (0.05s)
+--- PASS: TestContexto_SesionNuevaPideElegirDeNuevo (0.03s)
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/no_numerico
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/vacio
@@ -680,7 +680,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/muy_grande
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/inexistente
 === RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/html
---- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior (0.07s)
+--- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior (0.05s)
     --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/no_numerico (0.01s)
     --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/vacio (0.00s)
     --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/negativo (0.00s)
@@ -694,30 +694,30 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/0
 === RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/99999999999
 === RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/<script>
---- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia (0.03s)
+--- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia (0.05s)
     --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/abc (0.00s)
     --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/-1 (0.00s)
     --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/0 (0.00s)
     --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/99999999999 (0.00s)
     --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/<script> (0.00s)
 === RUN   TestContexto_ProyectoEliminadoLimpiaLaSeleccionConAdvertencia
---- PASS: TestContexto_ProyectoEliminadoLimpiaLaSeleccionConAdvertencia (0.05s)
+--- PASS: TestContexto_ProyectoEliminadoLimpiaLaSeleccionConAdvertencia (0.06s)
 === RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion
 === RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/sin_la_secci├│n_Proyectos
 === RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/con_la_secci├│n_Proyectos
---- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion (0.07s)
-    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/sin_la_secci├│n_Proyectos (0.04s)
-    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/con_la_secci├│n_Proyectos (0.03s)
+--- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion (0.10s)
+    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/sin_la_secci├│n_Proyectos (0.05s)
+    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/con_la_secci├│n_Proyectos (0.05s)
 === RUN   TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503
---- PASS: TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503 (0.03s)
+--- PASS: TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503 (0.05s)
 === RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo
 === RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_A
 === RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_B
---- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo (0.04s)
+--- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo (0.06s)
     --- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_A (0.01s)
     --- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_B (0.00s)
 === RUN   TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun
---- PASS: TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun (0.04s)
+--- PASS: TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun (0.07s)
 === RUN   TestIntegrante_CambiarDeNombreReemplazaLaIdentificacion
 --- PASS: TestIntegrante_CambiarDeNombreReemplazaLaIdentificacion (0.05s)
 === RUN   TestIntegrante_SinProyectoSePideElegirProyectoPrimero
@@ -733,13 +733,13 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/negativo
 === RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/muy_grande
 === RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/vacio
---- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion (0.07s)
-    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/de_otro_proyecto (0.01s)
+--- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion (0.09s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/de_otro_proyecto (0.02s)
     --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/inexistente (0.01s)
     --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/no_numerico (0.01s)
     --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/negativo (0.01s)
     --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/muy_grande (0.01s)
-    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/vacio (0.01s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/vacio (0.00s)
 === RUN   TestIntegrante_CookieDeIntegranteAjenoSeLimpiaConAdvertencia
 --- PASS: TestIntegrante_CookieDeIntegranteAjenoSeLimpiaConAdvertencia (0.04s)
 === RUN   TestIntegrante_QuitadoDelProyectoSeLimpiaConAdvertencia
@@ -790,6 +790,32 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 --- PASS: TestSetContextCookie_SecureConHTTPS (0.00s)
 === RUN   TestClearContextCookie_Expira
 --- PASS: TestClearContextCookie_Expira (0.00s)
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/texto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior)
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo
+--- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/texto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior) (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo (0.00s)
 === RUN   TestLoadCookieSecret_Valida
 --- PASS: TestLoadCookieSecret_Valida (0.00s)
 === RUN   TestLoadCookieSecret_Ausente
@@ -812,32 +838,6 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 --- PASS: TestCookieSigner_MalFormada (0.00s)
 === RUN   TestCookieSigner_OtraClave
 --- PASS: TestCookieSigner_OtraClave (0.00s)
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/texto
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior)
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave
-=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico
---- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/texto (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior) (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave (0.00s)
-    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico (0.00s)
 === RUN   TestHU26_ReinicioConMismaClave
 --- PASS: TestHU26_ReinicioConMismaClave (0.00s)
 === RUN   TestCaidaYRecuperacionDeLaBaseSinReiniciar
@@ -915,7 +915,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestPostgreSQLContextStore_ListProjects_MasRecientesPrimero
 --- PASS: TestPostgreSQLContextStore_ListProjects_MasRecientesPrimero (0.04s)
 === RUN   TestPostgreSQLContextStore_ListMembers_SoloLosDelProyecto
---- PASS: TestPostgreSQLContextStore_ListMembers_SoloLosDelProyecto (0.04s)
+--- PASS: TestPostgreSQLContextStore_ListMembers_SoloLosDelProyecto (0.02s)
 === RUN   TestPostgreSQLContextStore_ResolveContext
 === RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_v├ílidos
 === RUN   TestPostgreSQLContextStore_ResolveContext/sin_integrante
@@ -925,7 +925,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_inexistente
 === RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_negativo
 === RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_fuera_de_rango
---- PASS: TestPostgreSQLContextStore_ResolveContext (0.05s)
+--- PASS: TestPostgreSQLContextStore_ResolveContext (0.03s)
     --- PASS: TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_v├ílidos (0.00s)
     --- PASS: TestPostgreSQLContextStore_ResolveContext/sin_integrante (0.00s)
     --- PASS: TestPostgreSQLContextStore_ResolveContext/integrante_de_otro_proyecto (0.00s)
@@ -937,19 +937,19 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestPostgreSQLContextStore_BaseCaidaEsNoDisponible
 --- PASS: TestPostgreSQLContextStore_BaseCaidaEsNoDisponible (0.00s)
 === RUN   TestPostgreSQLContextStore_ResolveContext_MenosDe50ms
---- PASS: TestPostgreSQLContextStore_ResolveContext_MenosDe50ms (0.07s)
+--- PASS: TestPostgreSQLContextStore_ResolveContext_MenosDe50ms (0.03s)
 === RUN   TestPostgreSQLProjectCatalog_ListProjects
---- PASS: TestPostgreSQLProjectCatalog_ListProjects (0.05s)
+--- PASS: TestPostgreSQLProjectCatalog_ListProjects (0.03s)
 === RUN   TestPostgreSQLProjectCatalog_ListMembersOrdersByNameAndID
---- PASS: TestPostgreSQLProjectCatalog_ListMembersOrdersByNameAndID (0.05s)
+--- PASS: TestPostgreSQLProjectCatalog_ListMembersOrdersByNameAndID (0.03s)
 === RUN   TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices
---- PASS: TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices (0.03s)
+--- PASS: TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices (0.02s)
 === RUN   TestPostgreSQLSchemaVersionReader_SinTablaEsVersionCero
---- PASS: TestPostgreSQLSchemaVersionReader_SinTablaEsVersionCero (0.03s)
+--- PASS: TestPostgreSQLSchemaVersionReader_SinTablaEsVersionCero (0.02s)
 === RUN   TestPostgreSQLSchemaVersionReader_LeeVersionYDirty
---- PASS: TestPostgreSQLSchemaVersionReader_LeeVersionYDirty (0.06s)
+--- PASS: TestPostgreSQLSchemaVersionReader_LeeVersionYDirty (0.03s)
 === RUN   TestPostgreSQLSchemaVersionReader_TablaVaciaEsVersionCero
---- PASS: TestPostgreSQLSchemaVersionReader_TablaVaciaEsVersionCero (0.03s)
+--- PASS: TestPostgreSQLSchemaVersionReader_TablaVaciaEsVersionCero (0.02s)
 === RUN   TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInDescendingOrder
 --- PASS: TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInDescendingOrder (0.02s)
 === RUN   TestParseProjectForm_ValidDatesAndPreservedValues
@@ -973,36 +973,36 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestProjects_ListShowsDataNewestFirstWithin500Milliseconds
 --- PASS: TestProjects_ListShowsDataNewestFirstWithin500Milliseconds (0.03s)
 === RUN   TestProjects_EmptyListShowsMessageAndCreationForm
---- PASS: TestProjects_EmptyListShowsMessageAndCreationForm (0.04s)
+--- PASS: TestProjects_EmptyListShowsMessageAndCreationForm (0.03s)
 === RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage
 === RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_proyectos
 === RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_integrantes
---- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage (0.07s)
-    --- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_proyectos (0.04s)
+--- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage (0.05s)
+    --- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_proyectos (0.02s)
     --- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_integrantes (0.03s)
 === RUN   TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject
---- PASS: TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject (0.06s)
+--- PASS: TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject (0.04s)
 === RUN   TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted
---- PASS: TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted (0.08s)
+--- PASS: TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted (0.04s)
 === RUN   TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash
---- PASS: TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash (0.08s)
+--- PASS: TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash (0.04s)
 === RUN   TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission
---- PASS: TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission (0.06s)
+--- PASS: TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission (0.04s)
 === RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues
 === RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_vac├¡o
 === RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_solo_con_espacios
 === RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/fecha_de_fin_anterior
 === RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/sin_integrantes_marcados
---- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues (0.26s)
-    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_vac├¡o (0.06s)
-    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_solo_con_espacios (0.07s)
-    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/fecha_de_fin_anterior (0.07s)
-    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/sin_integrantes_marcados (0.06s)
+--- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues (0.16s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_vac├¡o (0.04s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_solo_con_espacios (0.04s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/fecha_de_fin_anterior (0.03s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/sin_integrantes_marcados (0.04s)
 === RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues
 === RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_inicio
 === RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_fin
---- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues (0.13s)
-    --- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_inicio (0.07s)
+--- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues (0.10s)
+    --- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_inicio (0.04s)
     --- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_fin (0.06s)
 === RUN   TestProjects_InvalidDateFormatIsShownByFieldAndPreservesValues
 --- PASS: TestProjects_InvalidDateFormatIsShownByFieldAndPreservesValues (0.06s)
@@ -1011,7 +1011,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_inexistente
 --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues (0.14s)
     --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_no_num├®rico (0.07s)
-    --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_inexistente (0.07s)
+    --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_inexistente (0.08s)
 === RUN   TestProjects_SaveFailureShowsGenericErrorAndPreservesValues
 --- PASS: TestProjects_SaveFailureShowsGenericErrorAndPreservesValues (0.06s)
 === RUN   TestPage_InicioMuestraSinProyectoSeleccionadoYUTF8
@@ -1023,7 +1023,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestPage_NoReferenciaOtrosOrigenes
 --- PASS: TestPage_NoReferenciaOtrosOrigenes (0.00s)
 === RUN   TestStatic_SirveLosEstilosLocales
---- PASS: TestStatic_SirveLosEstilosLocales (0.06s)
+--- PASS: TestStatic_SirveLosEstilosLocales (0.07s)
 === RUN   TestPage_FalloAMitadDelRenderMuestraPaginaDeErrorCompleta
 --- PASS: TestPage_FalloAMitadDelRenderMuestraPaginaDeErrorCompleta (0.00s)
 === RUN   TestSanitizeReturnTo
@@ -1125,7 +1125,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.242s
 === RUN   TestListen_PuertoEnUsoInformaElPuerto
 --- PASS: TestListen_PuertoEnUsoInformaElPuerto (0.00s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.135s
 === RUN   TestEscenario_RegistroDeNuevaHistoria
 --- PASS: TestEscenario_RegistroDeNuevaHistoria (0.00s)
 === RUN   TestEscenario_CriteriosDeAceptacionObligatorios
@@ -1147,29 +1147,29 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1
 === RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999
 === RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647
---- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion (0.09s)
-    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc (0.03s)
-    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1 (0.02s)
+--- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion (0.13s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc (0.04s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1 (0.04s)
     --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999 (0.02s)
-    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647 (0.02s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647 (0.03s)
 === RUN   TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia
 --- PASS: TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia (0.02s)
 === RUN   TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona
 --- PASS: TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona (0.02s)
 === RUN   TestEscenarioContexto_SesionNuevaPideElegirDeNuevo
---- PASS: TestEscenarioContexto_SesionNuevaPideElegirDeNuevo (0.02s)
+--- PASS: TestEscenarioContexto_SesionNuevaPideElegirDeNuevo (0.03s)
 === RUN   TestEscenarioIntegrante_Identificacion
---- PASS: TestEscenarioIntegrante_Identificacion (0.03s)
+--- PASS: TestEscenarioIntegrante_Identificacion (0.06s)
 === RUN   TestEscenarioIntegrante_AccionSinIdentificarse
---- PASS: TestEscenarioIntegrante_AccionSinIdentificarse (0.02s)
+--- PASS: TestEscenarioIntegrante_AccionSinIdentificarse (0.05s)
 === RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto
 === RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector
 === RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada
---- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto (0.03s)
+--- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto (0.04s)
     --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector (0.01s)
     --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada (0.00s)
 === RUN   TestEscenarioIntegrante_DejoDePertenecerAlProyecto
---- PASS: TestEscenarioIntegrante_DejoDePertenecerAlProyecto (0.02s)
+--- PASS: TestEscenarioIntegrante_DejoDePertenecerAlProyecto (0.03s)
 === RUN   TestEscenarioSeccion_SinProyectoRedirigeYVuelve
 --- PASS: TestEscenarioSeccion_SinProyectoRedirigeYVuelve (0.02s)
 === RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError
@@ -1186,7 +1186,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com
 === RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe
 === RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1)
---- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora (0.03s)
+--- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora (0.02s)
     --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com (0.00s)
     --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com (0.00s)
     --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com (0.00s)
@@ -1308,7 +1308,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
     --- PASS: TestWebBacklogBDD_BlankCriteriaAreIgnored/Given_criterios_en_blanco_y_uno_completo,_When_guardo,_Then_solo_persiste_el_completo (0.02s)
 === RUN   TestWebBacklogBDD_StoryPointsCanBeMissing
 === RUN   TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar
---- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing (0.03s)
+--- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing (0.02s)
     --- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar (0.02s)
 === RUN   TestWebBacklogBDD_EstimatedHoursAreOptional
 === RUN   TestWebBacklogBDD_EstimatedHoursAreOptional/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_horas,_Then_no_hay_advertencia_y_dice_Sin_estimar
@@ -1355,9 +1355,9 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestWebBacklogBDD_BacklogListAndEmptyState
 === RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_recientes_primero
 === RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario
---- PASS: TestWebBacklogBDD_BacklogListAndEmptyState (0.06s)
-    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_recientes_primero (0.03s)
-    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario (0.03s)
+--- PASS: TestWebBacklogBDD_BacklogListAndEmptyState (0.04s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_recientes_primero (0.02s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario (0.02s)
 === RUN   TestEscenarioWeb_PaginaDeInicioConMenu
 --- PASS: TestEscenarioWeb_PaginaDeInicioConMenu (0.00s)
 === RUN   TestEscenarioWeb_FaltaDatabaseURL
@@ -1367,11 +1367,11 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestEscenarioWeb_BaseCaidaNoExponeLaClave
 --- PASS: TestEscenarioWeb_BaseCaidaNoExponeLaClave (0.00s)
 === RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca
-=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty
 === RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty
 --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca (0.00s)
-    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty (0.00s)
     --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes (0.00s)
+    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty (0.00s)
 === RUN   TestEscenarioWeb_PuertoEnUso
 --- PASS: TestEscenarioWeb_PuertoEnUso (0.00s)
 === RUN   TestEscenarioWeb_EstructuraComunConMenuYContexto
@@ -1379,7 +1379,7 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu
 --- PASS: TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu (0.00s)
 === RUN   TestEscenarioWeb_SinRecursosExternos
---- PASS: TestEscenarioWeb_SinRecursosExternos (0.06s)
+--- PASS: TestEscenarioWeb_SinRecursosExternos (0.04s)
 === RUN   TestEscenarioWeb_CaracteresEspeciales
 --- PASS: TestEscenarioWeb_CaracteresEspeciales (0.00s)
 === RUN   TestEscenarioWeb_DireccionInexistenteOMalformadaDa404
@@ -1427,30 +1427,30 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	7.708s
 === RUN   TestWebProjects_EmptyNameIsRejected_BDD
 --- PASS: TestWebProjects_EmptyNameIsRejected_BDD (0.02s)
 === RUN   TestWebProjects_EarlierEndDateIsRejected_BDD
---- PASS: TestWebProjects_EarlierEndDateIsRejected_BDD (0.02s)
+--- PASS: TestWebProjects_EarlierEndDateIsRejected_BDD (0.03s)
 === RUN   TestWebProjects_MissingDateIsRejected_BDD
---- PASS: TestWebProjects_MissingDateIsRejected_BDD (0.02s)
+--- PASS: TestWebProjects_MissingDateIsRejected_BDD (0.03s)
 === RUN   TestWebProjects_NoSelectedMembersIsRejected_BDD
---- PASS: TestWebProjects_NoSelectedMembersIsRejected_BDD (0.02s)
+--- PASS: TestWebProjects_NoSelectedMembersIsRejected_BDD (0.03s)
 === RUN   TestWebProjects_InvalidDateFormatIsRejected_BDD
 --- PASS: TestWebProjects_InvalidDateFormatIsRejected_BDD (0.03s)
 === RUN   TestWebProjects_InvalidMemberIsRejected_BDD
 --- PASS: TestWebProjects_InvalidMemberIsRejected_BDD (0.03s)
 === RUN   TestWebProjects_SaveFailureShowsGenericError_BDD
---- PASS: TestWebProjects_SaveFailureShowsGenericError_BDD (0.03s)
+--- PASS: TestWebProjects_SaveFailureShowsGenericError_BDD (0.04s)
 === RUN   TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD
---- PASS: TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD (0.03s)
+--- PASS: TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD (0.06s)
 === RUN   TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD
---- PASS: TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD (0.01s)
+--- PASS: TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD (0.03s)
 === RUN   TestHU26_ContextoValidoSeConserva
---- PASS: TestHU26_ContextoValidoSeConserva (0.02s)
+--- PASS: TestHU26_ContextoValidoSeConserva (0.05s)
 === RUN   TestHU26_CookieProyectoModificada
---- PASS: TestHU26_CookieProyectoModificada (0.02s)
+--- PASS: TestHU26_CookieProyectoModificada (0.05s)
 === RUN   TestHU26_CookieIntegranteModificada
---- PASS: TestHU26_CookieIntegranteModificada (0.03s)
+--- PASS: TestHU26_CookieIntegranteModificada (0.05s)
 === RUN   TestHU26_ValorCopiadoEntreCookies
---- PASS: TestHU26_ValorCopiadoEntreCookies (0.03s)
+--- PASS: TestHU26_ValorCopiadoEntreCookies (0.05s)
 === RUN   TestHU26_CookiesSinFirmaSeDescartan
 --- PASS: TestHU26_CookiesSinFirmaSeDescartan (0.03s)
 PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/test	6.648s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	6.868s

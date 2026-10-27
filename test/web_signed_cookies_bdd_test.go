@@ -17,7 +17,8 @@ import (
 
 type firmaApp struct {
 	*seleccionFixture
-	servidor *httptest.Server
+	servidor    *httptest.Server
+	integranteB int64 // segundo integrante del proyecto A
 }
 
 // nuevaFirmaApp arma el servidor con el contexto de HU-20b, una sección que requiere proyecto y
@@ -44,7 +45,22 @@ func nuevaFirmaApp(t *testing.T) *firmaApp {
 	}
 	app := &firmaApp{seleccionFixture: f, servidor: httptest.NewServer(srv.Handler())}
 	t.Cleanup(app.servidor.Close)
+	app.integranteB = f.insertar(t, `INSERT INTO members (display_name) VALUES ($1) RETURNING id`, f.nombreIntegranteA+" B")
+	t.Cleanup(func() { _, _ = f.db.Exec(`DELETE FROM members WHERE id = $1`, app.integranteB) })
+	if _, err := f.db.Exec(`INSERT INTO project_members (project_id, member_id) VALUES ($1, $2)`, f.proyectoA, app.integranteB); err != nil {
+		t.Fatalf("no se pudo vincular el segundo integrante: %v", err)
+	}
 	return app
+}
+
+// cambiarNumero reemplaza el número del principio del valor y conserva el resto (la firma, si
+// la hay). Sin firma queda un número válido: así la prueba falla si se aceptan cookies sin firmar.
+func cambiarNumero(valor string, nuevo int64) string {
+	i := 0
+	for i < len(valor) && valor[i] >= '0' && valor[i] <= '9' {
+		i++
+	}
+	return idTexto(nuevo) + valor[i:]
 }
 
 // identificado elige el proyecto A y se identifica como su integrante por las pantallas de HU-20b.
@@ -130,9 +146,7 @@ func TestHU26_CookieProyectoModificada(t *testing.T) {
 	c := app.identificado(t)
 
 	// Cuando el valor de la cookie del proyecto se modifica manualmente
-	firmado := app.cookie(c, web.CookieProject)
-	firma := firmado[strings.LastIndex(firmado, "."):]
-	app.poner(t, c, web.CookieProject, idTexto(app.proyectoB)+firma)
+	app.poner(t, c, web.CookieProject, cambiarNumero(app.cookie(c, web.CookieProject), app.proyectoB))
 	resp, _ := app.pedir(t, c, "/datos-hu26")
 
 	// Entonces no la acepta y la descarta, descarta también mi identificación y me pide elegir un proyecto
@@ -151,8 +165,7 @@ func TestHU26_CookieIntegranteModificada(t *testing.T) {
 	c := app.identificado(t)
 
 	// Cuando el valor de la cookie del integrante se modifica manualmente
-	firmado := app.cookie(c, web.CookieMember)
-	app.poner(t, c, web.CookieMember, "1"+firmado)
+	app.poner(t, c, web.CookieMember, cambiarNumero(app.cookie(c, web.CookieMember), app.integranteB))
 	resp, cuerpo := app.pedir(t, c, "/datos-hu26")
 
 	// Entonces no la acepta y la descarta, y conserva mi proyecto
