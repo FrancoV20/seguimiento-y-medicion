@@ -122,18 +122,18 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T041 [P] Documentar en `specs/022-web-backlog/quickstart.md` los pasos para probar a mano con un proyecto activo y la nota de puerto
-- [ ] T042 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/backlog_handlers.go` y `src/web/backlog_form.go`
-- [ ] T043 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T044 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T045 Guardar en `specs/022-web-backlog/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T046 Guardar en `specs/022-web-backlog/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/022-web-backlog/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
-- [ ] T047 Coordinar con quien tome HU-13 que esta lista y `StoryCatalog` son su punto de partida (orden por prioridad que reemplaza al provisional y a la prueba de orden de T035, filtro, edición y su escenario de Backlog vacío que referencia el de esta historia); con quien tome HU-23 que las historias creadas quedan en estado `'Pendiente'`, se leen del mismo catálogo y la lista muestra su identificador; y con quien tome HU-17 que la regla de horas (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), su mensaje y el texto "Sin estimar" ya existen en el dominio y los reutilice en lugar de escribir otros
-- [ ] T048 Revisar trazabilidad de FR-001 a FR-023 y SC-001 a SC-008 en `specs/022-web-backlog/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
-- [ ] T050 [P] Actualizar el manual breve de usuario con la pantalla "Backlog" (ver `quickstart.md`)
-- [ ] T051 Verificar a mano con la aplicación en ejecución los 18 escenarios del Issue y la lista de `quickstart.md`
-- [ ] T052 Abrir el Pull Request desde `HU-22`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [x ] T041 [P] Documentar en `specs/022-web-backlog/quickstart.md` los pasos para probar a mano con un proyecto activo y la nota de puerto
+- [ x] T042 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/backlog_handlers.go` y `src/web/backlog_form.go`
+- [ x] T043 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [ x] T044 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [ x] T045 Guardar en `specs/022-web-backlog/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x ] T046 Guardar en `specs/022-web-backlog/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/022-web-backlog/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
+- [ x] T047 Coordinar con quien tome HU-13 que esta lista y `StoryCatalog` son su punto de partida (orden por prioridad que reemplaza al provisional y a la prueba de orden de T035, filtro, edición y su escenario de Backlog vacío que referencia el de esta historia); con quien tome HU-23 que las historias creadas quedan en estado `'Pendiente'`, se leen del mismo catálogo y la lista muestra su identificador; y con quien tome HU-17 que la regla de horas (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), su mensaje y el texto "Sin estimar" ya existen en el dominio y los reutilice en lugar de escribir otros
+- [ x] T048 Revisar trazabilidad de FR-001 a FR-023 y SC-001 a SC-008 en `specs/022-web-backlog/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [ x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
+- [ x] T050 [P] Actualizar el manual breve de usuario con la pantalla "Backlog" (ver `quickstart.md`)
+- [ x] T051 Verificar a mano con la aplicación en ejecución los 18 escenarios del Issue y la lista de `quickstart.md`
+- [ x] T052 Abrir el Pull Request desde `HU-22`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 

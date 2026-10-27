@@ -2,8 +2,8 @@ package web
 
 import (
 	"net/http"
-	"strings"
 	"net/url"
+	"strings"
 )
 
 // contextMiddleware resuelve el contexto de trabajo en cada solicitud (HU-20b): lee las cookies,
@@ -66,6 +66,7 @@ func contextMiddleware(store ContextStore, rd *Renderer) func(http.Handler) http
 		})
 	}
 }
+
 // RequireContext protege una sección según RequiresProject y RequiresMember (HU-20b, T052).
 // Si falta el proyecto o el integrante, redirige con 303 a elegirlo, con un mensaje, y lleva el
 // destino de regreso para volver a esta sección. Una sección sin requisitos pasa sin cambios.
