@@ -104,10 +104,10 @@
 
 ### Tests for User Story 3
 
-- [ ] T035 [P] [US3] Escribir la prueba de handler de la lista: identificador, título, prioridad, Story Points y horas estimadas (cada uno o "Sin estimar", nunca cero), estado, solo las historias del proyecto activo y, como orden provisional, las más recientes primero (la reemplaza HU-13), con verificación de tiempo de respuesta, en `src/web/backlog_handlers_test.go`
-- [ ] T036 [P] [US3] Escribir la prueba de handler sin historias: "Aún no hay historias" y el formulario, en `src/web/backlog_handlers_test.go`
-- [ ] T037 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/backlog_handlers_test.go`
-- [ ] T038 [P] [US3] Escribir los escenarios BDD de lista y Backlog vacío en `test/web_backlog_bdd_test.go`
+- [x] T035 [P] [US3] Escribir la prueba de handler de la lista: identificador, título, prioridad, Story Points y horas estimadas (cada uno o "Sin estimar", nunca cero), estado, solo las historias del proyecto activo y, como orden provisional, las más recientes primero (la reemplaza HU-13), con verificación de tiempo de respuesta, en `src/web/backlog_handlers_test.go`
+- [x] T036 [P] [US3] Escribir la prueba de handler sin historias: "Aún no hay historias" y el formulario, en `src/web/backlog_handlers_test.go`
+- [x] T037 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no un formulario incompleto, en `src/web/backlog_handlers_test.go`
+- [x] T038 [P] [US3] Escribir los escenarios BDD de lista y Backlog vacío en `test/web_backlog_bdd_test.go`
 
 ### Implementation for User Story 3
 

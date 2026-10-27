@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math"
@@ -24,14 +25,25 @@ func newHU22BacklogApp(t *testing.T) *hu22BacklogApp {
 }
 
 func newHU22BacklogAppWithStore(t *testing.T, storeFactory func(*ctxApp) backlog.BacklogStore) *hu22BacklogApp {
+	return newHU22BacklogAppWithDependencies(t, storeFactory, func(app *ctxApp) StoryCatalog {
+		return NewPostgreSQLStoryCatalog(app.db)
+	})
+}
+
+func newHU22BacklogAppWithDependencies(
+	t *testing.T,
+	storeFactory func(*ctxApp) backlog.BacklogStore,
+	catalogFactory func(*ctxApp) StoryCatalog,
+) *hu22BacklogApp {
 	t.Helper()
 
 	app := newCtxApp(t, nil)
 	store := storeFactory(app)
+	catalog := catalogFactory(app)
 	if err := RegisterBacklog(
 		app.srv,
 		backlog.NewBacklogService(store),
-		NewPostgreSQLStoryCatalog(app.db),
+		catalog,
 	); err != nil {
 		t.Fatalf("register Backlog routes: %v", err)
 	}
@@ -646,5 +658,148 @@ func TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave(t *
 				}
 			}
 		})
+	}
+}
+
+func TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst(t *testing.T) {
+	app := newHU22BacklogApp(t)
+	app.chooseProject(t, app.fx.projectA)
+
+	insertStory := func(projectID int64, title string, points *int, hours *float64) int64 {
+		t.Helper()
+		var id int64
+		err := app.db.QueryRow(`
+						INSERT INTO user_stories (
+							project_id, title, description, priority, story_points, estimated_hours, status
+						)
+						VALUES ($1, $2, 'HU-22 Backlog GET fixture', 'Media', $3, $4, 'Pendiente')
+						RETURNING id`, projectID, title, points, hours).Scan(&id)
+		if err != nil {
+			t.Fatalf("create GET fixture story: %v", err)
+		}
+		return id
+	}
+
+	points := 3
+	partialHours := 1.5
+	oldestTitle := fmt.Sprintf("HU22 GET oldest %d", app.fx.projectA)
+	newestTitle := fmt.Sprintf("HU22 GET newest %d", app.fx.projectA)
+	otherTitle := fmt.Sprintf("HU22 GET other project %d", app.fx.projectB)
+	oldestID := insertStory(app.fx.projectA, oldestTitle, &points, nil)
+	newestID := insertStory(app.fx.projectA, newestTitle, nil, &partialHours)
+	insertStory(app.fx.projectB, otherTitle, &points, &partialHours)
+
+	resp, body := app.get(t, app.client, "/backlog")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /backlog status = %d, want 200; body=%s", resp.StatusCode, body)
+	}
+	for _, column := range []string{
+		"Identificador",
+		"Título",
+		"Prioridad",
+		"Story Points",
+		"Horas estimadas",
+		"Estado",
+	} {
+		if !strings.Contains(body, column) {
+			t.Errorf("Backlog table is missing column %q", column)
+		}
+	}
+	for _, want := range []string{
+		id64(newestID),
+		newestTitle,
+		"Media",
+		"Sin estimar",
+		"1,5",
+		"Pendiente",
+		id64(oldestID),
+		oldestTitle,
+		"3",
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("Backlog table does not contain %q", want)
+		}
+	}
+	tableRows := extractHU22TableRows(t, body)
+	if strings.Count(tableRows, "Sin estimar") != 2 {
+		t.Errorf("Backlog should show 'Sin estimar' for both missing estimates; table has %d occurrences",
+			strings.Count(tableRows, "Sin estimar"))
+	}
+	if strings.Contains(body, otherTitle) {
+		t.Errorf("Backlog leaked a story from the inactive project: %q", otherTitle)
+	}
+	if strings.Index(body, newestTitle) >= strings.Index(body, oldestTitle) {
+		t.Errorf("Backlog stories are not ordered newest first: %q should precede %q", newestTitle, oldestTitle)
+	}
+}
+
+func extractHU22TableRows(t *testing.T, body string) string {
+	t.Helper()
+	start := strings.Index(body, "<tbody>")
+	end := strings.Index(body, "</tbody>")
+	if start < 0 || end < start {
+		t.Fatal("Backlog response does not contain a complete table body")
+	}
+	return body[start:end]
+}
+
+func TestBacklogHandler_GetShowsEmptyStateWhenProjectHasNoStories(t *testing.T) {
+	app := newHU22BacklogApp(t)
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, body := app.get(t, app.client, "/backlog")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /backlog status = %d, want 200; body=%s", resp.StatusCode, body)
+	}
+	if got := strings.Count(body, "Aún no hay historias"); got != 1 {
+		t.Errorf("empty-state text occurred %d times, want exactly once", got)
+	}
+	if strings.Contains(body, "<table") {
+		t.Error("empty Backlog rendered a stories table")
+	}
+	if !strings.Contains(body, `action="/backlog"`) || !strings.Contains(body, `name="titulo"`) {
+		t.Error("empty Backlog did not render the story creation form")
+	}
+}
+
+type hu22FailingStoryCatalog struct {
+	err error
+}
+
+func (c hu22FailingStoryCatalog) ListStories(context.Context, int64) ([]StoryRow, error) {
+	return nil, c.err
+}
+
+func TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog(t *testing.T) {
+	const internalFailure = "synthetic catalog query failure"
+	app := newHU22BacklogAppWithDependencies(
+		t,
+		func(ctx *ctxApp) backlog.BacklogStore {
+			return backlog.NewPostgreSQLBacklogStore(ctx.db)
+		},
+		func(*ctxApp) StoryCatalog {
+			return hu22FailingStoryCatalog{err: errors.New(internalFailure)}
+		},
+	)
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, body := app.get(t, app.client, "/backlog")
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("GET /backlog status = %d, want 500; body=%s", resp.StatusCode, body)
+	}
+	if !strings.Contains(body, TitleInternal) || !strings.Contains(body, MsgInternal) {
+		t.Errorf("catalog failure did not render the generic internal error page: %s", body)
+	}
+	if strings.Contains(body, "<table") || strings.Contains(body, "Crear historia") {
+		t.Error("catalog failure rendered a partial Backlog page")
+	}
+	if strings.Contains(body, internalFailure) {
+		t.Error("catalog failure leaked internal error detail to the response")
 	}
 }

@@ -585,3 +585,134 @@ func TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm(t *test
 		t.Errorf("failed persistence created %d stories, want 0", got)
 	}
 }
+
+func TestWebBacklogBDD_BacklogListAndEmptyState(t *testing.T) {
+	t.Run("Given un proyecto activo con historias, When abro Backlog, Then veo solo sus historias recientes primero", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+		ctx := context.Background()
+
+		var otherProjectID int64
+		if err := app.db.QueryRowContext(ctx, `
+				INSERT INTO projects (name, start_date, end_date)
+				VALUES ($1, CURRENT_DATE, CURRENT_DATE + 1)
+				RETURNING id`, fmt.Sprintf("HU22 BDD other project %d", time.Now().UnixNano())).Scan(&otherProjectID); err != nil {
+			t.Fatalf("create other BDD project: %v", err)
+		}
+		t.Cleanup(func() {
+			if _, err := app.db.Exec(`DELETE FROM user_stories WHERE project_id = $1`, otherProjectID); err != nil {
+				t.Errorf("delete other-project BDD stories: %v", err)
+			}
+			if _, err := app.db.Exec(`DELETE FROM projects WHERE id = $1`, otherProjectID); err != nil {
+				t.Errorf("delete other BDD project: %v", err)
+			}
+		})
+
+		insertStory := func(projectID int64, title string, points *int, hours *float64) int64 {
+			t.Helper()
+			var id int64
+			err := app.db.QueryRowContext(ctx, `
+					INSERT INTO user_stories (
+						project_id, title, description, priority, story_points, estimated_hours, status
+					)
+					VALUES ($1, $2, 'BDD listado', 'Media', $3, $4, 'Pendiente')
+					RETURNING id`, projectID, title, points, hours).Scan(&id)
+			if err != nil {
+				t.Fatalf("create BDD list story: %v", err)
+			}
+			return id
+		}
+
+		points := 5
+		hours := 1.5
+		olderTitle := fmt.Sprintf("HU22 BDD older %d", time.Now().UnixNano())
+		newerTitle := fmt.Sprintf("HU22 BDD newer %d", time.Now().UnixNano())
+		otherTitle := fmt.Sprintf("HU22 BDD foreign %d", time.Now().UnixNano())
+		olderID := insertStory(app.projectID, olderTitle, &points, nil)
+		newerID := insertStory(app.projectID, newerTitle, nil, &hours)
+		insertStory(otherProjectID, otherTitle, &points, &hours)
+
+		resp, body := app.request(t, http.MethodGet, "/backlog", nil)
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("GET /backlog status = %d, want 200; body=%s", resp.StatusCode, body)
+		}
+		for _, column := range []string{
+			"Identificador",
+			"Título",
+			"Prioridad",
+			"Story Points",
+			"Horas estimadas",
+			"Estado",
+		} {
+			if !strings.Contains(body, column) {
+				t.Errorf("Backlog table is missing column %q", column)
+			}
+		}
+		for _, want := range []string{
+			fmt.Sprintf("%d", newerID),
+			newerTitle,
+			"Media",
+			"Sin estimar",
+			"1,5",
+			"Pendiente",
+			fmt.Sprintf("%d", olderID),
+			olderTitle,
+			"5",
+		} {
+			if !strings.Contains(body, want) {
+				t.Errorf("Backlog does not contain %q", want)
+			}
+		}
+		start := strings.Index(body, "<tbody>")
+		end := strings.Index(body, "</tbody>")
+		if start < 0 || end < start {
+			t.Fatal("Backlog response does not contain a complete stories table")
+		}
+		tableRows := body[start:end]
+		if strings.Count(tableRows, "Sin estimar") != 2 {
+			t.Errorf("missing estimates displayed as Sin estimar %d times, want 2",
+				strings.Count(tableRows, "Sin estimar"))
+		}
+		if strings.Contains(body, otherTitle) {
+			t.Errorf("Backlog included another project's story %q", otherTitle)
+		}
+		if strings.Index(body, newerTitle) >= strings.Index(body, olderTitle) {
+			t.Errorf("newer story %q should precede older story %q", newerTitle, olderTitle)
+		}
+	})
+
+	t.Run("Given un proyecto sin historias, When abro Backlog, Then veo el estado vacío y el formulario", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+
+		var emptyProjectID int64
+		if err := app.db.QueryRow(`
+				INSERT INTO projects (name, start_date, end_date)
+				VALUES ($1, CURRENT_DATE, CURRENT_DATE + 1)
+				RETURNING id`, fmt.Sprintf("HU22 BDD empty project %d", time.Now().UnixNano())).Scan(&emptyProjectID); err != nil {
+			t.Fatalf("create empty BDD project: %v", err)
+		}
+		t.Cleanup(func() {
+			if _, err := app.db.Exec(`DELETE FROM projects WHERE id = $1`, emptyProjectID); err != nil {
+				t.Errorf("delete empty BDD project: %v", err)
+			}
+		})
+		resp, _ := app.request(t, http.MethodPost, "/contexto/proyecto", url.Values{
+			"proyecto_id": {fmt.Sprintf("%d", emptyProjectID)},
+			"volver_a":    {"/backlog"},
+		})
+		if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/backlog" {
+			t.Fatalf("select empty project status/location = %d/%q, want 303 /backlog",
+				resp.StatusCode, resp.Header.Get("Location"))
+		}
+
+		getResp, body := app.request(t, http.MethodGet, "/backlog", nil)
+		if getResp.StatusCode != http.StatusOK {
+			t.Fatalf("GET empty /backlog status = %d, want 200; body=%s", getResp.StatusCode, body)
+		}
+		if got := strings.Count(body, "Aún no hay historias"); got != 1 {
+			t.Errorf("empty-state phrase occurred %d times, want exactly once", got)
+		}
+		if strings.Contains(body, "<table") || !strings.Contains(body, `action="/backlog"`) {
+			t.Error("empty state should hide the story table and retain the creation form")
+		}
+	})
+}
