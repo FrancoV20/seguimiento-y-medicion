@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
@@ -409,4 +410,65 @@ func TestWebSprintsBDD_UnavailableStoryAndValidationErrors(t *testing.T) {
 			t.Error("los datos deben conservarse y el Sprint no debe quedar creado")
 		}
 	})
+}
+
+func TestWebSprintsBDD_ViewActiveSprint(t *testing.T) {
+	// Given: el proyecto seleccionado tiene un Sprint activo con historias en distintos estados.
+	const projectID = 704
+	active := &web.SprintView{
+		ID: 96, Number: 7, Label: "Sprint 7", Goal: "Completar autenticación",
+		StartDate: time.Date(2026, time.November, 1, 0, 0, 0, 0, time.UTC),
+		EndDate:   time.Date(2026, time.November, 14, 0, 0, 0, 0, time.UTC),
+		Stories: []web.SprintStoryRow{
+			{ID: 701, Title: "Implementar inicio de sesión", Status: sprint.EnSprint},
+			{ID: 702, Title: "Probar recuperación de cuenta", Status: sprint.InProgress},
+		},
+	}
+	app := newSprintBDDApp(t, projectID, "Proyecto con Sprint activo", active, nil)
+	app.chooseProject(t, projectID)
+
+	// When: abro la sección Sprints.
+	response, body := app.getSprints(t)
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200, se obtuvo %d", response.StatusCode)
+	}
+
+	// Then: veo los detalles del Sprint y el estado de cada historia.
+	for _, expected := range []string{
+		"Sprint 7",
+		"Completar autenticación",
+		"01/11/2026",
+		"14/11/2026",
+		"Implementar inicio de sesión",
+		"Probar recuperación de cuenta",
+		string(sprint.EnSprint),
+		string(sprint.InProgress),
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("la vista del Sprint debía contener %q: %s", expected, body)
+		}
+	}
+	if strings.Contains(body, "CREATE_FORM_MARKER") {
+		t.Error("no debe mostrarse el formulario de creación cuando hay Sprint activo")
+	}
+}
+
+func TestWebSprintsBDD_NoActiveSprintShowsCreationForm(t *testing.T) {
+	// Given: elijo un proyecto que todavía no tiene Sprint activo.
+	const projectID = 705
+	app := newSprintBDDApp(t, projectID, "Proyecto sin Sprint", nil, nil)
+	app.chooseProject(t, projectID)
+
+	// When: abro la sección Sprints.
+	response, body := app.getSprints(t)
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200, se obtuvo %d", response.StatusCode)
+	}
+
+	// Then: veo el mensaje de estado vacío y el formulario para crear el primer Sprint.
+	for _, expected := range []string{"No hay un Sprint activo", "Sprint Goal", "Fecha de inicio", "Fecha de fin", "Crear Sprint"} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("la pantalla sin Sprint debía contener %q: %s", expected, body)
+		}
+	}
 }

@@ -99,15 +99,15 @@
 
 ### Tests for User Story 3
 
-- [ ] T030 [P] [US3] Escribir la prueba de handler de la vista: identificador, Goal, fechas `dd/mm/aaaa` e historias con su estado, solo del Sprint activo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/sprints_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo" y el formulario de creación, en `src/web/sprints_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/sprints_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir los escenarios BDD de vista del Sprint activo y sin Sprint activo en `test/web_sprints_bdd_test.go`
+- [X] T030 [P] [US3] Escribir la prueba de handler de la vista: identificador, Goal, fechas `dd/mm/aaaa` e historias con su estado, solo del Sprint activo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/sprints_handlers_test.go`
+- [X] T031 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo" y el formulario de creación, en `src/web/sprints_handlers_test.go`
+- [X] T032 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/sprints_handlers_test.go`
+- [X] T033 [P] [US3] Escribir los escenarios BDD de vista del Sprint activo y sin Sprint activo en `test/web_sprints_bdd_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Agregar a `sprints.html` el bloque del Sprint activo (identificador, Goal, fechas y tabla de historias con su estado) y el estado "No hay un Sprint activo", en `src/web/templates/sprints.html`
-- [ ] T035 [US3] Usar `Fail` en `src/web/sprints_handlers.go` cuando falla la lectura del Sprint o de las historias
+- [X] T034 [US3] Agregar a `sprints.html` el bloque del Sprint activo (identificador, Goal, fechas y tabla de historias con su estado) y el estado "No hay un Sprint activo", en `src/web/templates/sprints.html`
+- [X] T035 [US3] Usar `Fail` en `src/web/sprints_handlers.go` cuando falla la lectura del Sprint o de las historias
 
 **Checkpoint**: US3 muestra el resultado de la planificación y deja el punto de partida para agregar y quitar historias.
 

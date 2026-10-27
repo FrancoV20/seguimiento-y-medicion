@@ -15,6 +15,7 @@ import (
 	"strings"
 	"testing"
 	"testing/fstest"
+	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
@@ -54,15 +55,23 @@ func (s sprintHandlerContextStore) ResolveContext(_ context.Context, projectID, 
 }
 
 type sprintHandlerCatalog struct {
-	active  map[int64]*SprintView
-	options map[int64][]StoryOption
+	active       map[int64]*SprintView
+	options      map[int64][]StoryOption
+	activeError  error
+	optionsError error
 }
 
 func (c *sprintHandlerCatalog) ActiveSprint(_ context.Context, projectID int64) (*SprintView, error) {
+	if c.activeError != nil {
+		return nil, c.activeError
+	}
 	return c.active[projectID], nil
 }
 
 func (c *sprintHandlerCatalog) ListStoryOptions(_ context.Context, projectID int64) ([]StoryOption, error) {
+	if c.optionsError != nil {
+		return nil, c.optionsError
+	}
 	return append([]StoryOption(nil), c.options[projectID]...), nil
 }
 
@@ -168,11 +177,23 @@ func newSprintHandlerTestApp(
 	options map[int64][]StoryOption,
 	active map[int64]*SprintView,
 ) *sprintHandlerTestApp {
+	return newSprintHandlerTestAppWithTemplate(t, projects, options, active, false)
+}
+
+func newSprintHandlerTestAppWithTemplate(
+	t *testing.T,
+	projects map[int64]string,
+	options map[int64][]StoryOption,
+	active map[int64]*SprintView,
+	useEmbeddedTemplate bool,
+) *sprintHandlerTestApp {
 	t.Helper()
 	server := NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
-	files := formsTemplates(t).(fstest.MapFS)
-	files["templates/sprints.html"] = &fstest.MapFile{Data: []byte(sprintsHandlerTestTemplate)}
-	server.renderer.files = files
+	if !useEmbeddedTemplate {
+		files := formsTemplates(t).(fstest.MapFS)
+		files["templates/sprints.html"] = &fstest.MapFile{Data: []byte(sprintsHandlerTestTemplate)}
+		server.renderer.files = files
+	}
 	RegisterContext(server, sprintHandlerContextStore{projects: projects})
 	catalog := &sprintHandlerCatalog{active: active, options: options}
 	actions := &sprintHandlerActions{catalog: catalog}
@@ -366,6 +387,102 @@ func TestSprintsHandler_ActiveSprintBlocksFormAndPost(t *testing.T) {
 	}
 	if app.actions.createCalls != 0 {
 		t.Errorf("no debía crearse otro Sprint; CreateSprint se llamó %d veces", app.actions.createCalls)
+	}
+}
+
+func TestSprintsHandler_ActiveSprintViewRendersAllDetails(t *testing.T) {
+	const projectID = 406
+	startDate := time.Date(2026, time.November, 1, 0, 0, 0, 0, time.UTC)
+	endDate := time.Date(2026, time.November, 14, 0, 0, 0, 0, time.UTC)
+	active := &SprintView{
+		ID: 96, Number: 7, Label: "Sprint 7", Goal: "Completar autenticación",
+		StartDate: startDate, EndDate: endDate,
+		Stories: []SprintStoryRow{
+			{ID: 701, Title: "Implementar inicio de sesión", Status: sprint.EnSprint},
+			{ID: 702, Title: "Probar recuperación de cuenta", Status: sprint.InProgress},
+		},
+	}
+	app := newSprintHandlerTestAppWithTemplate(t,
+		map[int64]string{projectID: "Proyecto vista"},
+		map[int64][]StoryOption{},
+		map[int64]*SprintView{projectID: active},
+		true,
+	)
+	app.selectProject(t, projectID)
+
+	startedAt := time.Now()
+	response, body := app.get(t)
+	if elapsed := time.Since(startedAt); elapsed >= 500*time.Millisecond {
+		t.Errorf("la vista del Sprint tardó %v; se esperaba menos de 500 ms", elapsed)
+	}
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("GET /sprints: se esperaba 200, se obtuvo %d", response.StatusCode)
+	}
+	for _, expected := range []string{
+		"Sprint 7",
+		"Completar autenticación",
+		"01/11/2026",
+		"14/11/2026",
+		"Implementar inicio de sesión",
+		"Probar recuperación de cuenta",
+		string(sprint.EnSprint),
+		string(sprint.InProgress),
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("la vista del Sprint activo debía contener %q: %s", expected, body)
+		}
+	}
+	if strings.Contains(body, "CREATE_FORM_MARKER") {
+		t.Error("con un Sprint activo no se debe renderizar el formulario de creación")
+	}
+}
+
+func TestSprintsHandler_NoActiveSprintShowsLiteralAndCreationForm(t *testing.T) {
+	const projectID = 407
+	app := newSprintHandlerTestAppWithTemplate(t,
+		map[int64]string{projectID: "Proyecto sin Sprint"},
+		map[int64][]StoryOption{},
+		map[int64]*SprintView{},
+		true,
+	)
+	app.selectProject(t, projectID)
+
+	response, body := app.get(t)
+	if response.StatusCode != http.StatusOK {
+		t.Fatalf("GET /sprints: se esperaba 200, se obtuvo %d", response.StatusCode)
+	}
+	if !strings.Contains(body, "No hay un Sprint activo") {
+		t.Errorf("falta el texto literal del estado vacío: %s", body)
+	}
+	for _, expected := range []string{"Sprint Goal", "Fecha de inicio", "Fecha de fin", "Crear Sprint"} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("el formulario de creación debía contener %q: %s", expected, body)
+		}
+	}
+}
+
+func TestSprintsHandler_CatalogReadFailureShowsGenericErrorPage(t *testing.T) {
+	const projectID = 408
+	app := newSprintHandlerTestAppWithTemplate(t,
+		map[int64]string{projectID: "Proyecto lectura fallida"},
+		map[int64][]StoryOption{},
+		map[int64]*SprintView{},
+		true,
+	)
+	app.selectProject(t, projectID)
+	app.catalog.activeError = fmt.Errorf("SELECT secret_column FROM internal_table")
+
+	response, body := app.get(t)
+	if response.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("se esperaba 500 ante la falla de lectura, se obtuvo %d", response.StatusCode)
+	}
+	for _, expected := range []string{TitleInternal, MsgInternal, "error-page"} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("la respuesta debía renderizar la página genérica HU-20a (%q): %s", expected, body)
+		}
+	}
+	if strings.Contains(body, "secret_column") || strings.Contains(body, "internal_table") || strings.Contains(body, "CREATE_FORM_MARKER") {
+		t.Errorf("la respuesta no debe exponer el error interno ni contenido parcial: %s", body)
 	}
 }
 
