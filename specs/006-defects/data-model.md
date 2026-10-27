@@ -32,9 +32,12 @@ CREATE INDEX idx_defects_resolution ON defects (resolution_sprint_id);
 DROP TABLE defects;
 ```
 
-> **Pendiente (T004)**: confirmar el número de migración con el equipo y quien esté trabajando en HU-15.
-> Verificar en PostgreSQL que `ON DELETE SET NULL` de `resolution_sprint_id` conviva con el `CHECK` al borrar un
-> Sprint; si no, cambiarlo a `ON DELETE CASCADE` y anotar el resultado acá.
+> **Migración (T004)**: `origin/main` llega a `008`; no hay migración `009` en las ramas remotas visibles y el
+> Product Builder confirmó que HU-15 todavía no tiene responsable ni implementación. `009` es el siguiente
+> candidato; volver a coordinar con el equipo antes de crearla y si HU-15 se asigna.
+>
+> **Verificación pendiente (T005)**: probar en PostgreSQL que `ON DELETE SET NULL` de `resolution_sprint_id`
+> conviva con el `CHECK` al borrar un Sprint; si no, cambiarlo a `ON DELETE CASCADE` y anotar el resultado acá.
 
 ## Verificación contra `main` (T001)
 

@@ -24,9 +24,11 @@ traducen sus errores. No modifica HU-02, HU-04, HU-15, HU-20a ni HU-20b.
 > No se encontró una operación de cierre de Sprint en `main`; los bloqueos `FOR UPDATE` existentes son de
 > asignación/remoción de historias, por lo que el contrato de HU-15 sigue pendiente.
 >
-> **Pendientes antes de implementar**: T002 debe verificar HU-20a y HU-20b después del merge de `origin/main`;
-> T004 debe confirmar el número siguiente y coordinarlo con HU-15. Consultar [data-model.md](data-model.md)
-> para los detalles del esquema y lo que no pudo verificarse del cierre.
+> **Setup verificado (T002-T004)**: los contratos comunes están disponibles. Los parciales son definiciones
+> `alert` y `field` dentro de `templates/layout.html` (no archivos separados `alert.html` y `field.html`).
+> `origin/main` llega a `008`; `009` es candidato, sin reserva en ramas remotas visibles. HU-15 todavía no tiene
+> responsable ni implementación, por lo que su cierre con `FOR UPDATE` no pudo verificarse en el código. Ver
+> [data-model.md](data-model.md); coordinar nuevamente el número y el contrato cuando HU-15 se asigne.
 
 ## Technical Context
 
