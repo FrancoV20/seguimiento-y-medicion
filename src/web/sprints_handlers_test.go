@@ -565,6 +565,49 @@ func TestSprintsHandler_RejectsMissingOrMalformedDates(t *testing.T) {
 	}
 }
 
+func TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs(t *testing.T) {
+	cases := []struct {
+		name    string
+		storyID string
+	}{
+		{name: "non numeric ID", storyID: "abc"},
+		{name: "story from another project", storyID: "122"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			const projectAID, projectBID = 612, 613
+			app := newSprintHandlerTestApp(t,
+				map[int64]string{projectAID: "Proyecto activo", projectBID: "Otro proyecto"},
+				map[int64][]StoryOption{
+					projectAID: sprintHandlerOptions(projectAID, 111),
+					projectBID: sprintHandlerOptions(projectBID, 122),
+				},
+				map[int64]*SprintView{},
+			)
+			app.selectProject(t, projectAID)
+
+			response, body := app.post(t, url.Values{
+				FieldGoal:      {"Planificar historias del proyecto activo"},
+				FieldStartDate: {"2026-11-01"},
+				FieldEndDate:   {"2026-11-14"},
+				FieldStory:     {tc.storyID},
+			})
+			if response.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("se esperaba 422 para %s, se obtuvo %d", tc.name, response.StatusCode)
+			}
+			if !strings.Contains(body, `<span id="story-error">`) || !strings.Contains(body, "no es válido") && !strings.Contains(body, sprint.ErrStoryNotAvailable.Error()) {
+				t.Errorf("se esperaba un error seguro junto al campo de historias: %s", body)
+			}
+			if app.actions.createCalls != 0 || app.catalog.active[projectAID] != nil {
+				t.Errorf("el ID inválido o ajeno no debe llegar a creación; calls=%d", app.actions.createCalls)
+			}
+			if strings.Contains(body, "INSERT INTO") || strings.Contains(body, "SELECT ") {
+				t.Error("la respuesta no debe exponer detalles SQL")
+			}
+		})
+	}
+}
+
 func TestSprintsHandler_StoreFailureShowsGenericErrorAndPreservesForm(t *testing.T) {
 	const projectID, storyID = 610, 101
 	app := newSprintHandlerTestApp(t,

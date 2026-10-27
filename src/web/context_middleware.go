@@ -2,8 +2,8 @@ package web
 
 import (
 	"net/http"
-	"strings"
 	"net/url"
+	"strings"
 )
 
 // contextMiddleware resuelve el contexto de trabajo en cada solicitud (HU-20b): lee las cookies,
@@ -66,6 +66,7 @@ func contextMiddleware(store ContextStore, rd *Renderer) func(http.Handler) http
 		})
 	}
 }
+
 // RequireContext protege una sección según RequiresProject y RequiresMember (HU-20b, T052).
 // Si falta el proyecto o el integrante, redirige con 303 a elegirlo, con un mensaje, y lleva el
 // destino de regreso para volver a esta sección. Una sección sin requisitos pasa sin cambios.
@@ -81,7 +82,11 @@ func RequireContext(section Section) func(http.Handler) http.Handler {
 			hasMember := hasProject && ac.MemberID != 0
 			switch {
 			case !hasProject:
-				SetFlash(w, r, FlashWarning, MsgProjectRequired)
+				message := &Flash{Kind: FlashWarning, Text: MsgProjectRequired}
+				if pending := pendingFlashFrom(r.Context()); pending != nil {
+					message = pending
+				}
+				SetFlash(w, r, message.Kind, message.Text)
 				RedirectSeeOther(w, r, pathSelectProject+"?volver_a="+url.QueryEscape(returnDestination(r, section)))
 			case section.RequiresMember && !hasMember:
 				SetFlash(w, r, FlashWarning, MsgMemberRequired)

@@ -79,6 +79,18 @@ func (h *sprintsHandlers) create(w http.ResponseWriter, r *http.Request) {
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
+	if !form.HasErrors() {
+		storyOptions := make(map[int64]struct{}, len(data.StoryOptions))
+		for _, option := range data.StoryOptions {
+			storyOptions[option.ID] = struct{}{}
+		}
+		for _, storyID := range input.StoryIDs {
+			if _, belongsToProject := storyOptions[storyID]; !belongsToProject {
+				form.AddError(FieldStory, sprint.ErrStoryNotAvailable.Error())
+				break
+			}
+		}
+	}
 	if form.HasErrors() {
 		h.server.renderer.PageStatus(w, r, http.StatusUnprocessableEntity, "sprints.html",
 			PageData{Title: "Sprints", Form: form, Data: data})
@@ -167,28 +179,20 @@ func selectedStoryIDs(form *FormView) map[int64]struct{} {
 }
 
 func (h *sprintsHandlers) handleCreateError(w http.ResponseWriter, r *http.Request, form *FormView, data *sprintsPageData, err error) {
-	switch {
-	case errors.Is(err, sprint.ErrActiveSprintExists):
-		var activeError *sprint.ActiveSprintExistsError
-		if errors.As(err, &activeError) {
-			data.Notice = activeSprintMessage(activeError.Number)
-		} else {
-			data.Notice = "Ya hay un Sprint activo"
-		}
-		h.server.renderer.PageStatus(w, r, http.StatusConflict, "sprints.html", PageData{Title: "Sprints", Data: data})
-	case errors.Is(err, sprint.ErrGoalRequired):
-		form.AddError(FieldGoal, err.Error())
-		h.server.renderer.PageStatus(w, r, http.StatusUnprocessableEntity, "sprints.html", PageData{Title: "Sprints", Form: form, Data: data})
-	case errors.Is(err, sprint.ErrInvalidSprintPeriod):
-		form.AddError(FieldEndDate, err.Error())
-		h.server.renderer.PageStatus(w, r, http.StatusUnprocessableEntity, "sprints.html", PageData{Title: "Sprints", Form: form, Data: data})
-	case errors.Is(err, sprint.ErrStoryNotAvailable), errors.Is(err, sprint.ErrActiveSprintConflict):
-		form.AddError(FieldStory, err.Error())
-		h.server.renderer.PageStatus(w, r, http.StatusConflict, "sprints.html", PageData{Title: "Sprints", Form: form, Data: data})
-	default:
-		h.server.renderer.PageStatus(w, r, http.StatusInternalServerError, "sprints.html",
-			PageData{Title: "Sprints", Form: form, Data: data, Flash: &Flash{Kind: FlashError, Text: MsgOperationFailed}})
+	mapped := mapSprintError(err)
+	if errors.Is(err, sprint.ErrActiveSprintExists) {
+		data.Notice = mapped.Message
+		h.server.renderer.PageStatus(w, r, mapped.StatusCode, "sprints.html", PageData{Title: "Sprints", Data: data})
+		return
 	}
+	if mapped.Field != "" {
+		form.AddError(mapped.Field, mapped.Message)
+	}
+	pageData := PageData{Title: "Sprints", Form: form, Data: data}
+	if mapped.StatusCode == http.StatusInternalServerError {
+		pageData.Flash = &Flash{Kind: FlashError, Text: mapped.Message}
+	}
+	h.server.renderer.PageStatus(w, r, mapped.StatusCode, "sprints.html", pageData)
 }
 
 func activeSprintMessage(number int64) string {

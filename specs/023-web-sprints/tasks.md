@@ -82,10 +82,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] Implementar el mapeo de los errores de HU-04 y de `ErrActiveSprintExists` a los campos y mensajes del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/sprints_form.go`
-- [ ] T027 [US2] Implementar en `src/web/sprints_handlers.go` las respuestas 422 para errores de validación, 409 para conflictos y 500 para fallas de guardado, conservando los valores y las marcas en `FormView`
-- [ ] T028 [US2] Rechazar en `src/web/sprints_handlers.go` los identificadores de historias no numéricos o de otro proyecto con un mensaje junto a la lista, comprobando que pertenecen a las opciones del proyecto activo, con su prueba en `src/web/sprints_handlers_test.go`
-- [ ] T029 [US2] Verificar en `src/web/sprints_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [X] T026 [US2] Implementar el mapeo de los errores de HU-04 y de `ErrActiveSprintExists` a los campos y mensajes del formulario, con `MsgOperationFailed` para cualquier otro, en `src/web/sprints_form.go`
+- [X] T027 [US2] Implementar en `src/web/sprints_handlers.go` las respuestas 422 para errores de validación, 409 para conflictos y 500 para fallas de guardado, conservando los valores y las marcas en `FormView`
+- [X] T028 [US2] Rechazar en `src/web/sprints_handlers.go` los identificadores de historias no numéricos o de otro proyecto con un mensaje junto a la lista, comprobando que pertenecen a las opciones del proyecto activo, con su prueba en `src/web/sprints_handlers_test.go`
+- [X] T029 [US2] Verificar en `src/web/sprints_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 informa cada error junto a su campo, conserva los datos y no deja Sprints inválidos, historias fuera de lugar ni falsos éxitos.
 

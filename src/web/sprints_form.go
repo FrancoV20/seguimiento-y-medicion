@@ -2,7 +2,9 @@ package web
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -38,6 +40,31 @@ type SprintFormInput struct {
 	StartDate time.Time
 	EndDate   time.Time
 	StoryIDs  []int64
+}
+
+type sprintFormError struct {
+	Field      string
+	Message    string
+	StatusCode int
+}
+
+func mapSprintError(err error) sprintFormError {
+	switch {
+	case errors.Is(err, sprint.ErrActiveSprintExists):
+		var activeError *sprint.ActiveSprintExistsError
+		if errors.As(err, &activeError) {
+			return sprintFormError{Message: activeSprintMessage(activeError.Number), StatusCode: http.StatusConflict}
+		}
+		return sprintFormError{Message: "Ya hay un Sprint activo", StatusCode: http.StatusConflict}
+	case errors.Is(err, sprint.ErrGoalRequired):
+		return sprintFormError{Field: FieldGoal, Message: sprint.ErrGoalRequired.Error(), StatusCode: http.StatusUnprocessableEntity}
+	case errors.Is(err, sprint.ErrInvalidSprintPeriod):
+		return sprintFormError{Field: FieldEndDate, Message: sprint.ErrInvalidSprintPeriod.Error(), StatusCode: http.StatusUnprocessableEntity}
+	case errors.Is(err, sprint.ErrStoryNotAvailable), errors.Is(err, sprint.ErrActiveSprintConflict):
+		return sprintFormError{Field: FieldStory, Message: err.Error(), StatusCode: http.StatusConflict}
+	default:
+		return sprintFormError{Message: MsgOperationFailed, StatusCode: http.StatusInternalServerError}
+	}
 }
 
 func buildSprintFormInput(projectID int64, values url.Values) (*FormView, SprintFormInput) {
