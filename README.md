@@ -109,6 +109,17 @@ Todos deben seguir este orden desde la raíz del repositorio:
   Si tu `docker-compose.override.yml` usa otro usuario, clave o puerto, ajustá la URL y
   verificá la conexión con la sección "Base de datos" de más abajo.
 
+  **Clave de las cookies (HU-26)**: el proyecto y el integrante activos viajan en cookies
+  firmadas con `COOKIE_SECRET`. Debe tener **al menos 32 caracteres**; con menos, la aplicación
+  no arranca. Si no está definida, se usa una clave temporal y las sesiones se pierden al
+  reiniciar (no es un error). Para conservarlas entre reinicios:
+
+  ```powershell
+  $env:COOKIE_SECRET = "una-clave-larga-de-al-menos-32-caracteres"
+  ```
+
+  No subas tu clave al repositorio.
+
 5. Aplicar las migraciones pendientes en orden numérico. Revisen el `quickstart.md` de su
   historia: allí figuran `DATABASE_URL`, el comando exacto y las migraciones previas requeridas.
 

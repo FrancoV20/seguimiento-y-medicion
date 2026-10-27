@@ -39,14 +39,19 @@ func TestCookieSigner_ValorModificado(t *testing.T) {
 
 func TestCookieSigner_FirmaModificada(t *testing.T) {
 	signed := testSigner.Sign(CookieMember, "12")
-	last := signed[len(signed)-1]
-	repl := byte('A')
-	if last == 'A' {
-		repl = 'B'
-	}
-	tampered := signed[:len(signed)-1] + string(repl)
-	if _, ok := testSigner.Verify(CookieMember, tampered); ok {
-		t.Errorf("una firma modificada no debía aceptarse: %q", tampered)
+	start := len("12.")
+	// Se cambia un carácter en distintas posiciones de la firma, incluido el último (que en
+	// base64 sin relleno lleva bits de relleno: Strict los rechaza).
+	for _, pos := range []int{start, start + 10, len(signed) - 1} {
+		for _, repl := range []byte{'A', 'B', '_'} {
+			if signed[pos] == repl {
+				continue
+			}
+			tampered := signed[:pos] + string(repl) + signed[pos+1:]
+			if _, ok := testSigner.Verify(CookieMember, tampered); ok {
+				t.Errorf("una firma modificada en la posición %d no debía aceptarse: %q", pos, tampered)
+			}
+		}
 	}
 }
 

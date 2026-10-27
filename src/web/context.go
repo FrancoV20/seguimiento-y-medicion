@@ -40,7 +40,7 @@ type ResolvedContext struct {
 	MemberName    string
 }
 
-// readIDCookie lee un identificador de una cookie de contexto. Devuelve present=true si la
+// readIDCookie lee un identificador de una cookie de contexto firmada. Devuelve present=true si la
 // cookie vino en la solicitud; el id es 0 si el valor no es un entero canónico entre 1 y MaxID
 // (vacío, no numérico, negativo, muy grande, con signo o con ceros a la izquierda). El
 // middleware usa present para borrar las cookies manipuladas (HU-20b, T011).
@@ -49,7 +49,13 @@ func readIDCookie(r *http.Request, name string) (id int64, present bool) {
 	if err != nil {
 		return 0, false
 	}
-	return parseID(c.Value), true
+	// HU-26: una cookie sin firma, mal formada, con firma de otra cookie o de otra clave se
+	// trata como manipulada (id 0): el middleware la descarta en silencio.
+	value, ok := verifyContextValue(name, c.Value)
+	if !ok {
+		return 0, true
+	}
+	return parseID(value), true
 }
 
 // requestIsHTTPS indica si la solicitud llegó por HTTPS.
@@ -68,9 +74,9 @@ func newContextCookie(r *http.Request, name, value string) *http.Cookie {
 	}
 }
 
-// setContextCookie guarda el identificador en una cookie de sesión.
+// setContextCookie guarda el identificador firmado en una cookie de sesión.
 func setContextCookie(w http.ResponseWriter, r *http.Request, name string, id int64) {
-	http.SetCookie(w, newContextCookie(r, name, strconv.FormatInt(id, 10)))
+	http.SetCookie(w, newContextCookie(r, name, SignedContextValue(name, id))) // firmada (HU-26)
 }
 
 // clearContextCookie pide al navegador que borre la cookie.
