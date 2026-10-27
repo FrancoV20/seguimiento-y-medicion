@@ -1,5 +1,13 @@
 # Research: Interfaz web del Product Backlog
 
+## Estado de las decisiones
+
+Las decisiones de este documento fueron contrastadas con la implementación de US1 (alta), US2
+(validación y retención del formulario) y US3 (listado). La solución está integrada en `src/backlog`
+y `src/web`: el dominio valida y persiste el alta, y la vista renderizada por servidor integra el
+formulario con la tabla del proyecto activo. Las pruebas cubren el ciclo TDD RED/GREEN, los flujos
+HTTP/BDD y el catálogo PostgreSQL.
+
 ## Decision 1: Una sola pantalla con formulario y lista mínima
 
 - **Decision**: `/backlog` muestra el formulario de alta y la lista de historias del proyecto activo.
@@ -35,8 +43,8 @@
 ## Decision 4: Enter guarda, no agrega ni quita
 
 - **Decision**: El primer botón de envío del formulario en el orden del documento es "Guardar"
-  (visualmente oculto con una clase que no use `display: none`), y los botones de agregar y quitar
-  van después.
+  (desplazado fuera del área visible, sin `display: none`), y los botones de agregar y quitar van
+  después.
 - **Rationale**: Al presionar Enter en un campo, el navegador activa el primer botón de envío; si
   fuera "Quitar" se borrarían criterios sin que la persona lo pida.
 - **Alternatives considered**: Dejar los botones en el orden visual (descartada: Enter quitaría el
@@ -68,11 +76,11 @@
 - **Decision**: Sin Story Points la historia se crea y, como después se redirige, la advertencia se
   muestra con `SetFlash` de tipo advertencia. Como el mensaje de una sola vista es único, el texto
   combina la confirmación y la advertencia: "Historia creada correctamente. Falta completar la
-  estimación de Story Points" (propuesta del equipo; si HU-02 define otro texto, se usa ese). Sin
-  horas estimadas no hay advertencia: la columna dice "Sin estimar".
+  estimación de Story Points". Sin horas estimadas no hay advertencia: la columna dice "Sin estimar".
 - **Rationale**: HU-02 permite crearla igual; la advertencia no puede quedar "junto al campo" porque
   el formulario ya no se muestra. En la lista, la historia aparece con "Sin estimar".
-- **A verificar** (T001): cómo devuelve HU-02 la advertencia y su texto.
+- **Confirmado**: el servicio de HU-02 devuelve la advertencia cuando faltan Story Points; el handler
+  presenta el mensaje combinado indicado arriba.
 
 ## Decision 8: No duplicar las reglas de HU-02
 
@@ -82,11 +90,12 @@
 - **Rationale**: Mantiene una única fuente de reglas y mensajes.
 - **Alternatives considered**: Revalidar en el handler (descartada: dos copias que pueden divergir).
 
-## Decision 9: Opciones del formulario tomadas de HU-02
+## Decision 9: Opciones del formulario alineadas con HU-02
 
-- **Decision**: Las opciones de prioridad y de Story Points se obtienen de los valores válidos que
-  expone HU-02 y no se escriben a mano en la plantilla. Si HU-02 no los expone como lista, se agrega
-  una constante en el paquete web que coincida con sus reglas y una prueba que las compare.
+- **Decision**: Las opciones de prioridad se derivan de los valores de HU-02 y las opciones de Story
+  Points se alinean con la serie validada por el dominio y la migración `002`. Se presentan como
+  selectores; la plantilla también conserva y representa una opción manipulada inválida al devolver
+  un error de validación.
 - **Rationale**: Evita que la plantilla acepte valores que HU-02 rechaza, o al revés.
 - **Confirmado en la migración `002`**: prioridad es `Alta`, `Media` o `Baja`, y Story Points es una
   lista cerrada (1, 2, 3, 5, 8, 13, 21, 34, 55, 89), así que ambos van como selectores. Una prueba
@@ -138,8 +147,9 @@
   de miles y muestra el valor con coma.
 - **Alternatives considered**: Una pantalla de interfaz separada para HU-17 (descartada: otra historia
   que no está en el sprint); no cargarlas desde la web (descartada por lo anterior).
-- **A verificar** (T001): si HU-02 acepta y valida las horas estimadas al crear, y cómo trata la coma
-  decimal.
+- **Confirmado en la implementación**: HU-02 valida horas opcionales, positivas, con hasta dos
+  decimales y hasta 9999,99. El handler acepta coma o punto como separador decimal y pasa el valor
+  numérico al dominio.
 - **Sin límite de largo en título y descripción**: las columnas son `TEXT`, por lo que no hay
   validación de largo. Un límite sería una decisión de producto aparte.
 
@@ -151,8 +161,8 @@
   con un error genérico ("La operación no pudo completarse") que engaña a quien la ingresó. El tope
   se escribe en el dominio, junto a la regla de horas de HU-02, no en el handler, para que haya una
   sola regla.
-- **Pendiente del equipo**: el valor es una propuesta (el máximo de la columna); el equipo puede
-  fijar un tope de negocio menor.
+- **Regla implementada**: el dominio rechaza valores superiores a 9999,99 antes de persistirlos;
+  este límite evita el redondeo o desbordamiento de `NUMERIC(6,2)`.
 - **Alternatives considered**: Dejar que la base falle (descartada: mensaje engañoso); validar solo
   en el handler (descartada: dos copias de la regla).
 
@@ -164,3 +174,14 @@
   HU-02 exige al menos un criterio.
 - **Alternatives considered**: Permitir quitar todos los campos (descartada: deja un formulario sin
   forma de agregar el primer criterio sin una acción extra).
+
+## Resultado técnico final
+
+- PostgreSQL se levanta mediante Docker Compose y la aplicación usa `database/sql` con el driver
+  `pgx` (`github.com/jackc/pgx/v5/stdlib`).
+- No se añadieron migraciones. El alta reutiliza `BacklogService` y
+  `PostgreSQLBacklogStore`; las lecturas usan `StoryCatalog` y `PostgreSQLStoryCatalog`.
+- El formulario y la tabla son HTML server-side con `html/template`; los valores dinámicos se
+  escapan en el renderizado. Las estimaciones opcionales nulas se presentan como "Sin estimar".
+- El estado de una historia nueva es `Pendiente`, asignado por el dominio de HU-02 y persistido con
+  las columnas de la migración `002`.
