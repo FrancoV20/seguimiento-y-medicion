@@ -37,8 +37,9 @@ func RegisterSprints(server *Server, catalog SprintCatalog, actions SprintAction
 		Path:            "/sprints",
 		RequiresProject: true,
 	}, Routes{
-		"GET /sprints":  http.HandlerFunc(h.get),
-		"POST /sprints": http.HandlerFunc(h.create),
+		"GET /sprints":            http.HandlerFunc(h.get),
+		"POST /sprints":           http.HandlerFunc(h.create),
+		"POST /sprints/historias": http.HandlerFunc(h.assignStories),
 	})
 }
 
@@ -136,6 +137,63 @@ func (h *sprintsHandlers) create(w http.ResponseWriter, r *http.Request) {
 		message = MsgSprintWithoutStories
 	}
 	SetFlash(w, r, FlashSuccess, message)
+	RedirectSeeOther(w, r, "/sprints")
+}
+
+func (h *sprintsHandlers) assignStories(w http.ResponseWriter, r *http.Request) {
+	activeContext := ActiveContextFrom(r.Context())
+	if activeContext == nil || activeContext.ProjectID <= 0 {
+		SetFlash(w, r, FlashWarning, MsgProjectRequired)
+		RedirectSeeOther(w, r, pathSelectProject+"?volver_a=%2Fsprints")
+		return
+	}
+	_ = r.ParseForm()
+	form, storyIDs := buildStoryAssignmentInput(r.PostForm)
+	data, err := h.loadPageData(r, activeContext.ProjectID, form)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	if !data.HasActive {
+		form.AddError(FieldStory, MsgNoActiveSprint)
+		h.server.renderer.PageStatus(w, r, http.StatusConflict, "sprints.html",
+			PageData{Title: "Sprints", Form: form, Data: data})
+		return
+	}
+	if form.HasErrors() {
+		h.server.renderer.PageStatus(w, r, http.StatusUnprocessableEntity, "sprints.html",
+			PageData{Title: "Sprints", Form: form, Data: data})
+		return
+	}
+
+	optionsByID := make(map[int64]StoryOption, len(data.StoryOptions))
+	for _, option := range data.StoryOptions {
+		optionsByID[option.ID] = option.StoryOption
+	}
+	for _, storyID := range storyIDs {
+		option, belongsToProject := optionsByID[storyID]
+		if !belongsToProject || !option.Available {
+			form.AddError(FieldStory, fmt.Sprintf("%s: historia %d", sprint.ErrStoryNotAvailable.Error(), storyID))
+			h.server.renderer.PageStatus(w, r, http.StatusConflict, "sprints.html",
+				PageData{Title: "Sprints", Form: form, Data: data})
+			return
+		}
+	}
+
+	if err := h.actions.AssignStories(r.Context(), data.Active.ID, storyIDs); err != nil {
+		mapped := mapSprintAssignmentError(err)
+		if mapped.Field != "" {
+			form.AddError(mapped.Field, mapped.Message)
+		}
+		pageData := PageData{Title: "Sprints", Form: form, Data: data}
+		if mapped.StatusCode == http.StatusInternalServerError {
+			pageData.Flash = &Flash{Kind: FlashError, Text: mapped.Message}
+		}
+		h.server.renderer.PageStatus(w, r, mapped.StatusCode, "sprints.html", pageData)
+		return
+	}
+
+	SetFlash(w, r, FlashSuccess, MsgStoriesAdded)
 	RedirectSeeOther(w, r, "/sprints")
 }
 

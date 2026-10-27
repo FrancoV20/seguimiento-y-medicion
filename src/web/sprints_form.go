@@ -67,6 +67,21 @@ func mapSprintError(err error) sprintFormError {
 	}
 }
 
+func mapSprintAssignmentError(err error) sprintFormError {
+	var assigned *sprint.StoryAlreadyAssignedError
+	if errors.As(err, &assigned) {
+		message := fmt.Sprintf("La historia %d ya está asignada", assigned.StoryID)
+		if assigned.SprintNumber > 0 {
+			message = fmt.Sprintf("La historia %d ya está asignada al Sprint %d", assigned.StoryID, assigned.SprintNumber)
+		}
+		return sprintFormError{Field: FieldStory, Message: message, StatusCode: http.StatusConflict}
+	}
+	if errors.Is(err, sprint.ErrStoryNotAvailable) {
+		return sprintFormError{Field: FieldStory, Message: err.Error(), StatusCode: http.StatusConflict}
+	}
+	return sprintFormError{Message: MsgOperationFailed, StatusCode: http.StatusInternalServerError}
+}
+
 func buildSprintFormInput(projectID int64, values url.Values) (*FormView, SprintFormInput) {
 	form := NewFormView()
 	input := SprintFormInput{ProjectID: projectID, Goal: values.Get(FieldGoal)}
@@ -104,6 +119,34 @@ func buildSprintFormInput(projectID int64, values url.Values) (*FormView, Sprint
 		input.StoryIDs = append(input.StoryIDs, id)
 	}
 	return form, input
+}
+
+func buildStoryAssignmentInput(values url.Values) (*FormView, []int64) {
+	form := NewFormView()
+	form.Values[FieldStory] = strings.Join(values[FieldStory], ",")
+	if len(values[FieldStory]) == 0 {
+		form.AddError(FieldStory, MsgSelectAtLeastOneStory)
+		return form, nil
+	}
+
+	seen := make(map[int64]struct{}, len(values[FieldStory]))
+	storyIDs := make([]int64, 0, len(values[FieldStory]))
+	for _, rawID := range values[FieldStory] {
+		id, err := strconv.ParseInt(rawID, 10, 64)
+		if err != nil || id <= 0 {
+			form.AddError(FieldStory, fmt.Sprintf("El identificador de historia %q no es válido", rawID))
+			continue
+		}
+		if _, duplicate := seen[id]; duplicate {
+			continue
+		}
+		seen[id] = struct{}{}
+		storyIDs = append(storyIDs, id)
+	}
+	if len(storyIDs) == 0 && !form.HasErrors() {
+		form.AddError(FieldStory, MsgSelectAtLeastOneStory)
+	}
+	return form, storyIDs
 }
 
 // SprintActions reúne las operaciones de HU-04 usadas por la interfaz.

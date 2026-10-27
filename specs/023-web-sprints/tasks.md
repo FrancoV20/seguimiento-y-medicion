@@ -121,16 +121,16 @@
 
 ### Tests for User Story 4
 
-- [ ] T036 [P] [US4] Escribir la prueba de handler de agregar historias disponibles: quedan "En Sprint", aparecen en el Sprint y "Historias agregadas correctamente" se muestra una sola vez, en `src/web/sprints_handlers_test.go`
-- [ ] T037 [P] [US4] Escribir la prueba de handler sin historias marcadas: "Elija al menos una historia" y sin cambios, en `src/web/sprints_handlers_test.go`
-- [ ] T038 [P] [US4] Escribir la prueba de handler con una historia no disponible o de otro proyecto entre las marcadas: no se asigna ninguna, se informa cuál y la selección se conserva, y un identificador de Sprint enviado se ignora, en `src/web/sprints_handlers_test.go`
-- [ ] T039 [P] [US4] Escribir los escenarios BDD de agregar historias y agregar sin marcar ninguna en `test/web_sprints_bdd_test.go`
+- [X] T036 [P] [US4] Escribir la prueba de handler de agregar historias disponibles: quedan "En Sprint", aparecen en el Sprint y "Historias agregadas correctamente" se muestra una sola vez, en `src/web/sprints_handlers_test.go`
+- [X] T037 [P] [US4] Escribir la prueba de handler sin historias marcadas: "Elija al menos una historia" y sin cambios, en `src/web/sprints_handlers_test.go`
+- [X] T038 [P] [US4] Escribir la prueba de handler con una historia no disponible o de otro proyecto entre las marcadas: no se asigna ninguna, se informa cuál y la selección se conserva, y un identificador de Sprint enviado se ignora, en `src/web/sprints_handlers_test.go`
+- [X] T039 [P] [US4] Escribir los escenarios BDD de agregar historias y agregar sin marcar ninguna en `test/web_sprints_bdd_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T040 [US4] Implementar `POST /sprints/historias` en `src/web/sprints_handlers.go`: toma el Sprint activo del servidor, quita identificadores repetidos, valida que pertenezcan a las opciones del proyecto, invoca `AssignStories` de HU-04 y usa `SetFlash` y la redirección 303
-- [ ] T041 [US4] Agregar el formulario "Agregar historias" con la lista de historias disponibles al bloque del Sprint activo en `src/web/templates/sprints.html`
-- [ ] T042 [US4] Mapear los errores de asignación de HU-04 a mensajes con las historias rechazadas en `src/web/sprints_form.go`
+- [X] T040 [US4] Implementar `POST /sprints/historias` en `src/web/sprints_handlers.go`: toma el Sprint activo del servidor, quita identificadores repetidos, valida que pertenezcan a las opciones del proyecto, invoca `AssignStories` de HU-04 y usa `SetFlash` y la redirección 303
+- [X] T041 [US4] Agregar el formulario "Agregar historias" con la lista de historias disponibles al bloque del Sprint activo en `src/web/templates/sprints.html`
+- [X] T042 [US4] Mapear los errores de asignación de HU-04 a mensajes con las historias rechazadas en `src/web/sprints_form.go`
 
 **Checkpoint**: US4 evita que un Sprint creado vacío o incompleto quede sin salida desde la web.
 

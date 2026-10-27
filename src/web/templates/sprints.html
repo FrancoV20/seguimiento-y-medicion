@@ -31,6 +31,27 @@
     {{else}}
     <p>Este Sprint todavía no tiene historias asignadas.</p>
     {{end}}
+
+    <form method="post" action="/sprints/historias">
+      <fieldset class="picker-list">
+        <legend>Agregar historias</legend>
+        {{if .Data.BacklogEmpty}}
+        <p>El Backlog no tiene historias.</p>
+        {{else}}
+          {{range .Data.StoryOptions}}
+          <div class="picker-item">
+            <label>
+              <input type="checkbox" name="historia" value="{{.ID}}"{{if .Selected}} checked{{end}}{{if not .Available}} disabled{{end}}>
+              {{.Title}} ({{.Priority}})
+            </label>
+            {{if not .Available}}<span class="unavailable-reason">{{.UnavailableReason}}</span>{{end}}
+          </div>
+          {{end}}
+        {{end}}
+        {{with .Form}}{{with index .Errors "historia"}}<p class="field-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}{{end}}
+      </fieldset>
+      <button type="submit">Agregar historias</button>
+    </form>
   </section>
   {{else}}
   <form method="post" action="/sprints">
