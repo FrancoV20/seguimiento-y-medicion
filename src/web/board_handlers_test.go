@@ -216,3 +216,25 @@ func TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos(t *testing.T) {
 		t.Errorf("los Story Points completados debían volver a 0 de 13")
 	}
 }
+
+// El tipo del mensaje al completar: éxito con horas y advertencia sin horas.
+func TestTablero_CompletarSinHorasSeMuestraComoAdvertenciaYConHorasComoExito(t *testing.T) {
+	app := newBoardApp(t)
+	projectID, sprintID := app.newBoardProject(t, "tipo del mensaje")
+	conHoras := newCatStory(t, app.db, projectID, sprintID, "Historia con horas", boardPuntos(3), sprint.InProgress)
+	addCatEffort(t, app.db, conHoras)
+	sinHoras := newCatStory(t, app.db, projectID, sprintID, "Historia sin horas", boardPuntos(5), sprint.InProgress)
+	c := app.openBoard(t, projectID)
+
+	app.changeStory(t, c, conHoras, sprint.ActionComplete, sprint.InProgress)
+	_, conHorasBody := app.get(t, c, "/tablero")
+	app.changeStory(t, c, sinHoras, sprint.ActionComplete, sprint.InProgress)
+	_, sinHorasBody := app.get(t, c, "/tablero")
+
+	if !strings.Contains(conHorasBody, "alert-success") || strings.Contains(conHorasBody, "alert-warning") {
+		t.Errorf("completar con horas debía mostrarse como éxito")
+	}
+	if !strings.Contains(sinHorasBody, "alert-warning") || strings.Contains(sinHorasBody, "alert-success") {
+		t.Errorf("completar sin horas debía mostrarse como advertencia")
+	}
+}

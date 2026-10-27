@@ -1,0 +1,2 @@
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	1.704s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.556s	coverage: 95.7% of statements
