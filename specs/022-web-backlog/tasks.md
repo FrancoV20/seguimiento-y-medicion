@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-02, HU-20a y HU-20b.
 
-- [ x ] T001 Revisar HU-02 en `main`: ruta del paquete, firmas del servicio de alta y de `StoryStore`, tipos de error y mensajes exactos de título, descripción, prioridad, criterios, Story Points y horas estimadas, cómo devuelve la advertencia por falta de Story Points, estado inicial `'Pendiente'`, y si el alta de HU-02 ya valida las horas estimadas más allá del `CHECK` de la base (mayor que 0): rechazo de más de dos decimales en lugar de redondeo, coma decimal y máximo de 9999,99. Lo que falte se agrega en el dominio, junto a la regla de HU-02 y no en el handler (T018); mirar también si HU-17 ya está en `main` para reutilizar su regla. Anotar el resultado en `specs/022-web-backlog/data-model.md` y ajustar el mapeo de `plan.md`
-- [x ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register`, `RequireContext` aplicado también a `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/022-web-backlog/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [x ] T004 [P] Confirmar que `db/migrations/002_*.up.sql` en `main` coincide con el esquema anotado en `specs/022-web-backlog/data-model.md` (`user_stories` y `acceptance_criteria`, con prioridad `Alta`/`Media`/`Baja`, Story Points de la serie y `estimated_hours` `NUMERIC(6,2)` opcional), anotar qué migración posterior agregó el estado "En Sprint" y avisar al equipo si algo cambió
+- [x] T001 Revisar HU-02 en `main`: ruta del paquete, firmas del servicio de alta y de `StoryStore`, tipos de error y mensajes exactos de título, descripción, prioridad, criterios, Story Points y horas estimadas, cómo devuelve la advertencia por falta de Story Points, estado inicial `'Pendiente'`, y si el alta de HU-02 ya valida las horas estimadas más allá del `CHECK` de la base (mayor que 0): rechazo de más de dos decimales en lugar de redondeo, coma decimal y máximo de 9999,99. Lo que falte se agrega en el dominio, junto a la regla de HU-02 y no en el handler (T018); mirar también si HU-17 ya está en `main` para reutilizar su regla. Anotar el resultado en `specs/022-web-backlog/data-model.md` y ajustar el mapeo de `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register`, `RequireContext` aplicado también a `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/022-web-backlog/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar que `db/migrations/002_*.up.sql` en `main` coincide con el esquema anotado en `specs/022-web-backlog/data-model.md` (`user_stories` y `acceptance_criteria`, con prioridad `Alta`/`Media`/`Baja`, Story Points de la serie y `estimated_hours` `NUMERIC(6,2)` opcional), anotar qué migración posterior agregó el estado "En Sprint" y avisar al equipo si algo cambió
 
 ---
 
@@ -46,15 +46,15 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [P] [US1] Escribir pruebas unitarias del armado del formulario (criterios en blanco ignorados, acción por defecto `guardar`, índice de `quitar_criterio:N` válido, fuera de rango y no numérico, no quitar el último campo, Story Points vacío, horas vacías, con coma, con punto y con valor no numérico, valores conservados) en `src/web/backlog_form_test.go`
-- [ ] T010 [P] [US1] Escribir la prueba de handler de alta exitosa con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: respuesta 303 a `/backlog`, "Historia creada correctamente" una sola vez, historia en la lista con estado "Pendiente" y los valores ingresados (con Story Points y horas) y, con dos proyectos, solo en el activo, en `src/web/backlog_handlers_test.go`
-- [ ] T011 [P] [US1] Escribir la prueba de handler de criterios dinámicos: "Agregar criterio" muestra un campo más, conserva lo escrito y no crea nada; "Quitar" elimina ese campo; con un solo campo, "Quitar" lo deja y no crea nada; y Enter dentro de un campo guarda y no agrega ni quita, en `src/web/backlog_handlers_test.go`
-- [ ] T012 [P] [US1] Escribir la prueba de handler con criterios en blanco: se ignoran y la historia se guarda solo con los criterios con texto, en `src/web/backlog_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler sin Story Points: la historia se crea, se muestra el mensaje combinado de advertencia y en la lista figura "Sin estimar" en Story Points, en `src/web/backlog_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de handler sin horas estimadas: la historia se crea, se muestra "Historia creada correctamente" sin advertencia y en la lista figura "Sin estimar" en horas, en `src/web/backlog_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de handler con horas estimadas válidas (`8`, `1,5`, `1.5` y `9999,99`): la historia se crea con esas horas exactas, sin redondeo, y la lista las muestra con coma, en `src/web/backlog_handlers_test.go`
-- [ ] T016 [P] [US1] Escribir la prueba de handler de recarga después de guardar: no se crea una segunda historia ni se repite el mensaje, en `src/web/backlog_handlers_test.go`
-- [ ] T017 [P] [US1] Escribir los escenarios BDD de alta de historia, agregar criterio, quitar criterio, no quitar el último, criterios en blanco, sin Story Points, sin horas estimadas y horas con coma decimal en `test/web_backlog_bdd_test.go`
+- [x] T009 [P] [US1] Escribir pruebas unitarias del armado del formulario (criterios en blanco ignorados, acción por defecto `guardar`, índice de `quitar_criterio:N` válido, fuera de rango y no numérico, no quitar el último campo, Story Points vacío, horas vacías, con coma, con punto y con valor no numérico, valores conservados) en `src/web/backlog_form_test.go`
+- [x] T010 [P] [US1] Escribir la prueba de handler de alta exitosa con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: respuesta 303 a `/backlog`, "Historia creada correctamente" una sola vez, historia en la lista con estado "Pendiente" y los valores ingresados (con Story Points y horas) y, con dos proyectos, solo en el activo, en `src/web/backlog_handlers_test.go`
+- [x] T011 [P] [US1] Escribir la prueba de handler de criterios dinámicos: "Agregar criterio" muestra un campo más, conserva lo escrito y no crea nada; "Quitar" elimina ese campo; con un solo campo, "Quitar" lo deja y no crea nada; y Enter dentro de un campo guarda y no agrega ni quita, en `src/web/backlog_handlers_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler con criterios en blanco: se ignoran y la historia se guarda solo con los criterios con texto, en `src/web/backlog_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler sin Story Points: la historia se crea, se muestra el mensaje combinado de advertencia y en la lista figura "Sin estimar" en Story Points, en `src/web/backlog_handlers_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de handler sin horas estimadas: la historia se crea, se muestra "Historia creada correctamente" sin advertencia y en la lista figura "Sin estimar" en horas, en `src/web/backlog_handlers_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de handler con horas estimadas válidas (`8`, `1,5`, `1.5` y `9999,99`): la historia se crea con esas horas exactas, sin redondeo, y la lista las muestra con coma, en `src/web/backlog_handlers_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de handler de recarga después de guardar: no se crea una segunda historia ni se repite el mensaje, en `src/web/backlog_handlers_test.go`
+- [x] T017 [P] [US1] Escribir los escenarios BDD de alta de historia, agregar criterio, quitar criterio, no quitar el último, criterios en blanco, sin Story Points, sin horas estimadas y horas con coma decimal en `test/web_backlog_bdd_test.go`
 
 ### Implementation for User Story 1
 
@@ -122,18 +122,18 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [x ] T041 [P] Documentar en `specs/022-web-backlog/quickstart.md` los pasos para probar a mano con un proyecto activo y la nota de puerto
-- [ x] T042 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/backlog_handlers.go` y `src/web/backlog_form.go`
-- [ x] T043 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ x] T044 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ x] T045 Guardar en `specs/022-web-backlog/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [x ] T046 Guardar en `specs/022-web-backlog/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/022-web-backlog/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
-- [ x] T047 Coordinar con quien tome HU-13 que esta lista y `StoryCatalog` son su punto de partida (orden por prioridad que reemplaza al provisional y a la prueba de orden de T035, filtro, edición y su escenario de Backlog vacío que referencia el de esta historia); con quien tome HU-23 que las historias creadas quedan en estado `'Pendiente'`, se leen del mismo catálogo y la lista muestra su identificador; y con quien tome HU-17 que la regla de horas (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), su mensaje y el texto "Sin estimar" ya existen en el dominio y los reutilice en lugar de escribir otros
-- [ x] T048 Revisar trazabilidad de FR-001 a FR-023 y SC-001 a SC-008 en `specs/022-web-backlog/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
-- [ x] T050 [P] Actualizar el manual breve de usuario con la pantalla "Backlog" (ver `quickstart.md`)
-- [ x] T051 Verificar a mano con la aplicación en ejecución los 18 escenarios del Issue y la lista de `quickstart.md`
-- [ x] T052 Abrir el Pull Request desde `HU-22`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [x] T041 [P] Documentar en `specs/022-web-backlog/quickstart.md` los pasos para probar a mano con un proyecto activo y la nota de puerto
+- [x] T042 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/backlog_handlers.go` y `src/web/backlog_form.go`
+- [x] T043 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T044 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T045 Guardar en `specs/022-web-backlog/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T046 Guardar en `specs/022-web-backlog/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/022-web-backlog/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
+- [x] T047 Coordinar con quien tome HU-13 que esta lista y `StoryCatalog` son su punto de partida (orden por prioridad que reemplaza al provisional y a la prueba de orden de T035, filtro, edición y su escenario de Backlog vacío que referencia el de esta historia); con quien tome HU-23 que las historias creadas quedan en estado `'Pendiente'`, se leen del mismo catálogo y la lista muestra su identificador; y con quien tome HU-17 que la regla de horas (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), su mensaje y el texto "Sin estimar" ya existen en el dominio y los reutilice en lugar de escribir otros
+- [x] T048 Revisar trazabilidad de FR-001 a FR-023 y SC-001 a SC-008 en `specs/022-web-backlog/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
+- [x] T050 [P] Actualizar el manual breve de usuario con la pantalla "Backlog" (ver `quickstart.md`)
+- [x] T051 Verificar a mano con la aplicación en ejecución los 18 escenarios del Issue y la lista de `quickstart.md`
+- [x] T052 Abrir el Pull Request desde `HU-22`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 
