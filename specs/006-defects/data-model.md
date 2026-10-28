@@ -36,8 +36,9 @@ DROP TABLE defects;
 > Product Builder confirmó que HU-15 todavía no tiene responsable ni implementación. `009` es el siguiente
 > candidato; volver a coordinar con el equipo antes de crearla y si HU-15 se asigna.
 >
-> **Verificación pendiente (T005)**: probar en PostgreSQL que `ON DELETE SET NULL` de `resolution_sprint_id`
-> conviva con el `CHECK` al borrar un Sprint; si no, cambiarlo a `ON DELETE CASCADE` y anotar el resultado acá.
+> **Verificación (T005)**: PostgreSQL rechazó borrar el Sprint de resolución con `ON DELETE SET NULL`, porque
+> dejaría un defecto "Resuelto" sin Sprint y violaría el `CHECK` de coherencia. Se usa `ON DELETE CASCADE` para
+> que los defectos vinculados se eliminen junto con ese Sprint, igual que con el Sprint de detección.
 
 ## Verificación contra `main` (T001)
 
