@@ -242,17 +242,18 @@ Los textos propios de HU-06 son una propuesta del equipo y se definen en un solo
 
 ## Trazabilidad *(Historia → Spec → Criterios → Escenarios BDD → Tests → Código)*
 
-| Escenario del Issue | Requisitos | Tests | BDD | Código |
-|---|---|---|---|---|
-| 1. Vinculación de defecto a historia | FR-002, FR-003, FR-015 | T006, T007, T016, T018 | T019 | `src/defect` (dominio), `defects_handlers.go` |
-| 2. Omisión de datos obligatorios | FR-005 | T006, T014, T024 | T029 | `defects_form.go`, `src/defect` |
-| 3. Descripción obligatoria | FR-005, FR-006 | T006, T025 | T029 | `src/defect`, `defects_form.go` |
-| 4. Sin Sprint activo | FR-007, FR-016 | T007, T027 | T029 | `postgres_store.go`, `defects.html` |
-| 5. Historia de otro proyecto | FR-008 | T007, T026 | T029 | `postgres_store.go`, `defects_form.go` |
-| 6. Historia de un Sprint anterior | FR-004 | T017 | T019 | `postgres_store.go` |
-| 7. Lista de defectos | FR-009, FR-014 | T012, T032, T034 | T035 | `postgres_defects_catalog.go`, `defects.html` |
-| 8. Lista vacía | FR-010 | T033 | T035 | `defects.html` |
-| 9. Error al guardar | FR-011, FR-013 | T007, T028, T031 | T029 | `defects_handlers.go` |
-| (HU-20b) Recarga sin duplicar | FR-003 | T042 | | `defects_handlers.go` |
-| (HU-20b) Sin proyecto activo | FR-015 | T043 | | `defects_handlers.go` |
-| (HU-20a) Error al leer | FR-012 | T037, T044 | | `defects_handlers.go` |
+| Escenario del Issue | Requisitos | Criterios | Tests | BDD | Código |
+|---|---|---|---|---|---|
+| Sección Defectos protegida por proyecto | FR-001 | | T023, T043 | | `src/cmd/server/main.go`, `src/web/defects_handlers.go` |
+| 1. Vinculación de defecto a historia | FR-002, FR-003, FR-015 | SC-001 | T006, T007, T016, T018 | T019 | `src/defect`, `src/web/defects_handlers.go`, `src/web/templates/defects.html` |
+| 2. Omisión de datos obligatorios | FR-005 | SC-002 | T006, T014, T024 | T029 | `src/web/defects_form.go`, `src/defect/service.go` |
+| 3. Descripción obligatoria y límite | FR-005, FR-006 | SC-002 | T006, T025 | T029 | `src/defect/service.go`, `src/web/defects_form.go` |
+| 4. Sin Sprint activo y cierre atómico | FR-007, FR-016 | SC-003, SC-004 | T007, T027 | T029 | `src/defect/postgres_store.go`, `src/web/defects_handlers.go`, `src/web/templates/defects.html` |
+| 5. Historia de otro proyecto | FR-008 | SC-003 | T007, T026 | T029 | `src/defect/postgres_store.go`, `src/web/defects_form.go` |
+| 6. Historia de un Sprint anterior | FR-004 | SC-001 | T017 | T019 | `src/defect/postgres_store.go` |
+| 7. Lista de defectos | FR-009, FR-014 | SC-005, SC-006 | T012, T032, T034 | T035 | `src/web/postgres_defects_catalog.go`, `src/web/templates/defects.html` |
+| 8. Lista vacía | FR-010 | | T033 | T035 | `src/web/templates/defects.html` |
+| 9. Error al guardar | FR-011, FR-013 | SC-002 | T007, T028, T031 | T029 | `src/web/defects_handlers.go`, `src/web/defects_form.go` |
+| (HU-20b) Recarga sin duplicar | FR-003 | SC-001 | T042 | | `src/web/defects_handlers.go` |
+| (HU-20b) Sin proyecto activo | FR-015 | | T043 | | `src/web/defects_handlers.go` |
+| (HU-20a) Error al leer | FR-012 | | T037, T044 | | `src/web/defects_handlers.go` |
