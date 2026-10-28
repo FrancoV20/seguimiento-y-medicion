@@ -1,8 +1,11 @@
 package web
 
 import (
+	"context"
 	"database/sql"
+	"errors"
 	"fmt"
+	"html"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -23,6 +26,11 @@ const (
 	hu17FieldHours      = "horas_estimadas"
 	hu17MsgRegistered   = "Horas estimadas registradas"
 	hu17MsgUpdated      = "Horas estimadas actualizadas"
+	hu17MsgInvalid      = "El valor de horas no es válido"
+	hu17MsgTooLarge     = "Las horas estimadas no pueden superar 9999,99"
+	hu17MsgNotFound     = "La historia no existe"
+	hu17MsgLocked       = "La historia pertenece a un Sprint finalizado; sus horas estimadas no se pueden modificar"
+	hu17MsgFailed       = "La operación no pudo completarse"
 	hu17StoryPointsNone = 3 // Story Points de las historias de prueba: no se confunden con las horas
 )
 
@@ -33,10 +41,20 @@ type hu17EstimatesApp struct {
 }
 
 func newHU17EstimatesApp(t *testing.T) *hu17EstimatesApp {
+	return newHU17EstimatesAppWithStore(t, nil)
+}
+
+// newHU17EstimatesAppWithStore permite envolver el almacenamiento real (por ejemplo, para simular
+// una falla de guardado).
+func newHU17EstimatesAppWithStore(t *testing.T, wrap func(backlog.EstimateStore) backlog.EstimateStore) *hu17EstimatesApp {
 	t.Helper()
 	app := newCtxApp(t, nil)
+	var store backlog.EstimateStore = backlog.NewPostgreSQLEstimateStore(app.db)
+	if wrap != nil {
+		store = wrap(store)
+	}
 	if err := RegisterEstimates(app.srv,
-		backlog.NewEstimateService(backlog.NewPostgreSQLEstimateStore(app.db)),
+		backlog.NewEstimateService(store),
 		NewPostgreSQLEstimateCatalog(app.db)); err != nil {
 		t.Fatalf("no se pudo registrar la sección Estimaciones: %v", err)
 	}
@@ -239,5 +257,211 @@ func TestEstimatesHandler_GuardaHorasConComaYPuntoSinRedondear(t *testing.T) {
 			}
 			hu17AssertCell(t, hu17StoryRow(t, body, title), c.shown, "las horas con coma")
 		})
+	}
+}
+
+// --- US2: rechazos y errores (T020 a T024) ---
+
+// finishSprintWith asigna la historia a un Sprint finalizado del proyecto.
+func (a *hu17EstimatesApp) finishSprintWith(t *testing.T, projectID, storyID int64) {
+	t.Helper()
+	var sprintID int64
+	if err := a.db.QueryRow(`
+		INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		VALUES ($1, 1, 'Sprint finalizado HU-17', DATE '2026-10-01', DATE '2026-10-15', 'Finalizado')
+		RETURNING id`, projectID).Scan(&sprintID); err != nil {
+		t.Fatalf("no se pudo crear el Sprint finalizado: %v", err)
+	}
+	if _, err := a.db.Exec(`INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES ($1, $2)`, sprintID, storyID); err != nil {
+		t.Fatalf("no se pudo asignar la historia al Sprint finalizado: %v", err)
+	}
+	if _, err := a.db.Exec(`UPDATE user_stories SET status = 'Hecho', active_sprint_id = $1 WHERE id = $2`, sprintID, storyID); err != nil {
+		t.Fatalf("no se pudo marcar la historia: %v", err)
+	}
+}
+
+var hu17HoursInputPattern = regexp.MustCompile(`<input\b[^>]*\bname="horas_estimadas"[^>]*>`)
+var hu17ValueAttrPattern = regexp.MustCompile(`\bvalue="([^"]*)"`)
+
+// hu17InputValue devuelve el valor del campo de horas de la fila (sin escapes HTML).
+func hu17InputValue(t *testing.T, row string) string {
+	t.Helper()
+	input := hu17HoursInputPattern.FindString(row)
+	if input == "" {
+		t.Fatalf("la fila no tiene el campo horas_estimadas: %s", row)
+	}
+	match := hu17ValueAttrPattern.FindStringSubmatch(input)
+	if match == nil {
+		return ""
+	}
+	return html.UnescapeString(match[1])
+}
+
+// hu17AssertRejected verifica el estado, el mensaje una sola vez y la ausencia de éxito.
+func hu17AssertRejected(t *testing.T, resp *http.Response, body string, status int, message string) {
+	t.Helper()
+	if resp.StatusCode != status {
+		t.Errorf("estado = %d; se esperaba %d", resp.StatusCode, status)
+	}
+	if n := strings.Count(body, message); n != 1 {
+		t.Errorf("el mensaje %q debía aparecer una vez; apareció %d", message, n)
+	}
+	for _, success := range []string{hu17MsgRegistered, hu17MsgUpdated} {
+		if strings.Contains(body, success) {
+			t.Errorf("un rechazo no debía mostrar %q", success)
+		}
+	}
+}
+
+// hu17AssertFieldError verifica el mensaje en la fila de la historia, lo escrito conservado en su
+// campo y el valor anterior todavía mostrado.
+func hu17AssertFieldError(t *testing.T, body, title, message, written, shownBefore string) {
+	t.Helper()
+	row := hu17StoryRow(t, body, title)
+	if !strings.Contains(row, message) {
+		t.Errorf("el mensaje %q debía estar junto al campo de la fila: %s", message, row)
+	}
+	if got := hu17InputValue(t, row); got != written {
+		t.Errorf("el campo debía conservar lo escrito %q; tiene %q", written, got)
+	}
+	hu17AssertCell(t, row, shownBefore, "las horas estimadas anteriores")
+}
+
+// T020
+func TestEstimatesHandler_RechazaHorasInvalidasJuntoAlCampo(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	previous := 8.0
+	storyID, title := app.insertStory(t, app.fx.projectA, "invalidas", &previous)
+	other, otherTitle := app.insertStory(t, app.fx.projectA, "vecina", &previous)
+	app.chooseProject(t, app.fx.projectA)
+
+	for _, input := range []string{"0", "-1", "abc", "", "1,555"} {
+		t.Run(fmt.Sprintf("%q", input), func(t *testing.T) {
+			resp, body := app.save(t, storyID, input)
+			hu17AssertRejected(t, resp, body, http.StatusUnprocessableEntity, hu17MsgInvalid)
+			hu17AssertFieldError(t, body, title, hu17MsgInvalid, input, "8")
+			if strings.Contains(hu17StoryRow(t, body, otherTitle), hu17MsgInvalid) {
+				t.Error("el mensaje no debía aparecer en la fila de otra historia")
+			}
+			if got := app.storedHours(t, storyID); got != "8.00" {
+				t.Errorf("el valor anterior cambió a %q", got)
+			}
+		})
+	}
+	if got := app.storedHours(t, other); got != "8.00" {
+		t.Errorf("la otra historia cambió a %q", got)
+	}
+}
+
+// T021 (9999,995 tiene más de dos decimales: se informa como valor no válido, ver data-model.md)
+func TestEstimatesHandler_RechazaHorasPorEncimaDelMaximo(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	previous := 8.0
+	storyID, title := app.insertStory(t, app.fx.projectA, "maximo", &previous)
+	app.chooseProject(t, app.fx.projectA)
+
+	cases := []struct{ input, message string }{
+		{"10000", hu17MsgTooLarge},
+		{"12345,5", hu17MsgTooLarge},
+		{"9999,995", hu17MsgInvalid},
+	}
+	for _, c := range cases {
+		t.Run(c.input, func(t *testing.T) {
+			resp, body := app.save(t, storyID, c.input)
+			hu17AssertRejected(t, resp, body, http.StatusUnprocessableEntity, c.message)
+			hu17AssertFieldError(t, body, title, c.message, c.input, "8")
+			if got := app.storedHours(t, storyID); got != "8.00" {
+				t.Errorf("el valor anterior cambió a %q", got)
+			}
+		})
+	}
+}
+
+// T022
+func TestEstimatesHandler_RechazaHistoriaDeSprintFinalizado(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	previous := 5.0
+	storyID, title := app.insertStory(t, app.fx.projectA, "finalizada", &previous)
+	app.finishSprintWith(t, app.fx.projectA, storyID)
+	app.chooseProject(t, app.fx.projectA)
+
+	// Envío directo, aunque la pantalla no ofrezca el campo editable.
+	resp, body := app.save(t, storyID, "9")
+	hu17AssertRejected(t, resp, body, http.StatusConflict, hu17MsgLocked)
+	row := hu17StoryRow(t, body, title)
+	if !strings.Contains(row, hu17MsgLocked) {
+		t.Errorf("el motivo debía mostrarse en la fila de la historia: %s", row)
+	}
+	hu17AssertCell(t, row, "5", "las horas estimadas sin cambios")
+	if got := app.storedHours(t, storyID); got != "5.00" {
+		t.Errorf("la historia bloqueada cambió a %q", got)
+	}
+}
+
+// T023
+func TestEstimatesHandler_RechazaHistoriaInexistenteOAjena(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	foreignHours := 6.0
+	foreign, foreignTitle := app.insertStory(t, app.fx.projectB, "ajena", &foreignHours)
+	app.chooseProject(t, app.fx.projectA)
+
+	cases := []struct {
+		name   string
+		values url.Values
+	}{
+		{"no numérica", url.Values{hu17FieldStoryID: {"abc"}, hu17FieldHours: {"3"}}},
+		{"cero", url.Values{hu17FieldStoryID: {"0"}, hu17FieldHours: {"3"}}},
+		{"vacía", url.Values{hu17FieldHours: {"3"}}},
+		{"inexistente", url.Values{hu17FieldStoryID: {"9223372036854775807"}, hu17FieldHours: {"3"}}},
+		{"de otro proyecto", url.Values{hu17FieldStoryID: {id64(foreign)}, hu17FieldHours: {"3"}}},
+		{"con campo de proyecto", url.Values{
+			hu17FieldStoryID: {id64(foreign)}, hu17FieldHours: {"3"},
+			"proyecto_id": {id64(app.fx.projectB)}, "project_id": {id64(app.fx.projectB)},
+		}},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			resp, body := app.post(t, app.client, hu17PathEstimates, c.values)
+			hu17AssertRejected(t, resp, body, http.StatusUnprocessableEntity, hu17MsgNotFound)
+			if strings.Contains(body, foreignTitle) {
+				t.Error("la respuesta no debía mostrar historias de otro proyecto")
+			}
+		})
+	}
+	if got := app.storedHours(t, foreign); got != "6.00" {
+		t.Errorf("la historia del otro proyecto cambió a %q", got)
+	}
+}
+
+// hu17FailingSaveStore lee con el almacenamiento real y falla al guardar.
+type hu17FailingSaveStore struct {
+	backlog.EstimateStore
+}
+
+func (hu17FailingSaveStore) UpdateEstimate(context.Context, int64, int64, float64) (bool, error) {
+	return false, errors.New("simulated database failure: UPDATE user_stories")
+}
+
+// T024
+func TestEstimatesHandler_FallaDeGuardadoConservaElValorAnterior(t *testing.T) {
+	app := newHU17EstimatesAppWithStore(t, func(real backlog.EstimateStore) backlog.EstimateStore {
+		return hu17FailingSaveStore{EstimateStore: real}
+	})
+	previous := 8.0
+	storyID, title := app.insertStory(t, app.fx.projectA, "falla", &previous)
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, body := app.save(t, storyID, "15")
+	hu17AssertRejected(t, resp, body, http.StatusInternalServerError, hu17MsgFailed)
+	row := hu17StoryRow(t, body, title)
+	hu17AssertCell(t, row, "8", "las horas estimadas anteriores")
+	if got := hu17InputValue(t, row); got != "15" {
+		t.Errorf("el campo debía conservar lo escrito \"15\"; tiene %q", got)
+	}
+	if got := app.storedHours(t, storyID); got != "8.00" {
+		t.Errorf("el valor anterior cambió a %q", got)
+	}
+	if strings.Contains(body, "simulated database failure") || strings.Contains(body, "UPDATE") {
+		t.Error("la respuesta no debía exponer el detalle interno de la falla")
 	}
 }

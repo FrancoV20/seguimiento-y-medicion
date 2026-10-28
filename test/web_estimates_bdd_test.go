@@ -3,6 +3,7 @@ package test
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -33,6 +34,11 @@ type hu17BDDApp struct {
 }
 
 func newHU17BDDApp(t *testing.T) *hu17BDDApp {
+	return newHU17BDDAppWithStore(t, nil)
+}
+
+// newHU17BDDAppWithStore permite envolver el almacenamiento real para simular fallas.
+func newHU17BDDAppWithStore(t *testing.T, wrap func(backlog.EstimateStore) backlog.EstimateStore) *hu17BDDApp {
 	t.Helper()
 	databaseURL := os.Getenv(web.EnvDatabaseURL)
 	if databaseURL == "" {
@@ -68,8 +74,12 @@ func newHU17BDDApp(t *testing.T) *hu17BDDApp {
 	server := web.NewServer(slog.New(slog.NewTextHandler(io.Discard, nil)))
 	server.Use(web.CrossOriginGuard(server.Renderer()))
 	web.RegisterContext(server, web.NewPostgreSQLContextStore(db))
+	var store backlog.EstimateStore = backlog.NewPostgreSQLEstimateStore(db)
+	if wrap != nil {
+		store = wrap(store)
+	}
 	if err := web.RegisterEstimates(server,
-		backlog.NewEstimateService(backlog.NewPostgreSQLEstimateStore(db)),
+		backlog.NewEstimateService(store),
 		web.NewPostgreSQLEstimateCatalog(db)); err != nil {
 		t.Fatalf("registrar la sección Estimaciones: %v", err)
 	}
@@ -255,5 +265,151 @@ func TestWebEstimatesBDD_HorasConComaDecimal(t *testing.T) {
 				t.Error("las horas no debían mostrarse con punto")
 			}
 		})
+	}
+}
+
+// --- US2: rechazos y errores (T025) ---
+
+// whenSubmit envía el formulario de la fila y devuelve la respuesta tal como llega (sin seguir
+// redirecciones).
+func (a *hu17BDDApp) whenSubmit(t *testing.T, storyID int64, hours string) (*http.Response, string) {
+	t.Helper()
+	return a.do(t, http.MethodPost, "/estimaciones", url.Values{
+		"historia_id":     {fmt.Sprintf("%d", storyID)},
+		"horas_estimadas": {hours},
+	})
+}
+
+func (a *hu17BDDApp) givenFinishedSprintWith(t *testing.T, storyID int64) {
+	t.Helper()
+	var sprintID int64
+	if err := a.db.QueryRow(`
+		INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		VALUES ($1, 1, 'Sprint BDD HU-17', DATE '2026-10-01', DATE '2026-10-15', 'Finalizado') RETURNING id`,
+		a.projectID).Scan(&sprintID); err != nil {
+		t.Fatalf("crear el Sprint finalizado: %v", err)
+	}
+	if _, err := a.db.Exec(`INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES ($1, $2)`, sprintID, storyID); err != nil {
+		t.Fatalf("asignar la historia al Sprint finalizado: %v", err)
+	}
+}
+
+var hu17BDDHoursInput = regexp.MustCompile(`<input\b[^>]*\bname="horas_estimadas"[^>]*\bvalue="([^"]*)"`)
+
+// hu17BDDThenRejectedInRow verifica estado, mensaje en la fila, lo escrito conservado y sin éxito.
+func hu17BDDThenRejectedInRow(t *testing.T, resp *http.Response, body, title string, status int, message, written string) {
+	t.Helper()
+	if resp.StatusCode != status {
+		t.Errorf("estado = %d; se esperaba %d", resp.StatusCode, status)
+	}
+	if strings.Contains(body, "Horas estimadas registradas") || strings.Contains(body, "Horas estimadas actualizadas") {
+		t.Error("un rechazo no debía mostrar un mensaje de éxito")
+	}
+	for _, row := range hu17BDDRow.FindAllString(body, -1) {
+		if !strings.Contains(row, title) {
+			continue
+		}
+		if !strings.Contains(row, message) {
+			t.Errorf("la fila debía mostrar %q: %s", message, row)
+		}
+		if written != "" {
+			if m := hu17BDDHoursInput.FindStringSubmatch(row); m == nil || m[1] != written {
+				t.Errorf("el campo debía conservar lo escrito %q: %s", written, row)
+			}
+		}
+		return
+	}
+	t.Errorf("no se encontró la historia %q en la respuesta", title)
+}
+
+// Escenario: Horas inválidas.
+func TestWebEstimatesBDD_HorasInvalidas(t *testing.T) {
+	for _, input := range []string{"-1", "0", "abc", "1,555"} {
+		t.Run(input, func(t *testing.T) {
+			// Given una historia con horas estimadas
+			app := newHU17BDDApp(t)
+			previous := 8.0
+			storyID, title := app.givenStory(t, "invalida", &previous)
+
+			// When ingreso un valor negativo, cero, no numérico o con más de dos decimales
+			resp, body := app.whenSubmit(t, storyID, input)
+
+			// Then veo "El valor de horas no es válido" junto al campo, el valor anterior no cambia
+			// y lo que escribí se conserva
+			hu17BDDThenRejectedInRow(t, resp, body, title, http.StatusUnprocessableEntity, "El valor de horas no es válido", input)
+			if got := app.stored(t, hu17BDDHoursSQL, storyID); got != "8.00" {
+				t.Errorf("el valor anterior cambió a %q", got)
+			}
+		})
+	}
+}
+
+// Escenario: Horas por encima del máximo.
+func TestWebEstimatesBDD_HorasPorEncimaDelMaximo(t *testing.T) {
+	// Given una historia
+	app := newHU17BDDApp(t)
+	previous := 8.0
+	storyID, title := app.givenStory(t, "maximo", &previous)
+
+	// When ingreso un valor mayor que 9999,99
+	resp, body := app.whenSubmit(t, storyID, "10000")
+
+	// Then veo "Las horas estimadas no pueden superar 9999,99" junto al campo y el valor anterior no cambia
+	hu17BDDThenRejectedInRow(t, resp, body, title, http.StatusUnprocessableEntity, "Las horas estimadas no pueden superar 9999,99", "10000")
+	if got := app.stored(t, hu17BDDHoursSQL, storyID); got != "8.00" {
+		t.Errorf("el valor anterior cambió a %q", got)
+	}
+}
+
+// Escenario: Historia de un Sprint finalizado.
+func TestWebEstimatesBDD_HistoriaDeSprintFinalizado(t *testing.T) {
+	// Given una historia de un Sprint finalizado
+	app := newHU17BDDApp(t)
+	previous := 5.0
+	storyID, title := app.givenStory(t, "finalizada", &previous)
+	app.givenFinishedSprintWith(t, storyID)
+
+	// When se envía el cambio de sus horas estimadas
+	resp, body := app.whenSubmit(t, storyID, "9")
+
+	// Then se bloquea con el motivo y el valor no cambia
+	hu17BDDThenRejectedInRow(t, resp, body, title, http.StatusConflict,
+		"La historia pertenece a un Sprint finalizado; sus horas estimadas no se pueden modificar", "")
+	if got := app.stored(t, hu17BDDHoursSQL, storyID); got != "5.00" {
+		t.Errorf("la historia bloqueada cambió a %q", got)
+	}
+}
+
+type hu17BDDFailingSaveStore struct {
+	backlog.EstimateStore
+}
+
+func (hu17BDDFailingSaveStore) UpdateEstimate(context.Context, int64, int64, float64) (bool, error) {
+	return false, errors.New("simulated database failure")
+}
+
+// Escenario: Error al guardar.
+func TestWebEstimatesBDD_ErrorAlGuardar(t *testing.T) {
+	// Given un valor válido y un almacenamiento que falla al guardar
+	app := newHU17BDDAppWithStore(t, func(real backlog.EstimateStore) backlog.EstimateStore {
+		return hu17BDDFailingSaveStore{EstimateStore: real}
+	})
+	previous := 8.0
+	storyID, title := app.givenStory(t, "falla", &previous)
+
+	// When falla el guardado
+	resp, body := app.whenSubmit(t, storyID, "15")
+
+	// Then veo "La operación no pudo completarse", el valor anterior se conserva y no veo éxito
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Errorf("estado = %d; se esperaba 500", resp.StatusCode)
+	}
+	if n := strings.Count(body, "La operación no pudo completarse"); n != 1 {
+		t.Errorf("el mensaje debía aparecer una vez; apareció %d", n)
+	}
+	hu17BDDThenRejectedInRow(t, resp, body, title, http.StatusInternalServerError, "", "15")
+	hu17BDDThenRowShows(t, body, title, "8")
+	if got := app.stored(t, hu17BDDHoursSQL, storyID); got != "8.00" {
+		t.Errorf("el valor anterior cambió a %q", got)
 	}
 }

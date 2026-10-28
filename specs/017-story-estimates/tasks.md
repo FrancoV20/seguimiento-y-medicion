@@ -73,12 +73,12 @@
 
 ### Tests for User Story 2
 
-- [ ] T020 [P] [US2] Escribir la prueba de handler con horas inválidas (`0`, `-1`, `abc`, vacío y `1,555`): "El valor de horas no es válido" junto al campo de esa fila, lo escrito conservado, valor anterior igual y 422, en `src/web/estimates_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler con horas por encima del máximo (`10000` y `9999,995`): "Las horas estimadas no pueden superar 9999,99" junto al campo y valor anterior igual, en `src/web/estimates_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler de una historia de un Sprint finalizado con un envío directo: 409 con el mensaje y valor sin cambios, en `src/web/estimates_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con historia no numérica, inexistente o de otro proyecto: "La historia no existe" y 422, y un campo de proyecto enviado se ignora, en `src/web/estimates_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y valor anterior intacto, en `src/web/estimates_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir los escenarios BDD de horas inválidas, horas por encima del máximo, historia de un Sprint finalizado y error al guardar en `test/web_estimates_bdd_test.go`
+- [x] T020 [P] [US2] Escribir la prueba de handler con horas inválidas (`0`, `-1`, `abc`, vacío y `1,555`): "El valor de horas no es válido" junto al campo de esa fila, lo escrito conservado, valor anterior igual y 422, en `src/web/estimates_handlers_test.go`
+- [x] T021 [P] [US2] Escribir la prueba de handler con horas por encima del máximo (`10000` y `12345,5`): "Las horas estimadas no pueden superar 9999,99" junto al campo (`9999,995` tiene más de dos decimales: se informa "El valor de horas no es válido", ver `data-model.md`) y valor anterior igual, en `src/web/estimates_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler de una historia de un Sprint finalizado con un envío directo: 409 con el mensaje y valor sin cambios, en `src/web/estimates_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con historia no numérica, inexistente o de otro proyecto: "La historia no existe" y 422, y un campo de proyecto enviado se ignora, en `src/web/estimates_handlers_test.go`
+- [x] T024 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito y valor anterior intacto, en `src/web/estimates_handlers_test.go`
+- [x] T025 [P] [US2] Escribir los escenarios BDD de horas inválidas, horas por encima del máximo, historia de un Sprint finalizado y error al guardar en `test/web_estimates_bdd_test.go`
 
 ### Implementation for User Story 2
 
