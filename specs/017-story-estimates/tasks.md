@@ -82,8 +82,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T026 [US2] Implementar en `src/web/estimates_form.go` el mapeo de los errores del dominio a mensajes y a la fila afectada, con `MsgOperationFailed` para cualquier otro, y en `src/web/estimates_handlers.go` las respuestas 422, 409 y 500 con la lista y lo escrito conservado
-- [ ] T027 [US2] Verificar en `src/web/estimates_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T026 [US2] Implementar en `src/web/estimates_form.go` el mapeo de los errores del dominio a mensajes y a la fila afectada, con `MsgOperationFailed` para cualquier otro, y en `src/web/estimates_handlers.go` las respuestas 422, 409 y 500 con la lista y lo escrito conservado
+- [x] T027 [US2] Verificar en `src/web/estimates_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 mantiene la estimación confiable ante valores inválidos, cierres de Sprint y fallas.
 

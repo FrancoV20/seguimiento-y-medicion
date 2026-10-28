@@ -1,6 +1,7 @@
 package web
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -54,4 +55,29 @@ func estimateSuccessMessage(result backlog.EstimateResult) string {
 		return MsgHoursRegistered
 	}
 	return MsgHoursUpdated
+}
+
+// estimateFailure es la traducción de un error del dominio a la respuesta de la pantalla (T026).
+type estimateFailure struct {
+	Status  int
+	Message string
+	InRow   bool // el mensaje va junto al campo de la fila; si no, es un mensaje general
+	Keep    bool // el campo de la fila conserva lo escrito
+}
+
+// mapEstimateError traduce los errores del dominio; cualquier otro es una falla de guardado y se
+// informa con MsgOperationFailed, sin exponer el detalle.
+func mapEstimateError(err error) estimateFailure {
+	switch {
+	case errors.Is(err, backlog.ErrEstimatedHoursTooLarge): // antes que el inválido: lo incluye
+		return estimateFailure{Status: http.StatusUnprocessableEntity, Message: MsgHoursTooLarge, InRow: true, Keep: true}
+	case errors.Is(err, backlog.ErrInvalidEstimatedHours):
+		return estimateFailure{Status: http.StatusUnprocessableEntity, Message: MsgInvalidEstimatedHours, InRow: true, Keep: true}
+	case errors.Is(err, backlog.ErrStoryNotFound):
+		return estimateFailure{Status: http.StatusUnprocessableEntity, Message: MsgStoryNotFound}
+	case errors.Is(err, backlog.ErrStoryInFinishedSprint):
+		return estimateFailure{Status: http.StatusConflict, Message: MsgHoursLockedSprint, InRow: true}
+	default:
+		return estimateFailure{Status: http.StatusInternalServerError, Message: MsgOperationFailed, Keep: true}
+	}
 }

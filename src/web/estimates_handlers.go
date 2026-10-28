@@ -56,6 +56,7 @@ type estimateRowView struct {
 	InputValue     string // valor del campo de horas: la estimación actual o lo escrito
 	Locked         bool
 	LockedReason   string
+	Error          string // mensaje junto al campo cuando se rechazó el envío de esta fila
 }
 
 func (h *estimatesHandlers) get(w http.ResponseWriter, r *http.Request) {
@@ -74,18 +75,49 @@ func (h *estimatesHandlers) post(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	submission := parseEstimateSubmission(r)
+	if !submission.ValidStoryID {
+		h.reject(w, r, active.ProjectID, submission, mapEstimateError(backlog.ErrStoryNotFound))
+		return
+	}
 	result, err := h.actions.UpdateEstimatedHours(r.Context(), active.ProjectID, submission.StoryID, submission.Hours)
 	if err != nil {
-		// El mapeo de cada error a su mensaje y su fila es de US2 (T026).
-		h.render(w, r, http.StatusInternalServerError, active.ProjectID, &Flash{Kind: FlashError, Text: MsgOperationFailed})
+		h.reject(w, r, active.ProjectID, submission, mapEstimateError(err))
 		return
 	}
 	SetFlash(w, r, FlashSuccess, estimateSuccessMessage(result))
 	RedirectSeeOther(w, r, pathEstimates)
 }
 
+// reject vuelve a mostrar la lista con el estado del rechazo: el mensaje junto al campo de la fila
+// o como mensaje general, y lo escrito conservado en el campo cuando corresponde.
+func (h *estimatesHandlers) reject(w http.ResponseWriter, r *http.Request, projectID int64, submission estimateSubmission, failure estimateFailure) {
+	row := &estimateRowState{StoryID: submission.StoryID}
+	if failure.Keep {
+		row.Written, row.KeepWritten = submission.Hours, true
+	}
+	var flash *Flash
+	if failure.InRow {
+		row.Error = failure.Message
+	} else {
+		flash = &Flash{Kind: FlashError, Text: failure.Message}
+	}
+	h.renderWith(w, r, failure.Status, projectID, flash, row)
+}
+
+// estimateRowState es el estado de la fila que se acaba de enviar.
+type estimateRowState struct {
+	StoryID     int64
+	Written     string
+	KeepWritten bool
+	Error       string
+}
+
 // render muestra la lista del proyecto con el estado HTTP y el mensaje indicados.
 func (h *estimatesHandlers) render(w http.ResponseWriter, r *http.Request, status int, projectID int64, flash *Flash) {
+	h.renderWith(w, r, status, projectID, flash, nil)
+}
+
+func (h *estimatesHandlers) renderWith(w http.ResponseWriter, r *http.Request, status int, projectID int64, flash *Flash, submitted *estimateRowState) {
 	rows, err := h.catalog.ListEstimates(r.Context(), projectID)
 	if err != nil {
 		h.server.renderer.Fail(w, r, err)
@@ -93,7 +125,14 @@ func (h *estimatesHandlers) render(w http.ResponseWriter, r *http.Request, statu
 	}
 	data := estimatesPageData{Rows: make([]estimateRowView, 0, len(rows))}
 	for _, row := range rows {
-		data.Rows = append(data.Rows, newEstimateRowView(row))
+		view := newEstimateRowView(row)
+		if submitted != nil && submitted.StoryID == row.ID {
+			if submitted.KeepWritten {
+				view.InputValue = submitted.Written
+			}
+			view.Error = submitted.Error
+		}
+		data.Rows = append(data.Rows, view)
 	}
 	page := PageData{Title: TitleEstimates, Data: data, Flash: flash}
 	if status == http.StatusOK {

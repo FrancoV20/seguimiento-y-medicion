@@ -311,6 +311,26 @@ func hu17AssertRejected(t *testing.T, resp *http.Response, body string, status i
 			t.Errorf("un rechazo no debía mostrar %q", success)
 		}
 	}
+	hu17AssertNoInternalDetails(t, body)
+}
+
+// hu17AssertNoInternalDetails verifica que una respuesta de error no exponga consultas, errores de
+// la base, rutas internas ni configuración (T027, FR-016).
+func hu17AssertNoInternalDetails(t *testing.T, body string) {
+	t.Helper()
+	for _, forbidden := range []string{
+		"simulated database failure",
+		"SELECT ", "INSERT INTO ", "UPDATE ", "DELETE FROM ",
+		"user_stories", "effort_logs", "sprint_story_assignments", "estimated_hours",
+		"SQLSTATE", "pgx", "sql:", "postgres://", "DATABASE_URL",
+		"estimates_handlers.go", "update_estimated_hours.go", ".go:",
+		"src\\web\\", "/src/web/", "/src/backlog/",
+		"leer las horas estimadas", "guardar las horas estimadas", "consultar las estimaciones",
+	} {
+		if strings.Contains(body, forbidden) {
+			t.Errorf("la respuesta de error expuso un detalle interno: %q", forbidden)
+		}
+	}
 }
 
 // hu17AssertFieldError verifica el mensaje en la fila de la historia, lo escrito conservado en su
@@ -461,7 +481,28 @@ func TestEstimatesHandler_FallaDeGuardadoConservaElValorAnterior(t *testing.T) {
 	if got := app.storedHours(t, storyID); got != "8.00" {
 		t.Errorf("el valor anterior cambió a %q", got)
 	}
-	if strings.Contains(body, "simulated database failure") || strings.Contains(body, "UPDATE") {
-		t.Error("la respuesta no debía exponer el detalle interno de la falla")
+}
+
+// T027: una falla de lectura de la base al guardar tampoco expone el detalle interno.
+type hu17FailingReadStore struct {
+	backlog.EstimateStore
+}
+
+func (hu17FailingReadStore) FindEstimate(context.Context, int64, int64) (backlog.EstimateState, error) {
+	return backlog.EstimateState{}, errors.New(`simulated database failure: SELECT estimated_hours FROM user_stories (SQLSTATE 08006) at /src/backlog/postgres_estimate_store.go:35`)
+}
+
+func TestEstimatesHandler_ErroresNoExponenDetallesInternos(t *testing.T) {
+	app := newHU17EstimatesAppWithStore(t, func(real backlog.EstimateStore) backlog.EstimateStore {
+		return hu17FailingReadStore{EstimateStore: real}
+	})
+	previous := 8.0
+	storyID, _ := app.insertStory(t, app.fx.projectA, "detalle interno", &previous)
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, body := app.save(t, storyID, "4")
+	hu17AssertRejected(t, resp, body, http.StatusInternalServerError, hu17MsgFailed)
+	if got := app.storedHours(t, storyID); got != "8.00" {
+		t.Errorf("el valor anterior cambió a %q", got)
 	}
 }

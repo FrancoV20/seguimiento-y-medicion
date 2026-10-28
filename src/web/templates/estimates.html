@@ -26,8 +26,11 @@
         <td>
           <form method="post" action="/estimaciones" class="estimate-form">
             <input type="hidden" name="historia_id" value="{{.ID}}">
-            <input type="text" id="horas-{{.ID}}" name="horas_estimadas" value="{{.InputValue}}" inputmode="decimal" autocomplete="off" aria-label="Horas estimadas de {{.Title}}">
-            <button type="submit">Guardar</button>
+            <div class="field{{if .Error}} field-invalid{{end}}">
+              <input type="text" id="horas-{{.ID}}" name="horas_estimadas" value="{{.InputValue}}" inputmode="decimal" autocomplete="off" aria-label="Horas estimadas de {{.Title}}"{{if .Error}} aria-invalid="true" aria-describedby="horas-{{.ID}}-error"{{end}}>
+              <button type="submit">Guardar</button>
+              {{if .Error}}<p class="field-error" id="horas-{{.ID}}-error"><span class="field-error-label">Error:</span> {{.Error}}</p>{{end}}
+            </div>
           </form>
         </td>
       </tr>
