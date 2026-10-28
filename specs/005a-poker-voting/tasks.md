@@ -91,31 +91,31 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T023 Crear `db/migrations/011_create_poker.up.sql` y `.down.sql` con el SQL exacto de `data-model.md`
+- [x] T023 Crear `db/migrations/011_create_poker.up.sql` y `.down.sql` con el SQL exacto de `data-model.md`
   (`status VARCHAR(20) NOT NULL DEFAULT 'Abierta' CHECK (status IN ('Abierta', 'Cerrada'))`,
   `CHECK ((status = 'Abierta') = (closed_at IS NULL))`, `UNIQUE (story_id, round_number)`, índice único parcial
   `(story_id) WHERE status = 'Abierta'`, `value INTEGER NOT NULL CHECK (value IN (1, 2, 3, 5, 8, 13, 21, 34, 55,
   89))`, `PRIMARY KEY (round_id, member_id)`); probar `up`, `down 1`, `up` y `go test -count=1 -p 1 ./db/...`
-- [ ] T024 [P] Crear `ErrValueRequired`, `ErrValueNotInSeries`, `ErrRoundClosed`, `ErrRoundNotFound`,
+- [x] T024 [P] Crear `ErrValueRequired`, `ErrValueNotInSeries`, `ErrRoundClosed`, `ErrRoundNotFound`,
   `ErrStoryNotFound`, `ErrRoundAlreadyOpen`, `ErrStoryAlreadyRounded` y `ErrMemberRequired` en
   `src/poker/errors.go`
-- [ ] T025 [P] Implementar `Series`, `InSeries` y `ParseValue` (texto canónico: `strconv.Itoa(n) == raw`) en
+- [x] T025 [P] Implementar `Series`, `InSeries` y `ParseValue` (texto canónico: `strconv.Itoa(n) == raw`) en
   `src/poker/series.go`
-- [ ] T026 [P] Implementar `RoundStatus` (`StatusOpen = "Abierta"`, `StatusClosed = "Cerrada"`), `CheckOpen`,
+- [x] T026 [P] Implementar `RoundStatus` (`StatusOpen = "Abierta"`, `StatusClosed = "Cerrada"`), `CheckOpen`,
   `CheckVote`, `OpenedRound` y `VoteOutcome` en `src/poker/round.go`
-- [ ] T027 Definir el puerto `Store` en `src/poker/store.go` y `Service`/`NewService` en `src/poker/service.go`
+- [x] T027 Definir el puerto `Store` en `src/poker/store.go` y `Service`/`NewService` en `src/poker/service.go`
   (validaciones de `data-model.md`, sección "Tipos de dominio")
-- [ ] T028 Implementar `PostgreSQLStore.OpenRound` en `src/poker/postgres_store.go`: transacción de
+- [x] T028 Implementar `PostgreSQLStore.OpenRound` en `src/poker/postgres_store.go`: transacción de
   `data-model.md` (historia `FOR NO KEY UPDATE`, rondas, `CheckOpen`, INSERT de la ronda 1) y traducción de
   `23505` sobre `uq_poker_rounds_one_open_per_story` a `ErrRoundAlreadyOpen` y sobre
   `uq_poker_rounds_story_number` a `ErrStoryAlreadyRounded`
-- [ ] T029 Implementar `PostgreSQLStore.CastVote` en `src/poker/postgres_store.go`: ronda `FOR SHARE`,
+- [x] T029 Implementar `PostgreSQLStore.CastVote` en `src/poker/postgres_store.go`: ronda `FOR SHARE`,
   `CheckVote` y el upsert con CTE `previous` de `data-model.md`
-- [ ] T030 Crear los tipos de vista y la interfaz `PokerCatalog` en `src/web/poker_catalog.go` y
+- [x] T030 Crear los tipos de vista y la interfaz `PokerCatalog` en `src/web/poker_catalog.go` y
   `PostgreSQLPokerCatalog` en `src/web/postgres_poker_catalog.go` con las cuatro lecturas de `data-model.md` en
   una transacción `READ ONLY ISOLATION LEVEL REPEATABLE READ`; la consulta de participantes no lee
   `poker_votes.value`
-- [ ] T031 Ejecutar T006–T021 en verde y `go test -count=1 -p 1 ./...` completo
+- [x] T031 Ejecutar T006–T021 en verde y `go test -count=1 -p 1 ./...` completo
 
 **Punto de control**: el dominio, la migración y las lecturas funcionan solos, sin pantalla.
 
