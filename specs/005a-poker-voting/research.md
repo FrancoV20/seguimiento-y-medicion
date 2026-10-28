@@ -8,6 +8,9 @@
 - **T003**: `git grep -n -i poker -- src` sin coincidencias. En `origin/main` están `RequireContext`, `parseID`,
   `Renderer.PageStatus`, `Renderer.Fail`, `SetFlash`, `MsgOperationFailed`, el parcial `alert` y
   `backlog.ValidateStoryPoints(*int) error`.
+- **T023**: la migración `011` se probó con `up`, `down 1` y `up` (las tablas `poker_rounds` y `poker_votes`
+  aparecen, desaparecen y vuelven a aparecer) y con `go test -count=1 -p 1 ./db/...`, que aplica todas las
+  migraciones sobre una base descartable.
 - **T004**: línea base en verde con `go test -count=1 -p 1 ./...` (PostgreSQL 16, migraciones 001–008).
 
 ## Datos verificados en el código (27/10/2026)
