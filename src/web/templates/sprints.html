@@ -16,7 +16,7 @@
     {{if .Data.Active.Stories}}
     <table>
       <thead>
-        <tr><th>Historia</th><th>Story Points</th><th>Estado</th></tr>
+        <tr><th>Historia</th><th>Story Points</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
       <tbody>
         {{range .Data.Active.Stories}}
@@ -24,6 +24,17 @@
           <td>{{.Title}}</td>
           <td>{{if .StoryPoints}}{{.StoryPoints}}{{else}}—{{end}}</td>
           <td>{{.Status}}</td>
+          <td>
+            <form method="post" action="/sprints/historias/quitar">
+              <input type="hidden" name="historia_id" value="{{.ID}}">
+              {{if .CanRemove}}
+              <button type="submit">Quitar</button>
+              {{else}}
+              <button type="submit" disabled aria-describedby="quitar-motivo-{{.ID}}">Quitar</button>
+              <span class="unavailable-reason" id="quitar-motivo-{{.ID}}">{{.RemoveBlockedReason}}</span>
+              {{end}}
+            </form>
+          </td>
         </tr>
         {{end}}
       </tbody>

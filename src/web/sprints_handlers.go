@@ -37,9 +37,10 @@ func RegisterSprints(server *Server, catalog SprintCatalog, actions SprintAction
 		Path:            "/sprints",
 		RequiresProject: true,
 	}, Routes{
-		"GET /sprints":            http.HandlerFunc(h.get),
-		"POST /sprints":           http.HandlerFunc(h.create),
-		"POST /sprints/historias": http.HandlerFunc(h.assignStories),
+		"GET /sprints":                   http.HandlerFunc(h.get),
+		"POST /sprints":                  http.HandlerFunc(h.create),
+		"POST /sprints/historias":        http.HandlerFunc(h.assignStories),
+		"POST /sprints/historias/quitar": http.HandlerFunc(h.removeStory),
 	})
 }
 
@@ -194,6 +195,71 @@ func (h *sprintsHandlers) assignStories(w http.ResponseWriter, r *http.Request) 
 	}
 
 	SetFlash(w, r, FlashSuccess, MsgStoriesAdded)
+	RedirectSeeOther(w, r, "/sprints")
+}
+
+// removeStory quita una historia del Sprint activo del proyecto activo. El dominio (HU-04)
+// aplica la regla de quitar; un rechazo responde 409 con el motivo y sin cambios (T048).
+func (h *sprintsHandlers) removeStory(w http.ResponseWriter, r *http.Request) {
+	activeContext := ActiveContextFrom(r.Context())
+	if activeContext == nil || activeContext.ProjectID <= 0 {
+		SetFlash(w, r, FlashWarning, MsgProjectRequired)
+		RedirectSeeOther(w, r, pathSelectProject+"?volver_a=%2Fsprints")
+		return
+	}
+	_ = r.ParseForm()
+	data, err := h.loadPageData(r, activeContext.ProjectID, nil)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	reject := func(status int, message string) {
+		if data.HasActive {
+			data.Notice = activeSprintMessage(data.Active.Number)
+		}
+		h.server.renderer.PageStatus(w, r, status, "sprints.html", PageData{
+			Title: "Sprints",
+			Data:  data,
+			Flash: &Flash{Kind: FlashError, Text: message},
+		})
+	}
+	if !data.HasActive {
+		reject(http.StatusConflict, MsgNoActiveSprint)
+		return
+	}
+
+	rawID := strings.TrimSpace(r.PostForm.Get(FieldStoryID))
+	storyID, err := strconv.ParseInt(rawID, 10, 64)
+	if err != nil || storyID <= 0 {
+		reject(http.StatusUnprocessableEntity, fmt.Sprintf("El identificador de historia %q no es válido", rawID))
+		return
+	}
+	belongsToActiveSprint := false
+	for _, story := range data.Active.Stories {
+		if story.ID == storyID {
+			belongsToActiveSprint = true
+			break
+		}
+	}
+	if !belongsToActiveSprint {
+		reject(http.StatusConflict, sprint.ErrStoryNotAvailable.Error())
+		return
+	}
+
+	if err := h.actions.RemoveStory(r.Context(), data.Active.ID, storyID); err != nil {
+		var removalError *sprint.StoryRemovalError
+		switch {
+		case errors.As(err, &removalError):
+			reject(http.StatusConflict, removalError.Message())
+		case errors.Is(err, sprint.ErrStoryNotAvailable):
+			reject(http.StatusConflict, sprint.ErrStoryNotAvailable.Error())
+		default:
+			reject(http.StatusInternalServerError, MsgOperationFailed)
+		}
+		return
+	}
+
+	SetFlash(w, r, FlashSuccess, MsgStoryRemoved)
 	RedirectSeeOther(w, r, "/sprints")
 }
 

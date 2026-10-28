@@ -65,6 +65,7 @@ func (c *PostgreSQLSprintCatalog) ActiveSprint(ctx context.Context, projectID in
 			return nil, fmt.Errorf("leer una historia del Sprint: %w", err)
 		}
 		story.Status = sprint.StoryStatus(status)
+		story.CanRemove, story.RemoveBlockedReason = sprint.CanRemoveStory(story.Status, story.HasEffort)
 		if storyPoints.Valid {
 			points := int(storyPoints.Int64)
 			story.StoryPoints = &points

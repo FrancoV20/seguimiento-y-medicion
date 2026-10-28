@@ -1155,10 +1155,19 @@ func TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories(t *test
 		t.Fatalf("no se pudo registrar esfuerzo: %v", err)
 	}
 
+	storyTitle := func(storyID int64) string {
+		t.Helper()
+		var title string
+		if err := fixture.db.QueryRow(`SELECT title FROM user_stories WHERE id = $1`, storyID).Scan(&title); err != nil {
+			t.Fatalf("no se pudo leer el título de la historia %d: %v", storyID, err)
+		}
+		return title
+	}
+
 	_, body := fixture.getSprints(t)
 	blockedStories := []struct{ title, reason string }{
-		{fmt.Sprintf("Historia %d del proyecto %d", progressID, fixture.projectID), "Ya está en progreso"},
-		{fmt.Sprintf("Historia %d del proyecto %d", doneID, fixture.projectID), "Ya está hecha"},
+		{storyTitle(progressID), "Ya está en progreso"},
+		{storyTitle(doneID), "Ya está hecha"},
 		{"Historia con esfuerzo HU23", "Tiene horas registradas"},
 	}
 	for _, blocked := range blockedStories {
