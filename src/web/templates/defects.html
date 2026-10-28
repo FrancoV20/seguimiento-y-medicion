@@ -1,0 +1,51 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+
+{{with .Data}}
+<form method="post" action="/defectos">
+  {{template "field" ($.Form.Field "descripcion" "Descripción" "text")}}
+
+  <div class="field">
+    <label for="severidad">Severidad</label>
+    <select id="severidad" name="severidad">
+      <option value="">Seleccione la severidad</option>
+      {{range .Severities}}
+      <option value="{{.}}">{{.}}</option>
+      {{end}}
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="historia">Historia relacionada</label>
+    <select id="historia" name="historia">
+      <option value="">Seleccione la historia relacionada</option>
+      {{range .Stories}}
+      <option value="{{.ID}}">{{.Title}}</option>
+      {{end}}
+    </select>
+  </div>
+
+  <button type="submit">Registrar defecto</button>
+</form>
+
+<section aria-labelledby="defects-list-title">
+  <h2 id="defects-list-title">Defectos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Identificador</th>
+        <th scope="col">Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .Defects}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Description}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+</section>
+{{end}}
+{{end}}

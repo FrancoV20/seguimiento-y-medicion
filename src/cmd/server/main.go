@@ -13,6 +13,7 @@ import (
 	"syscall"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -75,6 +76,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = ln.Close()
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Proyectos")
+	}
+
+	defectService := defect.NewService(defect.NewPostgreSQLStore(database))
+	defectCatalog := web.NewPostgreSQLDefectCatalog(database)
+	if err := web.RegisterDefects(srv, defectService, defectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Defectos")
 	}
 
 	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {

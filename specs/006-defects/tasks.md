@@ -60,10 +60,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T020 [US1] Implementar el handler `GET /defectos` en `src/web/defects_handlers.go`: lee los defectos, las historias y el Sprint activo del proyecto del contexto y usa `Fail` si falla la lectura
-- [ ] T021 [US1] Implementar el camino exitoso de `POST /defectos` en `src/web/defects_handlers.go`: arma el envío, llama al servicio con el proyecto del contexto, usa `SetFlash` con el número del Sprint y redirige con 303 a `/defectos`
-- [ ] T022 [US1] Crear `defects.html` con el formulario (descripción, severidad, historia) y la lista, usando los parciales `alert.html` y `field.html`, en `src/web/templates/defects.html`
-- [ ] T023 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Defectos" (`/defectos`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T020 [US1] Implementar el handler `GET /defectos` en `src/web/defects_handlers.go`: lee los defectos, las historias y el Sprint activo del proyecto del contexto y usa `Fail` si falla la lectura
+- [x] T021 [US1] Implementar el camino exitoso de `POST /defectos` en `src/web/defects_handlers.go`: arma el envío, llama al servicio con el proyecto del contexto, usa `SetFlash` con el número del Sprint y redirige con 303 a `/defectos`
+- [x] T022 [US1] Crear `defects.html` con el formulario (descripción, severidad, historia) y la lista, usando los parciales `alert.html` y `field.html`, en `src/web/templates/defects.html`
+- [x] T023 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Defectos" (`/defectos`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 registra defectos desde la web; HU-19, HU-10, HU-08 y HU-09 ya tienen datos de defectos.
 
