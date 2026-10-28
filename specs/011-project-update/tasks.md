@@ -109,7 +109,7 @@ Formato: `[ID] [P] [E#] descripción`
     `ROLLBACK`, guarda.
 - [X] T023 [P] `TestLogEffort_IntegranteQuitadoAlGuardar`: con `TestStore.SaveErr = errMemberNotInProject`, devuelve
   `ValidationErrors` con `FieldMember` y `ErrMemberRequired`, y `StorageError` vacío. En `src/effort/service_test.go`.
-- [ ] T024 Ejecutar T005–T023, confirmar que fallan porque el código no existe y guardar la salida en
+- [X] T024 Ejecutar T005–T023, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt` (sección "Fundamentos")
 
 ### Implementación (GREEN)
@@ -193,7 +193,7 @@ en la lista y en la estructura común; probar cada error de nombre y de fechas.
     respuesta no incluye texto de consultas.
 - [X] T044 [P] [E2a, E3] Escenarios BDD "Modificación exitosa" y "Nombre visible en la estructura común" en
   `test/web_project_update_bdd_test.go`
-- [ ] T045 Ejecutar T034–T044, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
+- [X] T045 Ejecutar T034–T044, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt` (sección "Datos del proyecto")
 
 ### Implementación (GREEN)
@@ -221,7 +221,7 @@ en la lista y en la estructura común; probar cada error de nombre y de fechas.
   - el botón "Guardar" y el enlace "Cancelar" a `/proyectos`.
 - [X] T051 Agregar en `src/web/templates/projects.html` la columna "Acciones" con el enlace `LinkEditProject` en cada
   fila
-- [ ] T052 Ejecutar T034–T044 en verde y `go test -count=1 -p 1 ./...` completo
+- [X] T052 Ejecutar T034–T044 en verde y `go test -count=1 -p 1 ./...` completo
 
 **Punto de control**: modificar nombre y fechas funciona de punta a punta.
 
@@ -255,7 +255,7 @@ integrante, y ver el efecto en el selector de identificación.
   3. `GET /` muestra la advertencia `MsgMemberGone` y borra la cookie `ctx_integrante`.
 - [X] T059 [P] [E7, E10] Escenarios BDD "Agregar integrante" y "Quitar un integrante con horas registradas" en
   `test/web_project_update_bdd_test.go`. Las horas se cargan con el servicio real de HU-03.
-- [ ] T060 Ejecutar T053–T059, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
+- [X] T060 Ejecutar T053–T059, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
   "Integrantes")
 
 ### Implementación (GREEN)
@@ -265,7 +265,7 @@ integrante, y ver el efecto en el selector de identificación.
   (ya lo hace `projectFieldError`)
 - [X] T062 Construir `SelectedMembers` con los integrantes enviados en cada rechazo y con los actuales en el `GET`, en
   `src/web/projects_update_handlers.go`
-- [ ] T063 Ejecutar T053–T059 en verde
+- [X] T063 Ejecutar T053–T059 en verde
 
 ## Fase 5: Bloque C – Fechas y Sprints (escenarios 11a, 11b, 12a y 12b)
 
@@ -288,7 +288,7 @@ cambiar solo el nombre o los integrantes.
 - [X] T066 [P] [E12a, E12b] `TestHU11_SinCambioDeFechasConSprints`: cambiar solo el nombre y solo los integrantes con
   Sprints creados → 303 en los dos casos
 - [X] T067 [P] [E11a] Escenario BDD "Fechas que dejan Sprints fuera" en `test/web_project_update_bdd_test.go`
-- [ ] T068 Ejecutar T064–T067, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Fechas y
+- [X] T068 Ejecutar T064–T067, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Fechas y
   Sprints")
 
 ### Implementación (GREEN)
@@ -319,13 +319,13 @@ cambiar solo el nombre o los integrantes.
 - [X] T074 [P] `TestHU11_Rendimiento`: con 50 integrantes en el sistema y 20 Sprints en el proyecto, el `GET` del
   formulario y un `POST` con cambio de fechas responden en menos de 500 ms
 - [X] T075 [P] [E16] Escenario BDD "Error al guardar" en `test/web_project_update_bdd_test.go`
-- [ ] T076 Ejecutar T071–T075, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores")
+- [X] T076 Ejecutar T071–T075, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores")
 
 ### Implementación (GREEN)
 
 - [X] T077 Completar en `src/web/projects_update_handlers.go` el mapeo de `ErrProjectNotFound` a `Fail(NotFound(...))`
   y de cualquier otro error a 500 con `Flash{FlashError, MsgOperationFailed}` y el formulario
-- [ ] T078 Ejecutar T071–T075 en verde
+- [X] T078 Ejecutar T071–T075 en verde
 
 ## Fase 7: Cierre
 
