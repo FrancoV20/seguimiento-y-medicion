@@ -27,3 +27,21 @@ src/web/postgres_poker_catalog_integration_test.go:179:16: undefined: NewPostgre
 src/web/postgres_poker_catalog_integration_test.go:179:16: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
+
+== Abrir ronda (T033-T037): sin la sección Planning Poker ==
+$ go test -count=1 -p 1 -v -run 'HU05a_(AbrirRonda|HistoriaConRondaAbierta|HistoriaYaTuvoRonda|SelectorTodasLasHistorias)' ./src/web/ ./test/
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/poker_handlers_test.go:52:12: undefined: RegisterPlanningPoker
+src/web/poker_handlers_test.go:176:64: undefined: LabelPokerNotVoted
+src/web/poker_handlers_test.go:177:62: undefined: LabelPokerNotVoted
+src/web/poker_handlers_test.go:194:29: undefined: MsgPokerRoundAlreadyOpen
+src/web/poker_handlers_test.go:195:28: undefined: MsgPokerRoundAlreadyOpen
+src/web/poker_handlers_test.go:208:29: undefined: MsgPokerStoryAlreadyRounded
+src/web/poker_handlers_test.go:209:28: undefined: MsgPokerStoryAlreadyRounded
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test/web_poker_bdd_test.go:89:16: undefined: web.RegisterPlanningPoker
+test/web_poker_bdd_test.go:160:48: undefined: web.LabelPokerNotVoted
+test/web_poker_bdd_test.go:181:35: undefined: web.MsgPokerRoundAlreadyOpen
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

@@ -128,23 +128,23 @@ volver a abrirla y ver el 409.
 
 ### Pruebas (RED)
 
-- [ ] T032 Preparar el servidor de prueba en `src/web/poker_handlers_test.go`: servidor real con
+- [x] T032 Preparar el servidor de prueba en `src/web/poker_handlers_test.go`: servidor real con
   `CrossOriginGuard`, `RegisterContext`, `poker.NewService(poker.NewPostgreSQLStore(db))` y
   `NewPostgreSQLPokerCatalog(db)`; fixtures (proyecto con Ana y Beto, «Login», «Pagos», otro proyecto); cliente
   con `cookiejar` que elige proyecto e integrante por el flujo de HU-20b; ayudante para un `poker.Store` que falla
-- [ ] T033 [P] [E1] `TestHU05a_AbrirRonda`: `POST /planning-poker/abrir` con `historia` → 303 a
+- [x] T033 [P] [E1] `TestHU05a_AbrirRonda`: `POST /planning-poker/abrir` con `historia` → 303 a
   `/planning-poker`; el GET muestra una sola vez "Ronda abierta para la historia «Login»", "Ronda 1" y a Ana y
   Beto "Sin votar"; en la base `opened_by` es el integrante identificado aunque se envíe un campo `integrante`
   con otro id
-- [ ] T034 [P] [E9] `TestHU05a_HistoriaConRondaAbierta`: 409, "Ya hay una ronda abierta para esta historia" y una
+- [x] T034 [P] [E9] `TestHU05a_HistoriaConRondaAbierta`: 409, "Ya hay una ronda abierta para esta historia" y una
   sola ronda
-- [ ] T035 [P] [E10] `TestHU05a_HistoriaYaTuvoRonda`: con una ronda cerrada preparada en la base, 409, "La
+- [x] T035 [P] [E10] `TestHU05a_HistoriaYaTuvoRonda`: con una ronda cerrada preparada en la base, 409, "La
   historia ya tuvo una ronda de votación" y ninguna ronda nueva
-- [ ] T036 [P] [E1] `TestHU05a_SelectorTodasLasHistorias`: el selector lista «Login» y «Pagos» con su estado
+- [x] T036 [P] [E1] `TestHU05a_SelectorTodasLasHistorias`: el selector lista «Login» y «Pagos» con su estado
   (también después de abrir la ronda de «Login») y ninguna historia de otro proyecto
-- [ ] T037 [P] [E1, E9] `TestBDD_HU05a_AbrirRonda` y `TestBDD_HU05a_HistoriaConRondaAbierta` en
+- [x] T037 [P] [E1, E9] `TestBDD_HU05a_AbrirRonda` y `TestBDD_HU05a_HistoriaConRondaAbierta` en
   `test/web_poker_bdd_test.go` (Dado/Cuando/Entonces como comentarios, igual que `test/web_backlog_bdd_test.go`)
-- [ ] T038 Ejecutar T033–T037, confirmar que fallan (la sección no existe) y guardar la salida en
+- [x] T038 Ejecutar T033–T037, confirmar que fallan (la sección no existe) y guardar la salida en
   `evidencia-red.txt` (sección "Abrir ronda")
 
 ### Implementación (GREEN)
