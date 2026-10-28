@@ -1,33 +1,23 @@
 # Implementation Plan: Interfaz web del Product Backlog
 
-**Branch**: `HU-22` | **Date**: 2026-10-18 (revisada 2026-10-21) | **Spec**: [spec.md](spec.md)
+**Branch**: `HU-22` | **Date**: 2026-10-26 (documentación final) | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from [spec.md](spec.md)
 
 ## Summary
 
-Implementar la pantalla "Backlog" como páginas generadas por el servidor: una sola ruta `/backlog`
-que muestra el formulario de alta y la lista mínima de historias del proyecto activo. La sección
-exige proyecto activo, así que HU-20b redirige a la selección cuando falta. El handler no duplica
-reglas de negocio: arma la lista de criterios (agregar, quitar, ignorar en blanco), delega el alta en
-el caso de uso de HU-02 con el proyecto del contexto del servidor y traduce sus errores a mensajes
-junto a cada campo. Un adaptador `PostgreSQLStoryCatalog` propio de HU-22 lee las historias del
-proyecto. Las horas estimadas se validan en el dominio (HU-02, con los límites de dos decimales y 9999,99
-que HU-17 reutiliza), no en el handler. No agrega migraciones, no usa JavaScript y no modifica HU-20a, HU-20b ni HU-21.
+**Estado final: COMPLETADA.** Se implementaron las tres historias de usuario (US1, US2 y US3) con
+el flujo de pruebas TDD en fases RED y GREEN, más escenarios BDD y pruebas de integración con
+PostgreSQL. La ruta `/backlog` reúne la creación y la consulta de historias para el proyecto activo.
+El alta reutiliza el dominio de HU-02, conserva los datos y presenta errores de validación junto al
+campo con HTTP 422; tras un alta correcta aplica Post/Redirect/Get (303) y comunica éxito o
+advertencias mediante mensajes flash. La lista muestra identificador, título, prioridad, Story
+Points, horas estimadas y estado, con aislamiento por proyecto, estado vacío y el texto "Sin
+estimar" para valores ausentes.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta del paquete de HU-02 y las firmas de su servicio de alta y de su store; los tipos de
->    error y los mensajes exactos de título, descripción, prioridad, criterios, Story Points y horas
->    estimadas; y si valida las horas estimadas (rechaza más de dos decimales en lugar de
->    redondearlos).
-> 2. Cómo devuelve HU-02 la advertencia por falta de Story Points y el estado inicial `'Pendiente'`.
-> 3. Que la migración `002` en `main` siga igual al esquema confirmado en `data-model.md`
->    (`user_stories` y `acceptance_criteria`).
-> 4. Si el alta de HU-02 ya valida las horas estimadas (más allá del `CHECK > 0` de la base): más de
->    dos decimales, coma decimal y máximo de 9999,99, y con qué mensaje; lo que falte se agrega en el
->    dominio, no en el handler.
-> 5. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` (también para `POST`),
->    `ActiveContextFrom`, `SetFlash`, `FormView`, parciales `alert.html` y `field.html`.
+No se agregaron migraciones. El catálogo de solo lectura y el store de escritura usan PostgreSQL
+mediante `database/sql` y pgx; las reglas de horas y el estado inicial se resuelven en el dominio de
+HU-02.
 
 ## Technical Context
 
@@ -67,8 +57,8 @@ estimadas después del alta (HU-17).
   HU-24; no agrega funcionalidades fuera de la historia.
 - **II. Quality by Construction**: PASS. El armado del formulario, el mapeo de errores, el catálogo y
   los handlers están separados; las reglas de negocio siguen en HU-02.
-- **III. Test-First and Evidence-Driven Delivery**: PASS. Cada escenario tiene pruebas de handler y
-  un escenario BDD con almacenamiento real; las pruebas se escriben antes de implementar.
+- **III. Test-First and Evidence-Driven Delivery**: PASS. La historia se completó mediante el ciclo
+  TDD RED/GREEN y cuenta con pruebas unitarias, de handler, BDD e integración PostgreSQL.
 - **IV. Agile, Collaborative Execution**: PASS. Alcance acotado y demostrable en la Sprint Review.
 - **V. Measurement and Continuous Improvement**: PASS. Sin cambios en métricas; la lista mínima deja
   base para HU-13.
@@ -185,3 +175,12 @@ de lectura que HU-13 podrá extender con orden y filtro.
 - **VI. PostgreSQL Persistence**: PASS. El único almacenamiento nuevo (lectura de historias) tiene
   adaptador e integración contra PostgreSQL.
 - **Technology & Quality Constraints**: PASS. Sin dependencias ni tecnologías nuevas.
+
+## Resultado de implementación
+
+**HU-22: COMPLETADA.** US1 (alta), US2 (validación y retención de datos) y US3 (listado) están
+implementadas. Los casos con errores de validación devuelven HTTP 422 con los valores conservados;
+el alta exitosa sigue PRG con HTTP 303. El GET lista las historias del proyecto activo, muestra
+"Aún no hay historias" cuando corresponde y representa estimaciones ausentes como "Sin estimar".
+Los errores de lectura se delegan al mecanismo genérico `Fail` de HU-20a. El desarrollo siguió el
+ciclo TDD RED/GREEN y cuenta con pruebas unitarias, de handler, BDD e integración PostgreSQL.

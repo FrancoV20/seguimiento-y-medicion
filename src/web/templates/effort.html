@@ -1,0 +1,85 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+
+{{with .Data}}
+{{if not .Sprint}}
+<p class="muted">{{.NoSprint}}</p>
+{{else}}
+{{range .Errors}}<div class="alert alert-error" role="alert"><strong class="alert-label">Error:</strong> <span class="alert-text">{{.}}</span></div>
+{{end}}
+{{if not .Sprint.Stories}}
+<p class="muted">{{.NoStories}}</p>
+{{else}}
+<section aria-labelledby="effort-stories-title">
+  <h2 id="effort-stories-title">Historias del Sprint {{.Sprint.Number}}</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Historia</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Horas registradas</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .Sprint.Stories}}
+      <tr{{if eq .ID $.Data.SelectedID}} aria-current="true"{{end}}>
+        <td><a href="/esfuerzo?historia={{.ID}}">{{.Title}}</a></td>
+        <td>{{.Status}}</td>
+        <td>{{.HoursText}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+</section>
+
+<form method="post" action="/esfuerzo">
+  <div class="field{{if $.Form.Errors.historia}} field-invalid{{end}}">
+    <label for="historia">Historia</label>
+    <select id="historia" name="historia"{{if $.Form.Errors.historia}} aria-invalid="true" aria-describedby="historia-error"{{end}}>
+      <option value="">Elegí una historia</option>
+      {{range .Sprint.Stories}}
+      <option value="{{.ID}}"{{if eq (printf "%d" .ID) $.Form.Values.historia}} selected{{end}}>#{{.ID}} {{.Title}} ({{.Status}})</option>
+      {{end}}
+    </select>
+    {{with $.Form.Errors.historia}}<p class="field-error" id="historia-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+  </div>
+  {{template "field" ($.Form.Field "fecha" "Fecha" "date")}}
+  {{template "field" ($.Form.Field "actividad" "Actividad" "text")}}
+  {{template "field" ($.Form.Field "horas" "Horas" "text")}}
+  <button type="submit">Registrar horas</button>
+</form>
+
+{{with .History}}
+<section aria-labelledby="effort-history-title">
+  <h2 id="effort-history-title">Historial de #{{.StoryID}} {{.Title}}</h2>
+  {{if .Entries}}
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Integrante</th>
+        <th scope="col">Fecha</th>
+        <th scope="col">Actividad</th>
+        <th scope="col">Horas</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .Entries}}
+      <tr>
+        <td>{{.MemberName}}</td>
+        <td>{{.Date.Format "02/01/2006"}}</td>
+        <td>{{.Activity}}</td>
+        <td>{{.HoursText}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="muted">{{$.Data.NoEntries}}</p>
+  {{end}}
+  <p class="effort-total">Total: <strong>{{.TotalText}}</strong> h</p>
+</section>
+{{end}}
+{{end}}
+{{end}}
+{{end}}
+{{end}}

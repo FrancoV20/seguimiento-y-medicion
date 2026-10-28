@@ -10,9 +10,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
-	"sync/atomic"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -174,7 +174,7 @@ func (a *seleccionApp) valorCookie(c *http.Client, nombre string) string {
 func idTexto(id int64) string { return strconv.FormatInt(id, 10) }
 
 func cookieID(nombre string, id int64) *http.Cookie {
-	return &http.Cookie{Name: nombre, Value: idTexto(id), Path: "/"}
+	return &http.Cookie{Name: nombre, Value: web.SignedContextValue(nombre, id), Path: "/"} // firmada (HU-26)
 }
 
 // US3 - Escenario: Selección de proyecto que se mantiene (FR-007, FR-008, FR-009, SC-006).
@@ -206,7 +206,9 @@ func TestEscenarioContexto_SeleccionQueSeMantiene(t *testing.T) {
 
 // US3 - Escenario: Sin proyectos (FR-010).
 func TestEscenarioContexto_SinProyectos(t *testing.T) {
-	vacio := func(real web.ContextStore, _ *seleccionFixture) web.ContextStore { return listaFija{ContextStore: real} }
+	vacio := func(real web.ContextStore, _ *seleccionFixture) web.ContextStore {
+		return listaFija{ContextStore: real}
+	}
 
 	t.Run("sin la sección Proyectos", func(t *testing.T) {
 		// Dado que no existen proyectos
@@ -366,6 +368,7 @@ func TestEscenarioContexto_SesionNuevaPideElegirDeNuevo(t *testing.T) {
 		t.Errorf("en una sesión nueva debía pedirse elegir el proyecto")
 	}
 }
+
 // --- US4 y US5: identificación del integrante y secciones que requieren contexto (T043, T050) ---
 
 // seccionesApp es el servidor real con secciones de prueba: Libre (sin requisitos), Con proyecto

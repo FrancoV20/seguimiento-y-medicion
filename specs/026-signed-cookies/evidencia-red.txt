@@ -1,0 +1,90 @@
+﻿== Fundamentos (T004-T010): sin cookie_signer.go ni cookie_secret.go ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web 
+[github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "CookieSigner|LoadCookieSecret" ./src/w 
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web 
+   .test]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\cookie_signer_test.go:12:18: undefined: NewCookieSigner
+src\web\context.go:54:15: undefined: verifyContextValue
+src\web\context.go:79:46: undefined: SignedContextValue
+src\web\context_handlers_test.go:53:41: undefined: SignedContextValue
+src\web\context_handlers_test.go:388:50: undefined: SignedContextValue
+src\web\context_member_test.go:88:30: undefined: SignedContextValue
+src\web\context_test.go:43:59: undefined: cookieSigner
+src\web\context_test.go:68:14: undefined: verifyContextValue
+src\web\context_test.go:112:12: undefined: cookieSigner
+src\web\context_test.go:113:11: undefined: NewCookieSigner
+src\web\context_test.go:113:11: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
+
+== Contexto firmado (T014-T019): context.go sin firmar ==
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior)
+    context_test.go:135: "7": se esperaba (0, true), se obtuvo (7, true)
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/texto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo
+=== NAME  TestReadIDCookie_FirmaInvalidaEsManipulada
+    context_test.go:143: firma correcta: se esperaba (7, true), se obtuvo (0, true)
+--- FAIL: TestReadIDCookie_FirmaInvalidaEsManipulada (0.00s)
+    --- FAIL: TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior) (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/texto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	3.130s
+=== RUN   TestHU26_ContextoValidoSeConserva
+    web_signed_cookies_bdd_test.go:130: la cookie de proyecto deb├¡a viajar firmada, se obtuvo "253"
+--- FAIL: TestHU26_ContextoValidoSeConserva (0.07s)
+=== RUN   TestHU26_CookieProyectoModificada
+    web_signed_cookies_bdd_test.go:154: se esperaba borrar las cookies de proyecto e integrante
+    web_signed_cookies_bdd_test.go:157: se esperaba ir a elegir proyecto, se obtuvo 200 ""
+--- FAIL: TestHU26_CookieProyectoModificada (0.03s)
+=== RUN   TestHU26_CookieIntegranteModificada
+    web_signed_cookies_bdd_test.go:173: se esperaba borrar solo la cookie del integrante
+    web_signed_cookies_bdd_test.go:176: se esperaba conservar el proyecto sin integrante, se obtuvo "contexto:proyecto=257;integrante=273"
+    web_signed_cookies_bdd_test.go:182: se esperaba ir a identificarse, se obtuvo 200 ""
+--- FAIL: TestHU26_CookieIntegranteModificada (0.03s)
+=== RUN   TestHU26_ValorCopiadoEntreCookies
+--- PASS: TestHU26_ValorCopiadoEntreCookies (0.03s)
+=== RUN   TestHU26_CookiesSinFirmaSeDescartan
+    web_signed_cookies_bdd_test.go:215: se esperaba borrar las cookies sin firma
+    web_signed_cookies_bdd_test.go:218: se esperaba ir a elegir proyecto, se obtuvo 200 ""
+--- FAIL: TestHU26_CookiesSinFirmaSeDescartan (0.04s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	3.438s
+FAIL
+
+== Clave y arranque (T025-T026): main.go sin COOKIE_SECRET ==
+=== RUN   TestHU26_ReinicioConMismaClave
+--- PASS: TestHU26_ReinicioConMismaClave (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	3.157s
+=== RUN   TestRun_ClaveCortaNoArranca
+    main_test.go:37: el mensaje debe explicar el largo m├¡nimo de COOKIE_SECRET: "time=2026-10-27T17:47:35.942-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=1 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:37.950-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=2 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:39.951-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=3 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:41.952-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=4 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:43.953-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=5 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:45.957-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=6 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:47.959-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=7 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:49.960-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=8 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:51.963-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=9 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\ntime=2026-10-27T17:47:53.966-03:00 level=WARN msg=\"la base de datos todav├¡a no responde\" destino=127.0.0.1:1/base intento=10 de=10 detalle=\"failed to connect to `user=usuario database=base`: 127.0.0.1:1 (127.0.0.1): dial error: dial tcp 127.0.0.1:1: connectex: No connection could be made because the target machine actively refused it.\"\nNo se pudo iniciar el servidor: no se pudo conectar a la base de datos en 127.0.0.1:1/base despu├®s de 10 intentos: verific├í que PostgreSQL est├® levantado (docker compose up -d) y que DATABASE_URL tenga el usuario, la clave y el puerto correctos\n"
+--- FAIL: TestRun_ClaveCortaNoArranca (18.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	21.022s
+FAIL

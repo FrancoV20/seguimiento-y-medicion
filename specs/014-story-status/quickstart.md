@@ -50,8 +50,8 @@ compartir una base.
 Las pruebas deben cubrir como mínimo:
 
 1. Regla de transiciones (unitaria): las tres permitidas, y rechazadas En Sprint → Hecho, En progreso →
-   En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas; `NextAction` de cada
-   estado.
+   En Sprint, Hecho → En Sprint, cualquier destino Pendiente y las repetidas; `NextAction` y `ActionTransition`
+   de cada estado.
 2. Servicio y almacenamiento (PostgreSQL real):
    - comenzar, completar y reabrir actualizan el estado;
    - completar sin horas devuelve la advertencia; con horas, no;
@@ -59,6 +59,8 @@ Las pruebas deben cubrir como mínimo:
      cambios;
    - estado ya aplicado: no cambia y no es un error de almacenamiento;
    - estado esperado distinto del real: `ErrStatusChanged` y sin cambios;
+   - acción que no corresponde al estado real (`comenzar` sobre Hecho, `reabrir` sobre En Sprint):
+     `ErrStatusChanged` y sin cambios;
    - dos cambios simultáneos sobre la misma historia: solo uno se aplica.
 3. Handler (con `cookiejar` y proyecto activo elegido por el flujo de HU-20b):
    - cada acción válida: 303 a `/tablero`, mensaje una sola vez y estado nuevo; con dos proyectos, solo
@@ -97,4 +99,52 @@ historia, la ejecución final y la cobertura:
 ```powershell
 go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/014-story-status/evidencia-pruebas.txt
 go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/014-story-status/cobertura.txt
+```
+
+## Prueba manual (datos de demo por SQL)
+
+El puerto 8080 puede estar ocupado por otro programa (por ejemplo un contenedor de otro proyecto): usar otro puerto con `ADDR`. Reemplazar `USUARIO` por el de `DATABASE_URL`.
+
+```powershell
+@"
+WITH p AS (
+  INSERT INTO projects (name, start_date, end_date, status)
+  VALUES ('Demo HU14 - Proyecto Tablero', DATE '2026-10-01', DATE '2026-12-31', 'Activo') RETURNING id
+),
+m AS (INSERT INTO members (display_name) VALUES ('Demo HU14 - Integrante') RETURNING id),
+pm AS (INSERT INTO project_members (project_id, member_id) SELECT p.id, m.id FROM p, m RETURNING project_id),
+s AS (
+  INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+  SELECT id, 1, 'Demo del Tablero', DATE '2026-10-20', DATE '2026-11-03', 'Activo' FROM p RETURNING id, project_id
+),
+u AS (
+  INSERT INTO user_stories (project_id, title, description, priority, story_points, status, active_sprint_id)
+  SELECT s.project_id, v.title, 'Historia de demo', 'Media', v.points, v.status, s.id
+  FROM s, (VALUES ('Demo: login', 5, 'En Sprint'), ('Demo: reporte', 3, 'En progreso'),
+                  ('Demo: exportar', 8, 'Hecho')) AS v(title, points, status)
+  RETURNING id, active_sprint_id
+)
+INSERT INTO sprint_story_assignments (sprint_id, story_id) SELECT active_sprint_id, id FROM u;
+"@ | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
+
+$env:ADDR = ":8081"
+go run ./src/cmd/server
+```
+
+1. Abrir `http://localhost:8081/tablero` sin elegir proyecto: redirige a la selección y, al elegir "Demo HU14 - Proyecto Tablero", vuelve al Tablero.
+2. Comprobar las tres columnas, "8 de 16" Story Points completados y una sola acción por historia.
+3. Comenzar, Completar (sin horas: advertencia en el mismo mensaje) y Reabrir; recargar con F5 después de un cambio: el mensaje no se repite.
+4. Con `UPDATE sprints SET status = 'Finalizado' ...` se ve "No hay un Sprint activo"; sin historias, "El Sprint no tiene historias asignadas".
+
+Atención: `go test ./...` con `DATABASE_URL` definida vacía la base local (la prueba de HU-01 hace `TRUNCATE`). Probar a mano antes de correr la suite, o volver a cargar los datos.
+
+Para borrar los datos de demo:
+
+```powershell
+@"
+DELETE FROM effort_logs WHERE story_id IN (SELECT id FROM user_stories WHERE title LIKE 'Demo: %');
+DELETE FROM user_stories WHERE project_id IN (SELECT id FROM projects WHERE name = 'Demo HU14 - Proyecto Tablero');
+DELETE FROM projects WHERE name = 'Demo HU14 - Proyecto Tablero';
+DELETE FROM members WHERE display_name = 'Demo HU14 - Integrante';
+"@ | docker exec -i seguimiento-y-medicion-db psql -U USUARIO -d seguimiento_y_medicion
 ```
