@@ -39,7 +39,7 @@ iguales (se rechaza), recargando la página y sin integrantes disponibles.
 
 1. **Given** que estoy en "Gestión de Proyectos" y existen integrantes disponibles, **When**
    completo nombre, integrantes y fechas válidas y presiono "Crear", **Then** veo el mensaje
-   "Proyecto creado correctamente" y el proyecto aparece en la lista.
+   "Proyecto creado exitosamente" y el proyecto aparece en la lista.
 2. **Given** que completo nombre e integrantes y ingreso la misma fecha de inicio y de fin, **When**
    presiono "Crear", **Then** veo junto a la fecha de fin el mensaje de fechas de HU-01, los datos
    se conservan y no se crea el proyecto.
@@ -111,7 +111,9 @@ formulario.
 
 ### Edge Cases
 
-- Un nombre con solo espacios se trata como vacío (regla de HU-01; se verifica en T001).
+- Un nombre se recorta antes del alta; si queda vacío (incluido el caso de solo espacios), se
+  rechaza con el mensaje exacto de HU-01. HU-01 no realiza esta normalización; la pantalla la aplica
+  para cumplir este requisito sin modificar el servicio.
 - Una fecha de fin igual a la de inicio se rechaza (FIX-HU-01), igual que en los Sprints; una fecha
   de fin un día posterior se acepta.
 - Los nombres de proyectos pueden repetirse: HU-01 no define unicidad.
@@ -121,8 +123,9 @@ formulario.
   formato se rechaza como formato inválido aunque el navegador no lo haya impedido.
 - Un nombre con HTML o scripts se muestra como texto en la lista (regla de HU-20a/HU-20b).
 - Crear un proyecto no lo selecciona como proyecto activo (HU-20b: sin autoselección).
-- Un nombre de más de 255 caracteres se rechaza con un mensaje junto al campo en lugar de fallar
-  al guardar (extra, ver T027; no es criterio de aceptación).
+- Un nombre de más de 255 caracteres se rechaza con el mensaje "El nombre no puede superar los
+  255 caracteres" junto al campo en lugar de fallar al guardar (extra, ver T027; no es criterio
+  de aceptación).
 - La lista no tiene paginación; con muchos proyectos se muestra completa.
 - Recargar la página después de crear un proyecto no crea un segundo proyecto ni repite el mensaje
   (patrón de HU-20b, "Envío válido sin reenvío"; se prueba en T012).
@@ -142,7 +145,7 @@ formulario.
 - **FR-004**: Cuando no existan integrantes, el sistema MUST mostrar "No hay integrantes
   disponibles" y MUST NOT permitir crear el proyecto.
 - **FR-005**: Un alta válida MUST crear el proyecto según las reglas de HU-01, mostrar
-  "Proyecto creado correctamente" una sola vez y mostrar el proyecto en la lista.
+  "Proyecto creado exitosamente" una sola vez y mostrar el proyecto en la lista.
 - **FR-006**: Ante datos inválidos, el sistema MUST mostrar los mensajes de HU-01 junto a cada
   campo, conservar los datos ingresados y MUST NOT crear el proyecto.
 - **FR-007**: Cuando falte la fecha de inicio o la de fin, el sistema MUST indicar cuál falta
@@ -210,7 +213,7 @@ reglas de HU-01 y sin que la persona pierda lo que escribió ante un error.
 
 | Condición | Campo | Mensaje | Respuesta |
 |---|---|---|---|
-| Nombre vacío o solo espacios | `nombre` | El de HU-01 | 422 |
+| Nombre vacío o solo espacios | `nombre` | "project name cannot be empty" (HU-01) | 422 |
 | Fecha de fin anterior o igual a la de inicio | `fecha_fin` | El de fechas de HU-01 (FIX-HU-01) | 422 |
 | Fecha de inicio vacía | `fecha_inicio` | "Falta la fecha de inicio" | 422 |
 | Fecha de fin vacía | `fecha_fin` | "Falta la fecha de fin" | 422 |
@@ -220,8 +223,9 @@ reglas de HU-01 y sin que la persona pierda lo que escribió ante un error.
 | Falla de guardado | general | "La operación no pudo completarse" | 500 |
 | Falla de lectura | página | Página de error de HU-20a | 500 o 503 |
 
-Los mensajes de HU-01 se toman del código de HU-01 (T001). Los textos propios de HU-21 y el mensaje
-de éxito son una propuesta del equipo; se definen en un solo lugar (`projects_form.go`).
+Los mensajes de HU-01 se toman del código de HU-01 (T001). Los textos propios de HU-21 se definen
+en un solo lugar (`projects_form.go`). El mensaje de éxito coincide con el resultado de
+`ProjectService.CreateProject`: "Proyecto creado exitosamente".
 
 ### Key Entities *(include if feature involves data)*
 

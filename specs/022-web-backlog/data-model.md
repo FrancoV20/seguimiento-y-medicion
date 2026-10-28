@@ -3,16 +3,21 @@
 Esta feature **no crea tablas ni migraciones**. El alta usa el esquema de HU-02 (migración `002`) a
 través del servicio y el store existentes. La lista lee las historias del proyecto activo.
 
+La implementación está completada: US1 crea historias desde el formulario web; US2 conserva los
+valores crudos y asocia los errores de dominio al campo correspondiente; US3 consulta y muestra el
+Backlog del proyecto activo. Las etiquetas HTML usan términos de usuario en español; las columnas
+de base de datos mantienen los nombres definidos por HU-02.
+
 ## Esquema confirmado (migración `002`)
 
-- `user_stories(id BIGSERIAL PK, project_id BIGINT NOT NULL REFERENCES projects(id), title TEXT,
-  description TEXT, priority TEXT, story_points INTEGER, status TEXT DEFAULT 'Pendiente',
-  estimated_hours NUMERIC(6,2), created_at TIMESTAMPTZ)`.
+- `user_stories(id BIGSERIAL PK, project_id BIGINT NOT NULL REFERENCES projects(id), title TEXT NOT
+  NULL, description TEXT NOT NULL, priority TEXT NOT NULL, story_points INTEGER NULL, status TEXT NOT
+  NULL DEFAULT 'Pendiente', estimated_hours NUMERIC(6,2) NULL, created_at TIMESTAMPTZ NOT NULL)`.
   - `priority` solo admite `'Alta'`, `'Media'` o `'Baja'`.
   - `story_points` es opcional y solo admite 1, 2, 3, 5, 8, 13, 21, 34, 55 u 89.
-  - `status` solo admite los estados del ciclo de vida: `'Pendiente'`, `'En Sprint'`, `'En progreso'` y
-    `'Hecho'` (la migración `002` define tres y una migración posterior agrega `'En Sprint'`; se
-    confirma en T004). Esta historia solo crea historias `'Pendiente'`.
+  - La migración `002` define el estado por defecto `'Pendiente'` y admite `'Pendiente'`, `'En progreso'`
+    y `'Hecho'`. La migración `004` amplía el conjunto con `'En Sprint'`. Esta historia crea historias
+    con el valor `'Pendiente'`, asignado explícitamente por el dominio de HU-02.
   - `estimated_hours` es opcional y debe ser mayor que 0.
   - `title` y `description` no pueden estar en blanco y no tienen límite de largo.
 - `acceptance_criteria(id BIGSERIAL PK, story_id BIGINT REFERENCES user_stories(id) ON DELETE
@@ -24,7 +29,7 @@ Notas:
 - `user_stories.project_id` no tiene borrado en cascada: eliminar un proyecto con historias falla. Las
   pruebas borran primero las historias (los criterios caen en cascada) y después el proyecto.
 - `NUMERIC(6,2)` redondea sin error un valor con más de dos decimales (1,555 pasa a 1,56): la
-  validación debe hacerse antes de guardar, en el dominio (HU-02; se confirma en T001). La base solo
+  validación se hace antes de guardar, en el dominio de HU-02. La base solo
   exige `estimated_hours > 0`.
 
 ## Datos leídos (definidos por HU-02)
@@ -43,17 +48,19 @@ Datos del envío, para conservarlos al volver a mostrar el formulario.
 
 ### Fields
 
-- `title`, `description`: texto de cada campo.
-- `priority`: valor elegido entre `Alta`, `Media` y `Baja`.
-- `storyPoints`: valor elegido entre 1, 2, 3, 5, 8, 13, 21, 34, 55 y 89, o vacío.
-- `estimatedHours`: texto ingresado, con coma o punto (puede estar vacío).
-- `criteria`: lista ordenada de textos de criterios, uno por campo mostrado.
+- `titulo` (`Title`) y `descripcion` (`Description`): texto de cada campo.
+- `prioridad` (`Priority`): valor elegido entre `Alta`, `Media` y `Baja`.
+- `story_points` (`StoryPoints`): valor elegido entre 1, 2, 3, 5, 8, 13, 21, 34, 55 y 89, o vacío.
+- `horas_estimadas` (`EstimatedHours`): texto ingresado, con coma o punto (puede estar vacío).
+- `criterio` (`Criteria`): lista ordenada de textos de criterios, uno por campo mostrado.
 
 ### Rules
 
 - Los valores se devuelven tal como se enviaron cuando hay errores o cuando se agrega o quita un
   criterio.
 - El formulario siempre muestra al menos un campo de criterio.
+- La acción se envía en `accion`; las opciones son `guardar`, `agregar_criterio` y
+  `quitar_criterio:N`.
 
 ## StoryFormInput
 
@@ -61,11 +68,12 @@ Resultado de armar el envío para invocar el alta.
 
 ### Fields
 
-- `projectID`: tomado del contexto del servidor; el campo del formulario se descarta.
-- `title`, `description`, `priority`.
-- `storyPoints`: ausente si el campo estaba vacío.
-- `estimatedHours`: ausente si el campo estaba vacío.
-- `criteria`: criterios con texto, sin los vacíos ni los que solo tienen espacios.
+- `ProjectID`: tomado de `ActiveContextFrom` en el contexto del servidor; no existe un identificador
+  de proyecto confiable enviado por el formulario.
+- `Title`, `Description`, `Priority`.
+- `StoryPoints`: `*int`, nil si el campo estaba vacío.
+- `EstimatedHours`: `*float64`, nil si el campo estaba vacío.
+- `AcceptanceCriteria`: criterios con texto, sin los vacíos ni los que solo tienen espacios.
 
 ### Rules
 
@@ -101,12 +109,10 @@ Fila de la lista del Backlog.
 
 ### Fields
 
-- `id`.
-- `title`.
-- `priority`.
-- `storyPoints`: ausente si no se estimó; se muestra "Sin estimar".
-- `estimatedHours`: ausente si no se estimó; se muestra "Sin estimar".
-- `status`: texto del estado.
+- El tipo Go `StoryRow` contiene `ID int64`, `Title string`, `Priority string`, `StoryPoints *int`,
+  `EstimatedHours *float64` y `Status string`.
+- La vista transforma los punteros nil a "Sin estimar" antes del renderizado y muestra los valores
+  presentes con horas decimales usando coma.
 
 ### Rules
 
@@ -172,3 +178,5 @@ ORDER BY id DESC;
 - Debe contar con pruebas de integración contra PostgreSQL antes de integrarse; las pruebas crean sus
   propios proyectos e historias y los eliminan al terminar, borrando primero las historias porque
   `user_stories.project_id` no tiene borrado en cascada.
+- La conexión local se configura mediante `DATABASE_URL`; Docker Compose publica PostgreSQL en el
+  puerto host `5433`. El orden implementado es `id DESC`.

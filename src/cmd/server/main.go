@@ -13,6 +13,10 @@ import (
 	"syscall"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/poker"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -35,6 +39,16 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	if err != nil {
 		return fail(err.Error())
 	}
+	// Clave de las cookies de contexto (HU-26): antes de abrir el puerto, para no arrancar con
+	// una clave corta. La clave nunca se registra.
+	secret, temporary, err := web.LoadCookieSecret(getenv)
+	if err != nil {
+		return fail(err.Error())
+	}
+	if temporary {
+		logger.Warn(web.MsgTemporaryCookieSecret)
+	}
+	web.SetCookieSecret(secret)
 
 	srv := web.NewServer(logger)
 	// La protección contra envíos de otro origen va primero (HU-20b, T025).
@@ -71,6 +85,10 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 
 	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
 	if err != nil {
+	// Inicialización y Registro de Backlog (HU-22)
+	backlogService := backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(database))
+	storyCatalog := web.NewPostgreSQLStoryCatalog(database)
+	if err := web.RegisterBacklog(srv, backlogService, storyCatalog); err != nil {
 		_ = ln.Close()
 		_ = database.Close()
 		return fail(err.Error())
@@ -81,6 +99,27 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	if err := web.RegisterSprints(srv, sprintCatalog, sprintActions); err != nil {
 		_ = ln.Close()
 		_ = sprintStore.Close()
+	// Inicialización y Registro de Proyectos (HU-21)
+	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
+	projectCatalog := web.NewPostgreSQLProjectCatalog(database)
+	if err := web.RegisterProjects(srv, projectService, projectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Proyectos")
+	}
+	// Tablero: cambio de estado de las historias del Sprint activo (HU-14, T022).
+	if err := web.RegisterBoard(srv,
+		sprint.NewStatusService(sprint.NewPostgreSQLStoryStatusStore(database)),
+		web.NewPostgreSQLBoardCatalog(database)); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+	// Planning Poker: rondas de votación y votos ocultos (HU-05a, T043).
+	if err := web.RegisterPlanningPoker(srv,
+		poker.NewService(poker.NewPostgreSQLStore(database)),
+		web.NewPostgreSQLPokerCatalog(database)); err != nil {
+		_ = ln.Close()
 		_ = database.Close()
 		return fail(err.Error())
 	}
@@ -89,6 +128,16 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = sprintStore.Close()
 		_ = database.Close()
 	}); err != nil {
+	// Registro de esfuerzo: registra con el servicio de HU-03 y lee con su catálogo (HU-24, T022).
+	effortService := effort.NewService(effort.NewPostgreSQLEffortStore(database), nil)
+	effortActions := web.NewEffortActions(effortService, nil)
+	if err := web.RegisterEffort(srv, effortActions, web.NewPostgreSQLEffortCatalog(database), nil); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Registro de esfuerzo")
+	}
+
+	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
 		return fail(err.Error())
 	}
 	return 0

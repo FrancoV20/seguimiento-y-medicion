@@ -6,7 +6,7 @@ FROM (VALUES
     ('Franco Valentin Velazco'),
     ('Adriel Alonso Gonzalez'),
     ('Alejandro Ruiz Andreola'),
-    ('Giuliana Betitol Rivadeo'),
+    ('Giuliana Bettiol Rivadeo'),
     ('Juan Ignacio Sanchez')
 ) AS v(name)
 WHERE NOT EXISTS (SELECT 1 FROM members m WHERE m.display_name = v.name);
