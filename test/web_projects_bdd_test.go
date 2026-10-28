@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	"errors"
 	"database/sql"
 	"fmt"
 	"io"
@@ -41,6 +42,11 @@ func (failingBDDProjectStore) Create(*project.Project) error {
 
 func (s failingBDDProjectStore) MemberExists(id int) (bool, error) {
 	return id == s.memberID, nil
+}
+
+// Update cumple el puerto ampliado por HU-11.
+func (failingBDDProjectStore) Update(context.Context, project.ProjectUpdate) error {
+	return errors.New("simulated update error")
 }
 
 func (noMembersBDDProjectCatalog) ListMembers(_ context.Context) ([]web.MemberOption, error) {
