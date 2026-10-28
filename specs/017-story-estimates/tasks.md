@@ -49,10 +49,10 @@
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Escribir la prueba de handler de registrar con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/estimaciones`, "Horas estimadas registradas" una sola vez, valor mostrado y, con dos proyectos, solo en el activo, en `src/web/estimates_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler de modificar: "Horas estimadas actualizadas", el valor reemplaza al anterior y las horas reales no cambian, en `src/web/estimates_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de handler con horas `8`, `1,5`, `1.5` y `9999,99`: se guardan exactas, sin redondeo y se muestran con coma, en `src/web/estimates_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir los escenarios BDD de estimación registrada, modificar la estimación y horas con coma decimal en `test/web_estimates_bdd_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler de registrar con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/estimaciones`, "Horas estimadas registradas" una sola vez, valor mostrado y, con dos proyectos, solo en el activo, en `src/web/estimates_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler de modificar: "Horas estimadas actualizadas", el valor reemplaza al anterior y las horas reales no cambian, en `src/web/estimates_handlers_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de handler con horas `8`, `1,5`, `1.5` y `9999,99`: se guardan exactas, sin redondeo y se muestran con coma, en `src/web/estimates_handlers_test.go`
+- [x] T015 [P] [US1] Escribir los escenarios BDD de estimación registrada, modificar la estimación y horas con coma decimal en `test/web_estimates_bdd_test.go`
 
 ### Implementation for User Story 1
 
