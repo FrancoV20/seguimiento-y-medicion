@@ -82,7 +82,11 @@ func RequireContext(section Section) func(http.Handler) http.Handler {
 			hasMember := hasProject && ac.MemberID != 0
 			switch {
 			case !hasProject:
-				SetFlash(w, r, FlashWarning, MsgProjectRequired)
+				message := &Flash{Kind: FlashWarning, Text: MsgProjectRequired}
+				if pending := pendingFlashFrom(r.Context()); pending != nil {
+					message = pending
+				}
+				SetFlash(w, r, message.Kind, message.Text)
 				RedirectSeeOther(w, r, pathSelectProject+"?volver_a="+url.QueryEscape(returnDestination(r, section)))
 			case section.RequiresMember && !hasMember:
 				SetFlash(w, r, FlashWarning, MsgMemberRequired)
