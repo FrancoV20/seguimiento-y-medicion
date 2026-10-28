@@ -70,8 +70,7 @@ func (h *pokerHandlers) open(w http.ResponseWriter, r *http.Request) {
 		h.reject(w, r, err)
 		return
 	}
-	SetFlash(w, r, FlashSuccess, pokerRoundOpenedMessage(round.StoryTitle))
-	RedirectSeeOther(w, r, pathPoker)
+	h.done(w, r, pokerRoundOpenedMessage(round.StoryTitle))
 }
 
 // vote registra o reemplaza el voto del integrante identificado; un campo "integrante"
@@ -88,6 +87,12 @@ func (h *pokerHandlers) vote(w http.ResponseWriter, r *http.Request) {
 	if outcome.Updated {
 		message = MsgPokerVoteUpdated
 	}
+	h.done(w, r, message)
+}
+
+// done deja el mensaje de éxito y vuelve a la pantalla con 303, así recargar no reenvía el
+// formulario (E2).
+func (h *pokerHandlers) done(w http.ResponseWriter, r *http.Request, message string) {
 	SetFlash(w, r, FlashSuccess, message)
 	RedirectSeeOther(w, r, pathPoker)
 }
