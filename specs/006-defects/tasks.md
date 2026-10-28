@@ -86,8 +86,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Implementar en `src/web/defects_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo, ocultando el formulario sin Sprint activo
-- [ ] T031 [US2] Verificar en `src/web/defects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T030 [US2] Implementar en `src/web/defects_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo, ocultando el formulario sin Sprint activo
+- [x] T031 [US2] Verificar en `src/web/defects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 evita defectos inválidos y mantiene los datos.
 

@@ -64,11 +64,14 @@ func (h *defectsHandlers) list(w http.ResponseWriter, r *http.Request) {
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
-	h.server.renderer.Page(w, r, "defects.html", PageData{
-		Title: "Defectos",
-		Form:  NewFormView(),
-		Data:  data,
-	})
+	if !data.HasActiveSprint {
+		h.renderPage(w, r, http.StatusConflict, data, NewFormView(), &Flash{
+			Kind: FlashError,
+			Text: MsgDefectNoSprint,
+		})
+		return
+	}
+	h.renderPage(w, r, http.StatusOK, data, NewFormView(), nil)
 }
 
 func (h *defectsHandlers) register(w http.ResponseWriter, r *http.Request) {
@@ -82,15 +85,60 @@ func (h *defectsHandlers) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	_, input, fieldErrors := parseDefectForm(r.PostForm, ac.ProjectID)
+	form := FormFromRequest(r, DefectDescriptionField, DefectSeverityField, DefectStoryField)
+	validatedInput, validationErrors := defect.Validate(input)
+	for _, violation := range validationErrors {
+		field, message, ok := defectFieldError(violation.Err)
+		if ok && fieldErrors[field] == "" {
+			fieldErrors[field] = message
+		}
+	}
 	if len(fieldErrors) != 0 {
-		h.server.renderer.Fail(w, r, errors.New("formulario de defectos inválido"))
+		for field, message := range fieldErrors {
+			form.AddError(field, message)
+		}
+		h.renderFormStatus(w, r, ac.ProjectID, http.StatusUnprocessableEntity, form)
 		return
 	}
-	registered, err := h.service.Register(r.Context(), input)
+	registered, err := h.service.Register(r.Context(), validatedInput)
 	if err != nil {
-		h.server.renderer.Fail(w, r, err)
+		switch {
+		case errors.Is(err, defect.ErrNoActiveSprint):
+			h.renderFormStatus(w, r, ac.ProjectID, http.StatusConflict, nil)
+		case errors.Is(err, defect.ErrStoryNotFound):
+			form.AddError(DefectStoryField, MsgDefectStoryNotInProject)
+			h.renderFormStatus(w, r, ac.ProjectID, http.StatusUnprocessableEntity, form)
+		default:
+			h.renderFormStatus(w, r, ac.ProjectID, http.StatusInternalServerError, form)
+		}
 		return
 	}
 	SetFlash(w, r, FlashSuccess, fmt.Sprintf(MsgDefectRegistered, registered.SprintNumber))
 	RedirectSeeOther(w, r, "/defectos")
+}
+
+func (h *defectsHandlers) renderFormStatus(w http.ResponseWriter, r *http.Request, projectID int64, status int, form *FormView) {
+	data, err := h.pageData(r, projectID)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	if status == http.StatusConflict {
+		h.renderPage(w, r, status, data, nil, &Flash{Kind: FlashError, Text: MsgDefectNoSprint})
+		return
+	}
+	if status == http.StatusInternalServerError {
+		h.renderPage(w, r, status, data, form, &Flash{Kind: FlashError, Text: MsgOperationFailed})
+		return
+	}
+	h.renderPage(w, r, status, data, form, nil)
+}
+
+func (h *defectsHandlers) renderPage(w http.ResponseWriter, r *http.Request, status int, data defectsPageData, form *FormView, flash *Flash) {
+	h.server.renderer.PageStatus(w, r, status, "defects.html", PageData{
+		Title: "Defectos",
+		Form:  form,
+		Flash: flash,
+		Data:  data,
+	})
 }

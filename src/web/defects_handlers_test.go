@@ -392,10 +392,33 @@ func TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails(t *testing.T)
 		testDB = openContextTestDB(t)
 		if err := RegisterDefects(
 			server,
-			defect.NewService(failingDefectStore{err: errors.New("private database detail")}),
+			defect.NewService(failingDefectStore{err: errors.New("SELECT * FROM defects at /internal/config/database")}),
 			NewPostgreSQLDefectCatalog(testDB),
 		); err != nil {
 			t.Fatalf("no se pudo registrar la sección Defectos: %v", err)
+		}
+	})
+	var sprintID, storyID int64
+	if err := app.db.QueryRow(
+		`INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		 VALUES ($1, 80, 'HU06 falla de guardado', '2026-01-01', '2026-01-14', 'Activo') RETURNING id`,
+		app.fx.projectA,
+	).Scan(&sprintID); err != nil {
+		t.Fatal(err)
+	}
+	if err := app.db.QueryRow(
+		`INSERT INTO user_stories (project_id, title, description, priority, status, active_sprint_id)
+		 VALUES ($1, 'HU06 historia falla de guardado', 'Descripción', 'Media', 'En progreso', $2) RETURNING id`,
+		app.fx.projectA, sprintID,
+	).Scan(&storyID); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if _, err := app.db.Exec(`DELETE FROM user_stories WHERE id = $1`, storyID); err != nil {
+			t.Errorf("no se pudo borrar la historia de prueba: %v", err)
+		}
+		if _, err := app.db.Exec(`DELETE FROM sprints WHERE id = $1`, sprintID); err != nil {
+			t.Errorf("no se pudo borrar el Sprint de prueba: %v", err)
 		}
 	})
 	client := app.client(false)
@@ -407,7 +430,7 @@ func TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails(t *testing.T)
 	values := url.Values{
 		DefectDescriptionField: {"Descripción conservada ante falla"},
 		DefectSeverityField:    {"Baja"},
-		DefectStoryField:       {id64(app.fx.projectA)},
+		DefectStoryField:       {id64(storyID)},
 	}
 	resp, body := app.post(t, client, "/defectos", values)
 	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, MsgOperationFailed) {
@@ -415,13 +438,47 @@ func TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails(t *testing.T)
 	}
 	if !strings.Contains(body, `value="Descripción conservada ante falla"`) ||
 		!strings.Contains(body, `value="Baja"`) ||
-		!strings.Contains(body, `value="`+id64(app.fx.projectA)+`"`) {
+		!strings.Contains(body, `value="`+id64(storyID)+`"`) {
 		t.Errorf("la respuesta debía conservar los valores enviados")
 	}
-	if strings.Contains(body, "private database detail") || strings.Contains(body, "Defecto registrado correctamente.") {
+	if strings.Contains(body, "SELECT * FROM defects") ||
+		strings.Contains(body, "/internal/config/database") ||
+		strings.Contains(body, "Defecto registrado correctamente.") {
 		t.Errorf("la respuesta no debe exponer detalles internos ni mostrar éxito")
 	}
 	assertNoDefects(t, testDB, app.fx.projectA)
+}
+
+func TestDefectsHandler_ErrorResponseDoesNotExposeSQLOrInternalPaths(t *testing.T) {
+	app := newCtxApp(t, nil, func(server *Server) {
+		db := openContextTestDB(t)
+		if err := RegisterDefects(
+			server,
+			defect.NewService(failingDefectStore{err: errors.New("SELECT * FROM defects at /internal/config/database")}),
+			NewPostgreSQLDefectCatalog(db),
+		); err != nil {
+			t.Fatalf("no se pudo registrar la sección Defectos: %v", err)
+		}
+	})
+	client := app.client(false)
+	resp, _ := app.selectProject(t, client, id64(app.fx.projectA), "/defectos")
+	if resp.StatusCode != http.StatusSeeOther {
+		t.Fatalf("la selección del proyecto debía redirigir; obtuvo %d", resp.StatusCode)
+	}
+
+	resp, body := app.post(t, client, "/defectos", url.Values{
+		DefectDescriptionField: {"Descripción"},
+		DefectSeverityField:    {"Alta"},
+		DefectStoryField:       {"1"},
+	})
+	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, MsgOperationFailed) {
+		t.Fatalf("se esperaba el error genérico de operación; status=%d body=%s", resp.StatusCode, body)
+	}
+	for _, privateText := range []string{"SELECT * FROM defects", "/internal/config/database"} {
+		if strings.Contains(body, privateText) {
+			t.Errorf("la respuesta de error expuso detalles internos %q", privateText)
+		}
+	}
 }
 
 func TestDefectsHandler_NoProjectContextRedirectsWithoutSaving(t *testing.T) {
