@@ -59,6 +59,9 @@ type UserStory struct {
 
 	// ActiveSprintNumber es el número visible del Sprint asignado, para los mensajes (FIX-HU-04).
 	ActiveSprintNumber int64
+
+	// HasEffort indica si la historia tiene horas registradas; impide quitarla del Sprint (T047).
+	HasEffort bool
 }
 
 // SprintCreationRequest contiene los datos del Sprint ingresados por el usuario.
