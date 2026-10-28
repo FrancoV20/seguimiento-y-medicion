@@ -13,14 +13,23 @@
   </form>
 </section>
 
-{{range .Board.Rounds}}
+{{range .Rounds}}
 <section class="poker-round" data-ronda="{{.ID}}" aria-labelledby="poker-round-{{.ID}}">
   <h2 id="poker-round-{{.ID}}">{{.StoryTitle}}</h2>
   <p>Ronda {{.Number}}</p>
   <ul class="poker-participants">
-    {{range .Participants}}<li data-integrante="{{.MemberID}}">{{.Name}}: {{if .HasVoted}}{{$.Data.Voted}}{{else}}{{$.Data.NotVoted}}{{end}}</li>
+    {{$round := .}}{{range .Participants}}<li data-integrante="{{.MemberID}}">{{.Name}}: {{if .HasVoted}}{{$.Data.Voted}}{{else}}{{$.Data.NotVoted}}{{end}}{{if and .IsMe $round.HasOwnVote}} · Tu voto: {{$round.OwnValue}}{{end}}</li>
     {{end}}
   </ul>
+  <form method="post" action="/planning-poker/votar">
+    <input type="hidden" name="ronda" value="{{.ID}}">
+    <fieldset class="poker-values">
+      <legend>Tu voto</legend>
+      {{range $.Data.Series}}<label><input type="radio" name="valor" value="{{.}}"{{if and $round.HasOwnVote (eq . $round.OwnValue)}} checked{{end}}> {{.}}</label>
+      {{end}}
+    </fieldset>
+    <button type="submit">Votar</button>
+  </form>
 </section>
 {{end}}
 {{end}}

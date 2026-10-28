@@ -195,11 +195,11 @@ volver a abrirla y ver el 409.
 
 ### Implementación (GREEN)
 
-- [ ] T051 Agregar `POST /planning-poker/votar` (`vote`) en `src/web/poker_handlers.go`: `Service.Vote` con
+- [x] T051 Agregar `POST /planning-poker/votar` (`vote`) en `src/web/poker_handlers.go`: `Service.Vote` con
   proyecto e integrante de `ActiveContextFrom`; mensaje según `VoteOutcome.Updated`
-- [ ] T052 Completar `src/web/templates/poker.html`: "Tu voto: N" solo en la fila con `IsMe`; formulario con
+- [x] T052 Completar `src/web/templates/poker.html`: "Tu voto: N" solo en la fila con `IsMe`; formulario con
   `ronda` oculto, diez radios `valor` de `poker.Series` y `checked` solo en `OwnVote`
-- [ ] T053 Ejecutar T045–T049 en verde
+- [x] T053 Ejecutar T045–T049 en verde
 
 **Punto de control**: con los Bloques A y B el equipo ya puede votar de forma oculta (MVP); HU-05b puede empezar.
 

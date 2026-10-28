@@ -23,9 +23,17 @@ type pokerHandlers struct {
 	catalog PokerCatalog
 }
 
+// pokerRoundPage es una ronda lista para la plantilla: el voto propio sin puntero.
+type pokerRoundPage struct {
+	PokerRoundView
+	HasOwnVote bool
+	OwnValue   int
+}
+
 // pokerPageData son los datos de poker.html.
 type pokerPageData struct {
 	Board        PokerBoard
+	Rounds       []pokerRoundPage
 	Series       []int
 	NoStories    string
 	NoOpenRounds string
@@ -42,6 +50,7 @@ func RegisterPlanningPoker(s *Server, actions PokerActions, catalog PokerCatalog
 		Routes{
 			"GET " + pathPoker:             http.HandlerFunc(h.show),
 			"POST " + pathPoker + "/abrir": http.HandlerFunc(h.open),
+			"POST " + pathPoker + "/votar": http.HandlerFunc(h.vote),
 		},
 	)
 }
@@ -65,6 +74,24 @@ func (h *pokerHandlers) open(w http.ResponseWriter, r *http.Request) {
 	RedirectSeeOther(w, r, pathPoker)
 }
 
+// vote registra o reemplaza el voto del integrante identificado; un campo "integrante"
+// enviado se ignora.
+func (h *pokerHandlers) vote(w http.ResponseWriter, r *http.Request) {
+	ac := ActiveContextFrom(r.Context())
+	_, round, value := pokerFormIDs(r)
+	outcome, err := h.actions.Vote(r.Context(), ac.ProjectID, round, ac.MemberID, value)
+	if err != nil {
+		h.reject(w, r, err)
+		return
+	}
+	message := MsgPokerVoteRegistered
+	if outcome.Updated {
+		message = MsgPokerVoteUpdated
+	}
+	SetFlash(w, r, FlashSuccess, message)
+	RedirectSeeOther(w, r, pathPoker)
+}
+
 // reject muestra la pantalla con el código y el mensaje del error; una falla se registra con su
 // detalle y se muestra con el mensaje genérico.
 func (h *pokerHandlers) reject(w http.ResponseWriter, r *http.Request, err error) {
@@ -83,11 +110,19 @@ func (h *pokerHandlers) render(w http.ResponseWriter, r *http.Request, status in
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
+	rounds := make([]pokerRoundPage, 0, len(board.Rounds))
+	for _, round := range board.Rounds {
+		page := pokerRoundPage{PokerRoundView: round}
+		if round.OwnVote != nil {
+			page.HasOwnVote, page.OwnValue = true, *round.OwnVote
+		}
+		rounds = append(rounds, page)
+	}
 	h.server.renderer.PageStatus(w, r, status, "poker.html", PageData{
 		Title: TitlePoker,
 		Flash: flash,
 		Data: pokerPageData{
-			Board: board, Series: poker.Series,
+			Board: board, Rounds: rounds, Series: poker.Series,
 			NoStories: MsgPokerNoStories, NoOpenRounds: MsgPokerNoOpenRounds,
 			Voted: LabelPokerVoted, NotVoted: LabelPokerNotVoted,
 		},
