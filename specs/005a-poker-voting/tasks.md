@@ -272,17 +272,17 @@ forzar una falla de guardado.
 
 ## Fase 7: Cierre
 
-- [ ] T074 Refactor sin cambiar comportamiento: duplicación entre `open` y `vote`, nombres y comentarios de
+- [x] T074 Refactor sin cambiar comportamiento: duplicación entre `open` y `vote`, nombres y comentarios de
   `src/poker` y `src/web/poker_*`; todas las pruebas en verde
-- [ ] T075 [P] `gofmt -l` solo sobre los archivos nuevos (sin `-w` en existentes), `go vet ./...` limpio y pipeline
+- [x] T075 [P] `gofmt -l` solo sobre los archivos nuevos (sin `-w` en existentes), `go vet ./...` limpio y pipeline
   de GitHub Actions en verde
-- [ ] T076 Guardar `specs/005a-poker-voting/evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en
+- [x] T076 Guardar `specs/005a-poker-voting/evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en
   verde
-- [ ] T077 Guardar `specs/005a-poker-voting/cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al
+- [x] T077 Guardar `specs/005a-poker-voting/cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al
   menos 80% en `src/poker`
 - [ ] T078 Verificar a mano los 13 escenarios con la aplicación en ejecución (`quickstart.md`, "Verificación
   manual")
-- [ ] T079 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y marcar
+- [x] T079 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y marcar
   `checklists/requirements.md`
 - [ ] T080 Antes del PR, `git fetch --all` y volver a confirmar que 011 sigue libre y que 009/010 ya están en
   `main` o que el equipo acordó el orden de merge (riesgo de `research.md`, decisión 1); si no, renumerar solo la

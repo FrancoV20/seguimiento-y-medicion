@@ -329,13 +329,13 @@ Se escribe como dos escenarios simples, uno por acción:
 |---|---|---|---|---|
 | 1 Abrir una ronda | FR-001, FR-002, FR-004, FR-018 | SC-001 | `TestHU05a_AbrirRonda`, `TestHU05a_SelectorTodasLasHistorias`, BDD `TestBDD_HU05a_AbrirRonda` | `TestCheckOpen_SinRondas`, `TestService_OpenRound_OK`, `TestPostgresOpenRound_OK`, `TestPostgresPokerCatalog_Historias`, `TestPostgresPokerCatalog_RondasAbiertas` |
 | 2 Voto oculto registrado | FR-003, FR-008, FR-018 | SC-002 | `TestHU05a_VotoRegistrado`, BDD `TestBDD_HU05a_VotoOculto` | `TestParseValue_Serie`, `TestCheckVote_Abierta`, `TestPostgresCastVote_Nuevo`, `TestPostgresCastVote_DosIntegrantes`, `TestPostgresPokerCatalog_Participantes` |
-| 3 Cambio de voto | FR-009 | SC-002 | `TestHU05a_VotoActualizado`, BDD `TestBDD_HU05a_CambioDeVoto` | `TestPostgresCastVote_Reemplaza` |
+| 3 Cambio de voto | FR-009 | SC-002 | `TestHU05a_VotoActualizado`, BDD `TestBDD_HU05a_CambioDeVoto` | `TestService_Vote_DevuelveUpdatedYPropagaErrores`, `TestPostgresCastVote_Reemplaza` |
 | 4 Votos ajenos ocultos | FR-003, FR-013 | SC-003 | `TestHU05a_VotosAjenosOcultos`, `TestHU05a_CambioDeIdentificacion`, BDD `TestBDD_HU05a_VotosOcultos` | `TestPostgresPokerCatalog_SinValoresAjenos`, `TestPostgresPokerCatalog_VotoPropio`, `TestPokerViewModel_SinCampoDeValorAjeno` |
 | 5 Valor fuera de la serie | FR-010, FR-022 | SC-004 | `TestHU05a_ValorFueraDeSerie` | `TestParseValue_FueraDeSerie`, `TestSeries_CoincideConStoryPoints`, `TestMigracionPoker_Restricciones` |
-| 6 Voto sin valor | FR-010 | SC-004 | `TestHU05a_VotoSinValor` | `TestParseValue_Vacio`, `TestService_Vote_*` |
+| 6 Voto sin valor | FR-010 | SC-004 | `TestHU05a_VotoSinValor` | `TestParseValue_Vacio`, `TestService_Vote_ValorVacioAntesDelAlmacen` |
 | 7 Ronda cerrada | FR-011, FR-019 | SC-004 | `TestHU05a_RondaCerrada`, BDD `TestBDD_HU05a_RondaCerrada` | `TestCheckVote_Cerrada`, `TestPostgresCastVote_RondaCerrada`, `TestPostgresCastVote_EsperaAlCierre` |
-| 8a Ronda inexistente | FR-012, FR-018 | SC-004 | `TestHU05a_RondaInexistente` | `TestService_Vote_*`, `TestPostgresCastVote_Inexistente`, `TestPostgresCastVote_OtroProyecto` |
-| 8b Historia inexistente | FR-005, FR-018 | SC-004 | `TestHU05a_HistoriaInexistente` | `TestService_OpenRound_*`, `TestPostgresOpenRound_Inexistente`, `TestPostgresOpenRound_OtroProyecto` |
+| 8a Ronda inexistente | FR-012, FR-018 | SC-004 | `TestHU05a_RondaInexistente` | `TestService_Vote_RondaYIntegrante`, `TestPostgresCastVote_Inexistente`, `TestPostgresCastVote_OtroProyecto` |
+| 8b Historia inexistente | FR-005, FR-018 | SC-004 | `TestHU05a_HistoriaInexistente` | `TestService_OpenRound_Validaciones`, `TestPostgresOpenRound_Inexistente`, `TestPostgresOpenRound_OtroProyecto` |
 | 9 Historia con ronda abierta | FR-006, FR-019 | SC-004, SC-005 | `TestHU05a_HistoriaConRondaAbierta`, BDD `TestBDD_HU05a_HistoriaConRondaAbierta` | `TestCheckOpen_Abierta`, `TestPostgresOpenRound_ConRondaAbierta`, `TestPostgresOpenRound_Concurrente` |
 | 10 Historia que ya tuvo ronda | FR-007 | SC-004 | `TestHU05a_HistoriaYaTuvoRonda` | `TestCheckOpen_Cerrada`, `TestPostgresOpenRound_YaTuvoRonda` |
 | 11 Error al guardar | FR-014, FR-023 | SC-006 | `TestHU05a_ErrorAlGuardar` | `TestPostgresCastVote_FalloNoDejaCambios` |
