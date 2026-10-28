@@ -615,7 +615,7 @@ func TestDefectsHandler_ListShowsTraceabilityForActiveProjectWithin500ms(t *test
 	if strings.Contains(body, "No debe aparecer en el proyecto activo") {
 		t.Errorf("la lista filtró un defecto de otro proyecto")
 	}
-	newerPos, olderPos := strings.Index(body, id64(newerID)), strings.Index(body, id64(olderID))
+	newerPos, olderPos := strings.Index(body, "Descripción reciente"), strings.Index(body, "Descripción anterior")
 	if newerPos < 0 || olderPos < 0 || newerPos >= olderPos {
 		t.Errorf("los defectos no se mostraron de más reciente a más antiguo")
 	}

@@ -36,11 +36,17 @@
 
 <section aria-labelledby="defects-list-title">
   <h2 id="defects-list-title">Defectos</h2>
+  {{if .Defects}}
   <table>
     <thead>
       <tr>
         <th scope="col">Identificador</th>
         <th scope="col">Descripción</th>
+        <th scope="col">Severidad</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Historia relacionada</th>
+        <th scope="col">Sprint de detección</th>
+        <th scope="col">Sprint de resolución</th>
       </tr>
     </thead>
     <tbody>
@@ -48,10 +54,18 @@
       <tr>
         <td>{{.ID}}</td>
         <td>{{.Description}}</td>
+        <td>{{.Severity}}</td>
+        <td>{{.Status}}</td>
+        <td>{{.StoryTitle}}</td>
+        <td>Sprint {{.DetectionSprint}}</td>
+        <td>{{if .ResolutionSprint}}Sprint {{.ResolutionSprint}}{{else}}—{{end}}</td>
       </tr>
     {{end}}
     </tbody>
   </table>
+  {{else}}
+  <p>{{.NoDefectsMessage}}</p>
+  {{end}}
 </section>
 {{end}}
 {{end}}

@@ -105,7 +105,7 @@
 - [x] T033 [P] [US3] Escribir la prueba de handler de la lista vacía: "Aún no hay defectos" y el formulario, en `src/web/defects_handlers_test.go`
 - [x] T034 [P] [US3] Escribir la prueba de handler de una descripción y un título de historia con `<script>`: se muestran como texto, en `src/web/defects_handlers_test.go`
 - [x] T035 [P] [US3] Escribir los escenarios BDD de lista de defectos y lista vacía en `test/web_defects_bdd_test.go`
-- [ ] T036 [US3] Completar `defects.html` con las columnas de la lista, el "—" del Sprint de resolución y el mensaje de lista vacía en `src/web/templates/defects.html`
+- [x] T036 [US3] Completar `defects.html` con las columnas de la lista, el "—" del Sprint de resolución y el mensaje de lista vacía en `src/web/templates/defects.html`
 - [x] T037 [US3] Usar `Fail` en `src/web/defects_handlers.go` cuando falla la lectura de la lista o de las historias y escribir su prueba con un catálogo que falla
 
 **Checkpoint**: US3 muestra los defectos y su trazabilidad.

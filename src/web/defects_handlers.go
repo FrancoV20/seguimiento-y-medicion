@@ -9,11 +9,12 @@ import (
 )
 
 type defectsPageData struct {
-	Defects         []DefectRow
-	Stories         []DefectStoryOption
-	Severities      []defect.Severity
-	ActiveSprint    int64
-	HasActiveSprint bool
+	Defects          []DefectRow
+	Stories          []DefectStoryOption
+	Severities       []defect.Severity
+	ActiveSprint     int64
+	HasActiveSprint  bool
+	NoDefectsMessage string
 }
 
 type defectsHandlers struct {
@@ -45,11 +46,12 @@ func (h *defectsHandlers) pageData(r *http.Request, projectID int64) (defectsPag
 		return defectsPageData{}, fmt.Errorf("leer Sprint activo para defectos: %w", err)
 	}
 	return defectsPageData{
-		Defects:         defects,
-		Stories:         stories,
-		Severities:      []defect.Severity{defect.SeverityCritical, defect.SeverityHigh, defect.SeverityMedium, defect.SeverityLow},
-		ActiveSprint:    sprintNumber,
-		HasActiveSprint: hasActiveSprint,
+		Defects:          defects,
+		Stories:          stories,
+		Severities:       []defect.Severity{defect.SeverityCritical, defect.SeverityHigh, defect.SeverityMedium, defect.SeverityLow},
+		ActiveSprint:     sprintNumber,
+		HasActiveSprint:  hasActiveSprint,
+		NoDefectsMessage: MsgDefectNone,
 	}, nil
 }
 
