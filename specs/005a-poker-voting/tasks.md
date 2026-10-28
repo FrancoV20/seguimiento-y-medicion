@@ -280,7 +280,7 @@ forzar una falla de guardado.
   verde
 - [x] T077 Guardar `specs/005a-poker-voting/cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al
   menos 80% en `src/poker`
-- [ ] T078 Verificar a mano los 13 escenarios con la aplicación en ejecución (`quickstart.md`, "Verificación
+- [x] T078 Verificar a mano los 13 escenarios con la aplicación en ejecución (`quickstart.md`, "Verificación
   manual")
 - [x] T079 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y marcar
   `checklists/requirements.md`
