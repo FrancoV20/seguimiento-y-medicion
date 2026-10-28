@@ -7,10 +7,24 @@
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
 - HU-02, HU-03, HU-22, HU-20a y HU-20b (completa) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main`.
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml` o
-  `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada con el puerto **del host** (ver "Nota de puerto"):
+  `postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable`.
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
+
+### Nota de puerto
+
+`docker-compose.yml` define el servicio `postgres` (imagen `postgres:16-alpine`, contenedor
+`seguimiento-y-medicion-db`, base `seguimiento_y_medicion`, usuario `sym_user`) con chequeo de salud
+`pg_isready` y publica el puerto `5433` del host hacia el `5432` del contenedor. Si tu
+`docker-compose.override.yml` (no versionado) publica otro puerto o cambia las credenciales, usá esos
+valores. En PowerShell:
+
+```powershell
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+```
+
+El CI de GitHub Actions usa su propio PostgreSQL en el puerto `5432`; los ejemplos con `5432` de otros
+`quickstart.md` corresponden a ese caso. El servidor web escucha en `:8080` salvo que se defina `ADDR`.
 
 ## Run the application
 
@@ -35,7 +49,7 @@ UPDATE sprints SET status = 'Finalizado' WHERE project_id = <ID_DEL_PROYECTO> AN
 5. Abrir `http://localhost:8080/estimaciones`.
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
 

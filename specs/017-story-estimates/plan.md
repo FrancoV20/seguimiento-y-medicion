@@ -8,23 +8,49 @@
 
 Implementar el registro y la modificación de las horas estimadas de una historia con una pantalla
 propia, "Estimaciones" (`/estimaciones`), como páginas generadas por el servidor. El servicio
-`UpdateEstimatedHours` vive en el paquete de historias de HU-02, en archivos nuevos, y reutiliza la regla
-de horas que HU-22 deja en el dominio; tiene un puerto de almacenamiento propio (`EstimateStore`) con su
+`UpdateEstimatedHours` vive en el paquete de historias de HU-02 (`src/backlog`), en archivos nuevos, y
+reutiliza la regla de horas que HU-22 deja en el dominio; tiene un puerto de almacenamiento propio (`EstimateStore`) con su
 adaptador PostgreSQL, sin modificar archivos de HU-02. El guardado es una única sentencia que solo toca
 `user_stories.estimated_hours` y excluye las historias de un Sprint finalizado. Un catálogo de lectura
 propio (`PostgreSQLEstimateCatalog`) lista las historias con sus horas estimadas y las horas reales de
 HU-03. La sección exige proyecto activo (`RequiresProject`) y los handlers solo arman el envío, llaman al
 servicio y traducen sus errores. No agrega migraciones y no modifica HU-20a ni HU-20b.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta del paquete de historias, los nombres y el tipo de la regla de horas que dejó HU-22 (función
->    de validación, errores y mensajes) y el texto "Sin estimar".
-> 2. Que HU-07 lee `user_stories.estimated_hours` y que no hay otras columnas obligatorias al
->    actualizarla.
-> 3. La columna de historia y la de horas en `effort_logs` (se suponen `story_id` y `hours`).
-> 4. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` para `POST`,
->    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parciales `alert.html` y `field.html`,
->    redirección 303 y protección contra envíos de otro origen.
+> **Supuestos verificados (T001, T002 y T004, 2026-10-28, `main` en `d12067f`)**:
+> 1. El paquete de historias es `src/backlog`, no `src/story`. La regla numérica de horas es
+>    `validEstimatedHours(*float64)` con `maxEstimatedHours = 9999.99`, sin exportar, y un único error,
+>    `ErrInvalidEstimatedHours`. La interpretación del texto (coma o punto) está en la web
+>    (`backlog_form.go`, con `strconv.ParseFloat`) y no en el dominio. "Sin estimar" es un texto literal
+>    de la web, no una constante del dominio. Ver "Ajustes por T001" más abajo.
+> 2. HU-07 (`src/metrics/postgres_metrics_store.go`) lee `user_stories.estimated_hours`; el `UPDATE` de
+>    una sola columna no choca con otras columnas obligatorias.
+> 3. `effort_logs` usa `story_id` y `hours NUMERIC(5,2)`.
+> 4. HU-20a y HU-20b están completas en `main`: `Server.Register(section, routes)` con varias rutas y
+>    métodos aplica `RequireContext` a cada ruta (incluido `POST`) según `Section.RequiresProject`;
+>    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed` (`forms.go`), `RedirectSeeOther` (303) y
+>    `CrossOriginGuard` registrado en `main.go`. Los parciales `alert` y `field` se definen en
+>    `templates/layout.html` (no hay archivos `alert.html` ni `field.html` separados).
+> 5. `git merge origin/main`: la rama `HU-17` ya estaba al día ("Already up to date").
+
+## Ajustes por T001
+
+- **Rutas**: donde `tasks.md` dice `src/story/...`, se usa `src/backlog/...`. Para no chocar con los
+  archivos de HU-22 (`estimated_hours_test.go` y `postgres_estimated_hours_integration_test.go`), los
+  archivos nuevos son `src/backlog/update_estimated_hours.go`, `update_estimated_hours_test.go`,
+  `postgres_estimate_store.go` y `postgres_estimate_store_integration_test.go`.
+- **Interpretación del texto**: como el dominio de HU-22 solo valida números, HU-17 agrega en un archivo
+  nuevo de `src/backlog` `ParseEstimatedHours(text)`, estricto (sin signo, exponente ni separador de
+  miles; más de dos decimales se rechaza antes que el máximo), que confirma el valor con
+  `validEstimatedHours`. Detalle en `data-model.md` ("Decisión para HU-17").
+- **Error por encima del máximo**: se agrega `ErrEstimatedHoursTooLarge`, reconocido también como
+  `ErrInvalidEstimatedHours` con `errors.Is`, para que la web elija el mensaje sin volver a comparar el
+  número. HU-22 no cambia.
+- **Mensajes**: se reutilizan `MsgInvalidEstimatedHours` y `MsgHoursTooLarge` de `backlog_form.go`. Los
+  nuevos (`MsgHoursRegistered`, `MsgHoursUpdated`, `MsgStoryNotFound`, `MsgHoursLockedSprint` y la
+  constante de "Sin estimar") se definen en `estimates_form.go`; antes de declararlos se comprueba con
+  `go vet ./...` que no choquen con otros nombres del paquete `web`.
+- **Coordinación**: avisar a quien mantiene HU-22 que el texto de horas del alta acepta `1e3` y `1.000`
+  (como 1), y que `ParseEstimatedHours` podría reutilizarse allí.
 
 ## Technical Context
 
@@ -91,11 +117,11 @@ direcciones y campos, abajo.
 
 ```text
 src/
-├── story/                                    # paquete de HU-02 (ruta a confirmar en T001); archivos nuevos
-│   ├── estimated_hours.go                    # servicio UpdateEstimatedHours, errores y puerto EstimateStore
-│   ├── estimated_hours_test.go
+├── backlog/                                  # paquete de HU-02 y HU-22 (confirmado en T001); solo archivos nuevos
+│   ├── update_estimated_hours.go             # ParseEstimatedHours, servicio UpdateEstimatedHours, errores y puerto EstimateStore
+│   ├── update_estimated_hours_test.go
 │   ├── postgres_estimate_store.go            # adaptador PostgreSQL
-│   └── *_integration_test.go
+│   └── postgres_estimate_store_integration_test.go
 └── web/
     ├── estimates_catalog.go                  # EstimateRow e interfaz EstimateCatalog
     ├── postgres_estimate_catalog.go          # adaptador PostgreSQL
@@ -148,10 +174,10 @@ con las dos rutas. El proyecto se obtiene del servidor; ningún campo de proyect
 ### Contratos que consume
 
 - De HU-20a: `Server.Register(section, routes)`, `Renderer.Page`, `Fail` y `RenderError`.
-- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303, los parciales `alert.html` y
-  `field.html`, la protección contra envíos de otro origen, `ActiveContextFrom` y `RequireContext`.
-- De HU-02 y HU-22: el esquema de `user_stories` y la regla de horas del dominio con sus errores y el
-  texto "Sin estimar".
+- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303 (`RedirectSeeOther`), los parciales
+  `alert` y `field` (definidos en `templates/layout.html`), la protección contra envíos de otro origen, `ActiveContextFrom` y `RequireContext`.
+- De HU-02 y HU-22 (`src/backlog`): el esquema de `user_stories`, `validEstimatedHours`,
+  `ErrInvalidEstimatedHours` y los mensajes `MsgInvalidEstimatedHours` y `MsgHoursTooLarge` de la web.
 - De HU-03: la tabla `effort_logs` (solo lectura, para las horas reales).
 - No usa el catálogo de historias de HU-22 ni el tablero de HU-14.
 

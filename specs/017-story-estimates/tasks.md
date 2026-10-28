@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza.
 
-- [ ] T001 Revisar en `main` HU-02, HU-22, HU-03 y HU-07: ruta del paquete de historias, nombres, tipo y errores de la regla de horas que dejó HU-22 (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), mensajes y texto "Sin estimar"; que HU-07 lee `user_stories.estimated_hours`; columnas de historia y de horas en `effort_logs`; y si `user_stories` exige otras columnas al actualizar; anotar el resultado en `specs/017-story-estimates/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/017-story-estimates/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar que las migraciones `002`, `003` y `004` en `main` coinciden con el esquema anotado en `specs/017-story-estimates/data-model.md` y avisar al equipo si cambiaron
+- [x] T001 Revisar en `main` HU-02, HU-22, HU-03 y HU-07: ruta del paquete de historias, nombres, tipo y errores de la regla de horas que dejó HU-22 (mayor que 0, hasta dos decimales, coma o punto, máximo 9999,99), mensajes y texto "Sin estimar"; que HU-07 lee `user_stories.estimated_hours`; columnas de historia y de horas en `effort_logs`; y si `user_stories` exige otras columnas al actualizar; anotar el resultado en `specs/017-story-estimates/data-model.md` y ajustar `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/017-story-estimates/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar que las migraciones `002`, `003` y `004` en `main` coinciden con el esquema anotado en `specs/017-story-estimates/data-model.md` y avisar al equipo si cambiaron
 
 ---
 
