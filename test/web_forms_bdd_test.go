@@ -203,6 +203,7 @@ func TestEscenarioForm_MensajeDeUnaSolaVista(t *testing.T) {
 		t.Errorf("el mensaje no debía volver a aparecer")
 	}
 }
+
 // enviarDesde envía el formulario con las cabeceras que identifican el origen de la solicitud.
 func (a *formApp) enviarDesde(t *testing.T, cabeceras map[string]string) (*http.Response, string) {
 	t.Helper()
