@@ -174,7 +174,7 @@ func (a *seleccionApp) valorCookie(c *http.Client, nombre string) string {
 func idTexto(id int64) string { return strconv.FormatInt(id, 10) }
 
 func cookieID(nombre string, id int64) *http.Cookie {
-	return &http.Cookie{Name: nombre, Value: idTexto(id), Path: "/"}
+	return &http.Cookie{Name: nombre, Value: web.SignedContextValue(nombre, id), Path: "/"} // firmada (HU-26)
 }
 
 // US3 - Escenario: Selección de proyecto que se mantiene (FR-007, FR-008, FR-009, SC-006).

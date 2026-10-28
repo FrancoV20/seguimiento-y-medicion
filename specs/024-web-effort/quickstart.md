@@ -7,9 +7,10 @@
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
 - HU-03, HU-04, FIX-HU-04, HU-20a y HU-20b (completa) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main`.
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml` o
-  `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
+- Variable `DATABASE_URL` configurada. El `docker-compose.yml` del repositorio publica PostgreSQL en el puerto
+  **5433** del equipo (`"5433:5432"`, verificado en T003); si tu `docker-compose.override.yml` usa otro (por ejemplo
+  5432), ajustalo:
+  `postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable`.
 - No subir al repositorio claves personales; usar `docker-compose.override.yml`.
 
 ## Run the application
@@ -30,9 +31,52 @@ Para probar a mano hace falta un proyecto con integrantes, un Sprint activo con 
 4. Abrir `http://localhost:8080/esfuerzo`.
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
+
+### Datos de prueba por SQL (si HU-21, HU-22 y HU-23 todavía no están en `main`)
+
+Reemplazar `<ID_INTEGRANTE>` por el id de tu integrante (`SELECT id, display_name FROM members;`):
+
+```sql
+WITH p AS (INSERT INTO projects (name, start_date, end_date)
+           VALUES ('Demo HU-24', DATE '2026-10-01', DATE '2026-12-31') RETURNING id),
+     pm AS (INSERT INTO project_members (project_id, member_id) SELECT id, <ID_INTEGRANTE> FROM p),
+     s AS (INSERT INTO sprints (project_id, number, goal, start_date, end_date)
+           SELECT id, 1, 'Sprint de prueba', DATE '2026-10-20', DATE '2026-11-02' FROM p RETURNING id, project_id)
+INSERT INTO user_stories (project_id, title, description, priority, status, active_sprint_id)
+SELECT project_id, 'Historia de prueba HU-24', 'Descripción', 'Alta', 'En Sprint', id FROM s;
+```
+
+### Prueba manual (T039 y T051)
+
+1. Sin identificarte, abrir `/esfuerzo`: te lleva a "Identificarme" y, al elegir tu nombre, vuelve a la pantalla.
+2. La fecha trae la de hoy. Elegir la historia, escribir una actividad y `1,5` horas y presionar "Registrar horas":
+   aparece "Esfuerzo registrado correctamente", el historial con tu nombre y el total en `1,5`.
+3. Recargar la página: el mensaje no se repite y no se agrega otra carga.
+4. Enviar sin historia, sin fecha, sin actividad y con `0` horas: se ven los cuatro errores juntos, cada uno debajo
+   de su campo, y lo escrito se conserva.
+5. Cargar una fecha futura: "La fecha no puede ser posterior a la fecha actual" junto a la fecha.
+6. Escribir `<script>alert(1)</script>` como actividad: en el historial se ve como texto.
+7. Elegir un proyecto sin Sprint activo: "No hay un Sprint activo" y sin formulario.
+8. Con `docker compose stop postgres`, abrir `/esfuerzo`: página "Servicio no disponible" (HU-20a). Volver a levantar
+   la base con `docker compose start postgres`.
+
+## Manual breve de usuario: "Registro de esfuerzo"
+
+> Copiada a `docs/manual-usuario.md` al integrar `main` con HU-21.
+
+- **Para qué sirve**: cargar las horas que trabajaste en una historia del Sprint activo, sin usar comandos.
+- **Antes de empezar**: elegí el proyecto ("Elegir proyecto") e identificate ("Identificarme"). Las horas quedan
+  siempre a tu nombre.
+- **Cargar horas**: en "Registro de esfuerzo" elegí la historia, revisá la fecha (por defecto hoy), describí la
+  actividad y escribí las horas (con coma o punto, hasta dos decimales, más de 0 y hasta 24). Presioná
+  "Registrar horas".
+- **Errores**: si algo está mal, se muestran todos los errores juntos debajo de cada campo y no se pierde lo escrito.
+- **Historial**: tocá el nombre de una historia en la tabla para ver quién cargó horas, cuándo, en qué actividad y el
+  total. La tabla de historias muestra las horas acumuladas de cada una.
+- **Qué no hace**: no permite editar ni borrar cargas, ni cambiar el estado de una historia.
 
 Las pruebas automáticas no dependen de HU-21, HU-22 ni HU-23: crean sus propios proyectos, integrantes, historias,
 Sprints y registros.
