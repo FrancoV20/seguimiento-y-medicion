@@ -108,3 +108,37 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.217s
 --- PASS: TestBDD_HU05a_SinIdentificarme (0.03s)
 PASS
 ok  	github.com/FrancoV20/seguimiento-y-medicion/test	0.052s
+
+== Pantalla (T064-T069): fallan los estados vacios (la plantilla todavia no los muestra) ==
+Nota: TituloEscapado, ErrorAlLeer, RecargaSinReenviar y Rendimiento pasan desde la primera ejecucion: el escape lo
+hace html/template, la lectura fallida ya usa Fail (T030) y el mensaje flash es de un solo uso (HU-20a).
+$ go test -count=1 -p 1 -v -run "HU05a_(PantallaVacia|TituloEscapado|ErrorAlLeer|RecargaSinReenviar|Rendimiento)" ./src/web/ ./test/
+=== RUN   TestHU05a_PantallaVacia
+    poker_view_test.go:84: proyecto sin historias: falta «Aún no hay historias»
+    poker_view_test.go:84: proyecto sin historias: falta «No hay rondas abiertas»
+    poker_view_test.go:88: proyecto sin historias: no debía mostrarse el formulario de apertura
+    poker_view_test.go:93: proyecto con historias y sin rondas: debían verse el selector y «No hay rondas abiertas»
+--- FAIL: TestHU05a_PantallaVacia (0.03s)
+=== RUN   TestHU05a_TituloEscapado
+--- PASS: TestHU05a_TituloEscapado (0.02s)
+=== RUN   TestHU05a_ErrorAlLeer
+=== RUN   TestHU05a_ErrorAlLeer/falla_inesperada
+=== RUN   TestHU05a_ErrorAlLeer/base_sin_respuesta
+--- PASS: TestHU05a_ErrorAlLeer (0.04s)
+    --- PASS: TestHU05a_ErrorAlLeer/falla_inesperada (0.02s)
+    --- PASS: TestHU05a_ErrorAlLeer/base_sin_respuesta (0.02s)
+=== RUN   TestHU05a_RecargaSinReenviar
+--- PASS: TestHU05a_RecargaSinReenviar (0.03s)
+=== RUN   TestHU05a_Rendimiento
+    poker_view_test.go:207: GET /planning-poker con 50 historias, 20 rondas y 10 integrantes: 5.016717ms
+--- PASS: TestHU05a_Rendimiento (0.12s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.251s
+=== RUN   TestBDD_HU05a_PantallaVacia
+    web_poker_bdd_test.go:323: la pantalla debía mostrar "Aún no hay historias"
+    web_poker_bdd_test.go:323: la pantalla debía mostrar "No hay rondas abiertas"
+    web_poker_bdd_test.go:325: sin historias no debía mostrarse el formulario para abrir una ronda
+--- FAIL: TestBDD_HU05a_PantallaVacia (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.036s
+FAIL

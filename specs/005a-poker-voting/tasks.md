@@ -247,19 +247,19 @@ forzar una falla de guardado.
 
 ### Pruebas (RED)
 
-- [ ] T064 [P] [E13] `TestHU05a_PantallaVacia` en `src/web/poker_view_test.go`: proyecto sin historias → "Aún no
+- [x] T064 [P] [E13] `TestHU05a_PantallaVacia` en `src/web/poker_view_test.go`: proyecto sin historias → "Aún no
   hay historias" y "No hay rondas abiertas", sin formulario de apertura; con historias y sin rondas → selector y
   "No hay rondas abiertas"
-- [ ] T065 [P] `TestHU05a_TituloEscapado`: un título y un nombre de integrante con `<script>` se ven como texto, en
+- [x] T065 [P] `TestHU05a_TituloEscapado`: un título y un nombre de integrante con `<script>` se ven como texto, en
   la página y en el mensaje de apertura
-- [ ] T066 [P] `TestHU05a_ErrorAlLeer`: con un `PokerCatalog` que falla, la página de error de HU-20a (500, o 503 si
+- [x] T066 [P] `TestHU05a_ErrorAlLeer`: con un `PokerCatalog` que falla, la página de error de HU-20a (500, o 503 si
   la base no responde) y nada de la pantalla
-- [ ] T067 [P] [E2] `TestHU05a_RecargaSinReenviar`: después de votar, dos GET seguidos → el mensaje aparece una sola
+- [x] T067 [P] [E2] `TestHU05a_RecargaSinReenviar`: después de votar, dos GET seguidos → el mensaje aparece una sola
   vez y hay un solo voto
-- [ ] T068 [P] `TestHU05a_Rendimiento`: con 50 historias, 20 rondas abiertas y 10 integrantes, `GET
+- [x] T068 [P] `TestHU05a_Rendimiento`: con 50 historias, 20 rondas abiertas y 10 integrantes, `GET
   /planning-poker` responde en menos de 500 ms con la base local (SC-007)
-- [ ] T069 [P] [E13] `TestBDD_HU05a_PantallaVacia` en `test/web_poker_bdd_test.go`
-- [ ] T070 Ejecutar T064–T069, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
+- [x] T069 [P] [E13] `TestBDD_HU05a_PantallaVacia` en `test/web_poker_bdd_test.go`
+- [x] T070 Ejecutar T064–T069, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
   "Pantalla")
 
 ### Implementación (GREEN)

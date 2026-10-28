@@ -309,3 +309,19 @@ func TestBDD_HU05a_SinIdentificarme(t *testing.T) {
 		t.Errorf("se esperaba volver a /planning-poker, se obtuvo %s", resp.Request.URL)
 	}
 }
+
+// Escenario 13: pantalla vacía.
+func TestBDD_HU05a_PantallaVacia(t *testing.T) {
+	// Dado un proyecto sin historias
+	m := dadoUnEquipoQueEstima(t)
+	app := m.laAplicacion(t)
+
+	// Cuando abro Planning Poker
+	_, cuerpo := app.abrir(t, app.navegador(t, m.vacio, m.ana), "/planning-poker")
+
+	// Entonces veo que aún no hay historias ni rondas, y no puedo abrir una ronda
+	pokerDebeContener(t, cuerpo, web.MsgPokerNoStories, web.MsgPokerNoOpenRounds)
+	if strings.Contains(cuerpo, `action="/planning-poker/abrir"`) {
+		t.Error("sin historias no debía mostrarse el formulario para abrir una ronda")
+	}
+}
