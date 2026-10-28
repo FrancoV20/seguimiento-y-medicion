@@ -1,0 +1,144 @@
+== Fundamentos (T006-T021): sin el paquete src/poker, sin la migración 011 y sin el catálogo ==
+$ go test -count=1 -p 1 -v -run 'ParseValue|Series|CheckOpen|CheckVote|Service_|MigracionPoker|PostgresOpenRound|PostgresCastVote|PostgresPokerCatalog|PokerViewModel' ./src/poker/ ./src/web/
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src/poker/service_test.go:17:23: undefined: OpenedRound
+src/poker/service_test.go:18:23: undefined: VoteOutcome
+src/poker/service_test.go:22:87: undefined: OpenedRound
+src/poker/service_test.go:28:97: undefined: VoteOutcome
+src/poker/postgres_store_integration_test.go:35:14: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:63:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:73:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:73:123: undefined: ErrStoryNotFound
+src/poker/postgres_store_integration_test.go:83:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:203:48: undefined: OpenedRound
+src/poker/postgres_store_integration_test.go:83:15: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/poker_catalog_test.go:11:24: undefined: PokerParticipantView
+src/web/postgres_poker_catalog_integration_test.go:94:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:98:12: undefined: PokerStoryOption
+src/web/postgres_poker_catalog_integration_test.go:110:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:123:13: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:132:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:143:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:147:12: undefined: PokerParticipantView
+src/web/postgres_poker_catalog_integration_test.go:162:13: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:179:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:179:16: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
+
+== Abrir ronda (T033-T037): sin la sección Planning Poker ==
+$ go test -count=1 -p 1 -v -run 'HU05a_(AbrirRonda|HistoriaConRondaAbierta|HistoriaYaTuvoRonda|SelectorTodasLasHistorias)' ./src/web/ ./test/
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/poker_handlers_test.go:52:12: undefined: RegisterPlanningPoker
+src/web/poker_handlers_test.go:176:64: undefined: LabelPokerNotVoted
+src/web/poker_handlers_test.go:177:62: undefined: LabelPokerNotVoted
+src/web/poker_handlers_test.go:194:29: undefined: MsgPokerRoundAlreadyOpen
+src/web/poker_handlers_test.go:195:28: undefined: MsgPokerRoundAlreadyOpen
+src/web/poker_handlers_test.go:208:29: undefined: MsgPokerStoryAlreadyRounded
+src/web/poker_handlers_test.go:209:28: undefined: MsgPokerStoryAlreadyRounded
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test/web_poker_bdd_test.go:89:16: undefined: web.RegisterPlanningPoker
+test/web_poker_bdd_test.go:160:48: undefined: web.LabelPokerNotVoted
+test/web_poker_bdd_test.go:181:35: undefined: web.MsgPokerRoundAlreadyOpen
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+== Votar (T045-T049): sin la ruta /planning-poker/votar ==
+$ go test -count=1 -p 1 -v -run 'HU05a_(VotoRegistrado|VotoActualizado|VotosAjenosOcultos|CambioDeIdentificacion|VotoOculto|CambioDeVoto|VotosOcultos)' ./src/web/ ./test/
+=== RUN   TestHU05a_VotoRegistrado
+    poker_handlers_test.go:252: se esperaba 303, se obtuvo 404
+--- FAIL: TestHU05a_VotoRegistrado (0.02s)
+=== RUN   TestHU05a_VotoActualizado
+    poker_handlers_test.go:279: se esperaba 303, se obtuvo 404
+--- FAIL: TestHU05a_VotoActualizado (0.02s)
+=== RUN   TestHU05a_VotosAjenosOcultos
+    poker_view_test.go:29: la fila de Ana debía decir «Votó» sin el valor: Ana Poker 1793162987183749572: Sin votar
+    poker_view_test.go:32: la fila de Beto debía mostrar su voto: Beto Poker 1793162987183749572: Sin votar
+    poker_view_test.go:35: el único valor marcado debía ser 3, se obtuvo []
+--- FAIL: TestHU05a_VotosAjenosOcultos (0.03s)
+=== RUN   TestHU05a_CambioDeIdentificacion
+    poker_view_test.go:60: se esperaba ver solo «Tu voto: 13»
+--- FAIL: TestHU05a_CambioDeIdentificacion (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.105s
+=== RUN   TestBDD_HU05a_VotoOculto
+    web_poker_bdd_test.go:213: la pantalla debía mostrar "Voto registrado"
+    web_poker_bdd_test.go:215: mi fila debía decir «Votó» y «Tu voto: 5»: 
+--- FAIL: TestBDD_HU05a_VotoOculto (0.03s)
+=== RUN   TestBDD_HU05a_CambioDeVoto
+    web_poker_bdd_test.go:232: la pantalla debía mostrar "Voto actualizado"
+    web_poker_bdd_test.go:232: la pantalla debía mostrar "Tu voto: 8"
+    web_poker_bdd_test.go:236: debía haber un solo voto de Ana, hay 0
+--- FAIL: TestBDD_HU05a_CambioDeVoto (0.03s)
+=== RUN   TestBDD_HU05a_VotosOcultos
+    web_poker_bdd_test.go:255: la fila de Ana debía decir «Votó» sin el valor: Ana BDD05a 1793162988249724625: Sin votar
+--- FAIL: TestBDD_HU05a_VotosOcultos (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.085s
+FAIL
+
+== Errores y estados (T054-T060): RED no reproducible ==
+Nota: estas pruebas pasan en la primera ejecucion. Los rechazos (pokerOutcomeFor + reject, 422/409/404/500)
+y la redireccion a identificarse (RequiresMember de HU-20b) ya se implementaron en los bloques "Abrir ronda" y
+"Votar" (T030-T032, T051-T053), porque open/vote necesitaban un camino de error. Se registra la salida tal cual;
+T062 no requiere codigo nuevo.
+$ go test -count=1 -p 1 -v -run "HU05a_(ValorFueraDeSerie|VotoSinValor|RondaCerrada|RondaInexistente|HistoriaInexistente|ErrorAlGuardar|SinIdentificarme)" ./src/web/ ./test/
+=== RUN   TestHU05a_ValorFueraDeSerie
+--- PASS: TestHU05a_ValorFueraDeSerie (0.03s)
+=== RUN   TestHU05a_VotoSinValor
+--- PASS: TestHU05a_VotoSinValor (0.02s)
+=== RUN   TestHU05a_RondaCerrada
+--- PASS: TestHU05a_RondaCerrada (0.03s)
+=== RUN   TestHU05a_RondaInexistente
+--- PASS: TestHU05a_RondaInexistente (0.04s)
+=== RUN   TestHU05a_HistoriaInexistente
+--- PASS: TestHU05a_HistoriaInexistente (0.03s)
+=== RUN   TestHU05a_ErrorAlGuardar
+--- PASS: TestHU05a_ErrorAlGuardar (0.03s)
+=== RUN   TestHU05a_SinIdentificarme
+--- PASS: TestHU05a_SinIdentificarme (0.02s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.217s
+=== RUN   TestBDD_HU05a_RondaCerrada
+--- PASS: TestBDD_HU05a_RondaCerrada (0.02s)
+=== RUN   TestBDD_HU05a_SinIdentificarme
+--- PASS: TestBDD_HU05a_SinIdentificarme (0.03s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	0.052s
+
+== Pantalla (T064-T069): fallan los estados vacios (la plantilla todavia no los muestra) ==
+Nota: TituloEscapado, ErrorAlLeer, RecargaSinReenviar y Rendimiento pasan desde la primera ejecucion: el escape lo
+hace html/template, la lectura fallida ya usa Fail (T030) y el mensaje flash es de un solo uso (HU-20a).
+$ go test -count=1 -p 1 -v -run "HU05a_(PantallaVacia|TituloEscapado|ErrorAlLeer|RecargaSinReenviar|Rendimiento)" ./src/web/ ./test/
+=== RUN   TestHU05a_PantallaVacia
+    poker_view_test.go:84: proyecto sin historias: falta «Aún no hay historias»
+    poker_view_test.go:84: proyecto sin historias: falta «No hay rondas abiertas»
+    poker_view_test.go:88: proyecto sin historias: no debía mostrarse el formulario de apertura
+    poker_view_test.go:93: proyecto con historias y sin rondas: debían verse el selector y «No hay rondas abiertas»
+--- FAIL: TestHU05a_PantallaVacia (0.03s)
+=== RUN   TestHU05a_TituloEscapado
+--- PASS: TestHU05a_TituloEscapado (0.02s)
+=== RUN   TestHU05a_ErrorAlLeer
+=== RUN   TestHU05a_ErrorAlLeer/falla_inesperada
+=== RUN   TestHU05a_ErrorAlLeer/base_sin_respuesta
+--- PASS: TestHU05a_ErrorAlLeer (0.04s)
+    --- PASS: TestHU05a_ErrorAlLeer/falla_inesperada (0.02s)
+    --- PASS: TestHU05a_ErrorAlLeer/base_sin_respuesta (0.02s)
+=== RUN   TestHU05a_RecargaSinReenviar
+--- PASS: TestHU05a_RecargaSinReenviar (0.03s)
+=== RUN   TestHU05a_Rendimiento
+    poker_view_test.go:207: GET /planning-poker con 50 historias, 20 rondas y 10 integrantes: 5.016717ms
+--- PASS: TestHU05a_Rendimiento (0.12s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.251s
+=== RUN   TestBDD_HU05a_PantallaVacia
+    web_poker_bdd_test.go:323: la pantalla debía mostrar "Aún no hay historias"
+    web_poker_bdd_test.go:323: la pantalla debía mostrar "No hay rondas abiertas"
+    web_poker_bdd_test.go:325: sin historias no debía mostrarse el formulario para abrir una ronda
+--- FAIL: TestBDD_HU05a_PantallaVacia (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.036s
+FAIL
