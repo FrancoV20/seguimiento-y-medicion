@@ -10,6 +10,16 @@ const (
 	SeverityLow      Severity = "Baja"
 )
 
+// IsValid informa si la severidad es una de las admitidas.
+func (s Severity) IsValid() bool {
+	switch s {
+	case SeverityCritical, SeverityHigh, SeverityMedium, SeverityLow:
+		return true
+	default:
+		return false
+	}
+}
+
 // Status es el estado de un defecto.
 type Status string
 

@@ -2,7 +2,8 @@ package defect
 
 import (
 	"context"
-	"errors"
+	"strings"
+	"unicode/utf8"
 )
 
 const (
@@ -36,10 +37,33 @@ func NewService(store Store) *Service {
 
 // Validate valida y normaliza una solicitud de registro.
 func Validate(input RegisterInput) (RegisterInput, []FieldError) {
-	return input, nil
+	var violations []FieldError
+	input.Description = strings.TrimSpace(input.Description)
+	switch {
+	case input.Description == "":
+		violations = append(violations, FieldError{Field: FieldDescription, Err: ErrDescriptionRequired})
+	case utf8.RuneCountInString(input.Description) > 1000:
+		violations = append(violations, FieldError{Field: FieldDescription, Err: ErrDescriptionTooLong})
+	}
+
+	switch {
+	case input.Severity == "":
+		violations = append(violations, FieldError{Field: FieldSeverity, Err: ErrSeverityRequired})
+	case !input.Severity.IsValid():
+		violations = append(violations, FieldError{Field: FieldSeverity, Err: ErrSeverityInvalid})
+	}
+
+	if input.StoryID <= 0 {
+		violations = append(violations, FieldError{Field: FieldStory, Err: ErrStoryRequired})
+	}
+	return input, violations
 }
 
 // Register registra un defecto validado.
-func (s *Service) Register(_ context.Context, _ RegisterInput) (Registered, error) {
-	return Registered{}, errors.New("implementación pendiente")
+func (s *Service) Register(ctx context.Context, input RegisterInput) (Registered, error) {
+	input, violations := Validate(input)
+	if len(violations) > 0 {
+		return Registered{}, ValidationErrors(violations)
+	}
+	return s.store.Create(ctx, input)
 }

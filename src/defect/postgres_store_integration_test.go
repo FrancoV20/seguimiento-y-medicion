@@ -152,7 +152,7 @@ func TestPostgreSQLStore_CreateTracksActiveSprintAndPreservesStory(t *testing.T)
 	}
 
 	if _, err := store.Create(ctx, RegisterInput{ProjectID: fixture.projectB, StoryID: fixture.storyProjectB, Description: "sin Sprint", Severity: SeverityLow}); !errors.Is(err, ErrNoActiveSprint) {
-		t.Errorf("proyecto B sin Sprint activo: se esperaba ErrNoActiveSprint, se obtuvo %v", err)
+		t.Errorf("proyecto B solo con Sprint finalizado: se esperaba ErrNoActiveSprint, se obtuvo %v", err)
 	}
 }
 
@@ -179,6 +179,20 @@ func TestPostgreSQLStore_CreateRejectsForeignStoryAndRollsBack(t *testing.T) {
 	}
 	if after != before {
 		t.Errorf("la transacción fallida dejó defectos: antes=%d después=%d", before, after)
+	}
+
+	input.StoryID = fixture.storyPending
+	input.Severity = "No válida"
+	if _, err := store.Create(ctx, input); err == nil {
+		t.Fatal("se esperaba que PostgreSQL rechazara la severidad inválida")
+	}
+	if err := db.QueryRowContext(ctx,
+		`SELECT count(*) FROM defects WHERE project_id = $1`, fixture.projectA,
+	).Scan(&after); err != nil {
+		t.Fatal(err)
+	}
+	if after != before {
+		t.Errorf("la falla del INSERT dejó datos parciales: antes=%d después=%d", before, after)
 	}
 }
 
