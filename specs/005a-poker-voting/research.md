@@ -1,5 +1,15 @@
 # Investigación: HU-05a – Emisión de voto oculto en Planning Poker
 
+## Resultado de la preparación (T001–T004, 28/10/2026)
+
+- **T001**: `HU-05a` está en `origin/main` (`d234b5a`), sin commits propios: no hizo falta adelantarla.
+- **T002**: `git fetch --all`; en `origin/main` y en todas las ramas remotas la última migración es `008`. Nadie
+  usa `009`, `010` ni `011`: HU-05a toma `011` (009 y 010 siguen reservadas para HU-06 y HU-15).
+- **T003**: `git grep -n -i poker -- src` sin coincidencias. En `origin/main` están `RequireContext`, `parseID`,
+  `Renderer.PageStatus`, `Renderer.Fail`, `SetFlash`, `MsgOperationFailed`, el parcial `alert` y
+  `backlog.ValidateStoryPoints(*int) error`.
+- **T004**: línea base en verde con `go test -count=1 -p 1 ./...` (PostgreSQL 16, migraciones 001–008).
+
 ## Datos verificados en el código (27/10/2026)
 
 - **Rama de trabajo**: la `main` local está en `dc55f92` y `origin/main` en `774fd05` (ya incluye HU-14, el

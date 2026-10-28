@@ -14,18 +14,18 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Crear la rama `HU-05a` desde `main` actualizado: `git switch main; git pull` (la `main` local está
+- [x] T001 Crear la rama `HU-05a` desde `main` actualizado: `git switch main; git pull` (la `main` local está
   detrás de `origin/main`, falta HU-14); como `HU-05a` ya existe localmente, confirmar con `git log main..HU-05a`
   que no tiene commits propios y hacer `git switch HU-05a; git merge --ff-only origin/main` (si no existiera:
   `git switch -c HU-05a`)
-- [ ] T002 `git fetch --all` y confirmar en `origin/main` y en las ramas remotas el último número de migración
+- [x] T002 `git fetch --all` y confirmar en `origin/main` y en las ramas remotas el último número de migración
   (`git ls-tree --name-only <rama> db/migrations/`): 009 y 010 siguen reservadas para HU-06 y HU-15 y nadie usa
   011; anotar el resultado en `research.md` (sección "Datos verificados") y, si cambió, ajustar el número en
   `plan.md`, `data-model.md` y este archivo
-- [ ] T003 [P] `git grep -n -i poker -- src` sin coincidencias; confirmar en `origin/main` los contratos listados
+- [x] T003 [P] `git grep -n -i poker -- src` sin coincidencias; confirmar en `origin/main` los contratos listados
   en `research.md` (`RequireContext`, `parseID`, `PageStatus`, `Fail`, `SetFlash`, `MsgOperationFailed`, parcial
   `alert`) y la firma de `backlog.ValidateStoryPoints(*int) error`
-- [ ] T004 Línea base: `DATABASE_URL` definida, `migrate … up` aplicado y `go test -count=1 -p 1 ./...` en verde
+- [x] T004 Línea base: `DATABASE_URL` definida, `migrate … up` aplicado y `go test -count=1 -p 1 ./...` en verde
 - [ ] T005 [P] Avisar al equipo que HU-05a toma la migración 011 y edita `src/cmd/server/main.go` (coordinar con
   quien tenga HU-06 y HU-15, que también lo editan)
 
