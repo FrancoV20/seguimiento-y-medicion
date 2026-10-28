@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -211,5 +212,307 @@ func TestDefectsHandler_RegisterEverySeverity(t *testing.T) {
 	want := []string{"Crítica", "Alta", "Media", "Baja"}
 	if fmt.Sprint(got) != fmt.Sprint(want) {
 		t.Errorf("severidades persistidas = %v; se esperaban %v", got, want)
+	}
+}
+
+func TestDefectsHandler_RequiredFieldsReturnAllErrorsAndPreserveValues(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+	values := url.Values{
+		DefectDescriptionField: {"   "},
+		DefectSeverityField:    {""},
+		DefectStoryField:       {""},
+	}
+
+	resp, body := fixture.app.post(t, client, "/defectos", values)
+
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Errorf("el formulario inválido debía responder 422; obtuvo %d", resp.StatusCode)
+	}
+	for _, field := range []struct{ name, message string }{
+		{DefectDescriptionField, MsgDefectDescriptionRequired},
+		{DefectSeverityField, MsgDefectSeverityRequired},
+		{DefectStoryField, MsgDefectStoryRequired},
+	} {
+		if !strings.Contains(body, field.message) || !strings.Contains(body, `id="`+field.name+`-error"`) {
+			t.Errorf("el error %q debía aparecer junto al campo %q", field.message, field.name)
+		}
+	}
+	if !strings.Contains(body, `name="descripcion" value="   "`) {
+		t.Errorf("el valor de descripción debía conservarse")
+	}
+	assertNoDefects(t, fixture.app.db, fixture.app.fx.projectA)
+}
+
+func TestDefectsHandler_DescriptionLengthAndWhitespace(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+
+	for _, tc := range []struct {
+		name, description, message string
+		status                     int
+	}{
+		{"solo espacios", " \t ", MsgDefectDescriptionRequired, http.StatusUnprocessableEntity},
+		{"1001 caracteres", strings.Repeat("ñ", 1001), MsgDefectDescriptionTooLong, http.StatusUnprocessableEntity},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			values := url.Values{
+				DefectDescriptionField: {tc.description},
+				DefectSeverityField:    {"Media"},
+				DefectStoryField:       {id64(fixture.storyActiveA)},
+			}
+			resp, body := fixture.app.post(t, client, "/defectos", values)
+			if resp.StatusCode != tc.status || !strings.Contains(body, tc.message) ||
+				!strings.Contains(body, `id="descripcion-error"`) {
+				t.Errorf("status=%d debía ser %d y mostrar el error %q junto a descripción",
+					resp.StatusCode, tc.status, tc.message)
+			}
+			assertNoDefects(t, fixture.app.db, fixture.app.fx.projectA)
+		})
+	}
+
+	description := strings.Repeat("ñ", 1000)
+	values := url.Values{
+		DefectDescriptionField: {description},
+		DefectSeverityField:    {"Media"},
+		DefectStoryField:       {id64(fixture.storyActiveA)},
+	}
+	resp, _ := fixture.app.post(t, client, "/defectos", values)
+	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/defectos" {
+		t.Fatalf("1000 caracteres debían aceptarse con redirección 303; obtuvo %d", resp.StatusCode)
+	}
+	var storedLength int
+	if err := fixture.app.db.QueryRow(
+		`SELECT char_length(description) FROM defects WHERE story_id = $1`, fixture.storyActiveA,
+	).Scan(&storedLength); err != nil {
+		t.Fatal(err)
+	}
+	if storedLength != 1000 {
+		t.Errorf("se guardaron %d caracteres; se esperaban 1000", storedLength)
+	}
+}
+
+func TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+
+	cases := []struct {
+		name, story, severity, field, message string
+	}{
+		{"historia de otro proyecto", id64(fixture.storyB), "Alta", DefectStoryField, MsgDefectStoryNotInProject},
+		{"historia inexistente", "999999999", "Alta", DefectStoryField, MsgDefectStoryNotInProject},
+		{"historia no numérica", "abc", "Alta", DefectStoryField, MsgDefectStoryNotInProject},
+		{"severidad inválida", id64(fixture.storyActiveA), "Urgente", DefectSeverityField, MsgDefectSeverityInvalid},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			values := url.Values{
+				DefectDescriptionField: {"Descripción conservada"},
+				DefectSeverityField:    {tc.severity},
+				DefectStoryField:       {tc.story},
+			}
+			resp, body := fixture.app.post(t, client, "/defectos", values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("el envío inválido debía responder 422; obtuvo %d", resp.StatusCode)
+			}
+			if !strings.Contains(body, tc.message) || !strings.Contains(body, `id="`+tc.field+`-error"`) {
+				t.Errorf("faltó el error %q junto al campo %q", tc.message, tc.field)
+			}
+			for _, value := range []string{"Descripción conservada", tc.severity, tc.story} {
+				if value != "" && !strings.Contains(body, `value="`+value+`"`) {
+					t.Errorf("no se conservó el valor enviado %q", value)
+				}
+			}
+			assertNoDefects(t, fixture.app.db, fixture.app.fx.projectA)
+		})
+	}
+}
+
+func TestDefectsHandler_NoActiveSprintRejectsGetAndPost(t *testing.T) {
+	for _, sprintStatus := range []string{"sin Sprints", "todos finalizados"} {
+		t.Run(sprintStatus, func(t *testing.T) {
+			fixture := newDefectsHandlerFixture(t)
+			client := fixture.app.client(false)
+			fixture.selectProjectA(t, client)
+			if sprintStatus == "todos finalizados" {
+				if _, err := fixture.app.db.Exec(
+					`UPDATE sprints SET status = 'Finalizado' WHERE id = $1`, fixture.activeSprintA,
+				); err != nil {
+					t.Fatal(err)
+				}
+			} else {
+				if _, err := fixture.app.db.Exec(
+					`DELETE FROM user_stories WHERE id = $1`, fixture.storyActiveA,
+				); err != nil {
+					t.Fatal(err)
+				}
+				fixture.storyActiveA = 0
+				if _, err := fixture.app.db.Exec(
+					`DELETE FROM sprints WHERE id = $1`, fixture.activeSprintA,
+				); err != nil {
+					t.Fatal(err)
+				}
+				fixture.activeSprintA = 0
+			}
+
+			getResp, getBody := fixture.app.get(t, client, "/defectos")
+			if getResp.StatusCode != http.StatusConflict || !strings.Contains(getBody, MsgDefectNoSprint) {
+				t.Errorf("GET sin Sprint activo debía responder 409 con %q; obtuvo %d", MsgDefectNoSprint, getResp.StatusCode)
+			}
+			if strings.Contains(getBody, `<form`) || strings.Contains(getBody, `name="descripcion"`) {
+				t.Errorf("GET sin Sprint activo no debía mostrar el formulario")
+			}
+
+			values := url.Values{
+				DefectDescriptionField: {"Descripción"},
+				DefectSeverityField:    {"Alta"},
+				DefectStoryField:       {id64(fixture.storyDone)},
+			}
+			postResp, postBody := fixture.app.post(t, client, "/defectos", values)
+			if postResp.StatusCode != http.StatusConflict || !strings.Contains(postBody, MsgDefectNoSprint) {
+				t.Errorf("POST sin Sprint activo debía responder 409 con %q; obtuvo %d", MsgDefectNoSprint, postResp.StatusCode)
+			}
+			assertNoDefects(t, fixture.app.db, fixture.app.fx.projectA)
+		})
+	}
+}
+
+type failingDefectStore struct{ err error }
+
+func (s failingDefectStore) Create(context.Context, defect.RegisterInput) (defect.Registered, error) {
+	return defect.Registered{}, s.err
+}
+
+func TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails(t *testing.T) {
+	var testDB *sql.DB
+	app := newCtxApp(t, nil, func(server *Server) {
+		testDB = openContextTestDB(t)
+		if err := RegisterDefects(
+			server,
+			defect.NewService(failingDefectStore{err: errors.New("private database detail")}),
+			NewPostgreSQLDefectCatalog(testDB),
+		); err != nil {
+			t.Fatalf("no se pudo registrar la sección Defectos: %v", err)
+		}
+	})
+	client := app.client(false)
+	resp, _ := app.selectProject(t, client, id64(app.fx.projectA), "/defectos")
+	if resp.StatusCode != http.StatusSeeOther {
+		t.Fatalf("la selección del proyecto debía redirigir; obtuvo %d", resp.StatusCode)
+	}
+
+	values := url.Values{
+		DefectDescriptionField: {"Descripción conservada ante falla"},
+		DefectSeverityField:    {"Baja"},
+		DefectStoryField:       {id64(app.fx.projectA)},
+	}
+	resp, body := app.post(t, client, "/defectos", values)
+	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, MsgOperationFailed) {
+		t.Errorf("la falla de guardado debía responder 500 con %q; obtuvo %d", MsgOperationFailed, resp.StatusCode)
+	}
+	if !strings.Contains(body, `value="Descripción conservada ante falla"`) ||
+		!strings.Contains(body, `value="Baja"`) ||
+		!strings.Contains(body, `value="`+id64(app.fx.projectA)+`"`) {
+		t.Errorf("la respuesta debía conservar los valores enviados")
+	}
+	if strings.Contains(body, "private database detail") || strings.Contains(body, "Defecto registrado correctamente.") {
+		t.Errorf("la respuesta no debe exponer detalles internos ni mostrar éxito")
+	}
+	assertNoDefects(t, testDB, app.fx.projectA)
+}
+
+func TestDefectsHandler_NoProjectContextRedirectsWithoutSaving(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	postValues := url.Values{
+		DefectDescriptionField: {"No debe guardarse"},
+		DefectSeverityField:    {"Alta"},
+		DefectStoryField:       {id64(fixture.storyActiveA)},
+	}
+	cases := []struct {
+		name  string
+		setup func(*http.Client)
+	}{
+		{"sin selección", func(*http.Client) {}},
+		{"cookie inválida", func(client *http.Client) {
+			fixture.app.setCookies(t, client, &http.Cookie{Name: CookieProject, Value: "invalid", Path: "/"})
+		}},
+		{"proyecto eliminado", func(client *http.Client) {
+			var deletedProjectID int64
+			if err := fixture.app.db.QueryRow(
+				`INSERT INTO projects (name, start_date, end_date) VALUES ($1, '2026-01-01', '2026-12-31') RETURNING id`,
+				fmt.Sprintf("HU06 proyecto eliminado %d", fixture.storyActiveA),
+			).Scan(&deletedProjectID); err != nil {
+				t.Fatalf("no se pudo crear el proyecto temporal: %v", err)
+			}
+			fixture.app.setCookies(t, client, idCookie(CookieProject, deletedProjectID))
+			if _, err := fixture.app.db.Exec(`DELETE FROM projects WHERE id = $1`, deletedProjectID); err != nil {
+				t.Fatalf("no se pudo eliminar el proyecto temporal: %v", err)
+			}
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			client := fixture.app.client(false)
+			tc.setup(client)
+			resp, body := fixture.app.post(t, client, "/defectos", postValues)
+			if resp.StatusCode != http.StatusSeeOther ||
+				!strings.HasPrefix(resp.Header.Get("Location"), pathSelectProject+"?volver_a=") {
+				t.Errorf("sin proyecto activo debía redirigir a selección; status=%d location=%q",
+					resp.StatusCode, resp.Header.Get("Location"))
+			}
+			if strings.Contains(body, "No debe guardarse") {
+				t.Errorf("el formulario no debía procesarse sin proyecto activo")
+			}
+			assertNoDefects(t, fixture.app.db, fixture.app.fx.projectA)
+		})
+	}
+}
+
+type failingDefectCatalog struct {
+	DefectCatalog
+	err error
+}
+
+func (c failingDefectCatalog) Defects(context.Context, int64) ([]DefectRow, error) {
+	return nil, c.err
+}
+
+func TestDefectsHandler_CatalogFailureUsesApplicationErrorPage(t *testing.T) {
+	app := newCtxApp(t, nil, func(server *Server) {
+		db := openContextTestDB(t)
+		if err := RegisterDefects(
+			server,
+			defect.NewService(defect.NewPostgreSQLStore(db)),
+			failingDefectCatalog{DefectCatalog: NewPostgreSQLDefectCatalog(db), err: errors.New("private query detail")},
+		); err != nil {
+			t.Fatalf("no se pudo registrar la sección Defectos: %v", err)
+		}
+	})
+	client := app.client(false)
+	resp, _ := app.selectProject(t, client, id64(app.fx.projectA), "/defectos")
+	if resp.StatusCode != http.StatusSeeOther {
+		t.Fatalf("la selección del proyecto debía redirigir; obtuvo %d", resp.StatusCode)
+	}
+
+	resp, body := app.get(t, client, "/defectos")
+	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, MsgInternal) {
+		t.Errorf("la falla de lectura debía mostrar la página de error común; obtuvo %d", resp.StatusCode)
+	}
+	if strings.Contains(body, "private query detail") || strings.Contains(body, `<form`) || strings.Contains(body, `<table`) {
+		t.Errorf("la respuesta no debe exponer el error interno ni renderizar una pantalla incompleta")
+	}
+}
+
+func assertNoDefects(t *testing.T, db *sql.DB, projectID int64) {
+	t.Helper()
+	var count int
+	if err := db.QueryRow(`SELECT count(*) FROM defects WHERE project_id = $1`, projectID).Scan(&count); err != nil {
+		t.Fatal(err)
+	}
+	if count != 0 {
+		t.Errorf("no debía guardarse ningún defecto; se encontraron %d", count)
 	}
 }

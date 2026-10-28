@@ -77,12 +77,12 @@
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Escribir la prueba de handler de errores juntos: descripción vacía, severidad vacía y historia vacía a la vez, con los tres mensajes junto a su campo, datos conservados, 422 y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir la prueba de handler de descripción solo con espacios y de 1001 caracteres (y de 1000 aceptada), cada una con su mensaje junto al campo, en `src/web/defects_handlers_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba de handler de historia de otro proyecto, inexistente y no numérica, y de severidad fuera de la lista: error junto al campo, datos conservados y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir la prueba de handler sin Sprint activo (sin Sprints y con todos finalizados): `GET` con "No hay un Sprint activo; no se puede registrar un defecto" y sin formulario, `POST` con 409 y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T028 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T029 [P] [US2] Escribir los escenarios BDD de omisión de datos obligatorios, descripción obligatoria, sin Sprint activo, historia de otro proyecto y error al guardar en `test/web_defects_bdd_test.go`
+- [x] T024 [P] [US2] Escribir la prueba de handler de errores juntos: descripción vacía, severidad vacía y historia vacía a la vez, con los tres mensajes junto a su campo, datos conservados, 422 y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T025 [P] [US2] Escribir la prueba de handler de descripción solo con espacios y de 1001 caracteres (y de 1000 aceptada), cada una con su mensaje junto al campo, en `src/web/defects_handlers_test.go`
+- [x] T026 [P] [US2] Escribir la prueba de handler de historia de otro proyecto, inexistente y no numérica, y de severidad fuera de la lista: error junto al campo, datos conservados y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T027 [P] [US2] Escribir la prueba de handler sin Sprint activo (sin Sprints y con todos finalizados): `GET` con "No hay un Sprint activo; no se puede registrar un defecto" y sin formulario, `POST` con 409 y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T028 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T029 [P] [US2] Escribir los escenarios BDD de omisión de datos obligatorios, descripción obligatoria, sin Sprint activo, historia de otro proyecto y error al guardar en `test/web_defects_bdd_test.go`
 
 ### Implementation for User Story 2
 
@@ -120,9 +120,9 @@
 - [ ] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/defects_handlers.go` y `src/web/defects_form.go`
 - [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T042 [P] Escribir la prueba de handler de recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje, en `src/web/defects_handlers_test.go`
-- [ ] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/defects_handlers_test.go`
-- [ ] T044 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/defects_handlers_test.go`
+- [x] T042 [P] Escribir la prueba de handler de recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje, en `src/web/defects_handlers_test.go`
+- [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/defects_handlers_test.go`
+- [x] T044 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/defects_handlers_test.go`
 - [x] T045 Guardar en `specs/006-defects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
 - [ ] T047 Coordinar con quien tome HU-19 que extiende `defects.html` y `defects_handlers.go` (acciones de resolver y reabrir) y completa `resolution_sprint_id` y el estado; con quien tome HU-10 que cuenta defectos por `detection_sprint_id` y `resolution_sprint_id`; con HU-08 y HU-09 que leen la misma tabla; con HU-15 que su cierre bloquea la fila del Sprint con `FOR UPDATE`; y el número de migración con quien tenga la de HU-15
