@@ -1,0 +1,176 @@
+package test
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"os"
+	"testing"
+	"time"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
+	_ "github.com/jackc/pgx/v5/stdlib"
+)
+
+type defectBDDScenario struct {
+	db           *sql.DB
+	service      *defect.Service
+	projectID    int64
+	activeSprint int64
+}
+
+func givenDefectBDDScenario(t *testing.T) defectBDDScenario {
+	t.Helper()
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		t.Skip("DATABASE_URL no definida: se omite el escenario con PostgreSQL")
+	}
+	db, err := sql.Open("pgx", databaseURL)
+	if err != nil {
+		t.Fatalf("no se pudo abrir PostgreSQL: %v", err)
+	}
+	t.Cleanup(func() { _ = db.Close() })
+	if err := db.PingContext(context.Background()); err != nil {
+		t.Fatalf("no se pudo conectar a PostgreSQL: %v", err)
+	}
+
+	stamp := time.Now().UnixNano()
+	var scenario defectBDDScenario
+	scenario.db = db
+	insertID := func(query string, args ...any) int64 {
+		t.Helper()
+		var id int64
+		if err := db.QueryRowContext(context.Background(), query, args...).Scan(&id); err != nil {
+			t.Fatalf("no se pudo preparar el escenario BDD: %v", err)
+		}
+		return id
+	}
+	scenario.projectID = insertID(
+		`INSERT INTO projects (name, start_date, end_date) VALUES ($1, '2026-01-01', '2026-12-31') RETURNING id`,
+		fmt.Sprintf("HU06 BDD %d", stamp),
+	)
+	t.Cleanup(func() {
+		if _, err := db.ExecContext(context.Background(), `DELETE FROM user_stories WHERE project_id = $1`, scenario.projectID); err != nil {
+			t.Errorf("no se pudieron borrar las historias BDD: %v", err)
+		}
+		if _, err := db.ExecContext(context.Background(), `DELETE FROM sprints WHERE project_id = $1`, scenario.projectID); err != nil {
+			t.Errorf("no se pudieron borrar los Sprints BDD: %v", err)
+		}
+		if _, err := db.ExecContext(context.Background(), `DELETE FROM projects WHERE id = $1`, scenario.projectID); err != nil {
+			t.Errorf("no se pudo borrar el proyecto BDD: %v", err)
+		}
+	})
+	scenario.activeSprint = insertID(
+		`INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		 VALUES ($1, 3, 'Detección', '2026-10-01', '2026-10-14', 'Activo') RETURNING id`,
+		scenario.projectID,
+	)
+	scenario.service = defect.NewService(defect.NewPostgreSQLStore(db))
+	return scenario
+}
+
+func (s defectBDDScenario) insertSprint(t *testing.T, number int, status string) int64 {
+	t.Helper()
+	var id int64
+	err := s.db.QueryRow(
+		`INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		 VALUES ($1, $2, $3, '2026-10-01', '2026-10-14', $4) RETURNING id`,
+		s.projectID, number, fmt.Sprintf("Sprint %d", number), status,
+	).Scan(&id)
+	if err != nil {
+		t.Fatalf("no se pudo crear el Sprint BDD: %v", err)
+	}
+	return id
+}
+
+func (s defectBDDScenario) insertStory(t *testing.T, title, status string, sprintID *int64) int64 {
+	t.Helper()
+	var id int64
+	err := s.db.QueryRow(
+		`INSERT INTO user_stories (project_id, title, description, priority, status, active_sprint_id)
+		 VALUES ($1, $2, 'Descripción BDD', 'Media', $3, $4) RETURNING id`,
+		s.projectID, title, status, sprintID,
+	).Scan(&id)
+	if err != nil {
+		t.Fatalf("no se pudo crear la historia BDD: %v", err)
+	}
+	return id
+}
+
+// Scenario: el defecto queda vinculado a la historia que lo originó.
+//
+//	Given una historia del proyecto y un Sprint activo de detección
+//	When el Product Builder registra un defecto con severidad y descripción
+//	Then el defecto queda abierto, vinculado a esa historia y al Sprint activo
+func TestScenarioDefectIsLinkedToRelatedStory(t *testing.T) {
+	scenario := givenDefectBDDScenario(t)
+	storyID := scenario.insertStory(t, "BDD historia relacionada", "En progreso", &scenario.activeSprint)
+	input := defect.RegisterInput{
+		ProjectID:   scenario.projectID,
+		StoryID:     storyID,
+		Description: "El botón de guardar no responde",
+		Severity:    defect.SeverityHigh,
+	}
+
+	registered, err := scenario.service.Register(context.Background(), input)
+	if err != nil {
+		t.Fatalf("el defecto válido debía registrarse: %v", err)
+	}
+
+	var projectID, storedStoryID, sprintID int64
+	var description, severity, status string
+	if err := scenario.db.QueryRow(
+		`SELECT project_id, story_id, detection_sprint_id, description, severity, status
+		 FROM defects WHERE id = $1`,
+		registered.ID,
+	).Scan(&projectID, &storedStoryID, &sprintID, &description, &severity, &status); err != nil {
+		t.Fatalf("no se pudo consultar el defecto BDD: %v", err)
+	}
+	if projectID != scenario.projectID || storedStoryID != storyID || sprintID != scenario.activeSprint ||
+		description != input.Description || severity != string(input.Severity) || status != "Abierto" {
+		t.Errorf("trazabilidad persistida incorrecta: proyecto=%d historia=%d sprint=%d descripción=%q severidad=%q estado=%q",
+			projectID, storedStoryID, sprintID, description, severity, status)
+	}
+}
+
+// Scenario: se registra un defecto sobre una historia de un Sprint anterior.
+//
+//	Given una historia Hecho de un Sprint finalizado y un Sprint activo distinto
+//	When el Product Builder registra un defecto asociado a esa historia
+//	Then el defecto usa el Sprint activo y la historia conserva estado y asignación
+func TestScenarioDefectCanReferenceStoryFromFinishedSprint(t *testing.T) {
+	scenario := givenDefectBDDScenario(t)
+	finishedSprint := scenario.insertSprint(t, 2, "Finalizado")
+	storyID := scenario.insertStory(t, "BDD historia terminada", "Hecho", &finishedSprint)
+
+	registered, err := scenario.service.Register(context.Background(), defect.RegisterInput{
+		ProjectID:   scenario.projectID,
+		StoryID:     storyID,
+		Description: "El cálculo final no coincide",
+		Severity:    defect.SeverityCritical,
+	})
+	if err != nil {
+		t.Fatalf("se debía aceptar una historia de un Sprint finalizado: %v", err)
+	}
+
+	var storyStatus string
+	var storySprint sql.NullInt64
+	if err := scenario.db.QueryRow(
+		`SELECT status, active_sprint_id FROM user_stories WHERE id = $1`, storyID,
+	).Scan(&storyStatus, &storySprint); err != nil {
+		t.Fatal(err)
+	}
+	if storyStatus != "Hecho" || !storySprint.Valid || storySprint.Int64 != finishedSprint {
+		t.Errorf("la historia debía conservar estado y asignación: estado=%q Sprint=%+v", storyStatus, storySprint)
+	}
+
+	var detectionSprintID int64
+	if err := scenario.db.QueryRow(
+		`SELECT detection_sprint_id FROM defects WHERE id = $1`, registered.ID,
+	).Scan(&detectionSprintID); err != nil {
+		t.Fatal(err)
+	}
+	if detectionSprintID != scenario.activeSprint {
+		t.Errorf("el Sprint de detección = %d; se esperaba el Sprint activo %d", detectionSprintID, scenario.activeSprint)
+	}
+}

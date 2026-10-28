@@ -53,10 +53,10 @@
 
 ### Tests for User Story 1
 
-- [ ] T016 [P] [US1] Escribir la prueba de handler de registro exitoso con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/defectos`, "Defecto registrado correctamente. Sprint de detección: Sprint N" una sola vez, defecto "Abierto" con el Sprint activo, un campo de Sprint o de proyecto enviado ignorado y, con dos proyectos, solo registra en el activo, en `src/web/defects_handlers_test.go`
-- [ ] T017 [P] [US1] Escribir la prueba de handler de una historia "Hecho" de un Sprint finalizado y de una historia sin Sprint: el defecto queda "Abierto" con el Sprint activo y la historia no cambia de estado ni de asignación, en `src/web/defects_handlers_test.go`
-- [ ] T018 [P] [US1] Escribir la prueba de handler de las cuatro severidades (Crítica, Alta, Media y Baja) guardadas tal cual, en `src/web/defects_handlers_test.go`
-- [ ] T019 [P] [US1] Escribir los escenarios BDD de vinculación de defecto a historia e historia de un Sprint anterior en `test/web_defects_bdd_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de handler de registro exitoso con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/defectos`, "Defecto registrado correctamente. Sprint de detección: Sprint N" una sola vez, defecto "Abierto" con el Sprint activo, un campo de Sprint o de proyecto enviado ignorado y, con dos proyectos, solo registra en el activo, en `src/web/defects_handlers_test.go`
+- [x] T017 [P] [US1] Escribir la prueba de handler de una historia "Hecho" de un Sprint finalizado y de una historia sin Sprint: el defecto queda "Abierto" con el Sprint activo y la historia no cambia de estado ni de asignación, en `src/web/defects_handlers_test.go`
+- [x] T018 [P] [US1] Escribir la prueba de handler de las cuatro severidades (Crítica, Alta, Media y Baja) guardadas tal cual, en `src/web/defects_handlers_test.go`
+- [x] T019 [P] [US1] Escribir los escenarios BDD de vinculación de defecto a historia e historia de un Sprint anterior en `test/web_defects_bdd_test.go`
 
 ### Implementation for User Story 1
 
