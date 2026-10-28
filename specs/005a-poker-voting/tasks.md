@@ -264,11 +264,11 @@ forzar una falla de guardado.
 
 ### Implementación (GREEN)
 
-- [ ] T071 Completar `src/web/templates/poker.html` con los estados vacíos (`MsgPokerNoStories`,
+- [x] T071 Completar `src/web/templates/poker.html` con los estados vacíos (`MsgPokerNoStories`,
   `MsgPokerNoOpenRounds`) y ocultar el formulario de apertura sin historias
-- [ ] T072 Ajustar `render` en `src/web/poker_handlers.go` si T066 lo requiere (lectura fallida → `Fail`, sin
+- [x] T072 Ajustar `render` en `src/web/poker_handlers.go` si T066 lo requiere (lectura fallida → `Fail`, sin
   escribir la respuesta a medias)
-- [ ] T073 Ejecutar T064–T069 en verde
+- [x] T073 Ejecutar T064–T069 en verde
 
 ## Fase 7: Cierre
 

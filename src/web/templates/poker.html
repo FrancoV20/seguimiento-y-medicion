@@ -3,6 +3,7 @@
 {{with .Data}}
 <section aria-labelledby="poker-open-title">
   <h2 id="poker-open-title">Abrir ronda</h2>
+  {{if .Board.Stories}}
   <form method="post" action="/planning-poker/abrir">
     <label for="historia">Historia</label>
     <select id="historia" name="historia">
@@ -11,8 +12,12 @@
     </select>
     <button type="submit">Abrir ronda</button>
   </form>
+  {{else}}
+  <p class="empty">{{.NoStories}}</p>
+  {{end}}
 </section>
 
+{{if not .Rounds}}<p class="empty">{{.NoOpenRounds}}</p>{{end}}
 {{range .Rounds}}
 <section class="poker-round" data-ronda="{{.ID}}" aria-labelledby="poker-round-{{.ID}}">
   <h2 id="poker-round-{{.ID}}">{{.StoryTitle}}</h2>
