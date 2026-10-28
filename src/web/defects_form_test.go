@@ -47,6 +47,10 @@ func TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved(t *t
 			if input.ProjectID != test.wantProject {
 				t.Errorf("el proyecto debe provenir del contexto servidor: %d", input.ProjectID)
 			}
+			if test.name == "valores tal como llegaron" && (input.Description != form.Description ||
+				string(input.Severity) != form.Severity || input.StoryID != 123) {
+				t.Errorf("entrada no construida a partir de los datos enviados: %+v", input)
+			}
 			if test.wantError == "" && len(fieldErrors) != 0 {
 				t.Errorf("no se esperaban errores al armar el formulario: %v", fieldErrors)
 			}
