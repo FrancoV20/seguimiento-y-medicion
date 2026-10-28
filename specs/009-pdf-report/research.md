@@ -71,7 +71,10 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
   bloquea para historias asignadas a un Sprint finalizado.
 - **HU-08** (`specs/008-dashboard/data-model.md`): `metrics.SummarizeVelocity(points []int) metrics.VelocitySummary`
   con `SprintCount`, `Total` y `Average` ("6.50" o "No disponible" sin Sprints), en `src/metrics/velocity_summary.go`.
-- **HU-12** no tiene documentos en `specs/` ni código en `main` (`git grep -n "HU-12"` solo la nombra en otras
+- **Actualización (28/10)**: HU-12 ya tiene sus md (`specs/012-project-status`). Su contrato es
+  `project.StatusOn(start, end, today time.Time) project.DateStatus` y `project.ProgressPercentage(done, total int)
+  string`, en `src/project/status.go`; la regla de estado recibe la fecha, así que la prueba con reloj fijo sirve.
+- **HU-12** (al escribir esta spec) no tenía documentos en `specs/` ni código en `main` (`git grep -n "HU-12"` solo la nombra en otras
   specs). Lo que se sabe:
   - calcula el estado del proyecto con sus fechas: "No iniciado", "En curso" o "Finalizado"; el primer y el último
     día son "En curso" (`specs/001-fix-project-dates/spec.md`, `specs/021-web-projects/spec.md`);

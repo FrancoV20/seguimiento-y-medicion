@@ -287,8 +287,10 @@ Pasos de `BuildProject` (research.md §18):
 1. Alguna dependencia `nil` → error; `projectID <= 0` → `ErrProjectNotFound`, sin llamar al almacén.
 2. `LoadProjectReport`. `ErrProjectNotFound` sin cambios; otro error, con
    `fmt.Errorf("load project report %d: %w", projectID, err)`.
-3. `now := s.now()`. `Status` con la regla de estado de HU-12 **(T001)** (`StartDate`, `EndDate`, `now`); `Progress`
-   con la regla de avance de HU-12 **(T001)** (`Stories.Done`, total de historias).
+3. `now := s.now()`. `Status = string(project.StatusOn(StartDate, EndDate, now))` (HU-12, `src/project/status.go`;
+   compara días del calendario y no lee el reloj); `Progress = project.ProgressPercentage(Stories.Done, total)`
+   (HU-12: texto con punto, "57.14"; "0.00" sin historias). Nombres tomados de `specs/012-project-status/data-model.md`;
+   T001 los confirma en el código.
 4. Por cada Sprint: "Finalizado" → `SprintQuality(ctx, projectID, id)` y `CalculateMetrics(id)`, errores envueltos
    con `%w`; "Activo" → fila `Active` y `Partial = true`.
 5. `Velocity = metrics.SummarizeVelocity(velocidades)` **(T001)**, con `Metrics.Velocity` de los finalizados en orden.
@@ -640,6 +642,7 @@ q, err := qualitySource.SprintQuality(ctx, projectID, sprintID) // HU-10 (T001):
                                                                // CompletionPercentage, PointsPlanned, PointsCompleted,
                                                                // DefectsDetected, DefectsResolved
 v := metrics.SummarizeVelocity(velocities)                     // HU-08 (T001): Total, Average ("6.50")
-// HU-12 (T001): estado del proyecto por fechas con la fecha de generación, y porcentaje de avance
-// ("57.14"; "0.00" sin historias). Nombres y firmas a confirmar en T001.
+st := project.StatusOn(start, end, generatedAt)  // HU-12: project.DateStatus ("No iniciado", "En curso", "Finalizado")
+p := project.ProgressPercentage(done, total)       // HU-12: "57.14"; "0.00" sin historias
+// Contrato de specs/012-project-status/data-model.md; T001 lo confirma en el código.
 ```
