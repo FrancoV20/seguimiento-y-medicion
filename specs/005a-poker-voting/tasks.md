@@ -178,19 +178,19 @@ volver a abrirla y ver el 409.
 
 ### Pruebas (RED)
 
-- [ ] T045 [P] [E2] `TestHU05a_VotoRegistrado` en `src/web/poker_handlers_test.go`: `POST /planning-poker/votar`
+- [x] T045 [P] [E2] `TestHU05a_VotoRegistrado` en `src/web/poker_handlers_test.go`: `POST /planning-poker/votar`
   con `ronda` y `valor=5` → 303; el GET muestra "Voto registrado" una vez, la fila propia "Votó" y "Tu voto: 5";
   en la base hay un voto del integrante identificado aunque se envíe un campo `integrante` con otro id
-- [ ] T046 [P] [E3] `TestHU05a_VotoActualizado`: votar 5 y después 8 → "Voto actualizado", "Tu voto: 8" y una sola
+- [x] T046 [P] [E3] `TestHU05a_VotoActualizado`: votar 5 y después 8 → "Voto actualizado", "Tu voto: 8" y una sola
   fila en `poker_votes` para el integrante
-- [ ] T047 [P] [E4] `TestHU05a_VotosAjenosOcultos` en `src/web/poker_view_test.go` (Ana 13, Beto 3; página de
+- [x] T047 [P] [E4] `TestHU05a_VotosAjenosOcultos` en `src/web/poker_view_test.go` (Ana 13, Beto 3; página de
   Beto): (1) la fila `data-integrante` de Ana dice "Votó" y no contiene "13", la de Beto muestra 3; (2) el único
   `checked` es el valor 3; (3) Ana cambia a 21 y la página de Beto es idéntica byte a byte a la anterior
-- [ ] T048 [P] [E4] `TestHU05a_CambioDeIdentificacion` en `src/web/poker_view_test.go`: al identificarse como Ana,
+- [x] T048 [P] [E4] `TestHU05a_CambioDeIdentificacion` en `src/web/poker_view_test.go`: al identificarse como Ana,
   la pantalla muestra "Tu voto: 13" y no el 3 de Beto
-- [ ] T049 [P] [E2, E3, E4] `TestBDD_HU05a_VotoOculto`, `TestBDD_HU05a_CambioDeVoto` y
+- [x] T049 [P] [E2, E3, E4] `TestBDD_HU05a_VotoOculto`, `TestBDD_HU05a_CambioDeVoto` y
   `TestBDD_HU05a_VotosOcultos` en `test/web_poker_bdd_test.go`
-- [ ] T050 Ejecutar T045–T049, confirmar que fallan (la ruta de voto no existe) y guardar la salida en
+- [x] T050 Ejecutar T045–T049, confirmar que fallan (la ruta de voto no existe) y guardar la salida en
   `evidencia-red.txt` (sección "Votar")
 
 ### Implementación (GREEN)

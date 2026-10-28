@@ -185,3 +185,76 @@ func TestBDD_HU05a_HistoriaConRondaAbierta(t *testing.T) {
 		t.Errorf("debía haber una sola ronda, hay %d", n)
 	}
 }
+
+// abrirRonda abre la ronda de «Login» y devuelve su identificador.
+func (m *pokerMundo) abrirRonda(t *testing.T, app *pokerBDDApp, c *http.Client) int64 {
+	t.Helper()
+	app.enviar(t, c, "/planning-poker/abrir", url.Values{"historia": {strconv.FormatInt(m.login, 10)}})
+	return m.rondaAbierta(t)
+}
+
+func (a *pokerBDDApp) votar(t *testing.T, c *http.Client, ronda int64, valor string) (*http.Response, string) {
+	t.Helper()
+	return a.enviar(t, c, "/planning-poker/votar", url.Values{"ronda": {strconv.FormatInt(ronda, 10)}, "valor": {valor}})
+}
+
+// Escenario 2: voto oculto registrado.
+func TestBDD_HU05a_VotoOculto(t *testing.T) {
+	// Dado una ronda abierta y un integrante identificado
+	m := dadoUnEquipoQueEstima(t)
+	app := m.laAplicacion(t)
+	ana := app.navegador(t, m.proyecto, m.ana)
+	ronda := m.abrirRonda(t, app, ana)
+
+	// Cuando elijo un valor de la serie y voto
+	_, cuerpo := app.votar(t, ana, ronda, "5")
+
+	// Entonces veo "Voto registrado", figuro como "Votó" y veo mi voto
+	pokerDebeContener(t, cuerpo, web.MsgPokerVoteRegistered)
+	if fila := filaDe(cuerpo, m.ana); !strings.Contains(fila, web.LabelPokerVoted) || !strings.Contains(fila, "Tu voto: 5") {
+		t.Errorf("mi fila debía decir «Votó» y «Tu voto: 5»: %s", fila)
+	}
+}
+
+// Escenario 3: cambio de voto.
+func TestBDD_HU05a_CambioDeVoto(t *testing.T) {
+	// Dado que ya voté en una ronda abierta
+	m := dadoUnEquipoQueEstima(t)
+	app := m.laAplicacion(t)
+	ana := app.navegador(t, m.proyecto, m.ana)
+	ronda := m.abrirRonda(t, app, ana)
+	app.votar(t, ana, ronda, "5")
+
+	// Cuando elijo otro valor y voto de nuevo
+	_, cuerpo := app.votar(t, ana, ronda, "8")
+
+	// Entonces veo "Voto actualizado" y mi voto nuevo, y sigue habiendo un solo voto mío
+	pokerDebeContener(t, cuerpo, web.MsgPokerVoteUpdated, "Tu voto: 8")
+	var n int
+	_ = m.db.QueryRow(`SELECT COUNT(*) FROM poker_votes WHERE round_id = $1 AND member_id = $2`, ronda, m.ana).Scan(&n)
+	if n != 1 {
+		t.Errorf("debía haber un solo voto de Ana, hay %d", n)
+	}
+}
+
+// Escenario 4: votos ajenos ocultos.
+func TestBDD_HU05a_VotosOcultos(t *testing.T) {
+	// Dado que Ana votó 13 en una ronda abierta
+	m := dadoUnEquipoQueEstima(t)
+	app := m.laAplicacion(t)
+	ana := app.navegador(t, m.proyecto, m.ana)
+	ronda := m.abrirRonda(t, app, ana)
+	app.votar(t, ana, ronda, "13")
+
+	// Cuando Beto mira la pantalla
+	beto := app.navegador(t, m.proyecto, m.beto)
+	_, cuerpo := app.abrir(t, beto, "/planning-poker")
+
+	// Entonces ve que Ana votó, pero no qué votó
+	if fila := filaDe(cuerpo, m.ana); !strings.Contains(fila, web.LabelPokerVoted) || strings.Contains(fila, "13") {
+		t.Errorf("la fila de Ana debía decir «Votó» sin el valor: %s", fila)
+	}
+	if strings.Contains(cuerpo, `value="13" checked`) || strings.Contains(cuerpo, "Tu voto: 13") {
+		t.Error("la pantalla de Beto no debía mostrar el voto de Ana")
+	}
+}

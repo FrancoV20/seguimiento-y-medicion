@@ -237,3 +237,51 @@ func TestHU05a_SelectorTodasLasHistorias(t *testing.T) {
 	_, body = a.get(t, c, "/planning-poker")
 	check(body)
 }
+
+// ---------------------------------------------------------------- Bloque B: votar
+
+// T045 (E2)
+func TestHU05a_VotoRegistrado(t *testing.T) {
+	a := newPokerApp(t)
+	c := a.as(t, a.fx.projectA, a.fx.ana)
+	a.open(t, c, a.fx.login)
+	round := a.roundOf(t, a.fx.login)
+	resp, _ := a.post(t, c, "/planning-poker/votar", url.Values{
+		"ronda": {strconv.FormatInt(round, 10)}, "valor": {"5"}, "integrante": {strconv.FormatInt(a.fx.beto, 10)},
+	})
+	pokerAssertRedirect(t, resp)
+
+	_, body := a.get(t, c, "/planning-poker")
+	if n := strings.Count(body, MsgPokerVoteRegistered); n != 1 {
+		t.Errorf("el mensaje debía verse una vez, se vio %d", n)
+	}
+	row := participantRow(t, body, a.fx.ana)
+	if !strings.Contains(row, LabelPokerVoted) || !strings.Contains(row, "Tu voto: 5") {
+		t.Errorf("la fila propia debía decir «Votó» y «Tu voto: 5»: %s", row)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1 AND member_id = $2 AND value = 5`, round, a.fx.ana); n != 1 {
+		t.Errorf("el voto debía quedar a nombre de Ana, hay %d", n)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1 AND member_id = $2`, round, a.fx.beto); n != 0 {
+		t.Error("el campo «integrante» enviado no debía usarse")
+	}
+}
+
+// T046 (E3)
+func TestHU05a_VotoActualizado(t *testing.T) {
+	a := newPokerApp(t)
+	c := a.as(t, a.fx.projectA, a.fx.ana)
+	a.open(t, c, a.fx.login)
+	round := a.roundOf(t, a.fx.login)
+	a.vote(t, c, round, "5")
+	a.get(t, c, "/planning-poker") // consume el mensaje del primer voto
+	resp, _ := a.vote(t, c, round, "8")
+	pokerAssertRedirect(t, resp)
+	_, body := a.get(t, c, "/planning-poker")
+	if !strings.Contains(body, MsgPokerVoteUpdated) || !strings.Contains(participantRow(t, body, a.fx.ana), "Tu voto: 8") {
+		t.Errorf("se esperaba «%s» y «Tu voto: 8»", MsgPokerVoteUpdated)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1 AND member_id = $2`, round, a.fx.ana); n != 1 {
+		t.Errorf("debía haber una sola fila de voto, hay %d", n)
+	}
+}

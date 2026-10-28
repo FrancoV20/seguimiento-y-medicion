@@ -45,3 +45,37 @@ test/web_poker_bdd_test.go:160:48: undefined: web.LabelPokerNotVoted
 test/web_poker_bdd_test.go:181:35: undefined: web.MsgPokerRoundAlreadyOpen
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
 FAIL
+
+== Votar (T045-T049): sin la ruta /planning-poker/votar ==
+$ go test -count=1 -p 1 -v -run 'HU05a_(VotoRegistrado|VotoActualizado|VotosAjenosOcultos|CambioDeIdentificacion|VotoOculto|CambioDeVoto|VotosOcultos)' ./src/web/ ./test/
+=== RUN   TestHU05a_VotoRegistrado
+    poker_handlers_test.go:252: se esperaba 303, se obtuvo 404
+--- FAIL: TestHU05a_VotoRegistrado (0.02s)
+=== RUN   TestHU05a_VotoActualizado
+    poker_handlers_test.go:279: se esperaba 303, se obtuvo 404
+--- FAIL: TestHU05a_VotoActualizado (0.02s)
+=== RUN   TestHU05a_VotosAjenosOcultos
+    poker_view_test.go:29: la fila de Ana debía decir «Votó» sin el valor: Ana Poker 1793162987183749572: Sin votar
+    poker_view_test.go:32: la fila de Beto debía mostrar su voto: Beto Poker 1793162987183749572: Sin votar
+    poker_view_test.go:35: el único valor marcado debía ser 3, se obtuvo []
+--- FAIL: TestHU05a_VotosAjenosOcultos (0.03s)
+=== RUN   TestHU05a_CambioDeIdentificacion
+    poker_view_test.go:60: se esperaba ver solo «Tu voto: 13»
+--- FAIL: TestHU05a_CambioDeIdentificacion (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.105s
+=== RUN   TestBDD_HU05a_VotoOculto
+    web_poker_bdd_test.go:213: la pantalla debía mostrar "Voto registrado"
+    web_poker_bdd_test.go:215: mi fila debía decir «Votó» y «Tu voto: 5»: 
+--- FAIL: TestBDD_HU05a_VotoOculto (0.03s)
+=== RUN   TestBDD_HU05a_CambioDeVoto
+    web_poker_bdd_test.go:232: la pantalla debía mostrar "Voto actualizado"
+    web_poker_bdd_test.go:232: la pantalla debía mostrar "Tu voto: 8"
+    web_poker_bdd_test.go:236: debía haber un solo voto de Ana, hay 0
+--- FAIL: TestBDD_HU05a_CambioDeVoto (0.03s)
+=== RUN   TestBDD_HU05a_VotosOcultos
+    web_poker_bdd_test.go:255: la fila de Ana debía decir «Votó» sin el valor: Ana BDD05a 1793162988249724625: Sin votar
+--- FAIL: TestBDD_HU05a_VotosOcultos (0.03s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.085s
+FAIL
