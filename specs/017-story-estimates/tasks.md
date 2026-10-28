@@ -29,13 +29,13 @@
 
 **Purpose**: Servicio, almacenamiento y catálogo compartidos por las tres historias.
 
-- [ ] T005 [P] Escribir las pruebas del servicio `UpdateEstimatedHours` contra PostgreSQL real con fixtures propias (dos proyectos; historias con y sin estimación, con horas reales y de un Sprint finalizado): registrar y modificar, valores válidos exactos (`8`, `1,5`, `1.5`, `0,01`, `9999,99`) y rechazados (`0`, `-1`, `abc`, vacío, `1,555`, `10000`, `9999,995`) con el valor anterior intacto, Sprint finalizado, historia inexistente o de otro proyecto, mismo valor, y que solo cambia `estimated_hours`, en `src/story/estimated_hours_test.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLEstimateStore`: `FindEstimate` (horas, Sprint finalizado, aislamiento por proyecto) y `UpdateEstimate` atómico (cambia solo `estimated_hours`, no cambia si el Sprint está finalizado), en `src/story/postgres_estimate_store_integration_test.go`
-- [ ] T007 [P] Definir `EstimateRow` y la interfaz `EstimateCatalog` en `src/web/estimates_catalog.go`
-- [ ] T008 [P] Escribir la prueba de integración de `PostgreSQLEstimateCatalog` con fixtures propias (dos proyectos; historias estimadas, sin estimar, con y sin horas reales, de un Sprint finalizado; proyecto sin historias): solo las del proyecto pedido, orden descendente por `id`, horas reales (0 sin registros) y bloqueo, en `src/web/postgres_estimate_catalog_integration_test.go`
-- [ ] T009 Implementar en `src/story/estimated_hours.go` el servicio `UpdateEstimatedHours` (usa la regla de horas de HU-22), `EstimateResult`, los errores `ErrStoryNotFound` y `ErrStoryInFinishedSprint` y la interfaz `EstimateStore`
-- [ ] T010 Implementar `PostgreSQLEstimateStore` con `database/sql` y pgx y las sentencias de `data-model.md` en `src/story/postgres_estimate_store.go`
-- [ ] T011 Implementar `PostgreSQLEstimateCatalog` en `src/web/postgres_estimate_catalog.go`
+- [x] T005 [P] Escribir las pruebas del servicio `UpdateEstimatedHours` contra PostgreSQL real con fixtures propias (dos proyectos; historias con y sin estimación, con horas reales y de un Sprint finalizado): registrar y modificar, valores válidos exactos (`8`, `1,5`, `1.5`, `0,01`, `9999,99`) y rechazados (`0`, `-1`, `abc`, vacío, `1,555`, `10000`, `9999,995`) con el valor anterior intacto, Sprint finalizado, historia inexistente o de otro proyecto, mismo valor, y que solo cambia `estimated_hours`, en `src/story/estimated_hours_test.go`
+- [x] T006 [P] Escribir la prueba de integración de `PostgreSQLEstimateStore`: `FindEstimate` (horas, Sprint finalizado, aislamiento por proyecto) y `UpdateEstimate` atómico (cambia solo `estimated_hours`, no cambia si el Sprint está finalizado), en `src/story/postgres_estimate_store_integration_test.go`
+- [x] T007 [P] Definir `EstimateRow` y la interfaz `EstimateCatalog` en `src/web/estimates_catalog.go`
+- [x] T008 [P] Escribir la prueba de integración de `PostgreSQLEstimateCatalog` con fixtures propias (dos proyectos; historias estimadas, sin estimar, con y sin horas reales, de un Sprint finalizado; proyecto sin historias): solo las del proyecto pedido, orden descendente por `id`, horas reales (0 sin registros) y bloqueo, en `src/web/postgres_estimate_catalog_integration_test.go`
+- [x] T009 Implementar en `src/story/estimated_hours.go` el servicio `UpdateEstimatedHours` (usa la regla de horas de HU-22), `EstimateResult`, los errores `ErrStoryNotFound` y `ErrStoryInFinishedSprint` y la interfaz `EstimateStore`
+- [x] T010 Implementar `PostgreSQLEstimateStore` con `database/sql` y pgx y las sentencias de `data-model.md` en `src/story/postgres_estimate_store.go`
+- [x] T011 Implementar `PostgreSQLEstimateCatalog` en `src/web/postgres_estimate_catalog.go`
 
 **Checkpoint**: El servicio y los adaptadores están listos y probados contra PostgreSQL.
 

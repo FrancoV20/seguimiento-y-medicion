@@ -3,10 +3,13 @@ package backlog
 import (
 	"context"
 	"errors"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
-// Horas estimadas por historia (HU-17). Este archivo solo declara el contrato: la lógica del
-// servicio (T009) todavía no está implementada.
+// Horas estimadas por historia (HU-17, T009): interpretación del texto, servicio y puerto de
+// almacenamiento. La regla numérica es la de HU-22 (validEstimatedHours, en service.go).
 
 var (
 	// ErrStoryNotFound indica que la historia no existe o pertenece a otro proyecto.
@@ -16,9 +19,11 @@ var (
 	// ErrEstimatedHoursTooLarge indica un valor mayor que 9999,99. errors.Is lo reconoce también
 	// como ErrInvalidEstimatedHours (regla de HU-22).
 	ErrEstimatedHoursTooLarge error = estimatedHoursTooLargeError{}
-
-	errEstimateNotImplemented = errors.New("horas estimadas: pendiente de implementar (T009-T010)")
 )
+
+// estimatedHoursPattern admite solo dígitos con una coma o un punto decimal: sin signo, exponente,
+// hexadecimal, espacios internos ni separador de miles.
+var estimatedHoursPattern = regexp.MustCompile(`^[0-9]+(?:[.,]([0-9]+))?$`)
 
 type estimatedHoursTooLargeError struct{}
 
@@ -27,6 +32,29 @@ func (estimatedHoursTooLargeError) Error() string {
 }
 
 func (estimatedHoursTooLargeError) Is(target error) bool { return target == ErrInvalidEstimatedHours }
+
+// ParseEstimatedHours interpreta el texto de horas estimadas con la regla de HU-22: mayor que 0,
+// hasta dos decimales, coma o punto y máximo 9999,99, sin redondear. Más de dos decimales es
+// inválido aunque el valor supere el máximo; un valor por encima del máximo devuelve
+// ErrEstimatedHoursTooLarge.
+func ParseEstimatedHours(text string) (float64, error) {
+	trimmed := strings.TrimSpace(text)
+	match := estimatedHoursPattern.FindStringSubmatch(trimmed)
+	if match == nil || len(match[1]) > 2 {
+		return 0, ErrInvalidEstimatedHours
+	}
+	value, err := strconv.ParseFloat(strings.Replace(trimmed, ",", ".", 1), 64)
+	if err != nil {
+		return 0, ErrInvalidEstimatedHours
+	}
+	if value > maxEstimatedHours {
+		return 0, ErrEstimatedHoursTooLarge
+	}
+	if !validEstimatedHours(&value) {
+		return 0, ErrInvalidEstimatedHours
+	}
+	return value, nil
+}
 
 // EstimateState es la lectura de una historia para decidir el cambio.
 type EstimateState struct {
@@ -59,7 +87,38 @@ func NewEstimateService(store EstimateStore) *EstimateService {
 	return &EstimateService{store: store}
 }
 
-// UpdateEstimatedHours valida el texto con la regla de horas, lee la historia y guarda el valor.
+// UpdateEstimatedHours valida el texto con la regla de horas, lee la historia y guarda el valor de
+// forma atómica. Devuelve los errores de la regla de horas, ErrStoryNotFound,
+// ErrStoryInFinishedSprint o, ante cualquier otra falla, el error de almacenamiento.
 func (s *EstimateService) UpdateEstimatedHours(ctx context.Context, projectID, storyID int64, input string) (EstimateResult, error) {
-	return EstimateResult{}, errEstimateNotImplemented
+	hours, err := ParseEstimatedHours(input)
+	if err != nil {
+		return EstimateResult{}, err
+	}
+	if projectID <= 0 || storyID <= 0 {
+		return EstimateResult{}, ErrStoryNotFound
+	}
+	state, err := s.store.FindEstimate(ctx, projectID, storyID)
+	if err != nil {
+		return EstimateResult{}, err
+	}
+	if state.InFinishedSprint {
+		return EstimateResult{}, ErrStoryInFinishedSprint
+	}
+	changed, err := s.store.UpdateEstimate(ctx, projectID, storyID, hours)
+	if err != nil {
+		return EstimateResult{}, err
+	}
+	if !changed {
+		// La historia cambió entre la lectura y el guardado: se relee para informar el motivo.
+		current, err := s.store.FindEstimate(ctx, projectID, storyID)
+		if err != nil {
+			return EstimateResult{}, err
+		}
+		if current.InFinishedSprint {
+			return EstimateResult{}, ErrStoryInFinishedSprint
+		}
+		return EstimateResult{}, ErrStoryNotFound
+	}
+	return EstimateResult{Previous: state.Hours, Current: hours}, nil
 }
