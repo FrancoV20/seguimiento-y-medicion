@@ -118,13 +118,13 @@
 
 - [x] T038 [P] Documentar en `specs/006-defects/quickstart.md` los pasos para probar a mano con un Sprint activo y la nota de puerto
 - [x] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/defects_handlers.go` y `src/web/defects_form.go`
-- [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T042 [P] Escribir la prueba de handler de recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje, en `src/web/defects_handlers_test.go`
 - [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/defects_handlers_test.go`
 - [x] T044 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/defects_handlers_test.go`
 - [x] T045 Guardar en `specs/006-defects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
+- [x] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
 - [ ] T047 Coordinar con quien tome HU-19 que extiende `defects.html` y `defects_handlers.go` (acciones de resolver y reabrir) y completa `resolution_sprint_id` y el estado; con quien tome HU-10 que cuenta defectos por `detection_sprint_id` y `resolution_sprint_id`; con HU-08 y HU-09 que leen la misma tabla; con HU-15 que su cierre bloquea la fila del Sprint con `FOR UPDATE`; y el número de migración con quien tenga la de HU-15
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/006-defects/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Defectos"
