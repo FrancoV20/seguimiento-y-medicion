@@ -33,60 +33,60 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T006 [P] [E2, E5, E6] En `src/poker/series_test.go`: `TestParseValue_Serie` (cada uno de 1, 2, 3, 5, 8, 13,
+- [x] T006 [P] [E2, E5, E6] En `src/poker/series_test.go`: `TestParseValue_Serie` (cada uno de 1, 2, 3, 5, 8, 13,
   21, 34, 55, 89 devuelve su número), `TestParseValue_Vacio` ("" → `ErrValueRequired`) y
   `TestParseValue_FueraDeSerie` (0, 4, 90, -1, "abc", "05", " 5", "5.0" → `ErrValueNotInSeries`)
-- [ ] T007 [P] [E5] `TestSeries_CoincideConStoryPoints` en `src/poker/series_test.go`: `poker.Series` tiene 10
+- [x] T007 [P] [E5] `TestSeries_CoincideConStoryPoints` en `src/poker/series_test.go`: `poker.Series` tiene 10
   valores en orden creciente; `backlog.ValidateStoryPoints(&v)` devuelve nil para cada uno y
   `errors.Is(err, backlog.ErrInvalidStoryPoints)` para 0, 4 y 90 (sin editar `src/backlog`)
-- [ ] T008 [P] [E1, E7, E9, E10] En `src/poker/round_test.go`: `TestCheckOpen_SinRondas` (nil),
+- [x] T008 [P] [E1, E7, E9, E10] En `src/poker/round_test.go`: `TestCheckOpen_SinRondas` (nil),
   `TestCheckOpen_Abierta` (`ErrRoundAlreadyOpen`, también si además hay una cerrada), `TestCheckOpen_Cerrada`
   (`ErrStoryAlreadyRounded`), `TestCheckVote_Abierta` (nil) y `TestCheckVote_Cerrada` (`ErrRoundClosed`)
-- [ ] T009 [P] [E1, E2, E3, E8a, E8b, E11] En `src/poker/service_test.go`, con un `Store` de prueba:
+- [x] T009 [P] [E1, E2, E3, E8a, E8b, E11] En `src/poker/service_test.go`, con un `Store` de prueba:
   `TestService_OpenRound_OK` (pasa proyecto, historia e integrante al almacén), `storyID == 0` →
   `ErrStoryNotFound` sin llamar al almacén, `memberID == 0` → `ErrMemberRequired`; `TestService_Vote_*`: valor
   vacío → `ErrValueRequired` antes del almacén, `roundID == 0` → `ErrRoundNotFound`, devuelve `Updated` del
   almacén y propaga sus errores sin envolverlos de forma que `errors.Is` falle
-- [ ] T010 Fixtures de integración en `src/poker/fixtures_integration_test.go`: `openTestDB` (se omite sin
+- [x] T010 Fixtures de integración en `src/poker/fixtures_integration_test.go`: `openTestDB` (se omite sin
   `DATABASE_URL`), proyectos A y B, integrantes Ana y Beto (en A) y Caro (en B) con `project_members`, historias
   en A («Login» "Pendiente" sin Story Points, «Pagos» "Hecho" con 5 SP) y en B, `insertClosedRound(storyID)`
   (`status = 'Cerrada', closed_at = now()`); limpieza: historias → proyectos → integrantes
-- [ ] T011 [P] `TestMigracionPoker_Restricciones` en `src/poker/postgres_store_integration_test.go`: la base
+- [x] T011 [P] `TestMigracionPoker_Restricciones` en `src/poker/postgres_store_integration_test.go`: la base
   rechaza `status` distinto de `'Abierta'`/`'Cerrada'`, una ronda `'Cerrada'` con `closed_at` NULL, una
   `'Abierta'` con `closed_at`, dos rondas `'Abierta'` de la misma historia, `(story_id, round_number)` repetido y
   un voto con `value` 4
-- [ ] T012 [P] [E1] `TestPostgresOpenRound_OK` (ronda 1, `'Abierta'`, `opened_by` = Ana, `closed_at` NULL,
+- [x] T012 [P] [E1] `TestPostgresOpenRound_OK` (ronda 1, `'Abierta'`, `opened_by` = Ana, `closed_at` NULL,
   `project_id` = A, título devuelto) y `TestPostgresOpenRound_NoModificaHistoria` (título, estado y
   `story_points` de «Pagos» sin cambios; una historia "Hecho" con SP se puede abrir)
-- [ ] T013 [P] [E8b] `TestPostgresOpenRound_Inexistente` y `TestPostgresOpenRound_OtroProyecto` →
+- [x] T013 [P] [E8b] `TestPostgresOpenRound_Inexistente` y `TestPostgresOpenRound_OtroProyecto` →
   `ErrStoryNotFound` y ninguna fila en `poker_rounds`
-- [ ] T014 [P] [E9, E10] `TestPostgresOpenRound_ConRondaAbierta` → `ErrRoundAlreadyOpen` y
+- [x] T014 [P] [E9, E10] `TestPostgresOpenRound_ConRondaAbierta` → `ErrRoundAlreadyOpen` y
   `TestPostgresOpenRound_YaTuvoRonda` (con `insertClosedRound`) → `ErrStoryAlreadyRounded`; la cantidad de rondas
   no cambia
-- [ ] T015 [P] [E9] `TestPostgresOpenRound_Concurrente`: dos `OpenRound` simultáneos (goroutines con una barrera)
+- [x] T015 [P] [E9] `TestPostgresOpenRound_Concurrente`: dos `OpenRound` simultáneos (goroutines con una barrera)
   sobre «Login» → uno OK y otro `ErrRoundAlreadyOpen`; queda una sola ronda. Y
   `TestPostgresCastVote_EsperaAlCierre`: una transacción de prueba toma la ronda con `FOR UPDATE` y la cierra
   (como hará HU-05b); un `CastVote` concurrente espera al commit y termina en `ErrRoundClosed` sin dejar voto
-- [ ] T016 [P] [E2, E3] `TestPostgresCastVote_Nuevo` (`Updated == false`, una fila con el valor),
+- [x] T016 [P] [E2, E3] `TestPostgresCastVote_Nuevo` (`Updated == false`, una fila con el valor),
   `TestPostgresCastVote_Reemplaza` (`Updated == true`, sigue una fila, valor nuevo, `updated_at` posterior) y
   `TestPostgresCastVote_DosIntegrantes` (Ana y Beto votan a la vez y quedan dos votos)
-- [ ] T017 [P] [E7, E8a] `TestPostgresCastVote_RondaCerrada` (`ErrRoundClosed`),
+- [x] T017 [P] [E7, E8a] `TestPostgresCastVote_RondaCerrada` (`ErrRoundClosed`),
   `TestPostgresCastVote_Inexistente` y `TestPostgresCastVote_OtroProyecto` (`ErrRoundNotFound`); los votos no
   cambian
-- [ ] T018 [P] [E11] `TestPostgresCastVote_FalloNoDejaCambios`: un voto con un integrante que no existe en
+- [x] T018 [P] [E11] `TestPostgresCastVote_FalloNoDejaCambios`: un voto con un integrante que no existe en
   `members` falla por la clave foránea, devuelve un error que no es del dominio y no deja filas; lo mismo para
   `OpenRound`
-- [ ] T019 [P] [E1, E13] En `src/web/postgres_poker_catalog_integration_test.go` (fixtures propios con
+- [x] T019 [P] [E1, E13] En `src/web/postgres_poker_catalog_integration_test.go` (fixtures propios con
   `openContextTestDB`): `TestPostgresPokerCatalog_Historias` (todas las del proyecto, cualquier estado, ordenadas
   por id, ninguna de otro proyecto), `TestPostgresPokerCatalog_RondasAbiertas` (solo `'Abierta'` del proyecto, en
   orden de apertura) y `TestPostgresPokerCatalog_Vacio` (proyecto sin historias ni rondas)
-- [ ] T020 [P] [E2, E4] En el mismo archivo: `TestPostgresPokerCatalog_Participantes` (todos los integrantes del
+- [x] T020 [P] [E2, E4] En el mismo archivo: `TestPostgresPokerCatalog_Participantes` (todos los integrantes del
   proyecto por nombre, `HasVoted` e `IsMe` correctos), `TestPostgresPokerCatalog_VotoPropio` (`OwnVote` del
   integrante pedido; nil si no votó) y `TestPostgresPokerCatalog_SinValoresAjenos` (Ana 13, Beto 3: el tablero de
   Beto tiene `OwnVote` 3 en la ronda y nada que contenga 13)
-- [ ] T021 [P] [E4] `TestPokerViewModel_SinCampoDeValorAjeno` en `src/web/poker_catalog_test.go`: con `reflect`,
+- [x] T021 [P] [E4] `TestPokerViewModel_SinCampoDeValorAjeno` en `src/web/poker_catalog_test.go`: con `reflect`,
   `PokerParticipantView` no tiene campos llamados `Value`/`Vote` ni numéricos distintos de `MemberID`
-- [ ] T022 Ejecutar T006–T021, confirmar que fallan porque el paquete, las tablas y el catálogo no existen y
+- [x] T022 Ejecutar T006–T021, confirmar que fallan porque el paquete, las tablas y el catálogo no existen y
   guardar la salida en `evidencia-red.txt` (sección "Fundamentos")
 
 ### Implementación (GREEN)

@@ -1,0 +1,29 @@
+== Fundamentos (T006-T021): sin el paquete src/poker, sin la migración 011 y sin el catálogo ==
+$ go test -count=1 -p 1 -v -run 'ParseValue|Series|CheckOpen|CheckVote|Service_|MigracionPoker|PostgresOpenRound|PostgresCastVote|PostgresPokerCatalog|PokerViewModel' ./src/poker/ ./src/web/
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src/poker/service_test.go:17:23: undefined: OpenedRound
+src/poker/service_test.go:18:23: undefined: VoteOutcome
+src/poker/service_test.go:22:87: undefined: OpenedRound
+src/poker/service_test.go:28:97: undefined: VoteOutcome
+src/poker/postgres_store_integration_test.go:35:14: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:63:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:73:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:73:123: undefined: ErrStoryNotFound
+src/poker/postgres_store_integration_test.go:83:15: undefined: NewPostgreSQLStore
+src/poker/postgres_store_integration_test.go:203:48: undefined: OpenedRound
+src/poker/postgres_store_integration_test.go:83:15: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/poker_catalog_test.go:11:24: undefined: PokerParticipantView
+src/web/postgres_poker_catalog_integration_test.go:94:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:98:12: undefined: PokerStoryOption
+src/web/postgres_poker_catalog_integration_test.go:110:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:123:13: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:132:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:143:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:147:12: undefined: PokerParticipantView
+src/web/postgres_poker_catalog_integration_test.go:162:13: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:179:16: undefined: NewPostgreSQLPokerCatalog
+src/web/postgres_poker_catalog_integration_test.go:179:16: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
