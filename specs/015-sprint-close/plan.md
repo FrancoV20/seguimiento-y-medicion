@@ -8,27 +8,35 @@
 
 Implementar el cierre del Sprint activo en el dominio y presentarlo en una pantalla propia, "Cierre de
 Sprint" (`/cierre`), como páginas generadas por el servidor. El servicio `CloseSprint` vive en `src/sprint`
-en archivos nuevos: comprueba que el Sprint sea del proyecto y esté activo, invoca la validación de HU-07
-y delega en un puerto de almacenamiento propio (`SprintCloseStore`) con su adaptador PostgreSQL. El
+en archivos nuevos: comprueba que el Sprint sea del proyecto y esté activo, invoca
+`metrics.ValidateSprintClosure` sobre los datos cargados de HU-07 y delega en un puerto de almacenamiento
+propio (`SprintCloseStore`) con su adaptador PostgreSQL. El
 adaptador hace todo en una sola transacción: bloquea el Sprint y sus historias, guarda el registro de
 cada historia en `sprint_story_results`, devuelve a "Pendiente" las no completadas quitándoles la
-asignación y pasa el Sprint a "Finalizado". Una migración nueva crea la tabla del registro. La pantalla
+asignación y pasa el Sprint a "Finalizado". La migración `012` crea la tabla del registro. La pantalla
 reutiliza `BoardCatalog` de HU-14 para el resumen, tiene una sección con `RequiresProject: true` y los
-handlers solo arman el envío, llaman al servicio y traducen sus errores. No modifica HU-04, HU-14, HU-20a
-ni HU-20b; en HU-03 solo agrega la regla de carga posterior si no existiera.
+handlers solo arman el envío, llaman al servicio y traducen sus errores. No modifica HU-03, HU-04,
+HU-14, HU-20a ni HU-20b.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta del paquete de Sprint, la validación previa al cierre de HU-07 (firma, datos que devuelve y
->    mensaje) y su cálculo de velocidad, y cómo HU-07 prueba el caso de datos inválidos.
-> 2. Qué hace HU-04 al asignar y al quitar (`sprint_story_assignments`, `user_stories.active_sprint_id`,
->    estados) y qué dejó FIX-HU-04 (errores, constantes).
-> 3. Si HU-03 ya rechaza cargar horas en una historia que no esté en el Sprint activo, y cómo cuenta HU-07
->    las horas de una historia que estuvo en dos Sprints.
-> 4. `BoardCatalog` de HU-14 en `main` (`ActiveBoard`, `BoardView`, `BoardStory`), el último número de
->    migración en `main` y el tipo de `user_stories.story_points`.
-> 5. HU-20a y HU-20b completas en `main`: `Server.Register`, `RequireContext` para `POST`,
->    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parciales `alert.html`, redirección 303 y
->    protección contra envíos de otro origen.
+> **Resultados del setup (T001–T004, verificados en el árbol actual de `origin/main`)**:
+> 1. El paquete de Sprint es `src/sprint`. La validación previa reutilizable de HU-07 es
+>    `metrics.ValidateSprintClosure(metrics.SprintData) error`; valida historias `'Hecho'`, rechaza horas
+>    reales negativas y Story Points nulos/inválidos, y devuelve motivos identificados por historia. No
+>    usar `CalculateMetrics` antes del cierre porque exige estado `'Finalizado'`; la velocidad es la suma
+>    de puntos de historias `'Hecho'` y vale cero si no hay ninguna.
+> 2. HU-04 asigna filas en `sprint_story_assignments` y actualiza estado/`active_sprint_id`; al quitar,
+>    elimina la fila y devuelve la historia a `'Pendiente'` con `active_sprint_id = NULL`. FIX-HU-04
+>    evita un segundo Sprint activo por proyecto.
+> 3. HU-03 ya rechaza horas si `active_sprint_id` no apunta a un Sprint `'Activo'`. HU-07 suma todas las
+>    horas registradas por historia, sin fecha ni atribución al Sprint; las horas históricas de una
+>    historia se incluyen mientras su asignación vigente esté en el Sprint consultado.
+> 4. HU-14 ofrece `BoardCatalog.ActiveBoard(ctx, projectID) (BoardView, found, error)`; `BoardStory` usa
+>    `StoryPoints *int`. En la base, `user_stories.story_points` es `INTEGER` nullable.
+> 5. HU-20a/b ya están integradas: `Server.Register` registra varias rutas y aplica `RequireContext`;
+>    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed` y 303 están disponibles. El parcial `"alert"`
+>    está definido en `layout.html` (no hay archivo `alert.html`) y `CrossOriginGuard` está instalado.
+>    `origin/main` contiene la migración `011` de HU-05a; la de HU-15 debe ser `012` (la `008` es el fix
+>    de HU-01).
 
 ## Technical Context
 
@@ -37,7 +45,8 @@ ni HU-20b; en HU-03 solo agrega la regla de carga posterior si no existiera.
 **Primary Dependencies**: Biblioteca estándar de Go (`net/http`, `html/template`, `database/sql`) y
 `github.com/jackc/pgx/v5/stdlib` ya incorporado. No se agregan dependencias nuevas.
 
-**Storage**: PostgreSQL con Docker Compose. Una migración nueva crea `sprint_story_results`. El cierre usa
+**Storage**: PostgreSQL con Docker Compose (puerto host `5433` hacia `5432` del contenedor). La siguiente
+migración es `012` y crea `sprint_story_results`. El cierre usa
 `sprints`, `sprint_story_assignments`, `user_stories` y `sprint_story_results` en una transacción de
 `database/sql`.
 
@@ -95,8 +104,8 @@ direcciones y campos, abajo.
 
 ```text
 db/migrations/
-├── NNN_create_sprint_story_results.up.sql    # NNN = último de main + 1
-└── NNN_create_sprint_story_results.down.sql
+├── 012_create_sprint_story_results.up.sql
+└── 012_create_sprint_story_results.down.sql
 src/
 ├── sprint/                                   # archivos nuevos; no se modifica HU-04
 │   ├── close_sprint.go                       # servicio CloseSprint, errores y puerto SprintCloseStore
@@ -114,8 +123,9 @@ test/
 
 **Structure Decision**: Se agregan archivos nuevos al paquete de Sprint (servicio y almacenamiento), una
 migración y archivos al paquete `src/web`. Se edita `src/cmd/server/main.go` para construir el servicio
-y registrar la sección. Si HU-03 no rechaza cargar horas en un Sprint finalizado, se agrega esa regla ahí
-(T016).
+y registrar la sección. HU-03 ya rechaza horas cuando la historia no pertenece a un Sprint activo; T016
+solo requiere una prueba que documente ese comportamiento y avisar a su responsable, sin cambiar el
+dominio de HU-03.
 
 ### Direcciones y campos (propuestos)
 
@@ -150,7 +160,8 @@ El proyecto se obtiene del servidor; el `sprint_id` se valida contra ese proyect
 ### Contratos que consume
 
 - De HU-20a: `Server.Register(section, routes)`, `Renderer.Page`, `Fail` y `RenderError`.
-- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303, el parcial `alert.html`, la protección
+- De HU-20b: `SetFlash`, `MsgOperationFailed`, la redirección 303, el parcial `"alert"` definido en
+  `layout.html`, la protección
   contra envíos de otro origen, `ActiveContextFrom` y `RequireContext`.
 - De HU-07: la validación previa al cierre y el cálculo de velocidad (solo se invocan).
 - De HU-14: `BoardCatalog.ActiveBoard`, `BoardView` y `BoardStory` (solo lectura, para el resumen).

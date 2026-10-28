@@ -1,15 +1,17 @@
 # Data Model: Cierre de Sprint
 
 Esta feature agrega **una tabla** (`sprint_story_results`) con una migración nueva. El resto usa
-`sprints`, `sprint_story_assignments` y `user_stories`.
+`sprints`, `sprint_story_assignments` y `user_stories`. El setup confirmó que el paquete de dominio y
+almacenamiento de Sprint es `src/sprint`.
 
 ## Migración
 
-Número: el último de `main` más uno (hoy `009`, después de la `008` del fix de HU-01); nadie edita una
-migración ajena. Se verifica en T001 y T004.
+Número: `012`, el último número de migración presente en `origin/main` es `011` (HU-05a, Planning Poker).
+La `008` corresponde al fix de HU-01, pero no es la última; no hay migraciones `009` ni `010` en el árbol
+actual. Nadie edita una migración ajena.
 
 ```sql
--- NNN_create_sprint_story_results.up.sql
+-- 012_create_sprint_story_results.up.sql
 CREATE TABLE sprint_story_results (
     sprint_id    BIGINT      NOT NULL REFERENCES sprints(id) ON DELETE CASCADE,
     story_id     BIGINT      NOT NULL REFERENCES user_stories(id) ON DELETE CASCADE,
@@ -20,22 +22,92 @@ CREATE TABLE sprint_story_results (
 );
 CREATE INDEX idx_sprint_story_results_story ON sprint_story_results (story_id);
 
--- NNN_create_sprint_story_results.down.sql
+-- 012_create_sprint_story_results.down.sql
 DROP TABLE sprint_story_results;
 ```
 
-> **A verificar (T001 y T004)**: el tipo de `user_stories.story_points` (se supone entero) y que la
-> migración se prueba en ambos sentidos (DoD).
+La columna `user_stories.story_points` es `INTEGER` nullable y restringe los valores a la secuencia
+Fibonacci permitida. La migración nueva debe probarse en ambos sentidos (`up`, `down 1`, `up`) como parte
+del DoD.
 
 ## Esquema usado
 
-- `sprints(id, project_id, number, goal, start_date, end_date, status)`: estado `'Activo'` o
-  `'Finalizado'`. El cierre lo pasa a `'Finalizado'`.
-- `sprint_story_assignments(sprint_id, story_id)`: `UNIQUE (story_id)`. El cierre elimina las filas de las
-  historias no completadas.
-- `user_stories`: `status`, `story_points`, `active_sprint_id`. El cierre pone las no completadas en
-  `'Pendiente'` y `active_sprint_id` en `NULL`.
+- `sprints`: `id BIGSERIAL`, `project_id BIGINT` con FK a `projects` y `ON DELETE CASCADE`, `number
+  INTEGER`, `goal TEXT`, `start_date DATE`, `end_date DATE`, `status VARCHAR(20)` y `created_at
+  TIMESTAMPTZ`. El estado acepta `'Activo'` o `'Finalizado'`; `end_date` debe ser posterior a `start_date`
+  y `(project_id, number)` es único. FIX-HU-04 impide crear un segundo Sprint activo para el mismo
+  proyecto (`ErrActiveSprintExists`).
+- `sprint_story_assignments`: `sprint_id BIGINT` y `story_id BIGINT`, ambos FK con borrado en cascada;
+  PK compuesta `(sprint_id, story_id)` y `UNIQUE (story_id)`, por lo que una historia tiene como máximo
+  una asignación vigente.
+- `user_stories`: `status TEXT` acepta `'Pendiente'`, `'En Sprint'`, `'En progreso'` o `'Hecho'`;
+  `story_points INTEGER` admite `NULL` y los valores Fibonacci configurados; `active_sprint_id BIGINT`
+  referencia `sprints` con `ON DELETE SET NULL`.
+- La asignación de HU-04 inserta en `sprint_story_assignments` y cambia la historia de `'Pendiente'` a
+  `'En Sprint'`, asignando `active_sprint_id`. Al quitarla, borra la asociación y deja la historia en
+  `'Pendiente'` con `active_sprint_id = NULL`; esa operación solo aplica a una historia en `'En Sprint'`.
+- El cierre conserva las asignaciones de las historias `'Hecho'`. Para las no completadas, las elimina y
+  las devuelve a `'Pendiente'` con `active_sprint_id = NULL`.
 - `sprint_story_results`: lo que el Sprint tenía al cerrar; nunca se actualiza después.
+
+## Hallazgos de dependencias (T001 y T002)
+
+### HU-07: validación y métricas
+
+- La validación reutilizable tiene la firma
+  `metrics.ValidateSprintClosure(sprint metrics.SprintData) error`. `SprintData` contiene `ID`, `Status` y
+  `Stories []CompletedStory`; cada `CompletedStory` lleva `ID`, `Status`, `StoryPoints *int`,
+  `EstimatedHours *big.Rat` y `ActualHours *big.Rat`.
+- La función solo valida historias `'Hecho'`: rechaza horas reales negativas y Story Points nulos o
+  fuera de la secuencia permitida. Devuelve un `ClosureValidationError` cuyo `Error()` concatena motivos
+  separados por saltos de línea, con formato `Historia {id}: horas reales negativas` o
+  `Historia {id}: Story Points inválidos`. Las pruebas ejercitan la función directamente con
+  `SprintData` inválido y verifican el ID, el motivo y el formato de múltiples motivos.
+- No debe usarse `(*metrics.Service).CalculateMetrics(sprintID int64) (SprintMetrics, error)` para
+  validar antes del cierre: el servicio exige que el Sprint esté `'Finalizado'`, ejecuta la misma
+  validación, calcula y persiste las métricas. El cálculo de velocidad suma `StoryPoints` (`int`) solo de
+  historias `'Hecho'`; con cero historias completadas, la velocidad es `0`.
+- HU-07 carga las historias a través de `sprint_story_assignments` y suma `effort_logs.hours` por
+  `story_id`, sin filtrar por fechas ni por Sprint. Como una historia solo conserva una asignación vigente,
+  al validar el Sprint activo entran todas las horas históricas registradas para sus historias; el modelo
+  actual no atribuye horas a cada Sprint en el que una historia haya participado ni permite reconstruir la
+  asignación anterior una vez quitada.
+
+### HU-03: registro de horas
+
+`PostgreSQLEffortStore.StoryAcceptsEffort` exige que la historia tenga `active_sprint_id` que apunte a un
+Sprint con estado `'Activo'`. El servicio rechaza los demás casos con `ErrStoryNotInSprint`
+(`"La historia no está asignada a un Sprint activo"`). Por lo tanto, HU-15 no necesita agregar esa regla
+al dominio de HU-03 para bloquear horas en una historia devuelta o de un Sprint finalizado.
+
+### HU-14: tablero
+
+`web.BoardCatalog` expone `ActiveBoard(ctx, projectID) (BoardView, found, error)`. `found == false` indica
+que no hay Sprint activo; los errores representan fallas de lectura. `BoardView` contiene el ID, número,
+etiqueta, objetivo, fechas, grupos de historias y Story Points planificados/completados. Cada `BoardStory`
+contiene ID, título, `StoryPoints *int` (nil significa sin estimar), estado, si tiene esfuerzo y la acción
+válida. Los grupos están ordenados `'En Sprint'`, `'En progreso'`, `'Hecho'`; `BoardPoints` suma todos los
+puntos planificados y solo suma como completados los de historias `'Hecho'`.
+
+### HU-20a y HU-20b: integración web
+
+- `Server.Register(section, routes)` agrega la sección y registra cada patrón/método de `Routes`; aplica
+  `RequireContext(section)` a las rutas registradas. Con `Section.RequiresProject`, las solicitudes sin
+  proyecto activo reciben un flash y una redirección 303 al selector, también para los envíos `POST`.
+- `ActiveContextFrom(ctx)` devuelve el `*ActiveContext` o nil. `SetFlash` guarda el mensaje para la
+  siguiente vista y `RedirectSeeOther` emite el 303 de Post/Redirect/Get. El mensaje genérico ante fallas
+  de guardado es `MsgOperationFailed` (`"La operación no pudo completarse"`).
+- El parcial se llama `"alert"` y está definido en `src/web/templates/layout.html`; no existe un archivo
+  separado `alert.html`.
+- `main.go` instala `CrossOriginGuard` antes de registrar las rutas. `http.CrossOriginProtection` rechaza
+  solicitudes no seguras reconocidas como originadas en otro sitio con 403; solicitudes sin cabeceras de
+  origen (por ejemplo, curl o las pruebas) pasan.
+
+### Verificación de base de datos (T003 y T004)
+
+`docker-compose.yml` publica PostgreSQL como `5433:5432`: el host usa el puerto `5433` y el contenedor
+escucha en `5432`. El árbol de `origin/main` contiene migraciones hasta `011_create_poker`; el esquema
+base coincide con las tablas usadas aquí y la siguiente migración de HU-15 es la `012`.
 
 ## SprintResult (registro del Sprint)
 

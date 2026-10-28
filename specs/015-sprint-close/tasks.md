@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza.
 
-- [ ] T001 Revisar en `main` HU-03, HU-04, FIX-HU-04, HU-07 y HU-14: ruta del paquete de Sprint; validación previa al cierre de HU-07 (firma, datos que devuelve, mensaje y cómo se prueba el caso inválido) y su cálculo de velocidad; qué escribe HU-04 al asignar y quitar (`sprint_story_assignments`, `active_sprint_id`, estados); si HU-03 ya rechaza horas en historias fuera del Sprint activo; cómo cuenta HU-07 las horas de una historia que estuvo en dos Sprints; `BoardCatalog` de HU-14; y el tipo de `user_stories.story_points`; anotar el resultado en `specs/015-sprint-close/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con varias rutas y métodos, `RequireContext` para `POST` según `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, parcial `alert.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/015-sprint-close/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar el último número de migración en `main` (hoy `008`, del fix de HU-01) y que el esquema de `sprints`, `sprint_story_assignments` y `user_stories` coincide con `data-model.md`; avisar al equipo si cambió
+- [x] T001 Revisar en `main` HU-03, HU-04, FIX-HU-04, HU-07 y HU-14: ruta del paquete de Sprint; validación previa al cierre de HU-07 (firma, datos que devuelve, mensaje y cómo se prueba el caso inválido) y su cálculo de velocidad; qué escribe HU-04 al asignar y quitar (`sprint_story_assignments`, `active_sprint_id`, estados); si HU-03 ya rechaza horas en historias fuera del Sprint activo; cómo cuenta HU-07 las horas de una historia que estuvo en dos Sprints; `BoardCatalog` de HU-14; y el tipo de `user_stories.story_points`; hallazgos documentados en `data-model.md` y planificación ajustada en `plan.md`.
+- [x] T002 Integrar/verificar `origin/main` y HU-20a/HU-20b: `Server.Register` registra varias rutas y métodos y aplica `RequireContext` según `Section.RequiresProject`; se verificaron `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, la redirección 303 y la protección contra envíos de otro origen. El parcial `"alert"` está definido en `layout.html` (no existe `alert.html` como archivo separado).
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `quickstart.md` `DATABASE_URL`; el puerto publicado es `5433` en el host hacia `5432` en el contenedor.
+- [x] T004 [P] Confirmar el esquema de `sprints`, `sprint_story_assignments` y `user_stories` y el último número de migración de `origin/main`: es `011` (HU-05a); `008` es el fix de HU-01. La migración siguiente para HU-15 es `012`; hallazgos documentados en `data-model.md` y `plan.md`.
 
 ---
 
@@ -29,7 +29,7 @@
 
 **Purpose**: Migración, servicio y almacenamiento del cierre, compartidos por las tres historias.
 
-- [ ] T005 Escribir la migración `.up.sql` y `.down.sql` de `sprint_story_results` con el siguiente número de `main` en `db/migrations/` y probarla en ambos sentidos (`up`, `down 1`, `up`)
+- [ ] T005 Escribir la migración `012_create_sprint_story_results.up.sql` y `.down.sql` en `db/migrations/` y probarla en ambos sentidos (`up`, `down 1`, `up`)
 - [ ] T006 [P] Escribir las pruebas del servicio `CloseSprint` contra PostgreSQL real con fixtures propias (dos proyectos; Sprint con historias "Hecho", "En progreso" y "En Sprint"; Sprint sin historias; Sprint sin "Hecho"; Sprint finalizado): cierre válido, orden de validación (Sprint del proyecto, activo, validación de HU-07), `ErrSprintNotFound`, `ErrSprintAlreadyClosed`, `ErrCloseBlocked` con datos inválidos armados como en HU-07 y velocidad cero de HU-07 cuando no hay "Hecho", en `src/sprint/close_sprint_test.go`
 - [ ] T007 [P] Escribir la prueba de integración de `PostgreSQLSprintCloser`: transacción completa (Sprint "Finalizado", no completadas en "Pendiente" sin asignación ni `active_sprint_id`, "Hecho" conservadas, una fila en `sprint_story_results` por historia con estado final y Story Points), el registro no cambia al reasignar una devuelta o editar sus puntos, una falla a mitad del cierre revierte todo, y dos cierres simultáneos aplican solo uno, en `src/sprint/postgres_sprint_closer_integration_test.go`
 - [ ] T008 [P] Escribir la prueba del armado del resumen a partir de `BoardView` de HU-14 (completadas, a devolver, Story Points planificados y completados) en `src/web/close_form_test.go`
@@ -60,7 +60,7 @@
 
 - [ ] T018 [US1] Implementar en `src/web/close_form.go` el armado del envío (`sprint_id`), el resumen a partir de `BoardCatalog` y los textos propios en un solo lugar (`MsgSprintClosed`, `MsgSprintAlreadyClosed`, `MsgSprintNotFound`, `MsgCloseBlocked`, `MsgNoSprintToClose`)
 - [ ] T019 [US1] Implementar los handlers `GET /cierre` y `POST /cierre` en `src/web/close_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` y la redirección 303
-- [ ] T020 [US1] Crear `close.html` con el resumen (Sprint, completadas, a devolver, Story Points), el aviso de que no se puede deshacer y el formulario con `sprint_id` y el botón "Cerrar Sprint", usando el parcial `alert.html`, en `src/web/templates/close.html`
+- [ ] T020 [US1] Crear `close.html` con el resumen (Sprint, completadas, a devolver, Story Points), el aviso de que no se puede deshacer y el formulario con `sprint_id` y el botón "Cerrar Sprint", usando el parcial `"alert"` definido en `layout.html`, en `src/web/templates/close.html`
 - [ ] T021 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Cierre de Sprint" (`/cierre`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 cierra Sprints desde la web; HU-07, HU-10, HU-16 y HU-25 ya tienen un Sprint finalizado con su registro.
