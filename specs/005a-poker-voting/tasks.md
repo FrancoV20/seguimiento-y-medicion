@@ -149,7 +149,7 @@ volver a abrirla y ver el 409.
 
 ### Implementación (GREEN)
 
-- [ ] T039 [P] Crear `src/web/poker_messages.go` con `TitlePoker` "Planning Poker", `MsgPokerVoteRegistered` "Voto
+- [x] T039 [P] Crear `src/web/poker_messages.go` con `TitlePoker` "Planning Poker", `MsgPokerVoteRegistered` "Voto
   registrado", `MsgPokerVoteUpdated` "Voto actualizado", `MsgPokerSelectValue` "Seleccioná un valor de la serie",
   `MsgPokerValueNotInSeries` "El valor no pertenece a la serie de Fibonacci", `MsgPokerRoundClosed` "La ronda ya
   está cerrada", `MsgPokerRoundNotFound` "La ronda no existe", `MsgPokerStoryNotFound` "La historia no existe",
@@ -157,18 +157,18 @@ volver a abrirla y ver el 409.
   historia ya tuvo una ronda de votación", `MsgPokerNoStories` "Aún no hay historias", `MsgPokerNoOpenRounds` "No
   hay rondas abiertas", `LabelPokerVoted` "Votó", `LabelPokerNotVoted` "Sin votar" y
   `pokerRoundOpenedMessage(title)` → "Ronda abierta para la historia «title»"
-- [ ] T040 [P] Crear `src/web/poker_form.go`: lectura de `historia`, `ronda` (con `parseID`) y `valor` (texto), y
+- [x] T040 [P] Crear `src/web/poker_form.go`: lectura de `historia`, `ronda` (con `parseID`) y `valor` (texto), y
   `pokerOutcomeFor(err) (status int, text string)` con la tabla de `plan.md` (decisión 7)
-- [ ] T041 Crear `src/web/poker_handlers.go`: `PokerActions`, `RegisterPlanningPoker(s, actions, catalog)` con
+- [x] T041 Crear `src/web/poker_handlers.go`: `PokerActions`, `RegisterPlanningPoker(s, actions, catalog)` con
   `Section{Name: TitlePoker, Path: "/planning-poker", RequiresProject: true, RequiresMember: true}`, `GET
   /planning-poker` (`show`), `POST /planning-poker/abrir` (`open`) y `render(w, r, status, flash)` que arma la
   vista con `PageStatus` y usa `Fail` si la lectura falla; éxito con `SetFlash` + `RedirectSeeOther`
-- [ ] T042 Crear `src/web/templates/poker.html`: formulario "Abrir ronda" (selector `historia` con título y
+- [x] T042 Crear `src/web/templates/poker.html`: formulario "Abrir ronda" (selector `historia` con título y
   estado) y, por ronda abierta, título, "Ronda N" y la lista de integrantes (`data-integrante="{{.MemberID}}"`,
   "Votó"/"Sin votar")
-- [ ] T043 Editar `src/cmd/server/main.go`: construir el servicio y el catálogo y llamar a
+- [x] T043 Editar `src/cmd/server/main.go`: construir el servicio y el catálogo y llamar a
   `web.RegisterPlanningPoker` después del Tablero, con el mismo manejo de error (sin reformatear el archivo)
-- [ ] T044 Ejecutar T033–T037 en verde y `go test -count=1 -p 1 ./...` completo
+- [x] T044 Ejecutar T033–T037 en verde y `go test -count=1 -p 1 ./...` completo
 
 ## Fase 4: Bloque B – Votar y cambiar voto (escenarios 2, 3 y 4) 🎯 MVP (parte 2)
 
