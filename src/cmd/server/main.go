@@ -14,7 +14,9 @@ import (
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -95,6 +97,23 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = ln.Close()
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Proyectos")
+	}
+	// Tablero: cambio de estado de las historias del Sprint activo (HU-14, T022).
+	if err := web.RegisterBoard(srv,
+		sprint.NewStatusService(sprint.NewPostgreSQLStoryStatusStore(database)),
+		web.NewPostgreSQLBoardCatalog(database)); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+
+	// Registro de esfuerzo: registra con el servicio de HU-03 y lee con su catálogo (HU-24, T022).
+	effortService := effort.NewService(effort.NewPostgreSQLEffortStore(database), nil)
+	effortActions := web.NewEffortActions(effortService, nil)
+	if err := web.RegisterEffort(srv, effortActions, web.NewPostgreSQLEffortCatalog(database), nil); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Registro de esfuerzo")
 	}
 
 	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {

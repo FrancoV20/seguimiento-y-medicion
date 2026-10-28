@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sym_user
+          POSTGRES_PASSWORD: sym_pass
+          POSTGRES_DB: seguimiento_y_medicion
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U sym_user -d seguimiento_y_medicion"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Descargar dependencias
+        run: go mod download
+
+      - name: gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "Archivos sin formatear con gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: Instalar golang-migrate
+        run: |
+          go install -tags "postgres" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Aplicar migraciones
+        run: migrate -path db/migrations -database "$DATABASE_URL" up
+
+      # -p 1: las pruebas de integración hacen TRUNCATE sobre tablas compartidas,
+      # así que los paquetes no pueden correr en paralelo contra la misma base.
+      - name: go test (con cobertura)
+        run: go test ./... -p 1 -race -coverprofile=coverage.out -covermode=atomic
+
+      - name: Resumen de cobertura
+        run: go tool cover -func=coverage.out | tail -n 1
+
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.out

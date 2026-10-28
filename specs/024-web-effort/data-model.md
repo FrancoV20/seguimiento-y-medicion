@@ -12,9 +12,29 @@ Las lecturas de pantalla usan `sprints`, `sprint_story_assignments`, `user_stori
 - `effort_logs`: registros de HU-03 con historia, integrante, fecha, actividad y horas.
 - `members(id, display_name)`: catálogo global de integrantes.
 
-> **A verificar (T001 y T004)**: los nombres exactos de las columnas de `effort_logs`. Se suponen `id`, `story_id`,
-> `member_id`, `work_date`, `activity` y `hours`, con `hours` numérico. Si difieren, se ajustan las consultas y se
-> anota acá.
+> **Verificado (T001 y T004, 2026-10-26)** contra `main` (migraciones 001 a 008):
+>
+> - `effort_logs(id BIGSERIAL, story_id BIGINT, member_id INTEGER, work_date DATE, activity TEXT, hours NUMERIC(5,2),
+>   created_at TIMESTAMPTZ)`, con `CHECK (hours > 0 AND hours <= 24)` y `CHECK (btrim(activity) <> '')`.
+> - `user_stories.active_sprint_id` (migración `004`) apunta al Sprint de la historia. HU-03 acepta una carga cuando
+>   `active_sprint_id` es de un Sprint `'Activo'`, sin mirar el estado de la historia: también acepta "Hecho".
+>   `sprint_story_assignments` se mantiene junto con `active_sprint_id` (HU-04), pero el catálogo de HU-24 usa
+>   `active_sprint_id` para ofrecer exactamente lo que HU-03 acepta.
+> - HU-03 vive en `src/effort`: `Service.LogEffort(ctx, LogEffortRequest)` devuelve `LogEffortResult` con
+>   `ValidationErrors` (todas juntas, una por campo) y `StorageError` (`ErrStorage`, sin detalles). Las horas son
+>   `effort.Hours` (centésimas de hora, enteras) y se leen con `effort.ParseHours` (coma o punto, hasta dos decimales,
+>   mayor que 0 y hasta 24). `effort.ValidateInput(req, now)` ya devuelve todas las violaciones que no necesitan la
+>   base, así que **T010 no agrega código en HU-03**: solo su prueba (`effort_actions_test.go`).
+> - Mensajes de HU-03 (`src/effort/errors.go`): `ErrInvalidHours` "El valor de horas no es válido",
+>   `ErrActivityRequired` "La descripción de la actividad es obligatoria", `ErrDateRequired` "La fecha es requerida",
+>   `ErrDateInFuture` "La fecha no puede ser posterior a la fecha actual", `ErrMemberRequired` "Se debe especificar el
+>   integrante responsable", `ErrStoryNotInSprint` "La historia no está asignada a un Sprint activo" y
+>   `SuccessMessage` "Esfuerzo registrado correctamente".
+> - HU-03 verifica que el integrante pertenezca al proyecto de la historia, pero no recibe el proyecto activo: por
+>   eso el handler comprueba antes que la historia esté en el Sprint activo del proyecto del contexto.
+> - En `main` no hay identificadores `Effort*` en el paquete `web` (HU-14, HU-15, HU-17, HU-21, HU-22 y HU-23 todavía
+>   no están integradas) ni un formato de horas compartido: HU-24 muestra las horas con coma decimal
+>   (`FormatEffortHours`: 250 → "2,5").
 
 Notas:
 
@@ -48,15 +68,15 @@ Resultado de leer el envío para invocar a HU-03.
 - `storyID`: identificador numérico.
 - `date`: fecha de calendario (`AAAA-MM-DD`); vacía si el campo vino vacío.
 - `activity`: texto sin espacios en los bordes.
-- `hours`: número leído del texto con coma o punto.
+- `hours`: el texto tal como llegó; lo interpreta HU-03 con `effort.ParseHours` (coma o punto).
 - `memberID`, `projectID`: del contexto del servidor.
 
 ### Rules
 
 - Una fecha no vacía con otro formato genera `MsgEffortInvalidDate` junto a `fecha`.
 - Un `storyID` vacío o no numérico genera `MsgEffortSelectStory` junto a `historia`.
-- Un texto de horas que no es un número (letras, vacío, formato científico) genera el mensaje de horas inválidas de
-  HU-03 junto a `horas`; un número fuera de rango lo informa HU-03.
+- Las horas no se interpretan en la web: cualquier texto inválido (letras, vacío, formato científico, negativo, cero o
+  más de 24) lo informa HU-03 con su mensaje junto a `horas`.
 - Las demás reglas (fecha requerida, actividad, rango de horas, integrante) las aplica HU-03.
 
 ## EffortActions (interfaz del lado web)
@@ -65,9 +85,10 @@ Adaptador sobre el servicio de HU-03.
 
 ### Operations
 
-- `Validate(entry)`: devuelve todas las violaciones, cada una con su campo (`fecha`, `actividad`, `horas` o general)
+- `Validate(entry)`: usa `effort.ValidateInput` y devuelve todas las violaciones, cada una con su campo (`fecha`, `actividad`, `horas` o general)
   y el mensaje de HU-03.
-- `Register(ctx, entry)`: registra la carga o devuelve el error de HU-03.
+- `Register(ctx, entry)`: llama a `Service.LogEffort`; devuelve las violaciones de HU-03 o `ErrEffortNotSaved` (sin
+  detalles) si falló el guardado. El integrante va como error general porque no es un campo de la pantalla.
 
 ## EffortSprint
 
@@ -130,17 +151,22 @@ SELECT id, number FROM sprints
 WHERE project_id = $1 AND status = 'Activo'
 ORDER BY number DESC LIMIT 1;
 
--- Historias del Sprint activo con horas acumuladas
-SELECT us.id, us.title, us.status, COALESCE(SUM(el.hours), 0) AS actual_hours
-FROM sprint_story_assignments a
-JOIN user_stories us ON us.id = a.story_id
-LEFT JOIN effort_logs el ON el.story_id = us.id
-WHERE a.sprint_id = $1 AND us.project_id = $2
-GROUP BY us.id, us.title, us.status
+-- Historias del Sprint activo con horas acumuladas (en centésimas, como HU-03)
+SELECT us.id, us.title, us.status,
+       COALESCE((SELECT SUM(el.hours) * 100 FROM effort_logs el WHERE el.story_id = us.id), 0)::bigint
+FROM user_stories us
+WHERE us.active_sprint_id = $1 AND us.project_id = $2
 ORDER BY us.id;
 
+-- La historia es del Sprint activo (de mayor número) del proyecto
+SELECT us.title
+FROM user_stories us
+JOIN sprints s ON s.id = us.active_sprint_id
+WHERE us.id = $1 AND us.project_id = $2 AND s.project_id = $2 AND s.status = 'Activo'
+  AND s.number = (SELECT MAX(number) FROM sprints WHERE project_id = $2 AND status = 'Activo');
+
 -- Historial de una historia del Sprint activo
-SELECT m.display_name, el.work_date, el.activity, el.hours
+SELECT m.display_name, el.work_date, el.activity, (el.hours * 100)::bigint
 FROM effort_logs el
 JOIN members m ON m.id = el.member_id
 WHERE el.story_id = $1
@@ -157,9 +183,11 @@ ORDER BY el.work_date DESC, el.id DESC;
 ## Mensajes
 
 - Éxito: `MsgEffortRecorded` ("Esfuerzo registrado correctamente").
+- `MsgEffortRecorded` es `effort.SuccessMessage` (no se copia el texto).
 - Errores de campo: `MsgEffortSelectStory` ("Seleccione una historia"), `MsgEffortStoryNotInSprint` ("La historia no
   pertenece al Sprint activo"), `MsgEffortInvalidDate` ("La fecha no es válida"); fecha requerida, actividad vacía,
   horas inválidas e integrante no especificado salen de HU-03.
-- Vista: `MsgEffortNoSprint` ("No hay un Sprint activo"), `MsgEffortNoEntries` ("Todavía no hay horas registradas
+- Vista: `MsgEffortNoSprint` ("No hay un Sprint activo"), `MsgEffortNoStories` ("El Sprint activo no tiene historias
+  asignadas"), `MsgEffortNoEntries` ("Todavía no hay horas registradas
   en esta historia").
 - Falla de guardado: `MsgOperationFailed` de HU-20b.

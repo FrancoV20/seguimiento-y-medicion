@@ -80,7 +80,7 @@ Formato: `[ID] [P] [E#] descripción`
 ## Fase 5: Cierre
 
 - [X] T030 Revisar con `git grep -n "r.Cookie(\|http.SetCookie" src` que el único acceso a cookies de contexto pasa por `readIDCookie` y `setContextCookie`, que la verificación usa `hmac.Equal` y que la clave no se imprime en ningún registro ni mensaje — Solo `readIDCookie` y `setContextCookie` acceden a las cookies de contexto; `Verify` usa `hmac.Equal`; `flash` sigue sin firma; la clave solo se lee en `LoadCookieSecret` y no se registra
-- [ ] T031 [P] No usar `gofmt -w` sobre archivos existentes (CRLF); archivos nuevos formateados; `go vet ./...` limpio; pipeline de GitHub Actions en verde (el repositorio no tiene pipeline: no aplica)
+- [ ] T031 [P] No usar `gofmt -w` sobre archivos existentes (CRLF); archivos nuevos formateados; `go vet ./...` limpio; pipeline de GitHub Actions en verde
 - [ ] T032 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt` (`go test -count=1 -p 1 -cover ./...`)
 - [X] T033 Verificar a mano los 8 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el aviso de clave temporal del escenario 7
 - [X] T034 [P] Agregar al `README.md`, junto a `DATABASE_URL`, una nota sobre `COOKIE_SECRET` (mínimo 32 caracteres; ausente = clave temporal)

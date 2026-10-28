@@ -75,7 +75,6 @@
 - La rama de trabajo es `HU-26` (la que existe en el repositorio), no `feature/hu-26-cookies-firmadas`.
 - `TestReadIDCookie_FirmaInvalidaEsManipulada` quedó en `context_test.go` y
   `TestHU26_ReinicioConMismaClave` en `cookie_signer_test.go`.
-- El repositorio no tiene pipeline de GitHub Actions (T031).
 
 ## Preguntas abiertas
 
