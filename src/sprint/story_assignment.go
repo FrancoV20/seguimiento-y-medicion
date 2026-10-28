@@ -21,10 +21,43 @@ func AssignStoryToSprint(story *UserStory, sprintID int64) error {
 	return nil
 }
 
-// RemoveStoryFromSprint elimina la asignación y devuelve la historia a Pendiente.
+// Motivos por los que una historia del Sprint no se puede quitar (T047).
+const (
+	RemoveReasonInProgress  = "Ya está en progreso"
+	RemoveReasonDone        = "Ya está hecha"
+	RemoveReasonHasEffort   = "Tiene horas registradas"
+	RemoveReasonNotInSprint = "No está en el Sprint"
+)
+
+// CanRemoveStory indica si una historia asignada se puede quitar del Sprint: solo las que
+// están "En Sprint" y no tienen horas registradas. Si no se puede, devuelve el motivo.
+func CanRemoveStory(status StoryStatus, hasEffort bool) (bool, string) {
+	switch status {
+	case InProgress:
+		return false, RemoveReasonInProgress
+	case Done:
+		return false, RemoveReasonDone
+	case EnSprint:
+		if hasEffort {
+			return false, RemoveReasonHasEffort
+		}
+		return true, ""
+	default:
+		return false, RemoveReasonNotInSprint
+	}
+}
+
+// RemoveStoryFromSprint elimina la asignación y devuelve la historia a Pendiente. Rechaza con
+// *StoryRemovalError una historia que no pertenece al Sprint o que CanRemoveStory no admite.
 func RemoveStoryFromSprint(story *UserStory, sprintID int64) error {
-	if story == nil || sprintID <= 0 || story.Status != EnSprint || story.ActiveSprintID != sprintID {
-		return ErrStoryNotAvailable
+	if story == nil {
+		return &StoryRemovalError{}
+	}
+	if sprintID <= 0 || story.ActiveSprintID != sprintID {
+		return &StoryRemovalError{StoryID: story.ID}
+	}
+	if canRemove, reason := CanRemoveStory(story.Status, story.HasEffort); !canRemove {
+		return &StoryRemovalError{StoryID: story.ID, Reason: reason}
 	}
 	story.Status = Pendiente
 	story.ActiveSprintID = 0
