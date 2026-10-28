@@ -1,0 +1,38 @@
+{{define "content"}}
+<h1>Estimaciones</h1>
+<p>Registrá o modificá las horas estimadas de cada historia. Usá coma o punto para los decimales.</p>
+
+<section aria-labelledby="estimates-heading">
+  <h2 id="estimates-heading">Historias</h2>
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Título</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Story Points</th>
+        <th scope="col">Horas estimadas</th>
+        <th scope="col">Horas reales</th>
+        <th scope="col">Nueva estimación</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Data.Rows}}
+      <tr>
+        <td>{{.Title}}</td>
+        <td>{{.Status}}</td>
+        <td>{{.StoryPoints}}</td>
+        <td>{{.EstimatedHours}}</td>
+        <td>{{.ActualHours}}</td>
+        <td>
+          <form method="post" action="/estimaciones" class="estimate-form">
+            <input type="hidden" name="historia_id" value="{{.ID}}">
+            <input type="text" id="horas-{{.ID}}" name="horas_estimadas" value="{{.InputValue}}" inputmode="decimal" autocomplete="off" aria-label="Horas estimadas de {{.Title}}">
+            <button type="submit">Guardar</button>
+          </form>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+</section>
+{{end}}

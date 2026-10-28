@@ -56,10 +56,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Implementar en `src/web/estimates_form.go` el armado del envío (`historia_id`, `horas_estimadas`), los textos propios en un solo lugar (`MsgHoursRegistered`, `MsgHoursUpdated`, `MsgStoryNotFound`, `MsgHoursLockedSprint`) y el formato de horas con coma
-- [ ] T017 [US1] Implementar los handlers `GET /estimaciones` y `POST /estimaciones` en `src/web/estimates_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` y la redirección 303
-- [ ] T018 [US1] Crear `estimates.html` con la tabla de historias (título, estado, Story Points, horas estimadas, horas reales) y un formulario por fila (`historia_id`, campo de horas y botón "Guardar"), usando los parciales `alert.html` y `field.html`, en `src/web/templates/estimates.html`
-- [ ] T019 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Estimaciones" (`/estimaciones`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T016 [US1] Implementar en `src/web/estimates_form.go` el armado del envío (`historia_id`, `horas_estimadas`), los textos propios en un solo lugar (`MsgHoursRegistered`, `MsgHoursUpdated`, `MsgStoryNotFound`, `MsgHoursLockedSprint`) y el formato de horas con coma
+- [x] T017 [US1] Implementar los handlers `GET /estimaciones` y `POST /estimaciones` en `src/web/estimates_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` y la redirección 303
+- [x] T018 [US1] Crear `estimates.html` con la tabla de historias (título, estado, Story Points, horas estimadas, horas reales) y un formulario por fila (`historia_id`, campo de horas y botón "Guardar"), usando los parciales `alert.html` y `field.html`, en `src/web/templates/estimates.html`
+- [x] T019 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Estimaciones" (`/estimaciones`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 registra y modifica estimaciones desde la web; HU-07 y HU-25 ya tienen datos de horas estimadas.
 
