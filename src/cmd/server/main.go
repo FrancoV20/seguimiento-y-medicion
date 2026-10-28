@@ -83,8 +83,6 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	// Contexto de trabajo: proyecto e integrante activos (HU-20b, T039).
 	web.RegisterContext(srv, web.NewPostgreSQLContextStore(database))
 
-	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
-	if err != nil {
 	// Inicialización y Registro de Backlog (HU-22)
 	backlogService := backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(database))
 	storyCatalog := web.NewPostgreSQLStoryCatalog(database)
@@ -93,12 +91,6 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail(err.Error())
 	}
-	sprintService := sprint.NewService(sprintStore)
-	sprintCatalog := web.NewPostgreSQLSprintCatalog(database)
-	sprintActions := sprintActionsAdapter{service: sprintService, store: sprintStore}
-	if err := web.RegisterSprints(srv, sprintCatalog, sprintActions); err != nil {
-		_ = ln.Close()
-		_ = sprintStore.Close()
 	// Inicialización y Registro de Proyectos (HU-21)
 	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
 	projectCatalog := web.NewPostgreSQLProjectCatalog(database)
@@ -124,10 +116,6 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail(err.Error())
 	}
 
-	if err := srv.Serve(ctx, ln, func() {
-		_ = sprintStore.Close()
-		_ = database.Close()
-	}); err != nil {
 	// Registro de esfuerzo: registra con el servicio de HU-03 y lee con su catálogo (HU-24, T022).
 	effortService := effort.NewService(effort.NewPostgreSQLEffortStore(database), nil)
 	effortActions := web.NewEffortActions(effortService, nil)
@@ -137,7 +125,27 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail("no se pudo registrar la sección Registro de esfuerzo")
 	}
 
-	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
+	// Sprints: creación, asignación y remoción de historias del Sprint activo (HU-23, T018).
+	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
+	if err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+	sprintService := sprint.NewService(sprintStore)
+	sprintCatalog := web.NewPostgreSQLSprintCatalog(database)
+	sprintActions := sprintActionsAdapter{service: sprintService, store: sprintStore}
+	if err := web.RegisterSprints(srv, sprintCatalog, sprintActions); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+
+	if err := srv.Serve(ctx, ln, func() {
+		_ = sprintStore.Close()
+		_ = database.Close()
+	}); err != nil {
 		return fail(err.Error())
 	}
 	return 0

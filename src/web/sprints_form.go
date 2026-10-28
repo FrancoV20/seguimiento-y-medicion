@@ -28,9 +28,8 @@ const (
 	MsgStoryRemoved          = "Historia quitada del Sprint"
 	MsgSelectAtLeastOneStory = "Elija al menos una historia"
 	MsgNoActiveSprint        = "No hay un Sprint activo"
-	MsgMissingStartDate      = "Falta la fecha de inicio"
-	MsgMissingEndDate        = "Falta la fecha de fin"
-	MsgInvalidDateFormat     = "La fecha no tiene un formato válido"
+	// MsgMissingStartDate, MsgMissingEndDate y MsgInvalidDateFormat se comparten con HU-21
+	// (projects_form.go): mismos textos.
 )
 
 // SprintFormInput contiene los datos de creación parseados desde el formulario.
