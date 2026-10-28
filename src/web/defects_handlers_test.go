@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 )
@@ -560,6 +561,157 @@ func TestDefectsHandler_CatalogFailureUsesApplicationErrorPage(t *testing.T) {
 	}
 	if strings.Contains(body, "private query detail") || strings.Contains(body, `<form`) || strings.Contains(body, `<table`) {
 		t.Errorf("la respuesta no debe exponer el error interno ni renderizar una pantalla incompleta")
+	}
+}
+
+func TestDefectsHandler_ListShowsTraceabilityForActiveProjectWithin500ms(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+	insert := func(description, severity string, storyID, sprintID int64) int64 {
+		t.Helper()
+		var id int64
+		if err := fixture.app.db.QueryRow(
+			`INSERT INTO defects (project_id, story_id, description, severity, status, detection_sprint_id)
+			 VALUES ($1, $2, $3, $4, 'Abierto', $5) RETURNING id`,
+			fixture.app.fx.projectA, storyID, description, severity, sprintID,
+		).Scan(&id); err != nil {
+			t.Fatalf("no se pudo crear el defecto de prueba: %v", err)
+		}
+		return id
+	}
+	olderID := insert("Descripción anterior", "Baja", fixture.storyDone, fixture.finishedSprintA)
+	newerID := insert("Descripción reciente", "Crítica", fixture.storyActiveA, fixture.activeSprintA)
+	if _, err := fixture.app.db.Exec(
+		`INSERT INTO defects (project_id, story_id, description, severity, status, detection_sprint_id)
+		 VALUES ($1, $2, 'No debe aparecer en el proyecto activo', 'Media', 'Abierto', $3)`,
+		fixture.app.fx.projectB, fixture.storyB, fixture.activeSprintB,
+	); err != nil {
+		t.Fatalf("no se pudo crear el defecto del proyecto B: %v", err)
+	}
+
+	start := time.Now()
+	resp, body := fixture.app.get(t, client, "/defectos")
+	duration := time.Since(start)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /defectos debía responder 200; obtuvo %d", resp.StatusCode)
+	}
+	if duration >= 500*time.Millisecond {
+		t.Errorf("la lista tardó %s; debía responder en menos de 500 ms", duration)
+	}
+	for _, want := range []string{
+		"Identificador", "Descripción", "Severidad", "Estado", "Historia relacionada",
+		"Sprint de detección", "Sprint de resolución",
+		id64(newerID), "Descripción reciente", "Crítica", "Abierto",
+		"HU06 handler historia activa", "Sprint 1", "—",
+		id64(olderID), "Descripción anterior", "Baja", "HU06 handler historia Hecho",
+		"Sprint 2",
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("la lista debía incluir %q; body=%s", want, body)
+		}
+	}
+	if strings.Contains(body, "No debe aparecer en el proyecto activo") {
+		t.Errorf("la lista filtró un defecto de otro proyecto")
+	}
+	newerPos, olderPos := strings.Index(body, id64(newerID)), strings.Index(body, id64(olderID))
+	if newerPos < 0 || olderPos < 0 || newerPos >= olderPos {
+		t.Errorf("los defectos no se mostraron de más reciente a más antiguo")
+	}
+}
+
+func TestDefectsHandler_EmptyListShowsMessageAndForm(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+
+	resp, body := fixture.app.get(t, client, "/defectos")
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /defectos sin defectos debía responder 200; obtuvo %d", resp.StatusCode)
+	}
+	if !strings.Contains(body, MsgDefectNone) {
+		t.Errorf("la lista vacía debía mostrar %q", MsgDefectNone)
+	}
+	for _, field := range []string{`name="descripcion"`, `name="severidad"`, `name="historia"`} {
+		if !strings.Contains(body, field) {
+			t.Errorf("la lista vacía debía mantener el formulario; falta %q", field)
+		}
+	}
+}
+
+func TestDefectsHandler_ListEscapesDescriptionAndStoryTitle(t *testing.T) {
+	fixture := newDefectsHandlerFixture(t)
+	client := fixture.app.client(false)
+	fixture.selectProjectA(t, client)
+	const descriptionScript = "<script>alert('description')</script>"
+	const titleScript = "<script>alert('title')</script>"
+	var storyID int64
+	if err := fixture.app.db.QueryRow(
+		`INSERT INTO user_stories (project_id, title, description, priority, status, active_sprint_id)
+		 VALUES ($1, $2, 'Descripción', 'Media', 'Pendiente', $3) RETURNING id`,
+		fixture.app.fx.projectA, titleScript, fixture.activeSprintA,
+	).Scan(&storyID); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		if _, err := fixture.app.db.Exec(`DELETE FROM user_stories WHERE id = $1`, storyID); err != nil {
+			t.Errorf("no se pudo borrar la historia de prueba: %v", err)
+		}
+	})
+	if _, err := fixture.app.db.Exec(
+		`INSERT INTO defects (project_id, story_id, description, severity, status, detection_sprint_id)
+		 VALUES ($1, $2, $3, 'Alta', 'Abierto', $4)`,
+		fixture.app.fx.projectA, storyID, descriptionScript, fixture.activeSprintA,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	resp, body := fixture.app.get(t, client, "/defectos")
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /defectos debía responder 200; obtuvo %d", resp.StatusCode)
+	}
+	if strings.Contains(body, descriptionScript) || strings.Contains(body, titleScript) ||
+		!strings.Contains(body, "&lt;script&gt;alert(&#39;description&#39;)&lt;/script&gt;") ||
+		!strings.Contains(body, "&lt;script&gt;alert(&#39;title&#39;)&lt;/script&gt;") {
+		t.Errorf("la descripción y el título deben mostrarse escapados como texto")
+	}
+}
+
+type failingStoryOptionsCatalog struct {
+	DefectCatalog
+	err error
+}
+
+func (c failingStoryOptionsCatalog) StoryOptions(context.Context, int64) ([]DefectStoryOption, error) {
+	return nil, c.err
+}
+
+func TestDefectsHandler_StoryCatalogFailureUsesApplicationErrorPage(t *testing.T) {
+	app := newCtxApp(t, nil, func(server *Server) {
+		db := openContextTestDB(t)
+		if err := RegisterDefects(
+			server,
+			defect.NewService(defect.NewPostgreSQLStore(db)),
+			failingStoryOptionsCatalog{DefectCatalog: NewPostgreSQLDefectCatalog(db), err: errors.New("private story query detail")},
+		); err != nil {
+			t.Fatalf("no se pudo registrar la sección Defectos: %v", err)
+		}
+	})
+	client := app.client(false)
+	resp, _ := app.selectProject(t, client, id64(app.fx.projectA), "/defectos")
+	if resp.StatusCode != http.StatusSeeOther {
+		t.Fatalf("la selección del proyecto debía redirigir; obtuvo %d", resp.StatusCode)
+	}
+
+	resp, body := app.get(t, client, "/defectos")
+	if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, MsgInternal) {
+		t.Errorf("la falla al leer historias debía mostrar la página de error común; obtuvo %d", resp.StatusCode)
+	}
+	if strings.Contains(body, "private story query detail") || strings.Contains(body, `<form`) || strings.Contains(body, `<table`) {
+		t.Errorf("la respuesta no debe exponer detalles ni mostrar una pantalla incompleta")
 	}
 }
 

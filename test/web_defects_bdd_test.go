@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -381,4 +382,114 @@ func validationErrorFor(err error, field string) error {
 		}
 	}
 	return nil
+}
+
+// Scenario: el Product Builder consulta la lista de defectos del proyecto.
+//
+//	Given defectos asociados a historias del proyecto y a otro proyecto
+//	When abre la lista del proyecto actual
+//	Then ve sus defectos más recientes primero y no ve registros ajenos
+func TestScenarioDefectListIsProjectScopedAndNewestFirst(t *testing.T) {
+	scenario := givenDefectBDDScenario(t)
+	storyID := scenario.insertStory(t, "BDD historia de la lista", "En progreso", nil)
+	first, err := scenario.service.Register(context.Background(), defect.RegisterInput{
+		ProjectID: scenario.projectID, StoryID: storyID,
+		Description: "Defecto anterior", Severity: defect.SeverityLow,
+	})
+	if err != nil {
+		t.Fatalf("no se pudo registrar el defecto anterior: %v", err)
+	}
+	second, err := scenario.service.Register(context.Background(), defect.RegisterInput{
+		ProjectID: scenario.projectID, StoryID: storyID,
+		Description: "Defecto reciente", Severity: defect.SeverityHigh,
+	})
+	if err != nil {
+		t.Fatalf("no se pudo registrar el defecto reciente: %v", err)
+	}
+
+	var otherProjectID, otherStoryID, otherSprintID int64
+	if err := scenario.db.QueryRow(
+		`INSERT INTO projects (name, start_date, end_date) VALUES ($1, '2026-01-01', '2026-12-31') RETURNING id`,
+		fmt.Sprintf("HU06 BDD lista externa %d", time.Now().UnixNano()),
+	).Scan(&otherProjectID); err != nil {
+		t.Fatalf("no se pudo crear el segundo proyecto: %v", err)
+	}
+	t.Cleanup(func() {
+		if _, err := scenario.db.Exec(`DELETE FROM user_stories WHERE id = $1`, otherStoryID); err != nil {
+			t.Errorf("no se pudo borrar la historia externa: %v", err)
+		}
+		if _, err := scenario.db.Exec(`DELETE FROM projects WHERE id = $1`, otherProjectID); err != nil {
+			t.Errorf("no se pudo borrar el proyecto externo: %v", err)
+		}
+	})
+	if err := scenario.db.QueryRow(
+		`INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		 VALUES ($1, 1, 'Sprint externo', '2026-10-01', '2026-10-14', 'Activo') RETURNING id`,
+		otherProjectID,
+	).Scan(&otherSprintID); err != nil {
+		t.Fatalf("no se pudo crear el Sprint del proyecto externo: %v", err)
+	}
+	if err := scenario.db.QueryRow(
+		`INSERT INTO user_stories (project_id, title, description, priority, status)
+		 VALUES ($1, 'BDD historia externa de lista', 'Descripción', 'Media', 'Pendiente') RETURNING id`,
+		otherProjectID,
+	).Scan(&otherStoryID); err != nil {
+		t.Fatalf("no se pudo crear la historia externa: %v", err)
+	}
+	if _, err := scenario.db.Exec(
+		`INSERT INTO defects (project_id, story_id, description, severity, status, detection_sprint_id)
+		 VALUES ($1, $2, 'Defecto de otro proyecto', 'Media', 'Abierto', $3)`,
+		otherProjectID, otherStoryID, otherSprintID,
+	); err != nil {
+		t.Fatalf("no se pudo crear el defecto externo: %v", err)
+	}
+
+	catalog := web.NewPostgreSQLDefectCatalog(scenario.db)
+	rows, err := catalog.Defects(context.Background(), scenario.projectID)
+	if err != nil {
+		t.Fatalf("no se pudo consultar la lista BDD: %v", err)
+	}
+	if len(rows) != 2 {
+		t.Fatalf("se esperaban dos defectos del proyecto; obtuvo %d", len(rows))
+	}
+	if rows[0].ID != second.ID || rows[1].ID != first.ID {
+		t.Errorf("orden de defectos = [%d, %d]; se esperaba [%d, %d]",
+			rows[0].ID, rows[1].ID, second.ID, first.ID)
+	}
+	if rows[0].StoryTitle != "BDD historia de la lista" ||
+		rows[0].DetectionSprint != 3 ||
+		rows[0].ResolutionSprint != nil {
+		t.Errorf("la fila no contiene trazabilidad esperada: %+v", rows[0])
+	}
+	for _, row := range rows {
+		if row.Description == "Defecto de otro proyecto" {
+			t.Errorf("la consulta devolvió defectos de otro proyecto")
+		}
+	}
+}
+
+// Scenario: todavía no hay defectos para mostrar.
+//
+//	Given un proyecto con Sprint activo y una historia, pero sin defectos
+//	When el Product Builder consulta el catálogo
+//	Then obtiene una lista vacía y puede iniciar el registro
+func TestScenarioDefectListCanBeEmpty(t *testing.T) {
+	scenario := givenDefectBDDScenario(t)
+	catalog := web.NewPostgreSQLDefectCatalog(scenario.db)
+
+	rows, err := catalog.Defects(context.Background(), scenario.projectID)
+
+	if err != nil {
+		t.Fatalf("la lista vacía debía consultarse correctamente: %v", err)
+	}
+	if len(rows) != 0 {
+		t.Errorf("se esperaba una lista vacía; obtuvo %d defectos", len(rows))
+	}
+	stories, err := catalog.StoryOptions(context.Background(), scenario.projectID)
+	if err != nil {
+		t.Fatalf("las opciones de historia debían consultarse correctamente: %v", err)
+	}
+	if stories == nil {
+		t.Errorf("el catálogo debía devolver una lista utilizable de historias")
+	}
 }

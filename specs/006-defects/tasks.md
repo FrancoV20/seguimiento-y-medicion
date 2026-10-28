@@ -101,12 +101,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Escribir la prueba de handler de la lista: identificador, descripción, severidad, estado, historia, Sprint de detección y Sprint de resolución ("—"), más recientes primero, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/defects_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de handler de la lista vacía: "Aún no hay defectos" y el formulario, en `src/web/defects_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de handler de una descripción y un título de historia con `<script>`: se muestran como texto, en `src/web/defects_handlers_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD de lista de defectos y lista vacía en `test/web_defects_bdd_test.go`
+- [x] T032 [P] [US3] Escribir la prueba de handler de la lista: identificador, descripción, severidad, estado, historia, Sprint de detección y Sprint de resolución ("—"), más recientes primero, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/defects_handlers_test.go`
+- [x] T033 [P] [US3] Escribir la prueba de handler de la lista vacía: "Aún no hay defectos" y el formulario, en `src/web/defects_handlers_test.go`
+- [x] T034 [P] [US3] Escribir la prueba de handler de una descripción y un título de historia con `<script>`: se muestran como texto, en `src/web/defects_handlers_test.go`
+- [x] T035 [P] [US3] Escribir los escenarios BDD de lista de defectos y lista vacía en `test/web_defects_bdd_test.go`
 - [ ] T036 [US3] Completar `defects.html` con las columnas de la lista, el "—" del Sprint de resolución y el mensaje de lista vacía en `src/web/templates/defects.html`
-- [ ] T037 [US3] Usar `Fail` en `src/web/defects_handlers.go` cuando falla la lectura de la lista o de las historias y escribir su prueba con un catálogo que falla
+- [x] T037 [US3] Usar `Fail` en `src/web/defects_handlers.go` cuando falla la lectura de la lista o de las historias y escribir su prueba con un catálogo que falla
 
 **Checkpoint**: US3 muestra los defectos y su trazabilidad.
 
