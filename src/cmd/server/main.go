@@ -13,8 +13,8 @@ import (
 	"syscall"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
-	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/poker"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
