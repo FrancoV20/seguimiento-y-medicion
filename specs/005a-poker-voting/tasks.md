@@ -212,32 +212,32 @@ forzar una falla de guardado.
 
 ### Pruebas (RED)
 
-- [ ] T054 [P] [E5] `TestHU05a_ValorFueraDeSerie` en `src/web/poker_handlers_test.go`: `valor` 4, 0, 90 y "abc" →
+- [x] T054 [P] [E5] `TestHU05a_ValorFueraDeSerie` en `src/web/poker_handlers_test.go`: `valor` 4, 0, 90 y "abc" →
   422 y "El valor no pertenece a la serie de Fibonacci"; un voto anterior de 5 se conserva
-- [ ] T055 [P] [E6] `TestHU05a_VotoSinValor`: sin `valor` → 422 y "Seleccioná un valor de la serie"; nada
+- [x] T055 [P] [E6] `TestHU05a_VotoSinValor`: sin `valor` → 422 y "Seleccioná un valor de la serie"; nada
   registrado
-- [ ] T056 [P] [E7] `TestHU05a_RondaCerrada`: ronda cerrada en la base → 409 y "La ronda ya está cerrada"; los
+- [x] T056 [P] [E7] `TestHU05a_RondaCerrada`: ronda cerrada en la base → 409 y "La ronda ya está cerrada"; los
   votos no cambian
-- [ ] T057 [P] [E8a, E8b] `TestHU05a_RondaInexistente` y `TestHU05a_HistoriaInexistente`: identificador
+- [x] T057 [P] [E8a, E8b] `TestHU05a_RondaInexistente` y `TestHU05a_HistoriaInexistente`: identificador
   inexistente, vacío, no numérico, "05" y de otro proyecto → 404 con "La ronda no existe" / "La historia no
   existe"; nada cambia
-- [ ] T058 [P] [E11] `TestHU05a_ErrorAlGuardar`: con un `poker.Store` que falla detrás del `Service` real, votar y
+- [x] T058 [P] [E11] `TestHU05a_ErrorAlGuardar`: con un `poker.Store` que falla detrás del `Service` real, votar y
   abrir → 500 y "La operación no pudo completarse", sin mensaje de éxito; el cuerpo no contiene "poker_", "SQL",
   "pgx" ni el texto del error
-- [ ] T059 [P] [E12] `TestHU05a_SinIdentificarme`: con proyecto y sin integrante, `POST /planning-poker/votar` → 303
+- [x] T059 [P] [E12] `TestHU05a_SinIdentificarme`: con proyecto y sin integrante, `POST /planning-poker/votar` → 303
   a `/contexto/integrante?volver_a=%2Fplanning-poker`, ningún voto; al identificarse, el regreso lleva a
   `/planning-poker`
-- [ ] T060 [P] [E7, E12] `TestBDD_HU05a_RondaCerrada` y `TestBDD_HU05a_SinIdentificarme` en
+- [x] T060 [P] [E7, E12] `TestBDD_HU05a_RondaCerrada` y `TestBDD_HU05a_SinIdentificarme` en
   `test/web_poker_bdd_test.go`
-- [ ] T061 Ejecutar T054–T060, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores y
+- [x] T061 Ejecutar T054–T060, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores y
   estados")
 
 ### Implementación (GREEN)
 
-- [ ] T062 Completar en `src/web/poker_handlers.go` los rechazos: `pokerOutcomeFor` → `render` con su código y
+- [x] T062 Completar en `src/web/poker_handlers.go` los rechazos: `pokerOutcomeFor` → `render` con su código y
   `Flash{Kind: FlashError}`; 500 con `MsgOperationFailed` y `logger.Error` con el detalle; ajustar
   `poker_form.go` si alguna prueba lo pide
-- [ ] T063 Ejecutar T054–T060 en verde
+- [x] T063 Ejecutar T054–T060 en verde
 
 ## Fase 6: Bloque D – Pantalla y estados vacíos (escenario 13)
 

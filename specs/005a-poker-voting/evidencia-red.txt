@@ -79,3 +79,32 @@ FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.105s
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.085s
 FAIL
+
+== Errores y estados (T054-T060): RED no reproducible ==
+Nota: estas pruebas pasan en la primera ejecucion. Los rechazos (pokerOutcomeFor + reject, 422/409/404/500)
+y la redireccion a identificarse (RequiresMember de HU-20b) ya se implementaron en los bloques "Abrir ronda" y
+"Votar" (T030-T032, T051-T053), porque open/vote necesitaban un camino de error. Se registra la salida tal cual;
+T062 no requiere codigo nuevo.
+$ go test -count=1 -p 1 -v -run "HU05a_(ValorFueraDeSerie|VotoSinValor|RondaCerrada|RondaInexistente|HistoriaInexistente|ErrorAlGuardar|SinIdentificarme)" ./src/web/ ./test/
+=== RUN   TestHU05a_ValorFueraDeSerie
+--- PASS: TestHU05a_ValorFueraDeSerie (0.03s)
+=== RUN   TestHU05a_VotoSinValor
+--- PASS: TestHU05a_VotoSinValor (0.02s)
+=== RUN   TestHU05a_RondaCerrada
+--- PASS: TestHU05a_RondaCerrada (0.03s)
+=== RUN   TestHU05a_RondaInexistente
+--- PASS: TestHU05a_RondaInexistente (0.04s)
+=== RUN   TestHU05a_HistoriaInexistente
+--- PASS: TestHU05a_HistoriaInexistente (0.03s)
+=== RUN   TestHU05a_ErrorAlGuardar
+--- PASS: TestHU05a_ErrorAlGuardar (0.03s)
+=== RUN   TestHU05a_SinIdentificarme
+--- PASS: TestHU05a_SinIdentificarme (0.02s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.217s
+=== RUN   TestBDD_HU05a_RondaCerrada
+--- PASS: TestBDD_HU05a_RondaCerrada (0.02s)
+=== RUN   TestBDD_HU05a_SinIdentificarme
+--- PASS: TestBDD_HU05a_SinIdentificarme (0.03s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	0.052s

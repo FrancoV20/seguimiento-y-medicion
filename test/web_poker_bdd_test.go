@@ -263,3 +263,49 @@ func TestBDD_HU05a_VotosOcultos(t *testing.T) {
 		t.Error("la pantalla de Beto no debía mostrar el voto de Ana")
 	}
 }
+
+// Escenario 7: ronda cerrada.
+func TestBDD_HU05a_RondaCerrada(t *testing.T) {
+	// Dado una ronda que ya está cerrada (como la deja HU-05b)
+	m := dadoUnEquipoQueEstima(t)
+	cerrada := m.id(t, `INSERT INTO poker_rounds (project_id, story_id, round_number, status, opened_by, closed_at)
+		VALUES ($1, $2, 1, 'Cerrada', $3, now()) RETURNING id`, m.proyecto, m.login, m.ana)
+	app := m.laAplicacion(t)
+
+	// Cuando intento votar en ella
+	resp, cuerpo := app.votar(t, app.navegador(t, m.proyecto, m.ana), cerrada, "5")
+
+	// Entonces veo el rechazo y no se registra nada
+	if resp.StatusCode != http.StatusConflict {
+		t.Fatalf("se esperaba 409, se obtuvo %d", resp.StatusCode)
+	}
+	pokerDebeContener(t, cuerpo, web.MsgPokerRoundClosed)
+	var n int
+	_ = m.db.QueryRow(`SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, cerrada).Scan(&n)
+	if n != 0 {
+		t.Errorf("no debía registrarse ningún voto, hay %d", n)
+	}
+}
+
+// Escenario 12: sin identificarme.
+func TestBDD_HU05a_SinIdentificarme(t *testing.T) {
+	// Dado que elegí el proyecto pero no me identifiqué
+	m := dadoUnEquipoQueEstima(t)
+	app := m.laAplicacion(t)
+	c := app.navegador(t, m.proyecto, 0)
+
+	// Cuando entro a Planning Poker
+	resp, cuerpo := app.abrir(t, c, "/planning-poker")
+
+	// Entonces se me pide identificarme y, al hacerlo, vuelvo a Planning Poker
+	if resp.Request.URL.Path != "/contexto/integrante" {
+		t.Fatalf("se esperaba la pantalla de identificación, se obtuvo %s", resp.Request.URL)
+	}
+	pokerDebeContener(t, cuerpo, web.MsgMemberRequired)
+	resp, _ = app.enviar(t, c, "/contexto/integrante", url.Values{
+		"integrante_id": {strconv.FormatInt(m.ana, 10)}, "volver_a": {resp.Request.URL.Query().Get("volver_a")},
+	})
+	if resp.Request.URL.Path != "/planning-poker" {
+		t.Errorf("se esperaba volver a /planning-poker, se obtuvo %s", resp.Request.URL)
+	}
+}

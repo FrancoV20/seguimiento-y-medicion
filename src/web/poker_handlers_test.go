@@ -285,3 +285,136 @@ func TestHU05a_VotoActualizado(t *testing.T) {
 		t.Errorf("debía haber una sola fila de voto, hay %d", n)
 	}
 }
+
+// ---------------------------------------------------------------- Bloque C: errores y estados
+
+// openRoundAs abre la ronda de «Login» como Ana y devuelve el navegador de Ana y la ronda.
+func (a *pokerApp) openRoundAs(t *testing.T) (*http.Client, int64) {
+	t.Helper()
+	c := a.as(t, a.fx.projectA, a.fx.ana)
+	a.open(t, c, a.fx.login)
+	return c, a.roundOf(t, a.fx.login)
+}
+
+// T054 (E5)
+func TestHU05a_ValorFueraDeSerie(t *testing.T) {
+	a := newPokerApp(t)
+	c, round := a.openRoundAs(t)
+	a.vote(t, c, round, "5")
+	for _, v := range []string{"4", "0", "90", "abc"} {
+		resp, body := a.vote(t, c, round, v)
+		pokerAssertStatus(t, resp, http.StatusUnprocessableEntity)
+		if !strings.Contains(body, MsgPokerValueNotInSeries) {
+			t.Errorf("valor %q: falta «%s»", v, MsgPokerValueNotInSeries)
+		}
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1 AND member_id = $2 AND value = 5`, round, a.fx.ana); n != 1 {
+		t.Error("el voto anterior de 5 debía conservarse")
+	}
+}
+
+// T055 (E6)
+func TestHU05a_VotoSinValor(t *testing.T) {
+	a := newPokerApp(t)
+	c, round := a.openRoundAs(t)
+	resp, body := a.post(t, c, "/planning-poker/votar", url.Values{"ronda": {strconv.FormatInt(round, 10)}})
+	pokerAssertStatus(t, resp, http.StatusUnprocessableEntity)
+	if !strings.Contains(body, MsgPokerSelectValue) {
+		t.Errorf("falta «%s»", MsgPokerSelectValue)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, round); n != 0 {
+		t.Errorf("no debía registrarse nada, hay %d votos", n)
+	}
+}
+
+// T056 (E7)
+func TestHU05a_RondaCerrada(t *testing.T) {
+	a := newPokerApp(t)
+	closed := a.fx.round(t, a.fx.projectA, a.fx.login, false)
+	a.fx.vote(t, closed, a.fx.beto, 8)
+	resp, body := a.vote(t, a.as(t, a.fx.projectA, a.fx.ana), closed, "5")
+	pokerAssertStatus(t, resp, http.StatusConflict)
+	if !strings.Contains(body, MsgPokerRoundClosed) {
+		t.Errorf("falta «%s»", MsgPokerRoundClosed)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, closed); n != 1 {
+		t.Errorf("los votos no debían cambiar, hay %d", n)
+	}
+}
+
+// T057 (E8a)
+func TestHU05a_RondaInexistente(t *testing.T) {
+	a := newPokerApp(t)
+	c, round := a.openRoundAs(t)
+	foreign := a.fx.round(t, a.fx.projectB, a.fx.storyB, true)
+	for _, id := range []string{"999999999", "", "abc", "05", strconv.FormatInt(foreign, 10)} {
+		resp, body := a.post(t, c, "/planning-poker/votar", url.Values{"ronda": {id}, "valor": {"5"}})
+		pokerAssertStatus(t, resp, http.StatusNotFound)
+		if !strings.Contains(body, MsgPokerRoundNotFound) {
+			t.Errorf("ronda %q: falta «%s»", id, MsgPokerRoundNotFound)
+		}
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id IN ($1, $2)`, round, foreign); n != 0 {
+		t.Errorf("no debía registrarse nada, hay %d votos", n)
+	}
+}
+
+// T057 (E8b)
+func TestHU05a_HistoriaInexistente(t *testing.T) {
+	a := newPokerApp(t)
+	c := a.as(t, a.fx.projectA, a.fx.ana)
+	for _, id := range []string{"999999999", "", "abc", "05", strconv.FormatInt(a.fx.storyB, 10)} {
+		resp, body := a.post(t, c, "/planning-poker/abrir", url.Values{"historia": {id}})
+		pokerAssertStatus(t, resp, http.StatusNotFound)
+		if !strings.Contains(body, MsgPokerStoryNotFound) {
+			t.Errorf("historia %q: falta «%s»", id, MsgPokerStoryNotFound)
+		}
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_rounds WHERE project_id IN ($1, $2)`, a.fx.projectA, a.fx.projectB); n != 0 {
+		t.Errorf("no debía abrirse ninguna ronda, hay %d", n)
+	}
+}
+
+// T058 (E11)
+func TestHU05a_ErrorAlGuardar(t *testing.T) {
+	a := newPokerApp(t, pokerOption{store: func(s poker.Store) poker.Store { return failingPokerStore{s} }})
+	open := a.fx.round(t, a.fx.projectA, a.fx.login, true)
+	c := a.as(t, a.fx.projectA, a.fx.ana)
+	for name, send := range map[string]func() (*http.Response, string){
+		"votar": func() (*http.Response, string) { return a.vote(t, c, open, "5") },
+		"abrir": func() (*http.Response, string) { return a.open(t, c, a.fx.pagos) },
+	} {
+		resp, body := send()
+		pokerAssertStatus(t, resp, http.StatusInternalServerError)
+		if !strings.Contains(body, MsgOperationFailed) {
+			t.Errorf("%s: falta «%s»", name, MsgOperationFailed)
+		}
+		for _, leak := range []string{"poker_", "SQL", "pgx", errPokerStoreInternal.Error(), MsgPokerVoteRegistered, "Ronda abierta para"} {
+			if strings.Contains(body, leak) {
+				t.Errorf("%s: la respuesta no debía contener %q", name, leak)
+			}
+		}
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, open); n != 0 {
+		t.Errorf("no debía registrarse nada, hay %d votos", n)
+	}
+}
+
+// T059 (E12)
+func TestHU05a_SinIdentificarme(t *testing.T) {
+	a := newPokerApp(t)
+	open := a.fx.round(t, a.fx.projectA, a.fx.login, true)
+	c := a.as(t, a.fx.projectA, 0)
+	resp, _ := a.vote(t, c, open, "5")
+	pokerAssertStatus(t, resp, http.StatusSeeOther)
+	if loc := resp.Header.Get("Location"); loc != "/contexto/integrante?volver_a=%2Fplanning-poker" {
+		t.Errorf("se esperaba pedir identificarse, se obtuvo %q", loc)
+	}
+	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, open); n != 0 {
+		t.Errorf("no debía registrarse ningún voto, hay %d", n)
+	}
+	resp, _ = a.post(t, c, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(a.fx.ana, 10)}, "volver_a": {"/planning-poker"}})
+	if loc := resp.Header.Get("Location"); loc != "/planning-poker" {
+		t.Errorf("al identificarse se esperaba volver a /planning-poker, se obtuvo %q", loc)
+	}
+}
