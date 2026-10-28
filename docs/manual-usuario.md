@@ -38,6 +38,29 @@ valores ingresados:
 Si todavía no hay integrantes cargados, la pantalla informa **No hay integrantes disponibles** y
 no permite enviar el formulario.
 
+### Modificar un proyecto
+
+En la lista de **Gestión de Proyectos**, presioná **Modificar** en la fila del proyecto. El
+formulario se abre con el nombre, las fechas y los integrantes actuales.
+
+1. Cambiá el nombre o las fechas, o marcá y desmarcá integrantes. Solo aparecen los integrantes que
+   ya existen en el sistema.
+2. Presioná **Guardar**. Para salir sin cambios, presioná **Cancelar**.
+
+Si se guarda, aparece **Proyecto modificado exitosamente** y volvés a la lista. Si el proyecto es tu
+contexto de trabajo, el nombre nuevo se ve arriba sin volver a elegirlo. Se guarda todo junto: si
+algo falla, no cambia nada.
+
+Además de los mensajes de la creación, al modificar pueden aparecer:
+
+| Mensaje | Qué hacer |
+|---|---|
+| `No se puede quitar a [nombre]: tiene horas registradas en este proyecto` | Ese integrante ya cargó horas en historias del proyecto y no se puede quitar. Volvé a marcarlo. |
+| `El Sprint N queda fuera de las nuevas fechas del proyecto` | Las fechas nuevas dejan fuera a ese Sprint. Elegí fechas que lo incluyan. |
+
+Si quitás a un integrante que estaba identificado, la próxima vez que navegue se le pide elegir
+otro integrante.
+
 ## Registro de esfuerzo
 
 Abrí `http://localhost:8080/esfuerzo` para cargar las horas que trabajaste en una historia del

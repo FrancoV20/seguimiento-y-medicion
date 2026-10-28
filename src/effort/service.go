@@ -2,6 +2,7 @@ package effort
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -60,6 +61,10 @@ func (s *Service) LogEffort(ctx context.Context, req LogEffortRequest) LogEffort
 		Activity: input.Activity,
 		Hours:    input.Hours,
 	})
+	if errors.Is(err, errMemberNotInProject) {
+		// HU-11: el integrante fue quitado del proyecto mientras se guardaba.
+		return LogEffortResult{ValidationErrors: []FieldError{{Field: FieldMember, Err: ErrMemberRequired}}}
+	}
 	if err != nil {
 		// Se informa un error genérico: nunca se exponen detalles internos de la base (FR-013).
 		return LogEffortResult{StorageError: ErrStorage}
