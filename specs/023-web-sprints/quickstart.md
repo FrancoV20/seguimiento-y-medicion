@@ -47,6 +47,56 @@ Si en tu base de desarrollo quedó un Sprint activo de prueba y querés crear ot
 UPDATE sprints SET status = 'Finalizado' WHERE project_id = <ID_DEL_PROYECTO> AND status = 'Activo';
 ```
 
+## Manual check: recorrido completo con un proyecto activo
+
+Con el servidor en ejecución, un proyecto activo elegido y al menos tres historias "Pendiente" en el
+Backlog (ver "Run the application"):
+
+1. Abrir `http://localhost:8080/sprints`: se ve "No hay un Sprint activo" y el formulario de creación.
+2. Enviar el formulario con el Goal vacío o con la fecha de fin anterior a la de inicio: el mensaje
+   aparece junto al campo y los datos y las marcas se conservan.
+3. Completar Goal, fechas y marcar dos historias; "Crear Sprint": se ve "Sprint creado correctamente"
+   una sola vez, el Sprint (por ejemplo "Sprint 1") con sus fechas `dd/mm/aaaa` y las dos historias
+   "En Sprint". Recargar la página no duplica el Sprint ni repite el mensaje.
+4. En "Agregar historias", marcar la tercera historia y enviar: "Historias agregadas correctamente".
+   Enviar sin marcar ninguna: "Elija al menos una historia".
+5. Pulsar "Quitar" en una historia "En Sprint" sin horas: "Historia quitada del Sprint" y la historia
+   vuelve a estar disponible en la lista.
+6. Pasar una historia del Sprint a "En progreso" y registrar horas en otra (por SQL si HU-14 o HU-24
+   no están integradas):
+
+   ```sql
+   UPDATE user_stories SET status = 'En progreso' WHERE id = <ID_HISTORIA_1>;
+   INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
+   VALUES (<ID_HISTORIA_2>, <ID_INTEGRANTE>, CURRENT_DATE, 'Prueba manual', 1);
+   ```
+
+   Al recargar, "Quitar" queda deshabilitado con "Ya está en progreso" y "Tiene horas registradas".
+7. Con un Sprint activo, la pantalla no ofrece el formulario de creación e informa "Ya hay un Sprint
+   activo (Sprint N)".
+8. Cerrar a mano el Sprint de prueba (HU-15 todavía no existe) y recargar: vuelve a ofrecerse el
+   formulario de creación.
+
+   ```sql
+   UPDATE sprints SET status = 'Finalizado' WHERE project_id = <ID_DEL_PROYECTO> AND status = 'Activo';
+   ```
+
+   Las historias que quedaron asignadas siguen con su asignación; para empezar de cero, recrear la
+   base con `docker compose down -v` y volver a migrar.
+
+### Nota de puerto
+
+`docker-compose.yml` publica PostgreSQL en el puerto `5433` del host hacia el `5432` del contenedor.
+Si tu `docker-compose.override.yml` (no versionado) publica otro puerto, usá ese. `DATABASE_URL`
+siempre lleva el puerto del host:
+
+```powershell
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+```
+
+Las credenciales personales van solo en tu `docker-compose.override.yml` y en tu variable de entorno,
+nunca en archivos del repositorio. El servidor web escucha en `:8080` salvo que se defina `ADDR`.
+
 ## Run the tests
 
 ```powershell
@@ -144,8 +194,29 @@ go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/023-web-spri
 go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/023-web-sprints/cobertura.txt
 ```
 
-## Con `docker-compose.yml` y `docker-compose.override.yml`, PostgreSQL publica el puerto `5433` del host hacia el `5432` del contenedor. Usa el puerto del host en `DATABASE_URL`:
+## Manual breve de usuario: pantalla "Sprints"
 
-  ```powershell
-  $env:DATABASE_URL = "postgres://postgres:060204@localhost:5433/seguimiento_y_medicion?sslmode=disable"
-  ```
+La pantalla "Sprints" (`/sprints`) planifica el Sprint del proyecto activo. Si no hay un proyecto
+elegido, la aplicación pide elegirlo primero.
+
+**Crear un Sprint** (solo cuando no hay uno activo):
+
+1. Escribir el Sprint Goal y elegir las fechas de inicio y de fin. La fecha de fin debe ser posterior
+   a la de inicio.
+2. Marcar las historias del Backlog que entran al Sprint. Las que no se pueden elegir aparecen
+   deshabilitadas con el motivo ("Ya está asignada al Sprint N" o "No está pendiente"). También se
+   puede crear sin historias y agregarlas después.
+3. Pulsar "Crear Sprint". El número del Sprint lo asigna la aplicación y no se puede cambiar.
+
+**Ver el Sprint activo**: se muestran su número, el Sprint Goal, las fechas y sus historias con los
+Story Points y el estado. Solo puede haber un Sprint activo por proyecto.
+
+**Agregar historias**: en "Agregar historias", marcar una o más historias disponibles y pulsar
+"Agregar historias". Pasan al estado "En Sprint".
+
+**Quitar una historia**: pulsar "Quitar" en su fila. La historia vuelve al Backlog como "Pendiente".
+Solo se pueden quitar historias "En Sprint" sin horas registradas; si no, el botón aparece
+deshabilitado con el motivo: "Ya está en progreso", "Ya está hecha" o "Tiene horas registradas".
+
+**Mensajes**: los errores de un campo aparecen junto a ese campo y se conservan los datos cargados.
+Si aparece "La operación no pudo completarse", no se guardó nada: volver a intentarlo más tarde.

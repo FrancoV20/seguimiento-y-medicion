@@ -375,7 +375,7 @@ equipo y se definen en un solo lugar (`sprints_form.go`).
 | 1. Crear Sprint con historias | FR-001 a FR-003, FR-012 | T009, T010 | T014 | `sprints_form.go`, `sprints_handlers.go`, `sprints.html` |
 | 2. Sprint sin historias | FR-004 | T011 | T014 | `sprints_handlers.go` |
 | 3. Ya hay un Sprint activo | FR-005 | T012 | T014 | `sprints_form.go`, `sprints_handlers.go`, `sprints.html` |
-| 4. Sin Sprint activo | FR-014 | T031 | T033 | `sprints.html` |
+| 4. Sin Sprint activo | FR-014 | T031 | T033 | `sprints_handlers.go`, `sprints.html` |
 | 5. Vista del Sprint activo | FR-013 | T006, T030 | T033 | `postgres_sprint_catalog.go`, `sprints.html` |
 | 6. Historia no disponible en la lista | FR-006 | T006, T019 | T025 | `postgres_sprint_catalog.go`, `sprints.html` |
 | 7. Historia que dejó de estar disponible | FR-007 | T020 | T025 | `sprints_form.go` |
@@ -383,11 +383,11 @@ equipo y se definen en un solo lugar (`sprints_form.go`).
 | 9. Fin anterior o igual al inicio | FR-008 | T021 | T025 | `sprints_form.go` |
 | 10. Fecha faltante | FR-009 | T009, T022 | T025 | `sprints_form.go` |
 | 11. Fecha con formato inválido | FR-009 | T009, T022 | T025 | `sprints_form.go` |
-| 12. Error al guardar el Sprint | FR-010, FR-021 | T023, T029 | T025 | `sprints_handlers.go` |
+| 12. Error al guardar el Sprint | FR-010, FR-021 | T023, T029, T051 | T025 | `sprints_form.go`, `sprints_handlers.go` |
 | 13. Agregar historias | FR-017 | T036 | T039 | `sprints_handlers.go`, `sprints.html` |
 | 14. Agregar sin marcar ninguna | FR-018 | T037 | T039 | `sprints_handlers.go` |
 | 15. Quitar una historia | FR-019 | T043, T044 | T046 | `src/sprint` (dominio), `sprints_handlers.go`, `sprints.html` |
-| 16. Historia que no se puede quitar | FR-020 | T043, T045 | T046 | `src/sprint` (dominio), `sprints.html` |
+| 16. Historia que no se puede quitar | FR-020 | T043, T045 | T046 | `src/sprint` (dominio), `postgres_sprint_catalog.go`, `sprints.html` |
 | 17. Intento de quitar una historia que no se puede | FR-020 | T043, T045 | T046 | `src/sprint` (dominio), `sprints_handlers.go` |
 | (HU-20b) Recarga sin duplicar | FR-016 | T013 | | `sprints_handlers.go` |
 | (HU-20b) Sin proyecto activo al guardar | FR-011, FR-012 | T024 | | `sprints_handlers.go` |

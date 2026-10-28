@@ -151,9 +151,9 @@
 
 ### Implementation for User Story 5
 
-- [ ] T047 [US5] Implementar en `src/sprint` la validación de `RemoveStory` (solo `'En Sprint'` y sin horas registradas, con errores tipados y la función pura `CanRemoveStory` exportada); si el dominio no puede consultar `effort_logs`, agregar la lectura al store de Sprints con su adaptador PostgreSQL y su prueba de integración; avisar a quien mantiene HU-04
-- [ ] T048 [US5] Implementar `POST /sprints/historias/quitar` en `src/web/sprints_handlers.go`: verifica que la historia pertenece al Sprint activo del proyecto activo, invoca `RemoveStory` (que aplica la regla del dominio) y usa `SetFlash` y la redirección 303; un rechazo responde 409 con el motivo
-- [ ] T049 [US5] Mostrar en `src/web/templates/sprints.html` un botón "Quitar" por historia, deshabilitado con el motivo cuando `CanRemoveStory` lo indique, y llenar `SprintStoryRow.canRemove` en `src/web/postgres_sprint_catalog.go` con esa misma función
+- [X] T047 [US5] Implementar en `src/sprint` la validación de `RemoveStory` (solo `'En Sprint'` y sin horas registradas, con errores tipados y la función pura `CanRemoveStory` exportada); si el dominio no puede consultar `effort_logs`, agregar la lectura al store de Sprints con su adaptador PostgreSQL y su prueba de integración; avisar a quien mantiene HU-04
+- [X] T048 [US5] Implementar `POST /sprints/historias/quitar` en `src/web/sprints_handlers.go`: verifica que la historia pertenece al Sprint activo del proyecto activo, invoca `RemoveStory` (que aplica la regla del dominio) y usa `SetFlash` y la redirección 303; un rechazo responde 409 con el motivo
+- [X] T049 [US5] Mostrar en `src/web/templates/sprints.html` un botón "Quitar" por historia, deshabilitado con el motivo cuando `CanRemoveStory` lo indique, y llenar `SprintStoryRow.canRemove` en `src/web/postgres_sprint_catalog.go` con esa misma función
 
 **Checkpoint**: US5 permite corregir la planificación sin recrear el Sprint ni dejar horas huérfanas.
 
@@ -163,19 +163,19 @@
 
 **Purpose**: Validación final, evidencias, usabilidad, coordinación y trazabilidad.
 
-- [ ] T050 [P] Documentar en `specs/023-web-sprints/quickstart.md` los pasos para probar a mano con un proyecto activo con historias, el cierre manual de un Sprint de prueba y la nota de puerto
-- [ ] T051 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/sprints_handlers.go` y `src/web/sprints_form.go`
-- [ ] T052 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T053 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T054 Guardar en `specs/023-web-sprints/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T055 Guardar en `specs/023-web-sprints/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/023-web-sprints/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
-- [ ] T056 Hacer la prueba de usabilidad de SC-009 y SC-010 en la Sprint Review y registrar los resultados en `specs/023-web-sprints/evidencia-usabilidad.txt`
-- [ ] T057 Coordinar con quien tome HU-14 que las historias asignadas quedan en `'En Sprint'` y la transición debe partir de ese estado y no de `'Pendiente'`; con quien tome HU-15 que el cierre debe eliminar la asignación de las historias no terminadas (la relación es única por historia) y que habilita crear el siguiente Sprint; con quien tome HU-24 que las historias del Sprint activo salen de `SprintCatalog`; y con quien mantiene HU-04 la validación de quitar (T047)
-- [ ] T058 Revisar trazabilidad de FR-001 a FR-021 y SC-001 a SC-010 en `specs/023-web-sprints/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T059 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
-- [ ] T060 [P] Actualizar el manual breve de usuario con la pantalla "Sprints" (ver `quickstart.md`)
-- [ ] T061 Verificar a mano con la aplicación en ejecución los 17 escenarios del Issue y la lista de `quickstart.md`
-- [ ] T062 Abrir el Pull Request desde `HU-23`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [X] T050 [P] Documentar en `specs/023-web-sprints/quickstart.md` los pasos para probar a mano con un proyecto activo con historias, el cierre manual de un Sprint de prueba y la nota de puerto
+- [X] T051 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/sprints_handlers.go` y `src/web/sprints_form.go`
+- [X] T052 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [X] T053 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [X] T054 Guardar en `specs/023-web-sprints/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [X] T055 Guardar en `specs/023-web-sprints/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/023-web-sprints/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`
+- [X] T056 Hacer la prueba de usabilidad de SC-009 y SC-010 en la Sprint Review y registrar los resultados en `specs/023-web-sprints/evidencia-usabilidad.txt`
+- [X] T057 Coordinar con quien tome HU-14 que las historias asignadas quedan en `'En Sprint'` y la transición debe partir de ese estado y no de `'Pendiente'`; con quien tome HU-15 que el cierre debe eliminar la asignación de las historias no terminadas (la relación es única por historia) y que habilita crear el siguiente Sprint; con quien tome HU-24 que las historias del Sprint activo salen de `SprintCatalog`; y con quien mantiene HU-04 la validación de quitar (T047)
+- [X] T058 Revisar trazabilidad de FR-001 a FR-021 y SC-001 a SC-010 en `specs/023-web-sprints/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [X] T059 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, y verificar que el pipeline de GitHub Actions queda en verde
+- [X] T060 [P] Actualizar el manual breve de usuario con la pantalla "Sprints" (ver `quickstart.md`)
+- [X] T061 Verificar a mano con la aplicación en ejecución los 17 escenarios del Issue y la lista de `quickstart.md`
+- [X] T062 Abrir el Pull Request desde `HU-23`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 
