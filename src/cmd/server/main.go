@@ -134,7 +134,6 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail("no se pudo registrar la sección Defectos")
 	}
 
-	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
 	// Sprints: creación, asignación y remoción de historias del Sprint activo (HU-23, T018).
 	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
 	if err != nil {

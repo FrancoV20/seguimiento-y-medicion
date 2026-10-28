@@ -5,7 +5,7 @@ Esta feature agrega **una tabla** (`defects`) con una migración nueva. El resto
 
 ## Migración
 
-Número: el último de `main` más uno (hoy `008`, o la siguiente si la de HU-15 ya está integrada); nadie edita una
+Número: el último de `main` más uno (hoy `012`, porque `main` llega a `011`; o la siguiente si la de HU-15 ya está integrada); nadie edita una
 migración ajena. Se verifica en T001 y T004.
 
 ```sql
@@ -32,8 +32,8 @@ CREATE INDEX idx_defects_resolution ON defects (resolution_sprint_id);
 DROP TABLE defects;
 ```
 
-> **Migración (T004)**: `origin/main` llega a `008`; no hay migración `009` en las ramas remotas visibles y el
-> Product Builder confirmó que HU-15 todavía no tiene responsable ni implementación. `009` es el siguiente
+> **Migración (T004)**: `origin/main` llega a `011` (HU-05a, Planning Poker); no hay migración `012` en las ramas remotas visibles y el
+> Product Builder confirmó que HU-15 todavía no tiene responsable ni implementación. `012` es el siguiente
 > candidato; volver a coordinar con el equipo antes de crearla y si HU-15 se asigna.
 >
 > **Verificación (T005)**: PostgreSQL rechazó borrar el Sprint de resolución con `ON DELETE SET NULL`, porque

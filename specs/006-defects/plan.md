@@ -26,7 +26,7 @@ traducen sus errores. No modifica HU-02, HU-04, HU-15, HU-20a ni HU-20b.
 >
 > **Setup verificado (T002-T004)**: los contratos comunes están disponibles. Los parciales son definiciones
 > `alert` y `field` dentro de `templates/layout.html` (no archivos separados `alert.html` y `field.html`).
-> `origin/main` llega a `008`; `009` es candidato, sin reserva en ramas remotas visibles. HU-15 todavía no tiene
+> `origin/main` llega a `011` (HU-05a); `012` es candidato, sin reserva en ramas remotas visibles. HU-15 todavía no tiene
 > responsable ni implementación, por lo que su cierre con `FOR UPDATE` no pudo verificarse en el código. Ver
 > [data-model.md](data-model.md); coordinar nuevamente el número y el contrato cuando HU-15 se asigne.
 
