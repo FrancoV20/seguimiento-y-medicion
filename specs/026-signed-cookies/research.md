@@ -63,6 +63,19 @@
 - La firma actual de la preparación de pruebas de `test/context_bdd_test.go`
   (`nuevaSeleccionApp`, `formNavegador`, `poner`, `valorCookie`).
 
+## Resultado de T001 (27/10/2026)
+
+- La lista de pruebas se confirmó. Además, `src/web/backlog_handlers_test.go` (HU-22, ya en `main`)
+  usa `idCookie` (queda firmada al actualizar el helper) y una cookie inválida a propósito, que se
+  sigue descartando.
+- Ramas abiertas: HU-14 (`board_context_test.go`), HU-23 (`sprints_handlers_test.go`) y HU-24
+  (`effort_handlers_test.go`) solo arman cookies inválidas a propósito; no se rompen.
+- Nadie más edita `src/web/context.go`. HU-23 modifica `RequireContext` en
+  `context_middleware.go`, compatible con el descarte silencioso de HU-26.
+- La rama de trabajo es `HU-26` (la que existe en el repositorio), no `feature/hu-26-cookies-firmadas`.
+- `TestReadIDCookie_FirmaInvalidaEsManipulada` quedó en `context_test.go` y
+  `TestHU26_ReinicioConMismaClave` en `cookie_signer_test.go`.
+
 ## Preguntas abiertas
 
 Ninguna.

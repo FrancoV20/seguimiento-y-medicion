@@ -38,6 +38,16 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	if err != nil {
 		return fail(err.Error())
 	}
+	// Clave de las cookies de contexto (HU-26): antes de abrir el puerto, para no arrancar con
+	// una clave corta. La clave nunca se registra.
+	secret, temporary, err := web.LoadCookieSecret(getenv)
+	if err != nil {
+		return fail(err.Error())
+	}
+	if temporary {
+		logger.Warn(web.MsgTemporaryCookieSecret)
+	}
+	web.SetCookieSecret(secret)
 
 	srv := web.NewServer(logger)
 	// La protección contra envíos de otro origen va primero (HU-20b, T025).
