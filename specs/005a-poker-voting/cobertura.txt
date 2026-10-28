@@ -1,0 +1,29 @@
+# HU-05a - cobertura
+# Fecha: 2026-10-28 04:57
+$ go test -count=1 -p 1 -cover ./...
+
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.151s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	0.063s	coverage: 95.8% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.006s	coverage: 12.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.115s	coverage: 92.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.036s	coverage: 82.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	0.382s	coverage: 86.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.050s	coverage: 82.6% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	0.647s	coverage: 80.0% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	4.442s	coverage: 90.9% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	1.578s	coverage: [no statements]
+
+$ go test -count=1 -p 1 -coverprofile=poker.out ./src/poker/ && go tool cover -func=poker.out
+
+src/poker/postgres_store.go:21:	NewPostgreSQLStore	100.0%
+src/poker/postgres_store.go:26:	OpenRound		73.1%
+src/poker/postgres_store.go:74:	roundStatuses		81.8%
+src/poker/postgres_store.go:93:	CastVote		84.2%
+src/poker/round.go:14:		CheckOpen		100.0%
+src/poker/round.go:27:		CheckVote		100.0%
+src/poker/series.go:9:		InSeries		100.0%
+src/poker/series.go:20:		ParseValue		100.0%
+src/poker/service.go:11:		NewService		100.0%
+src/poker/service.go:16:		OpenRound		100.0%
+src/poker/service.go:28:		Vote			100.0%
+total:										(statements)		86.7%
