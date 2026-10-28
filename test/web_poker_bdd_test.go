@@ -251,7 +251,12 @@ func TestBDD_HU05a_VotosOcultos(t *testing.T) {
 	_, cuerpo := app.abrir(t, beto, "/planning-poker")
 
 	// Entonces ve que Ana votó, pero no qué votó
-	if fila := filaDe(cuerpo, m.ana); !strings.Contains(fila, web.LabelPokerVoted) || strings.Contains(fila, "13") {
+	// Se quita el nombre: lleva números al azar que podrían contener un 13.
+	fila := filaDe(cuerpo, m.ana)
+	if i := strings.Index(fila, ":"); i >= 0 {
+		fila = fila[i:]
+	}
+	if !strings.Contains(fila, web.LabelPokerVoted) || strings.Contains(fila, "13") {
 		t.Errorf("la fila de Ana debía decir «Votó» sin el valor: %s", fila)
 	}
 	if strings.Contains(cuerpo, `value="13" checked`) || strings.Contains(cuerpo, "Tu voto: 13") {

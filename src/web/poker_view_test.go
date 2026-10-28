@@ -24,7 +24,9 @@ func TestHU05a_VotosAjenosOcultos(t *testing.T) {
 	a.get(t, beto, "/planning-poker") // consume el mensaje del voto
 
 	_, before := a.get(t, beto, "/planning-poker")
-	anaRow, betoRow := participantRow(t, before, a.fx.ana), participantRow(t, before, a.fx.beto)
+	// Se quita el nombre: lleva números al azar que podrían contener un 13.
+	anaRow := strings.TrimPrefix(participantRow(t, before, a.fx.ana), a.fx.anaName)
+	betoRow := participantRow(t, before, a.fx.beto)
 	if !strings.Contains(anaRow, LabelPokerVoted) || strings.Contains(anaRow, "13") {
 		t.Errorf("la fila de Ana debía decir «Votó» sin el valor: %s", anaRow)
 	}
