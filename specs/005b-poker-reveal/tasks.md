@@ -39,13 +39,13 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T003 [P] [E2, E3, E4, E5] Escribir `src/poker/spread_test.go`:
+- [x] T003 [P] [E2, E3, E4, E5] Escribir `src/poker/spread_test.go`:
   - `TestSpread`: prueba de tabla con los once casos de `data-model.md` (2-13-5 → 2, 13, true; 3-5-8 → 3, 8, false;
     3-13-3 → 3, 13, true; 5-5 → 5, 5, false; 8 → 8, 8, false; 1-3 false; 1-5 true; 55-89 false; 1-89 true);
   - `TestSpread_Errores`: sin valores (nil y vacío) → `errors.Is(err, ErrNoVotes)`; 4 y {2, 0} →
     `ErrValueNotInSeries`;
   - `TestSpread_NoModificaLosValores`: el slice {13, 2, 5} sigue igual después de llamar a `Spread`.
-- [ ] T004 Ejecutar T003, confirmar que falla porque `Spread`, `VoteSpread` y `ErrNoVotes` no existen y guardar la
+- [x] T004 Ejecutar T003, confirmar que falla porque `Spread`, `VoteSpread` y `ErrNoVotes` no existen y guardar la
   salida en `evidencia-red.txt`, sección "Divergencia".
 
 ### Implementación (GREEN)
