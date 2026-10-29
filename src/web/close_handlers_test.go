@@ -380,3 +380,91 @@ func TestCloseHandler_TituloConScriptSeMuestraComoTexto(t *testing.T) {
 		t.Errorf("el título persistido cambió: %q", persistedTitle)
 	}
 }
+
+func TestCloseHandler_SprintFinalizadoRechazadoSinCerrarElSprintActivo(t *testing.T) {
+	// Dado un Sprint finalizado y un Sprint nuevo activo en el mismo proyecto.
+	app := newCloseHandlerFixture(t)
+	projectID := newCatProject(t, app.db, "Sprint finalizado con reemplazo activo")
+	closedSprintID, _ := newCatSprint(t, app.db, projectID, "Finalizado")
+	activeSprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	// Cuando se intenta cerrar el Sprint finalizado enviando su identificador anterior.
+	resp, body := closeHandlerPost(t, app, client, closedSprintID)
+	defer resp.Body.Close()
+
+	// Entonces se rechaza con 409 y el mensaje de dominio; el Sprint activo no cambia.
+	if resp.StatusCode != http.StatusConflict {
+		t.Errorf("POST /cierre para Sprint finalizado = %d; se esperaba 409", resp.StatusCode)
+	}
+	if !strings.Contains(body, MsgSprintAlreadyClosed) {
+		t.Errorf("la respuesta debía mostrar %q", MsgSprintAlreadyClosed)
+	}
+	assertSprintStatus := func(id int64, want string) {
+		t.Helper()
+		var got string
+		if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, id).Scan(&got); err != nil {
+			t.Fatalf("no se pudo leer el estado del Sprint %d: %v", id, err)
+		}
+		if got != want {
+			t.Errorf("estado del Sprint %d = %q; se esperaba %q", id, got, want)
+		}
+	}
+	assertSprintStatus(closedSprintID, "Finalizado")
+	assertSprintStatus(activeSprintID, "Activo")
+}
+
+func TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza(t *testing.T) {
+	// Dado dos proyectos con Sprints activos y el proyecto A seleccionado como contexto.
+	app := newCloseHandlerFixture(t)
+	projectA := newCatProject(t, app.db, "id de cierre A")
+	projectB := newCatProject(t, app.db, "id de cierre B")
+	activeSprintA, _ := newCatSprint(t, app.db, projectA, "Activo")
+	activeSprintB, _ := newCatSprint(t, app.db, projectB, "Activo")
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectA)
+
+	// Cuando se envía un identificador malformado, negativo, inexistente o perteneciente
+	// a otro proyecto (aunque el formulario incluya un project_id no confiable).
+	cases := []struct {
+		name      string
+		sprintID  string
+		projectID string
+	}{
+		{name: "texto", sprintID: "abc"},
+		{name: "decimal", sprintID: "1.5"},
+		{name: "exponente", sprintID: "1e2"},
+		{name: "negativo", sprintID: "-1"},
+		{name: "vacío", sprintID: ""},
+		{name: "inexistente", sprintID: "9223372036854775807"},
+		{name: "sprint de otro proyecto", sprintID: id64(activeSprintB), projectID: id64(projectB)},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			form := url.Values{"sprint_id": {tc.sprintID}}
+			if tc.projectID != "" {
+				form.Set("project_id", tc.projectID)
+			}
+			resp, body := app.post(t, client, "/cierre", form)
+			defer resp.Body.Close()
+
+			// Entonces responde 422 con "El Sprint no existe" y ambos Sprints siguen activos.
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Errorf("POST /cierre con sprint_id=%q = %d; se esperaba 422", tc.sprintID, resp.StatusCode)
+			}
+			if !strings.Contains(body, MsgSprintNotFound) {
+				t.Errorf("la respuesta debía mostrar %q", MsgSprintNotFound)
+			}
+			for _, id := range []int64{activeSprintA, activeSprintB} {
+				var status string
+				if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, id).Scan(&status); err != nil {
+					t.Fatalf("no se pudo leer el estado del Sprint %d: %v", id, err)
+				}
+				if status != "Activo" {
+					t.Errorf("el Sprint %d quedó %q; se esperaba que siguiera Activo", id, status)
+				}
+			}
+		})
+	}
+}
