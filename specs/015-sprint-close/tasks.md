@@ -100,12 +100,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T031 [P] [US3] Escribir la prueba de handler del resumen: Sprint, completadas, a devolver, Story Points completados sobre planificados y botón, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/close_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo para cerrar" y sin botón, en `src/web/close_handlers_test.go`
+- [x] T031 [P] [US3] Escribir la prueba de handler del resumen: Sprint, completadas, a devolver, Story Points completados sobre planificados y botón, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/close_handlers_test.go`
+- [x] T032 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo para cerrar" y sin botón, en `src/web/close_handlers_test.go`
 - [ ] T033 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/close_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de handler de un título con `<script>`: se muestra como texto, en `src/web/close_handlers_test.go`
+- [x] T034 [P] [US3] Escribir la prueba de handler de un título con `<script>`: se muestra como texto, en `src/web/close_handlers_test.go`
 - [ ] T035 [P] [US3] Completar `close.html` con el estado "No hay un Sprint activo para cerrar" y sin botón en `src/web/templates/close.html`
-- [ ] T036 [P] [US3] Escribir los escenarios BDD de resumen antes de cerrar y sin Sprint activo en `test/web_close_bdd_test.go`
+- [x] T036 [P] [US3] Escribir los escenarios BDD de resumen antes de cerrar y sin Sprint activo en `test/web_close_bdd_test.go`
 - [ ] T037 [US3] Usar `Fail` en `src/web/close_handlers.go` cuando falla la lectura del Sprint o de las historias
 
 **Checkpoint**: US3 muestra el efecto del cierre antes de confirmarlo.

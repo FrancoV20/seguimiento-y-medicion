@@ -72,6 +72,14 @@ type cierreBDDApp struct {
 }
 
 func nuevaCierreBDDApp(t *testing.T, estados ...sprint.StoryStatus) *cierreBDDApp {
+	return nuevaCierreBDDAppConSprint(t, true, estados...)
+}
+
+func nuevaCierreBDDAppSinSprint(t *testing.T) *cierreBDDApp {
+	return nuevaCierreBDDAppConSprint(t, false)
+}
+
+func nuevaCierreBDDAppConSprint(t *testing.T, crearSprint bool, estados ...sprint.StoryStatus) *cierreBDDApp {
 	t.Helper()
 	fixture := nuevaSeleccionFixture(t)
 	server := web.NewServer(silencioso())
@@ -92,10 +100,12 @@ func nuevaCierreBDDApp(t *testing.T, estados ...sprint.StoryStatus) *cierreBDDAp
 	app := &cierreBDDApp{
 		seleccionFixture: fixture,
 		httpServer:       httpServer,
-		sprintID: fixture.insertar(t, `
+	}
+	if crearSprint {
+		app.sprintID = fixture.insertar(t, `
 			INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
 			VALUES ($1, 1, 'Objetivo BDD HU-15', DATE '2026-10-01', DATE '2026-10-15', 'Activo')
-			RETURNING id`, fixture.proyectoA),
+			RETURNING id`, fixture.proyectoA)
 	}
 	t.Cleanup(func() {
 		_, _ = fixture.db.Exec(
@@ -158,6 +168,55 @@ func (a *cierreBDDApp) obtener(t *testing.T, client *http.Client, path string) (
 		t.Fatalf("GET %s: %v", path, err)
 	}
 	return response, formCuerpo(t, response)
+}
+
+func TestCloseBDD_ResumenPrevioAntesDeConfirmar(t *testing.T) {
+	// Dado un Sprint activo con historias Hecho, En progreso y En Sprint en el proyecto elegido.
+	app := nuevaCierreBDDApp(t, sprint.Done, sprint.InProgress, sprint.EnSprint)
+	client := app.elegirProyecto(t)
+
+	// Cuando abro por HTTP la pantalla Cierre de Sprint sin confirmar el cierre.
+	response, body := app.obtener(t, client, "/cierre")
+
+	// Entonces veo el resumen con historias completadas y a devolver, los puntos y el botón.
+	if response.StatusCode != http.StatusOK {
+		t.Errorf("GET /cierre = %d; se esperaba 200", response.StatusCode)
+	}
+	for _, expected := range []string{
+		"Sprint 1", "HU15 BDD historia 1", "HU15 BDD historia 2", "HU15 BDD historia 3",
+		"Hecho", "En progreso", "En Sprint", "3 de 16", "Cerrar Sprint",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("el resumen previo debía incluir %q", expected)
+		}
+	}
+	var status string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, app.sprintID).Scan(&status); err != nil {
+		t.Fatalf("no se pudo comprobar el estado del Sprint: %v", err)
+	}
+	if status != string(sprint.SprintActive) {
+		t.Errorf("la lectura del resumen cambió el Sprint a %q; debía seguir Activo", status)
+	}
+}
+
+func TestCloseBDD_SinSprintActivoSinBoton(t *testing.T) {
+	// Dado un proyecto elegido en HU-20b que no tiene ningún Sprint activo.
+	app := nuevaCierreBDDAppSinSprint(t)
+	client := app.elegirProyecto(t)
+
+	// Cuando abro por HTTP la pantalla de Cierre de Sprint.
+	response, body := app.obtener(t, client, "/cierre")
+
+	// Entonces la pantalla informa que no hay Sprint activo y no ofrece cerrar uno.
+	if response.StatusCode != http.StatusOK {
+		t.Errorf("GET /cierre sin Sprint activo = %d; se esperaba 200", response.StatusCode)
+	}
+	if !strings.Contains(body, "No hay un Sprint activo para cerrar") {
+		t.Errorf("la pantalla debía mostrar %q", "No hay un Sprint activo para cerrar")
+	}
+	if strings.Contains(body, "Cerrar Sprint") || strings.Contains(body, `name="sprint_id"`) {
+		t.Errorf("la pantalla sin Sprint activo mostró un botón o formulario de cierre")
+	}
 }
 
 func (a *cierreBDDApp) exigirRedireccionDeCierre(t *testing.T, response *http.Response) bool {

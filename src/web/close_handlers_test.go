@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
@@ -284,5 +285,98 @@ func TestCloseHandler_SprintSinHistoriasHechoCierraYHU07CalculaVelocidadCero(t *
 		t.Errorf("HU-07 CalculateMetrics() devolvió error: %v", err)
 	} else if calculated.Velocity != 0 {
 		t.Errorf("HU-07 calculó velocidad %d; se esperaba 0", calculated.Velocity)
+	}
+}
+
+func TestCloseHandler_ResumenPrevioMuestraSoloDatosDelProyectoActivo(t *testing.T) {
+	// Dado dos proyectos con Sprints activos y el proyecto A seleccionado en HU-20b.
+	app := newCloseHandlerFixture(t)
+	projectA := newCatProject(t, app.db, "resumen activo A")
+	projectB := newCatProject(t, app.db, "resumen otro B")
+	sprintA, _ := newCatSprint(t, app.db, projectA, "Activo")
+	sprintB, _ := newCatSprint(t, app.db, projectB, "Activo")
+	newCatStory(t, app.db, projectA, sprintA, "Completa de A", boardPuntos(3), sprint.Done)
+	newCatStory(t, app.db, projectA, sprintA, "En progreso de A", boardPuntos(5), sprint.InProgress)
+	newCatStory(t, app.db, projectA, sprintA, "En Sprint de A", boardPuntos(8), sprint.EnSprint)
+	newCatStory(t, app.db, projectB, sprintB, "Historia privada de B", boardPuntos(13), sprint.Done)
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectA)
+
+	// Cuando se abre el formulario de cierre, se mide el tiempo de respuesta.
+	started := time.Now()
+	resp, body := app.get(t, client, "/cierre")
+	elapsed := time.Since(started)
+
+	// Entonces se ve el resumen de A, sus puntos y el botón; no aparecen datos de B
+	// y la pantalla responde dentro del umbral SC-007.
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("GET /cierre = %d; se esperaba 200", resp.StatusCode)
+	}
+	for _, expected := range []string{
+		"Sprint 1", "Completa de A", "En progreso de A", "En Sprint de A",
+		"Hecho", "En progreso", "En Sprint", "3 de 16", "Cerrar Sprint",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("el resumen previo debía contener %q", expected)
+		}
+	}
+	if strings.Contains(body, "Historia privada de B") {
+		t.Errorf("el resumen del proyecto activo incluyó una historia del otro proyecto")
+	}
+	if elapsed >= 500*time.Millisecond {
+		t.Errorf("GET /cierre tardó %v; SC-007 exige menos de 500 ms", elapsed)
+	}
+}
+
+func TestCloseHandler_SinSprintActivoMuestraMensajeYSinBoton(t *testing.T) {
+	// Dado un proyecto activo sin ningún Sprint activo y seleccionado en HU-20b.
+	app := newCloseHandlerFixture(t)
+	projectID := newCatProject(t, app.db, "sin Sprint activo")
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	// Cuando se abre la pantalla de cierre.
+	resp, body := app.get(t, client, "/cierre")
+
+	// Entonces se informa que no hay Sprint para cerrar y no se muestra el botón.
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("GET /cierre sin Sprint activo = %d; se esperaba 200", resp.StatusCode)
+	}
+	if !strings.Contains(body, "No hay un Sprint activo para cerrar") {
+		t.Errorf("la pantalla debía mostrar %q", "No hay un Sprint activo para cerrar")
+	}
+	if strings.Contains(body, "Cerrar Sprint") || strings.Contains(body, `name="sprint_id"`) {
+		t.Errorf("sin Sprint activo no deben mostrarse el botón ni el campo sprint_id")
+	}
+}
+
+func TestCloseHandler_TituloConScriptSeMuestraComoTexto(t *testing.T) {
+	// Dado un Sprint activo cuya historia tiene un título que contiene una etiqueta script.
+	app := newCloseHandlerFixture(t)
+	projectID := newCatProject(t, app.db, "título escapado")
+	sprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+	storyID := newCatStory(t, app.db, projectID, sprintID, "<script>alert('x')</script>", boardPuntos(3), sprint.Done)
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	// Cuando se carga el resumen previo.
+	resp, body := app.get(t, client, "/cierre")
+
+	// Entonces la etiqueta se escapa como texto y no se interpreta como HTML ejecutable.
+	if resp.StatusCode != http.StatusOK {
+		t.Errorf("GET /cierre = %d; se esperaba 200", resp.StatusCode)
+	}
+	if !strings.Contains(body, "&lt;script&gt;") {
+		t.Errorf("el título debía mostrarse escapado como texto")
+	}
+	if strings.Contains(body, "<script>") {
+		t.Errorf("la respuesta contiene una etiqueta script sin escapar")
+	}
+	var persistedTitle string
+	if err := app.db.QueryRow(`SELECT title FROM user_stories WHERE id = $1`, storyID).Scan(&persistedTitle); err != nil {
+		t.Fatalf("no se pudo verificar el título de la historia: %v", err)
+	}
+	if persistedTitle != "<script>alert('x')</script>" {
+		t.Errorf("el título persistido cambió: %q", persistedTitle)
 	}
 }
