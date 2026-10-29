@@ -12,16 +12,6 @@ type PostgreSQLSprintCloser struct {
 	db *sql.DB
 }
 
-// CloseResult contiene el resultado mínimo del cierre requerido por las pruebas RED.
-type CloseResult struct {
-	ReturnedCount int
-}
-
-var (
-	ErrSprintNotFound      = errors.New("sprint not found")
-	ErrSprintAlreadyClosed = errors.New("sprint already closed")
-)
-
 // NewPostgreSQLSprintCloser crea un closer sobre una conexión ya abierta.
 func NewPostgreSQLSprintCloser(db *sql.DB) *PostgreSQLSprintCloser {
 	return &PostgreSQLSprintCloser{db: db}
@@ -43,10 +33,11 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 	defer tx.Rollback()
 
 	var status string
+	var sprintNumber int64
 	err = tx.QueryRowContext(ctx,
-		`SELECT status FROM sprints WHERE id = $1 FOR UPDATE`,
+		`SELECT status, number FROM sprints WHERE id = $1 FOR UPDATE`,
 		sprintID,
-	).Scan(&status)
+	).Scan(&status, &sprintNumber)
 	if errors.Is(err, sql.ErrNoRows) {
 		return CloseResult{}, ErrSprintNotFound
 	}
@@ -84,6 +75,17 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 	}
 	if err := storyRows.Close(); err != nil {
 		return CloseResult{}, fmt.Errorf("close story rows for sprint %d: %w", sprintID, err)
+	}
+
+	var completedCount int
+	if err := tx.QueryRowContext(ctx, `
+		SELECT count(*)
+		FROM user_stories
+		WHERE active_sprint_id = $1 AND status = $2`,
+		sprintID,
+		string(Done),
+	).Scan(&completedCount); err != nil {
+		return CloseResult{}, fmt.Errorf("count completed stories for sprint %d: %w", sprintID, err)
 	}
 
 	if _, err := tx.ExecContext(ctx, `
@@ -146,5 +148,9 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 	if err := tx.Commit(); err != nil {
 		return CloseResult{}, fmt.Errorf("commit sprint %d close: %w", sprintID, err)
 	}
-	return CloseResult{ReturnedCount: int(returnedCount)}, nil
+	return CloseResult{
+		SprintNumber:   sprintNumber,
+		CompletedCount: completedCount,
+		ReturnedCount:  int(returnedCount),
+	}, nil
 }
