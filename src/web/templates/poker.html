@@ -1,0 +1,41 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+{{with .Data}}
+<section aria-labelledby="poker-open-title">
+  <h2 id="poker-open-title">Abrir ronda</h2>
+  {{if .Board.Stories}}
+  <form method="post" action="/planning-poker/abrir">
+    <label for="historia">Historia</label>
+    <select id="historia" name="historia">
+      {{range .Board.Stories}}<option value="{{.ID}}">{{.Title}} ({{.Status}})</option>
+      {{end}}
+    </select>
+    <button type="submit">Abrir ronda</button>
+  </form>
+  {{else}}
+  <p class="empty">{{.NoStories}}</p>
+  {{end}}
+</section>
+
+{{if not .Rounds}}<p class="empty">{{.NoOpenRounds}}</p>{{end}}
+{{range .Rounds}}
+<section class="poker-round" data-ronda="{{.ID}}" aria-labelledby="poker-round-{{.ID}}">
+  <h2 id="poker-round-{{.ID}}">{{.StoryTitle}}</h2>
+  <p>Ronda {{.Number}}</p>
+  <ul class="poker-participants">
+    {{$round := .}}{{range .Participants}}<li data-integrante="{{.MemberID}}">{{.Name}}: {{if .HasVoted}}{{$.Data.Voted}}{{else}}{{$.Data.NotVoted}}{{end}}{{if and .IsMe $round.HasOwnVote}} · Tu voto: {{$round.OwnValue}}{{end}}</li>
+    {{end}}
+  </ul>
+  <form method="post" action="/planning-poker/votar">
+    <input type="hidden" name="ronda" value="{{.ID}}">
+    <fieldset class="poker-values">
+      <legend>Tu voto</legend>
+      {{range $.Data.Series}}<label><input type="radio" name="valor" value="{{.}}"{{if and $round.HasOwnVote (eq . $round.OwnValue)}} checked{{end}}> {{.}}</label>
+      {{end}}
+    </fieldset>
+    <button type="submit">Votar</button>
+  </form>
+</section>
+{{end}}
+{{end}}
+{{end}}

@@ -157,26 +157,27 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		sprintID,
 	).Scan(&status)
 	if err == sql.ErrNoRows {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	if err != nil {
 		return persistenceError("consultar el Sprint para quitar una historia")
 	}
 	if status != SprintActive {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 
-	var story UserStory
+	story := UserStory{ID: storyID}
 	var activeSprintID sql.NullInt64
 	err = tx.QueryRowContext(ctx, `
-		SELECT id, project_id, status, active_sprint_id
-		FROM user_stories
-		WHERE id = $1
-		FOR UPDATE`,
+		SELECT us.project_id, us.status, us.active_sprint_id,
+		       EXISTS (SELECT 1 FROM effort_logs el WHERE el.story_id = us.id)
+		FROM user_stories us
+		WHERE us.id = $1
+		FOR UPDATE OF us`,
 		storyID,
-	).Scan(&story.ID, &story.ProjectID, &story.Status, &activeSprintID)
+	).Scan(&story.ProjectID, &story.Status, &activeSprintID, &story.HasEffort)
 	if err == sql.ErrNoRows {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	if err != nil {
 		return persistenceError("consultar la historia para quitar")
@@ -201,7 +202,7 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		return persistenceError("verificar la eliminación de la asociación")
 	}
 	if affected != 1 {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	result, err = tx.ExecContext(ctx,
 		`UPDATE user_stories SET status = $1, active_sprint_id = NULL WHERE id = $2`,
@@ -216,7 +217,7 @@ func (s *PostgreSQLSprintStore) RemoveStory(ctx context.Context, sprintID int64,
 		return persistenceError("verificar la devolución de la historia a Pendiente")
 	}
 	if affected != 1 {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	if err := tx.Commit(); err != nil {
 		return persistenceError("confirmar la eliminación de la asociación")

@@ -14,7 +14,9 @@ import (
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/poker"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
@@ -106,6 +108,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail(err.Error())
 	}
+	// Planning Poker: rondas de votación y votos ocultos (HU-05a, T043).
+	if err := web.RegisterPlanningPoker(srv,
+		poker.NewService(poker.NewPostgreSQLStore(database)),
+		web.NewPostgreSQLPokerCatalog(database)); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
 
 	// Registro de esfuerzo: registra con el servicio de HU-03 y lee con su catálogo (HU-24, T022).
 	effortService := effort.NewService(effort.NewPostgreSQLEffortStore(database), nil)
@@ -116,10 +126,60 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail("no se pudo registrar la sección Registro de esfuerzo")
 	}
 
-	if err := srv.Serve(ctx, ln, func() { _ = database.Close() }); err != nil {
+	defectService := defect.NewService(defect.NewPostgreSQLStore(database))
+	defectCatalog := web.NewPostgreSQLDefectCatalog(database)
+	if err := web.RegisterDefects(srv, defectService, defectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Defectos")
+	}
+
+	// Sprints: creación, asignación y remoción de historias del Sprint activo (HU-23, T018).
+	sprintStore, err := sprint.NewPostgreSQLSprintStore(cfg.DatabaseURL)
+	if err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+	sprintService := sprint.NewService(sprintStore)
+	sprintCatalog := web.NewPostgreSQLSprintCatalog(database)
+	sprintActions := sprintActionsAdapter{service: sprintService, store: sprintStore}
+	if err := web.RegisterSprints(srv, sprintCatalog, sprintActions); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+
+	if err := srv.Serve(ctx, ln, func() {
+		_ = sprintStore.Close()
+		_ = database.Close()
+	}); err != nil {
 		return fail(err.Error())
 	}
 	return 0
+}
+
+type sprintActionsAdapter struct {
+	service sprint.Service
+	store   sprint.SprintStore
+}
+
+func (a sprintActionsAdapter) CreateSprint(
+	ctx context.Context,
+	request sprint.SprintCreationRequest,
+	project sprint.Project,
+	stories []sprint.UserStory,
+) (sprint.SprintCreationResult, error) {
+	return a.service.CreateSprint(ctx, request, project, stories)
+}
+
+func (a sprintActionsAdapter) AssignStories(ctx context.Context, sprintID int64, storyIDs []int64) error {
+	return a.store.AssignStories(ctx, sprintID, storyIDs)
+}
+
+func (a sprintActionsAdapter) RemoveStory(ctx context.Context, sprintID, storyID int64) error {
+	return a.store.RemoveStory(ctx, sprintID, storyID)
 }
 
 // unwrapAll devuelve el error más interno, para registrar el detalle técnico.
