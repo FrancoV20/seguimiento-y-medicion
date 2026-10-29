@@ -77,8 +77,8 @@ func TestNewProject_SuccessInitialState(t *testing.T) {
 		t.Fatalf("did not expect an error for a valid project, got: %v", err)
 	}
 
-	// T006: El proyecto debe nacer con estado "Active"
-	expectedStatus := "Active"
+	// T006: El proyecto debe nacer con estado "Activo"
+	expectedStatus := "Activo"
 	if p.Status != expectedStatus {
 		t.Errorf("expected initial status %q, got %q", expectedStatus, p.Status)
 	}

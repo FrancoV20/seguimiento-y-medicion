@@ -8,10 +8,10 @@
 
 ## Tareas
 
-- [ ] T001 Revisar en `main` dónde se asigna y dónde se compara el estado del proyecto (`git grep -n "Active"` y `git grep -n "'Activo'"`). Resultado esperado: solo `src/project/project.go` usa "Active".
-- [ ] T002 [P] Ajustar las pruebas de HU-01 para esperar "Activo": `src/project/project_test.go`, `src/project/service_test.go`, `src/project/postgres_store_integration_test.go` y `test/project_bdd_test.go`.
-- [ ] T003 [P] Escribir la prueba de integración `test/project_backlog_flow_test.go`: un proyecto creado con `ProjectService` sobre PostgreSQL admite una historia con `BacklogService`.
-- [ ] T004 Ejecutar `go test -count=1 -p 1 ./...` y guardar la salida en rojo en `specs/021-fix-project-status/evidencia-fix-estado-red.txt`.
+- [x] T001 Revisar en `main` dónde se asigna y dónde se compara el estado del proyecto (`git grep -n "Active"` y `git grep -n "'Activo'"`). Resultado esperado: solo `src/project/project.go` usa "Active".
+- [x] T002 [P] Ajustar las pruebas de HU-01 para esperar "Activo": `src/project/project_test.go`, `src/project/service_test.go`, `src/project/postgres_store_integration_test.go` y `test/project_bdd_test.go`.
+- [x] T003 [P] Escribir la prueba de integración `test/project_backlog_flow_test.go`: un proyecto creado con `ProjectService` sobre PostgreSQL admite una historia con `BacklogService`.
+- [x] T004 Ejecutar `go test -count=1 -p 1 ./...` y guardar la salida en rojo en `specs/021-fix-project-status/evidencia-fix-estado-red.txt`.
 - [ ] T005 Definir `StatusActive = "Activo"` en `src/project/model.go` y usarla en `NewProject` (GREEN).
 - [ ] T006 Crear la migración de datos que pasa los proyectos "Active" a "Activo" (la bajada no cambia datos).
 - [ ] T007 REFACTOR: revisar comentarios y nombres de las pruebas tocadas.
