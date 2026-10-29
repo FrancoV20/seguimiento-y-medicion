@@ -1,0 +1,1 @@
+﻿Evidencia Fase RED: Los escenarios BDD y las pruebas de handlers fallaron exitosamente en la etapa de diseño (ver Commits 15 y 16) debido al mensaje generico 'La operacion no pudo completarse', superando la fase RED de TDD antes de la implementacion final en el Commit 17.
