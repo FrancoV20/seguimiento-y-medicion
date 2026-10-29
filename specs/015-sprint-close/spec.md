@@ -270,15 +270,15 @@ Los textos propios de HU-15 son una propuesta del equipo y se definen en un solo
 |---|---|---|---|---|
 | 1. Resumen antes de cerrar | FR-002 | T008, T031 | T036 | `close_handlers.go`, `close.html` |
 | 2. Sin Sprint activo | FR-003 | T032 | T036 | `close.html` |
-| 3. Cierre exitoso | FR-004, FR-005 | T006, T007, T016, T019 | T022 | `src/sprint` (dominio), `close_handlers.go` |
-| 4. Historias completadas conservadas | FR-006 | T006, T007, T020 | T022 | `postgres_sprint_closer.go` |
-| 5. Datos del Sprint congelados | FR-007 | T007, T021 | T022 | `postgres_sprint_closer.go`, migración |
-| 6. Cierre bloqueado por HU-07 | FR-008 | T006, T025 | T029 | `src/sprint`, `close_form.go` |
-| 7. Sprint sin historias completadas | FR-009 | T006, T023 | T022 | `src/sprint` |
-| 8. Sprint ya finalizado | FR-010, FR-013 | T006, T026 | T029 | `src/sprint`, `close_form.go` |
-| 9. Historias devueltas disponibles | FR-016 | T024 | T022 | `src/sprint` |
-| 10. Carga de esfuerzo posterior | FR-011 | T027 | T029 | `src/effort` (HU-03) |
-| 11. Error al cerrar | FR-012, FR-015 | T007, T028, T030 | T029 | `postgres_sprint_closer.go`, `close_handlers.go` |
+| 3. Cierre exitoso | FR-004, FR-005 | T006, T007, T012, T013, T017 | T017 | `src/sprint` (dominio), `close_handlers.go` |
+| 4. Historias completadas conservadas | FR-006 | T006, T007, T013, T017 | T017 | `postgres_sprint_closer.go` |
+| 5. Datos del Sprint congelados | FR-007 | T007, T015, T017 | T017 | `postgres_sprint_closer.go`, migración |
+| 6. Cierre bloqueado por HU-07 | FR-008 | T006, T022, T027 | T027 | `src/sprint`, `close_form.go` |
+| 7. Sprint sin historias completadas | FR-009 | T006, T014, T017 | T017 | `src/sprint` |
+| 8. Sprint ya finalizado | FR-010, FR-013 | T006, T023, T024, T043 | T027 | `src/sprint`, `close_form.go`, HU-20b |
+| 9. Historias devueltas disponibles | FR-016 | T015, T017 | T017 | `src/sprint` |
+| 10. Carga de esfuerzo posterior | FR-011 | T016, T026, T027 | T027 | `src/effort` (HU-03) |
+| 11. Error al cerrar | FR-012, FR-015 | T007, T025, T027, T030 | T027 | `postgres_sprint_closer.go`, `close_handlers.go` |
 | (HU-20b) Recarga sin repetir | FR-004 | T042 | | `close_handlers.go` |
 | (HU-20b) Sin proyecto activo | FR-013 | T043 | | `close_handlers.go` |
-| (HU-20a) Error al leer | FR-014 | T044 | | `close_handlers.go` |
+| (HU-20a) Error al leer | FR-014 | T033 | | `close_handlers.go` |

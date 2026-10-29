@@ -1,0 +1,1955 @@
+﻿=== RUN   TestServicio_SegundoSprintActivoSeRechazaConSuNumero
+--- PASS: TestServicio_SegundoSprintActivoSeRechazaConSuNumero (0.00s)
+=== RUN   TestServicio_RechazoNoDejaHuecosEnLaNumeracion
+--- PASS: TestServicio_RechazoNoDejaHuecosEnLaNumeracion (0.00s)
+=== RUN   TestServicio_ConTodosLosSprintsFinalizadosSeCreaUnoActivo
+--- PASS: TestServicio_ConTodosLosSprintsFinalizadosSeCreaUnoActivo (0.00s)
+=== RUN   TestServicio_LaReglaEsPorProyecto
+--- PASS: TestServicio_LaReglaEsPorProyecto (0.00s)
+=== RUN   TestCreateSprint_ProyectoConSprintActivoSeRechazaSinTocarHistorias
+--- PASS: TestCreateSprint_ProyectoConSprintActivoSeRechazaSinTocarHistorias (0.00s)
+=== RUN   TestServicio_AsignacionDejaLasHistoriasEnSprint
+--- PASS: TestServicio_AsignacionDejaLasHistoriasEnSprint (0.00s)
+=== RUN   TestServicio_HistoriaYaAsignadaInformaElSprint
+--- PASS: TestServicio_HistoriaYaAsignadaInformaElSprint (0.00s)
+=== RUN   TestServicio_QuitarYVolverAAsignarEnElSprintActivo
+--- PASS: TestServicio_QuitarYVolverAAsignarEnElSprintActivo (0.00s)
+=== RUN   TestCloseSprintServiceClosesActiveSprintAndReturnsCounts
+--- PASS: TestCloseSprintServiceClosesActiveSprintAndReturnsCounts (0.43s)
+=== RUN   TestCloseSprintServiceValidatesProjectBeforeStatusAndHU07
+--- PASS: TestCloseSprintServiceValidatesProjectBeforeStatusAndHU07 (0.13s)
+=== RUN   TestCloseSprintServiceValidatesActiveStatusBeforeHU07
+--- PASS: TestCloseSprintServiceValidatesActiveStatusBeforeHU07 (0.13s)
+=== RUN   TestCloseSprintServiceRejectsMissingSprint
+--- PASS: TestCloseSprintServiceRejectsMissingSprint (0.07s)
+=== RUN   TestCloseSprintServiceBlocksInvalidCompletedStoryWithoutChangingData
+--- PASS: TestCloseSprintServiceBlocksInvalidCompletedStoryWithoutChangingData (0.17s)
+=== RUN   TestCloseSprintServiceAllowsEmptySprintAndHU07VelocityIsZero
+--- PASS: TestCloseSprintServiceAllowsEmptySprintAndHU07VelocityIsZero (0.18s)
+=== RUN   TestCloseSprintServiceAllowsSprintWithoutCompletedStoriesAndHU07VelocityIsZero
+--- PASS: TestCloseSprintServiceAllowsSprintWithoutCompletedStoriesAndHU07VelocityIsZero (0.22s)
+=== RUN   TestCloseSprint_ReasignaHistoriasDevueltasYConservaElRegistroCongelado
+--- PASS: TestCloseSprint_ReasignaHistoriasDevueltasYConservaElRegistroCongelado (0.34s)
+=== RUN   TestCloseSprint_EsfuerzoPosteriorAlCierreSeRechazaPorHU03
+--- PASS: TestCloseSprint_EsfuerzoPosteriorAlCierreSeRechazaPorHU03 (0.27s)
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/proyecto_inexistente
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/goal_obligatorio
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/per├¡odo_inv├ílido
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/historia_no_disponible
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/conflicto_de_Sprint_activo
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/ya_hay_un_Sprint_activo
+=== RUN   TestDomainErrorsAreDistinctAndCanBeWrapped/persistencia
+--- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/proyecto_inexistente (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/goal_obligatorio (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/per├¡odo_inv├ílido (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/historia_no_disponible (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/conflicto_de_Sprint_activo (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/ya_hay_un_Sprint_activo (0.00s)
+    --- PASS: TestDomainErrorsAreDistinctAndCanBeWrapped/persistencia (0.00s)
+=== RUN   TestPostgreSQLSprintStore_UnSoloSprintActivoYNumeracionSinHuecos
+--- PASS: TestPostgreSQLSprintStore_UnSoloSprintActivoYNumeracionSinHuecos (0.16s)
+=== RUN   TestPostgreSQLSprintStore_LaReglaEsPorProyecto
+--- PASS: TestPostgreSQLSprintStore_LaReglaEsPorProyecto (0.19s)
+=== RUN   TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo
+--- PASS: TestPostgreSQLSprintStore_CreacionSimultaneaCreaUnSolo (0.22s)
+=== RUN   TestPostgreSQLSprintStore_EstadosYMensajeDeHistoriaAsignada
+--- PASS: TestPostgreSQLSprintStore_EstadosYMensajeDeHistoriaAsignada (0.30s)
+=== RUN   TestPostgreSQLSprintCloserCloseSprintPersistsSnapshotAndReturnsIncompleteStories
+--- PASS: TestPostgreSQLSprintCloserCloseSprintPersistsSnapshotAndReturnsIncompleteStories (0.20s)
+=== RUN   TestPostgreSQLSprintCloserSnapshotDoesNotChangeAfterReassignmentOrStoryPointEdit
+--- PASS: TestPostgreSQLSprintCloserSnapshotDoesNotChangeAfterReassignmentOrStoryPointEdit (0.21s)
+=== RUN   TestPostgreSQLSprintCloserRollsBackWhenFinalSprintUpdateFails
+--- PASS: TestPostgreSQLSprintCloserRollsBackWhenFinalSprintUpdateFails (0.19s)
+=== RUN   TestPostgreSQLSprintCloserConcurrentCloseAppliesOnlyOnce
+--- PASS: TestPostgreSQLSprintCloserConcurrentCloseAppliesOnlyOnce (0.17s)
+=== RUN   TestPostgreSQLSprintStoreCreateSprintAndSequence
+--- PASS: TestPostgreSQLSprintStoreCreateSprintAndSequence (0.16s)
+=== RUN   TestPostgreSQLSprintStoreCreatesSprintWithoutStoryAssignments
+--- PASS: TestPostgreSQLSprintStoreCreatesSprintWithoutStoryAssignments (0.11s)
+=== RUN   TestPostgreSQLSprintStoreAssignmentConflictRollsBack
+--- PASS: TestPostgreSQLSprintStoreAssignmentConflictRollsBack (0.24s)
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/en_progreso
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/hecha
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/con_horas
+--- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort (0.23s)
+    --- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/en_progreso (0.02s)
+    --- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/hecha (0.01s)
+    --- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsStatusAndRecordedEffort/con_horas (0.01s)
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory/historia_de_otro_Sprint
+=== RUN   TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory/historia_inexistente
+--- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory (0.19s)
+    --- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory/historia_de_otro_Sprint (0.01s)
+    --- PASS: TestPostgreSQLSprintStore_RemoveStoryRejectsOtherSprintAndMissingStory/historia_inexistente (0.01s)
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint
+--- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras (0.39s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_Sprint,_Sprint_activo,_sin_horas (0.10s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/En_progreso,_Sprint_activo,_con_horas (0.12s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Hecho,_Sprint_finalizado (0.09s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryLeeEstadoSprintYHoras/Pendiente,_sin_Sprint (0.08s)
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto
+=== RUN   TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente
+--- PASS: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto (0.22s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/de_otro_proyecto (0.11s)
+    --- PASS: TestPostgreSQLStoryStatusStore_FindStoryAislaPorProyecto/inexistente (0.11s)
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_est├í_finalizado
+=== RUN   TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint
+--- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus (0.36s)
+    --- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus/cambia_con_el_estado_esperado (0.10s)
+    --- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_con_otro_estado_esperado (0.09s)
+    --- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_el_Sprint_est├í_finalizado (0.10s)
+    --- PASS: TestPostgreSQLStoryStatusStore_UpdateStatus/no_cambia_si_no_tiene_Sprint (0.07s)
+=== RUN   TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica
+--- PASS: TestPostgreSQLStoryStatusStore_CambiosSimultaneosSoloUnoSeAplica (0.15s)
+=== RUN   TestFormatSprintID
+--- PASS: TestFormatSprintID (0.00s)
+=== RUN   TestFormatSprintIDRejectsNonPositiveNumber
+--- PASS: TestFormatSprintIDRejectsNonPositiveNumber (0.00s)
+=== RUN   TestCreateSprint_AssignsThreePendingStoriesAndGeneratesDisplayID
+--- PASS: TestCreateSprint_AssignsThreePendingStoriesAndGeneratesDisplayID (0.00s)
+=== RUN   TestServiceCreatesSprintWithoutStoriesAndReturnsWarning
+--- PASS: TestServiceCreatesSprintWithoutStoriesAndReturnsWarning (0.00s)
+=== RUN   TestCreateSprint_RejectsEmptyOrWhitespaceGoal
+=== RUN   TestCreateSprint_RejectsEmptyOrWhitespaceGoal/vac├¡o
+=== RUN   TestCreateSprint_RejectsEmptyOrWhitespaceGoal/solo_espacios
+--- PASS: TestCreateSprint_RejectsEmptyOrWhitespaceGoal (0.00s)
+    --- PASS: TestCreateSprint_RejectsEmptyOrWhitespaceGoal/vac├¡o (0.00s)
+    --- PASS: TestCreateSprint_RejectsEmptyOrWhitespaceGoal/solo_espacios (0.00s)
+=== RUN   TestCreateSprintRejectsInvalidPeriods
+=== RUN   TestCreateSprintRejectsInvalidPeriods/fin_anterior_al_inicio
+=== RUN   TestCreateSprintRejectsInvalidPeriods/fin_igual_al_inicio
+--- PASS: TestCreateSprintRejectsInvalidPeriods (0.00s)
+    --- PASS: TestCreateSprintRejectsInvalidPeriods/fin_anterior_al_inicio (0.00s)
+    --- PASS: TestCreateSprintRejectsInvalidPeriods/fin_igual_al_inicio (0.00s)
+=== RUN   TestServiceInvalidPeriodDoesNotCallStoreOrConsumeSprintNumber
+--- PASS: TestServiceInvalidPeriodDoesNotCallStoreOrConsumeSprintNumber (0.00s)
+=== RUN   TestSprintCreationRequestDoesNotExposeGeneratedIdentifier
+--- PASS: TestSprintCreationRequestDoesNotExposeGeneratedIdentifier (0.00s)
+=== RUN   TestCreateSprint_RejectsStoryAlreadyAssignedToASprint
+--- PASS: TestCreateSprint_RejectsStoryAlreadyAssignedToASprint (0.00s)
+=== RUN   TestCreateSprint_AllowsStoryMoveOnlyAfterRemovingCurrentAssignment
+--- PASS: TestCreateSprint_AllowsStoryMoveOnlyAfterRemovingCurrentAssignment (0.00s)
+=== RUN   TestServicePersistsBeforeMutatingStoriesAndUsesPersistedSprintID
+--- PASS: TestServicePersistsBeforeMutatingStoriesAndUsesPersistedSprintID (0.00s)
+=== RUN   TestServiceDoesNotMutateStoriesWhenPersistenceFails
+--- PASS: TestServiceDoesNotMutateStoriesWhenPersistenceFails (0.00s)
+=== RUN   TestAssignStoryToSprint_MensajeIndicaElSprintDeLaHistoria
+--- PASS: TestAssignStoryToSprint_MensajeIndicaElSprintDeLaHistoria (0.00s)
+=== RUN   TestRemoveStoryFromSprint_LimpiaElNumeroDeSprint
+--- PASS: TestRemoveStoryFromSprint_LimpiaElNumeroDeSprint (0.00s)
+=== RUN   TestAssignStoryToSprintUpdatesPendingStory
+--- PASS: TestAssignStoryToSprintUpdatesPendingStory (0.00s)
+=== RUN   TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation
+=== RUN   TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/estado_distinto_de_pendiente
+=== RUN   TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/ya_pertenece_a_otro_Sprint
+=== RUN   TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/Sprint_destino_inv├ílido
+--- PASS: TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation (0.00s)
+    --- PASS: TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/estado_distinto_de_pendiente (0.00s)
+    --- PASS: TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/ya_pertenece_a_otro_Sprint (0.00s)
+    --- PASS: TestAssignStoryToSprintRejectsUnavailableStoryWithoutMutation/Sprint_destino_inv├ílido (0.00s)
+=== RUN   TestValidateStoryForProjectRejectsDifferentProject
+--- PASS: TestValidateStoryForProjectRejectsDifferentProject (0.00s)
+=== RUN   TestRemoveStoryFromSprintReturnsStoryToPending
+--- PASS: TestRemoveStoryFromSprintReturnsStoryToPending (0.00s)
+=== RUN   TestRemoveStoryFromSprintRejectsNonMatchingSprintWithoutMutation
+--- PASS: TestRemoveStoryFromSprintRejectsNonMatchingSprintWithoutMutation (0.00s)
+=== RUN   TestCanRemoveStoryReportsEligibilityAndBlockedReason
+=== RUN   TestCanRemoveStoryReportsEligibilityAndBlockedReason/En_Sprint_sin_horas
+=== RUN   TestCanRemoveStoryReportsEligibilityAndBlockedReason/en_progreso
+=== RUN   TestCanRemoveStoryReportsEligibilityAndBlockedReason/hecha
+=== RUN   TestCanRemoveStoryReportsEligibilityAndBlockedReason/con_horas_registradas
+--- PASS: TestCanRemoveStoryReportsEligibilityAndBlockedReason (0.00s)
+    --- PASS: TestCanRemoveStoryReportsEligibilityAndBlockedReason/En_Sprint_sin_horas (0.00s)
+    --- PASS: TestCanRemoveStoryReportsEligibilityAndBlockedReason/en_progreso (0.00s)
+    --- PASS: TestCanRemoveStoryReportsEligibilityAndBlockedReason/hecha (0.00s)
+    --- PASS: TestCanRemoveStoryReportsEligibilityAndBlockedReason/con_horas_registradas (0.00s)
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/comenzar
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/completar
+=== RUN   TestChangeStatus_CadaTransicionActualizaElEstado/reabrir
+--- PASS: TestChangeStatus_CadaTransicionActualizaElEstado (0.32s)
+    --- PASS: TestChangeStatus_CadaTransicionActualizaElEstado/comenzar (0.10s)
+    --- PASS: TestChangeStatus_CadaTransicionActualizaElEstado/completar (0.11s)
+    --- PASS: TestChangeStatus_CadaTransicionActualizaElEstado/reabrir (0.10s)
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas
+=== RUN   TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas
+--- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras (0.45s)
+    --- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_con_horas (0.14s)
+    --- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/completar_sin_horas (0.11s)
+    --- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/comenzar_sin_horas (0.10s)
+    --- PASS: TestChangeStatus_AdvertenciaDeHorasSoloAlCompletarSinHoras/reabrir_sin_horas (0.10s)
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente
+=== RUN   TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto
+--- PASS: TestChangeStatus_HistoriaInexistenteODeOtroProyecto (0.21s)
+    --- PASS: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/inexistente (0.10s)
+    --- PASS: TestChangeStatus_HistoriaInexistenteODeOtroProyecto/de_otro_proyecto (0.12s)
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint
+=== RUN   TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado
+--- PASS: TestChangeStatus_FueraDeUnSprintActivo (0.19s)
+    --- PASS: TestChangeStatus_FueraDeUnSprintActivo/Pendiente_sin_Sprint (0.08s)
+    --- PASS: TestChangeStatus_FueraDeUnSprintActivo/en_un_Sprint_finalizado (0.11s)
+=== RUN   TestChangeStatus_YaEstaEnElEstadoPedido
+--- PASS: TestChangeStatus_YaEstaEnElEstadoPedido (0.12s)
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real
+=== RUN   TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica
+--- PASS: TestChangeStatus_EstadoEsperadoDistintoDelReal (0.21s)
+    --- PASS: TestChangeStatus_EstadoEsperadoDistintoDelReal/distinto_del_real (0.10s)
+    --- PASS: TestChangeStatus_EstadoEsperadoDistintoDelReal/igual_al_real_se_aplica (0.11s)
+=== RUN   TestChangeStatus_TransicionNoPermitida
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho
+=== RUN   TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint
+--- PASS: TestChangeStatus_TransicionNoPermitida (0.20s)
+    --- PASS: TestChangeStatus_TransicionNoPermitida/En_Sprint_a_Hecho (0.10s)
+    --- PASS: TestChangeStatus_TransicionNoPermitida/En_progreso_a_En_Sprint (0.10s)
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho
+=== RUN   TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint
+--- PASS: TestChangeStatus_AccionQueNoCorrespondeAlEstado (0.21s)
+    --- PASS: TestChangeStatus_AccionQueNoCorrespondeAlEstado/comenzar_sobre_una_historia_Hecho (0.10s)
+    --- PASS: TestChangeStatus_AccionQueNoCorrespondeAlEstado/reabrir_sobre_una_historia_En_Sprint (0.12s)
+=== RUN   TestChangeStatus_OrdenDeValidacion
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado
+=== RUN   TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado
+=== RUN   TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transici├│n
+=== RUN   TestChangeStatus_OrdenDeValidacion/la_transici├│n_antes_que_el_origen_de_la_acci├│n
+--- PASS: TestChangeStatus_OrdenDeValidacion (0.50s)
+    --- PASS: TestChangeStatus_OrdenDeValidacion/el_proyecto_antes_que_el_Sprint (0.12s)
+    --- PASS: TestChangeStatus_OrdenDeValidacion/el_Sprint_activo_antes_que_ya_aplicado (0.10s)
+    --- PASS: TestChangeStatus_OrdenDeValidacion/ya_aplicado_antes_que_el_estado_esperado (0.09s)
+    --- PASS: TestChangeStatus_OrdenDeValidacion/el_estado_esperado_antes_que_la_transici├│n (0.10s)
+    --- PASS: TestChangeStatus_OrdenDeValidacion/la_transici├│n_antes_que_el_origen_de_la_acci├│n (0.10s)
+=== RUN   TestCanTransition_LasTresPermitidas
+=== RUN   TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso
+=== RUN   TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho
+=== RUN   TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso
+--- PASS: TestCanTransition_LasTresPermitidas (0.00s)
+    --- PASS: TestCanTransition_LasTresPermitidas/En_Sprint_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_LasTresPermitidas/En_progreso_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_LasTresPermitidas/Hecho_a_En_progreso (0.00s)
+=== RUN   TestCanTransition_RechazaCualquierOtroPar
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint
+=== RUN   TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho
+--- PASS: TestCanTransition_RechazaCualquierOtroPar (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Pendiente_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_Sprint_a_Hecho (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/En_progreso_a_En_progreso (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Pendiente (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_En_Sprint (0.00s)
+    --- PASS: TestCanTransition_RechazaCualquierOtroPar/Hecho_a_Hecho (0.00s)
+=== RUN   TestNextAction_UnaAccionPorEstado
+=== RUN   TestNextAction_UnaAccionPorEstado/En_Sprint
+=== RUN   TestNextAction_UnaAccionPorEstado/En_progreso
+=== RUN   TestNextAction_UnaAccionPorEstado/Hecho
+=== RUN   TestNextAction_UnaAccionPorEstado/Pendiente
+--- PASS: TestNextAction_UnaAccionPorEstado (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/En_Sprint (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/En_progreso (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/Hecho (0.00s)
+    --- PASS: TestNextAction_UnaAccionPorEstado/Pendiente (0.00s)
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/completar
+=== RUN   TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir
+--- PASS: TestActionTransition_OrigenYDestinoDeCadaAccion (0.00s)
+    --- PASS: TestActionTransition_OrigenYDestinoDeCadaAccion/comenzar (0.00s)
+    --- PASS: TestActionTransition_OrigenYDestinoDeCadaAccion/completar (0.00s)
+    --- PASS: TestActionTransition_OrigenYDestinoDeCadaAccion/reabrir (0.00s)
+=== RUN   TestActionTransition_AccionDesconocida
+=== RUN   TestActionTransition_AccionDesconocida/accion_
+=== RUN   TestActionTransition_AccionDesconocida/accion_borrar
+--- PASS: TestActionTransition_AccionDesconocida (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_ (0.00s)
+    --- PASS: TestActionTransition_AccionDesconocida/accion_borrar (0.00s)
+=== RUN   TestAcciones_SonCoherentesConLaRegla
+=== RUN   TestAcciones_SonCoherentesConLaRegla/comenzar
+=== RUN   TestAcciones_SonCoherentesConLaRegla/completar
+=== RUN   TestAcciones_SonCoherentesConLaRegla/reabrir
+--- PASS: TestAcciones_SonCoherentesConLaRegla (0.00s)
+    --- PASS: TestAcciones_SonCoherentesConLaRegla/comenzar (0.00s)
+    --- PASS: TestAcciones_SonCoherentesConLaRegla/completar (0.00s)
+    --- PASS: TestAcciones_SonCoherentesConLaRegla/reabrir (0.00s)
+=== RUN   TestMemorySprintStoreGeneratesSequentialSprintIDs
+--- PASS: TestMemorySprintStoreGeneratesSequentialSprintIDs (0.00s)
+=== RUN   TestMemorySprintStoreAssignsExclusivelyAndAllowsRemoveThenAssign
+--- PASS: TestMemorySprintStoreAssignsExclusivelyAndAllowsRemoveThenAssign (0.00s)
+=== RUN   TestMemorySprintStoreAssignmentIsAtomic
+--- PASS: TestMemorySprintStoreAssignmentIsAtomic (0.00s)
+=== RUN   TestMemorySprintStoreInvalidCreationDoesNotConsumeSprintNumber
+--- PASS: TestMemorySprintStoreInvalidCreationDoesNotConsumeSprintNumber (0.00s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	8.790s
+=== RUN   TestEscenario_RegistroDeNuevaHistoria
+--- PASS: TestEscenario_RegistroDeNuevaHistoria (0.00s)
+=== RUN   TestEscenario_CriteriosDeAceptacionObligatorios
+--- PASS: TestEscenario_CriteriosDeAceptacionObligatorios (0.00s)
+=== RUN   TestEscenarioContexto_SeleccionQueSeMantiene
+--- PASS: TestEscenarioContexto_SeleccionQueSeMantiene (0.13s)
+=== RUN   TestEscenarioContexto_SinProyectos
+=== RUN   TestEscenarioContexto_SinProyectos/sin_la_secci├│n_Proyectos
+=== RUN   TestEscenarioContexto_SinProyectos/con_la_secci├│n_Proyectos
+--- PASS: TestEscenarioContexto_SinProyectos (0.15s)
+    --- PASS: TestEscenarioContexto_SinProyectos/sin_la_secci├│n_Proyectos (0.07s)
+    --- PASS: TestEscenarioContexto_SinProyectos/con_la_secci├│n_Proyectos (0.07s)
+=== RUN   TestEscenarioContexto_CambioDeProyectoLimpiaElIntegrante
+--- PASS: TestEscenarioContexto_CambioDeProyectoLimpiaElIntegrante (0.09s)
+=== RUN   TestEscenarioContexto_MismoProyectoConservaElIntegrante
+--- PASS: TestEscenarioContexto_MismoProyectoConservaElIntegrante (0.08s)
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647
+--- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion (0.37s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc (0.10s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1 (0.09s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999 (0.09s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647 (0.09s)
+=== RUN   TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia
+--- PASS: TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia (0.10s)
+=== RUN   TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona
+--- PASS: TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona (0.07s)
+=== RUN   TestEscenarioContexto_SesionNuevaPideElegirDeNuevo
+--- PASS: TestEscenarioContexto_SesionNuevaPideElegirDeNuevo (0.08s)
+=== RUN   TestEscenarioIntegrante_Identificacion
+--- PASS: TestEscenarioIntegrante_Identificacion (0.12s)
+=== RUN   TestEscenarioIntegrante_AccionSinIdentificarse
+--- PASS: TestEscenarioIntegrante_AccionSinIdentificarse (0.10s)
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada
+--- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto (0.12s)
+    --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector (0.03s)
+    --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada (0.00s)
+=== RUN   TestEscenarioIntegrante_DejoDePertenecerAlProyecto
+--- PASS: TestEscenarioIntegrante_DejoDePertenecerAlProyecto (0.11s)
+=== RUN   TestEscenarioSeccion_SinProyectoRedirigeYVuelve
+--- PASS: TestEscenarioSeccion_SinProyectoRedirigeYVuelve (0.08s)
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_proyecto_y_no_hay_proyecto
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_hay_proyecto
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_me_identifiqu├®
+--- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError (0.10s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_proyecto_y_no_hay_proyecto (0.01s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_hay_proyecto (0.00s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_me_identifiqu├® (0.02s)
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1)
+--- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora (0.11s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1) (0.01s)
+=== RUN   TestEscenarioSeccion_SinRequisitosSeMuestraNormalmente
+--- PASS: TestEscenarioSeccion_SinRequisitosSeMuestraNormalmente (0.08s)
+=== RUN   TestScenarioDailyEffortLog
+--- PASS: TestScenarioDailyEffortLog (0.00s)
+=== RUN   TestScenarioEffortAddsToPreviousHours
+--- PASS: TestScenarioEffortAddsToPreviousHours (0.00s)
+=== RUN   TestScenarioInvalidHours
+=== RUN   TestScenarioInvalidHours/horas_-1
+=== RUN   TestScenarioInvalidHours/horas_0
+=== RUN   TestScenarioInvalidHours/horas_25
+--- PASS: TestScenarioInvalidHours (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_-1 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_0 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_25 (0.00s)
+=== RUN   TestScenarioEmptyActivity
+--- PASS: TestScenarioEmptyActivity (0.00s)
+=== RUN   TestScenarioMissingDate
+--- PASS: TestScenarioMissingDate (0.00s)
+=== RUN   TestScenarioMemberNotSpecified
+=== RUN   TestScenarioMemberNotSpecified/integrante_''
+=== RUN   TestScenarioMemberNotSpecified/integrante_'M999'
+--- PASS: TestScenarioMemberNotSpecified (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'' (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'M999' (0.00s)
+=== RUN   TestScenarioStorageFailure
+--- PASS: TestScenarioStorageFailure (0.00s)
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas/Then_muestra_velocidad_y_desviaci├│n_calculadas
+--- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation (0.00s)
+    --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad (0.00s)
+        --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes (0.00s)
+            --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas (0.00s)
+                --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas/Then_muestra_velocidad_y_desviaci├│n_calculadas (0.00s)
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n/Then_indica_No_disponible_sin_error_de_divisi├│n_por_cero
+--- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort (0.00s)
+    --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado (0.00s)
+        --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas (0.00s)
+            --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n (0.00s)
+                --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n/Then_indica_No_disponible_sin_error_de_divisi├│n_por_cero (0.00s)
+=== RUN   TestMetricsBDD_PartialEffortCalculation
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas/Then_informa_el_conteo_exacto_del_c├ílculo_parcial
+--- PASS: TestMetricsBDD_PartialEffortCalculation (0.00s)
+    --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos (0.00s)
+        --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias (0.00s)
+            --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas (0.00s)
+                --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas/Then_informa_el_conteo_exacto_del_c├ílculo_parcial (0.00s)
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint/Then_el_cierre_queda_bloqueado_e_identifica_historias_y_motivos
+--- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData (0.00s)
+    --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos (0.00s)
+        --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos (0.00s)
+            --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint (0.00s)
+                --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint/Then_el_cierre_queda_bloqueado_e_identifica_historias_y_motivos (0.00s)
+=== RUN   TestProjectCreation_BDD
+--- PASS: TestProjectCreation_BDD (0.00s)
+=== RUN   TestProjectCreation_InvalidDates_BDD
+--- PASS: TestProjectCreation_InvalidDates_BDD (0.00s)
+=== RUN   TestProjectCreation_EqualDates_BDD
+--- PASS: TestProjectCreation_EqualDates_BDD (0.00s)
+=== RUN   TestProjectCreation_EndDateOneDayAfter_BDD
+--- PASS: TestProjectCreation_EndDateOneDayAfter_BDD (0.00s)
+=== RUN   TestSprintBDDScenarios
+=== RUN   TestSprintBDDScenarios/crear_Sprint_con_tres_historias_pendientes
+=== RUN   TestSprintBDDScenarios/bloquear_historia_que_ya_est├í_asignada_a_un_Sprint
+=== RUN   TestSprintBDDScenarios/quitar_una_historia_y_volver_a_asignarla
+=== RUN   TestSprintBDDScenarios/un_solo_Sprint_activo_por_proyecto
+=== RUN   TestSprintBDDScenarios/asignaci├│n_exitosa_deja_las_historias_En_Sprint
+=== RUN   TestSprintBDDScenarios/generar_identificador_de_Sprint_y_no_solicitarlo_al_usuario
+=== RUN   TestSprintBDDScenarios/crear_Sprint_sin_historias_y_mostrar_advertencia
+=== RUN   TestSprintBDDScenarios/rechazar_Sprint_Goal_vac├¡o
+=== RUN   TestSprintBDDScenarios/rechazar_fecha_final_anterior_o_igual_a_la_inicial
+--- PASS: TestSprintBDDScenarios (0.00s)
+    --- PASS: TestSprintBDDScenarios/crear_Sprint_con_tres_historias_pendientes (0.00s)
+    --- PASS: TestSprintBDDScenarios/bloquear_historia_que_ya_est├í_asignada_a_un_Sprint (0.00s)
+    --- PASS: TestSprintBDDScenarios/quitar_una_historia_y_volver_a_asignarla (0.00s)
+    --- PASS: TestSprintBDDScenarios/un_solo_Sprint_activo_por_proyecto (0.00s)
+    --- PASS: TestSprintBDDScenarios/asignaci├│n_exitosa_deja_las_historias_En_Sprint (0.00s)
+    --- PASS: TestSprintBDDScenarios/generar_identificador_de_Sprint_y_no_solicitarlo_al_usuario (0.00s)
+    --- PASS: TestSprintBDDScenarios/crear_Sprint_sin_historias_y_mostrar_advertencia (0.00s)
+    --- PASS: TestSprintBDDScenarios/rechazar_Sprint_Goal_vac├¡o (0.00s)
+    --- PASS: TestSprintBDDScenarios/rechazar_fecha_final_anterior_o_igual_a_la_inicial (0.00s)
+=== RUN   TestWebBacklogBDD_CreateStory
+=== RUN   TestWebBacklogBDD_CreateStory/Given_un_proyecto_activo_y_datos_v├ílidos,_When_guardo,_Then_veo_la_historia_Pendiente
+--- PASS: TestWebBacklogBDD_CreateStory (0.10s)
+    --- PASS: TestWebBacklogBDD_CreateStory/Given_un_proyecto_activo_y_datos_v├ílidos,_When_guardo,_Then_veo_la_historia_Pendiente (0.10s)
+=== RUN   TestWebBacklogBDD_AddCriterionPreservesForm
+=== RUN   TestWebBacklogBDD_AddCriterionPreservesForm/Given_el_formulario_escrito,_When_agrego_un_criterio,_Then_conserva_los_datos_y_no_guarda
+--- PASS: TestWebBacklogBDD_AddCriterionPreservesForm (0.07s)
+    --- PASS: TestWebBacklogBDD_AddCriterionPreservesForm/Given_el_formulario_escrito,_When_agrego_un_criterio,_Then_conserva_los_datos_y_no_guarda (0.07s)
+=== RUN   TestWebBacklogBDD_RemoveCriterion
+=== RUN   TestWebBacklogBDD_RemoveCriterion/Given_varios_criterios,_When_quito_uno,_Then_solo_desaparece_ese_campo
+--- PASS: TestWebBacklogBDD_RemoveCriterion (0.07s)
+    --- PASS: TestWebBacklogBDD_RemoveCriterion/Given_varios_criterios,_When_quito_uno,_Then_solo_desaparece_ese_campo (0.07s)
+=== RUN   TestWebBacklogBDD_CannotRemoveLastCriterion
+=== RUN   TestWebBacklogBDD_CannotRemoveLastCriterion/Given_un_├║nico_criterio,_When_lo_quito,_Then_permanece_sin_guardar
+--- PASS: TestWebBacklogBDD_CannotRemoveLastCriterion (0.07s)
+    --- PASS: TestWebBacklogBDD_CannotRemoveLastCriterion/Given_un_├║nico_criterio,_When_lo_quito,_Then_permanece_sin_guardar (0.07s)
+=== RUN   TestWebBacklogBDD_BlankCriteriaAreIgnored
+=== RUN   TestWebBacklogBDD_BlankCriteriaAreIgnored/Given_criterios_en_blanco_y_uno_completo,_When_guardo,_Then_solo_persiste_el_completo
+--- PASS: TestWebBacklogBDD_BlankCriteriaAreIgnored (0.09s)
+    --- PASS: TestWebBacklogBDD_BlankCriteriaAreIgnored/Given_criterios_en_blanco_y_uno_completo,_When_guardo,_Then_solo_persiste_el_completo (0.09s)
+=== RUN   TestWebBacklogBDD_StoryPointsCanBeMissing
+=== RUN   TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar
+--- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing (0.10s)
+    --- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar (0.10s)
+=== RUN   TestWebBacklogBDD_EstimatedHoursAreOptional
+=== RUN   TestWebBacklogBDD_EstimatedHoursAreOptional/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_horas,_Then_no_hay_advertencia_y_dice_Sin_estimar
+--- PASS: TestWebBacklogBDD_EstimatedHoursAreOptional (0.09s)
+    --- PASS: TestWebBacklogBDD_EstimatedHoursAreOptional/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_horas,_Then_no_hay_advertencia_y_dice_Sin_estimar (0.09s)
+=== RUN   TestWebBacklogBDD_CommaDecimalHours
+=== RUN   TestWebBacklogBDD_CommaDecimalHours/Given_horas_con_coma_decimal,_When_guardo_1,5,_Then_el_valor_queda_exacto_y_visible
+--- PASS: TestWebBacklogBDD_CommaDecimalHours (0.11s)
+    --- PASS: TestWebBacklogBDD_CommaDecimalHours/Given_horas_con_coma_decimal,_When_guardo_1,5,_Then_el_valor_queda_exacto_y_visible (0.11s)
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_criterios_sin_texto,_When_guardo,_Then_recibo_el_error_de_HU-02_y_no_se_crea_la_historia
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_el_t├¡tulo_vac├¡o,_When_guardo,_Then_recibo_el_error_junto_al_t├¡tulo
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_la_descripci├│n_vac├¡a,_When_guardo,_Then_recibo_el_error_junto_a_la_descripci├│n
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_una_prioridad_manipulada,_When_guardo,_Then_recibo_el_error_de_HU-02
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_fuera_de_Fibonacci,_When_guardo,_Then_recibo_el_error_de_HU-22
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_no_num├®ricos,_When_guardo,_Then_recibo_el_error_de_HU-22
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_inv├ílidas,_When_guardo,_Then_recibo_el_error_de_HU-17
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_por_encima_del_m├íximo,_When_guardo,_Then_recibo_el_mensaje_de_l├¡mite
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_abc,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_10000,_When_guardo,_Then_se_informa_el_m├íximo_permitido
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_9999,995,_When_guardo,_Then_se_informa_el_m├íximo_permitido
+--- PASS: TestWebBacklogBDD_InvalidFormSubmissions (0.18s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_criterios_sin_texto,_When_guardo,_Then_recibo_el_error_de_HU-02_y_no_se_crea_la_historia (0.02s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_el_t├¡tulo_vac├¡o,_When_guardo,_Then_recibo_el_error_junto_al_t├¡tulo (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_la_descripci├│n_vac├¡a,_When_guardo,_Then_recibo_el_error_junto_a_la_descripci├│n (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_una_prioridad_manipulada,_When_guardo,_Then_recibo_el_error_de_HU-02 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_fuera_de_Fibonacci,_When_guardo,_Then_recibo_el_error_de_HU-22 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_no_num├®ricos,_When_guardo,_Then_recibo_el_error_de_HU-22 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_inv├ílidas,_When_guardo,_Then_recibo_el_error_de_HU-17 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_por_encima_del_m├íximo,_When_guardo,_Then_recibo_el_mensaje_de_l├¡mite (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_abc,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_10000,_When_guardo,_Then_se_informa_el_m├íximo_permitido (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_9999,995,_When_guardo,_Then_se_informa_el_m├íximo_permitido (0.01s)
+=== RUN   TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm
+--- PASS: TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm (0.07s)
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_recientes_primero
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario
+--- PASS: TestWebBacklogBDD_BacklogListAndEmptyState (0.19s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_recientes_primero (0.11s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario (0.08s)
+=== RUN   TestEscenarioWeb_PaginaDeInicioConMenu
+--- PASS: TestEscenarioWeb_PaginaDeInicioConMenu (0.00s)
+=== RUN   TestEscenarioWeb_FaltaDatabaseURL
+--- PASS: TestEscenarioWeb_FaltaDatabaseURL (0.00s)
+=== RUN   TestEscenarioWeb_BaseLentaReintentaYConecta
+--- PASS: TestEscenarioWeb_BaseLentaReintentaYConecta (0.00s)
+=== RUN   TestEscenarioWeb_BaseCaidaNoExponeLaClave
+--- PASS: TestEscenarioWeb_BaseCaidaNoExponeLaClave (0.00s)
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty
+--- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca (0.00s)
+    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes (0.00s)
+    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty (0.00s)
+=== RUN   TestEscenarioWeb_PuertoEnUso
+--- PASS: TestEscenarioWeb_PuertoEnUso (0.00s)
+=== RUN   TestEscenarioWeb_EstructuraComunConMenuYContexto
+--- PASS: TestEscenarioWeb_EstructuraComunConMenuYContexto (0.00s)
+=== RUN   TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu
+--- PASS: TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu (0.00s)
+=== RUN   TestEscenarioWeb_SinRecursosExternos
+--- PASS: TestEscenarioWeb_SinRecursosExternos (0.06s)
+=== RUN   TestEscenarioWeb_CaracteresEspeciales
+--- PASS: TestEscenarioWeb_CaracteresEspeciales (0.00s)
+=== RUN   TestEscenarioWeb_DireccionInexistenteOMalformadaDa404
+--- PASS: TestEscenarioWeb_DireccionInexistenteOMalformadaDa404 (0.00s)
+=== RUN   TestEscenarioWeb_MetodoNoSoportadoDa405
+--- PASS: TestEscenarioWeb_MetodoNoSoportadoDa405 (0.00s)
+=== RUN   TestEscenarioWeb_FalloInesperadoDa500Generico
+--- PASS: TestEscenarioWeb_FalloInesperadoDa500Generico (0.00s)
+=== RUN   TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar
+--- PASS: TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar (0.00s)
+=== RUN   TestEscenarioTablero_ComenzarUnaHistoria
+--- PASS: TestEscenarioTablero_ComenzarUnaHistoria (0.17s)
+=== RUN   TestEscenarioTablero_CompletarUnaHistoria
+--- PASS: TestEscenarioTablero_CompletarUnaHistoria (0.19s)
+=== RUN   TestEscenarioTablero_CompletarSinHorasRegistradas
+--- PASS: TestEscenarioTablero_CompletarSinHorasRegistradas (0.18s)
+=== RUN   TestEscenarioTablero_ReabrirUnaHistoria
+--- PASS: TestEscenarioTablero_ReabrirUnaHistoria (0.19s)
+=== RUN   TestEscenarioTablero_FueraDeUnSprintActivo
+--- PASS: TestEscenarioTablero_FueraDeUnSprintActivo (0.15s)
+=== RUN   TestEscenarioTablero_MarcarDosVeces
+--- PASS: TestEscenarioTablero_MarcarDosVeces (0.16s)
+=== RUN   TestEscenarioTablero_TransicionNoPermitida
+--- PASS: TestEscenarioTablero_TransicionNoPermitida (0.15s)
+=== RUN   TestEscenarioTablero_EstadoDesactualizado
+--- PASS: TestEscenarioTablero_EstadoDesactualizado (0.17s)
+=== RUN   TestEscenarioTablero_ErrorAlGuardar
+--- PASS: TestEscenarioTablero_ErrorAlGuardar (0.16s)
+=== RUN   TestEscenarioTablero_TableroDelSprintActivo
+--- PASS: TestEscenarioTablero_TableroDelSprintActivo (0.17s)
+=== RUN   TestEscenarioTablero_AccionesSegunElEstado
+--- PASS: TestEscenarioTablero_AccionesSegunElEstado (0.16s)
+=== RUN   TestEscenarioTablero_SinSprintActivo
+--- PASS: TestEscenarioTablero_SinSprintActivo (0.15s)
+=== RUN   TestEscenarioTablero_SprintSinHistorias
+--- PASS: TestEscenarioTablero_SprintSinHistorias (0.22s)
+=== RUN   TestCloseBDD_ResumenPrevioAntesDeConfirmar
+--- PASS: TestCloseBDD_ResumenPrevioAntesDeConfirmar (0.15s)
+=== RUN   TestCloseBDD_SinSprintActivoSinBoton
+--- PASS: TestCloseBDD_SinSprintActivoSinBoton (0.10s)
+=== RUN   TestCloseBDD_CierreExitoso
+--- PASS: TestCloseBDD_CierreExitoso (0.24s)
+=== RUN   TestCloseBDD_HistoriasCompletadasConservadas
+--- PASS: TestCloseBDD_HistoriasCompletadasConservadas (0.21s)
+=== RUN   TestCloseBDD_DatosDelSprintCongeladosTrasReasignar
+--- PASS: TestCloseBDD_DatosDelSprintCongeladosTrasReasignar (0.29s)
+=== RUN   TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero
+--- PASS: TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero (0.23s)
+=== RUN   TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo
+--- PASS: TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo (0.30s)
+=== RUN   TestCloseBDD_SprintYaCerradoSeRechaza
+--- PASS: TestCloseBDD_SprintYaCerradoSeRechaza (0.21s)
+=== RUN   TestCloseBDD_CierreBloqueadoPorValidacionHU07
+--- PASS: TestCloseBDD_CierreBloqueadoPorValidacionHU07 (0.19s)
+=== RUN   TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico
+--- PASS: TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico (0.17s)
+=== RUN   TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza
+--- PASS: TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza (0.27s)
+=== RUN   TestScenarioDefectIsLinkedToRelatedStory
+--- PASS: TestScenarioDefectIsLinkedToRelatedStory (0.10s)
+=== RUN   TestScenarioDefectCanReferenceStoryFromFinishedSprint
+--- PASS: TestScenarioDefectCanReferenceStoryFromFinishedSprint (0.11s)
+=== RUN   TestScenarioMissingRequiredDefectFields
+--- PASS: TestScenarioMissingRequiredDefectFields (0.07s)
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/vac├¡a
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/solo_espacios
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/supera_el_l├¡mite
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/car├ícter_NUL
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/UTF-8_inv├ílido
+--- PASS: TestScenarioInvalidDefectDescriptionIsRejected (0.10s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/vac├¡a (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/solo_espacios (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/supera_el_l├¡mite (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/car├ícter_NUL (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/UTF-8_inv├ílido (0.00s)
+=== RUN   TestScenarioDefectRequiresActiveSprint
+--- PASS: TestScenarioDefectRequiresActiveSprint (0.10s)
+=== RUN   TestScenarioDefectCannotReferenceStoryFromAnotherProject
+--- PASS: TestScenarioDefectCannotReferenceStoryFromAnotherProject (0.14s)
+=== RUN   TestScenarioDefectStorageFailureDoesNotSucceed
+--- PASS: TestScenarioDefectStorageFailureDoesNotSucceed (0.08s)
+=== RUN   TestScenarioDefectListIsProjectScopedAndNewestFirst
+--- PASS: TestScenarioDefectListIsProjectScopedAndNewestFirst (0.17s)
+=== RUN   TestScenarioDefectListCanBeEmpty
+--- PASS: TestScenarioDefectListCanBeEmpty (0.08s)
+=== RUN   TestEscenarioEsfuerzo_CargaExitosa
+--- PASS: TestEscenarioEsfuerzo_CargaExitosa (0.25s)
+=== RUN   TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo
+--- PASS: TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo (0.21s)
+=== RUN   TestEscenarioEsfuerzo_SinSprintActivo
+--- PASS: TestEscenarioEsfuerzo_SinSprintActivo (0.20s)
+=== RUN   TestEscenarioEsfuerzo_SinIntegranteIdentificado
+--- PASS: TestEscenarioEsfuerzo_SinIntegranteIdentificado (0.22s)
+=== RUN   TestEscenarioEsfuerzo_ErroresJuntos
+--- PASS: TestEscenarioEsfuerzo_ErroresJuntos (0.21s)
+=== RUN   TestEscenarioEsfuerzo_HistoriaNoDisponible
+--- PASS: TestEscenarioEsfuerzo_HistoriaNoDisponible (0.22s)
+=== RUN   TestEscenarioEsfuerzo_FallaDeAlmacenamiento
+--- PASS: TestEscenarioEsfuerzo_FallaDeAlmacenamiento (0.23s)
+=== RUN   TestEscenarioEsfuerzo_HistorialDeLaHistoria
+--- PASS: TestEscenarioEsfuerzo_HistorialDeLaHistoria (0.31s)
+=== RUN   TestEscenarioEsfuerzo_HistoriaSinRegistros
+--- PASS: TestEscenarioEsfuerzo_HistoriaSinRegistros (0.24s)
+=== RUN   TestEscenarioForm_FormatoDeMensajes
+=== RUN   TestEscenarioForm_FormatoDeMensajes/success
+=== RUN   TestEscenarioForm_FormatoDeMensajes/error
+=== RUN   TestEscenarioForm_FormatoDeMensajes/warning
+--- PASS: TestEscenarioForm_FormatoDeMensajes (0.01s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/success (0.00s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/error (0.00s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/warning (0.00s)
+=== RUN   TestEscenarioForm_ErrorAlGuardar
+--- PASS: TestEscenarioForm_ErrorAlGuardar (0.00s)
+=== RUN   TestEscenarioForm_EnvioValidoSinReenvio
+--- PASS: TestEscenarioForm_EnvioValidoSinReenvio (0.00s)
+=== RUN   TestEscenarioForm_MensajeDeUnaSolaVista
+--- PASS: TestEscenarioForm_MensajeDeUnaSolaVista (0.00s)
+=== RUN   TestEscenarioForm_ContenidoConHTMLSeVeComoTexto
+--- PASS: TestEscenarioForm_ContenidoConHTMLSeVeComoTexto (0.00s)
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Sec-Fetch-Site_cross-site
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Origin_de_otro_sitio
+--- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza (0.01s)
+    --- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Sec-Fetch-Site_cross-site (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Origin_de_otro_sitio (0.00s)
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Origin_de_la_aplicaci├│n
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Sec-Fetch-Site_same-origin
+--- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Origin_de_la_aplicaci├│n (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Sec-Fetch-Site_same-origin (0.00s)
+=== RUN   TestBDD_HU05a_AbrirRonda
+--- PASS: TestBDD_HU05a_AbrirRonda (0.17s)
+=== RUN   TestBDD_HU05a_HistoriaConRondaAbierta
+--- PASS: TestBDD_HU05a_HistoriaConRondaAbierta (0.19s)
+=== RUN   TestBDD_HU05a_VotoOculto
+--- PASS: TestBDD_HU05a_VotoOculto (0.23s)
+=== RUN   TestBDD_HU05a_CambioDeVoto
+--- PASS: TestBDD_HU05a_CambioDeVoto (0.26s)
+=== RUN   TestBDD_HU05a_VotosOcultos
+--- PASS: TestBDD_HU05a_VotosOcultos (0.23s)
+=== RUN   TestBDD_HU05a_RondaCerrada
+--- PASS: TestBDD_HU05a_RondaCerrada (0.17s)
+=== RUN   TestBDD_HU05a_SinIdentificarme
+--- PASS: TestBDD_HU05a_SinIdentificarme (0.16s)
+=== RUN   TestBDD_HU05a_PantallaVacia
+--- PASS: TestBDD_HU05a_PantallaVacia (0.15s)
+=== RUN   TestWebProjects_CreateValidProject_BDD
+--- PASS: TestWebProjects_CreateValidProject_BDD (0.09s)
+=== RUN   TestWebProjects_EqualDatesAreRejected_BDD
+--- PASS: TestWebProjects_EqualDatesAreRejected_BDD (0.06s)
+=== RUN   TestWebProjects_NoAvailableMembersPreventsCreation_BDD
+--- PASS: TestWebProjects_NoAvailableMembersPreventsCreation_BDD (0.06s)
+=== RUN   TestWebProjects_EmptyNameIsRejected_BDD
+--- PASS: TestWebProjects_EmptyNameIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_EarlierEndDateIsRejected_BDD
+--- PASS: TestWebProjects_EarlierEndDateIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_MissingDateIsRejected_BDD
+--- PASS: TestWebProjects_MissingDateIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_NoSelectedMembersIsRejected_BDD
+--- PASS: TestWebProjects_NoSelectedMembersIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_InvalidDateFormatIsRejected_BDD
+--- PASS: TestWebProjects_InvalidDateFormatIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_InvalidMemberIsRejected_BDD
+--- PASS: TestWebProjects_InvalidMemberIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_SaveFailureShowsGenericError_BDD
+--- PASS: TestWebProjects_SaveFailureShowsGenericError_BDD (0.06s)
+=== RUN   TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD
+--- PASS: TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD (0.12s)
+=== RUN   TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD
+--- PASS: TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD (0.06s)
+=== RUN   TestHU26_ContextoValidoSeConserva
+--- PASS: TestHU26_ContextoValidoSeConserva (0.11s)
+=== RUN   TestHU26_CookieProyectoModificada
+--- PASS: TestHU26_CookieProyectoModificada (0.17s)
+=== RUN   TestHU26_CookieIntegranteModificada
+--- PASS: TestHU26_CookieIntegranteModificada (0.16s)
+=== RUN   TestHU26_ValorCopiadoEntreCookies
+--- PASS: TestHU26_ValorCopiadoEntreCookies (0.12s)
+=== RUN   TestHU26_CookiesSinFirmaSeDescartan
+--- PASS: TestHU26_CookiesSinFirmaSeDescartan (0.12s)
+=== RUN   TestWebSprintsBDD_CreateWithSelectedStories
+--- PASS: TestWebSprintsBDD_CreateWithSelectedStories (0.00s)
+=== RUN   TestWebSprintsBDD_CreateWithoutStoriesShowsWarning
+--- PASS: TestWebSprintsBDD_CreateWithoutStoriesShowsWarning (0.00s)
+=== RUN   TestWebSprintsBDD_ExistingActiveSprintBlocksAnother
+--- PASS: TestWebSprintsBDD_ExistingActiveSprintBlocksAnother (0.00s)
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vac├¡o
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inv├ílido
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado
+--- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors (0.02s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vac├¡o (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inv├ílido (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado (0.00s)
+=== RUN   TestWebSprintsBDD_ViewActiveSprint
+--- PASS: TestWebSprintsBDD_ViewActiveSprint (0.00s)
+=== RUN   TestWebSprintsBDD_NoActiveSprintShowsCreationForm
+--- PASS: TestWebSprintsBDD_NoActiveSprintShowsCreationForm (0.00s)
+=== RUN   TestWebSprintsBDD_AddAvailableStory
+--- PASS: TestWebSprintsBDD_AddAvailableStory (0.26s)
+=== RUN   TestWebSprintsBDD_AddWithoutSelection
+--- PASS: TestWebSprintsBDD_AddWithoutSelection (0.23s)
+=== RUN   TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog
+--- PASS: TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog (0.26s)
+=== RUN   TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission
+--- PASS: TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission (0.24s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	17.465s
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/pagina
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/form
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/error/pagina
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/error/form
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/warning/pagina
+=== RUN   TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/warning/form
+--- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas (0.01s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/pagina (0.00s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/success/form (0.00s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/error/pagina (0.00s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/error/form (0.00s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/warning/pagina (0.00s)
+    --- PASS: TestMensajes_FormatoPorTipoIgualEnTodasLasPantallas/warning/form (0.00s)
+=== RUN   TestParseBacklogFormDefaultsActionAndFiltersAcceptanceCriteria
+--- PASS: TestParseBacklogFormDefaultsActionAndFiltersAcceptanceCriteria (0.00s)
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/add_criterion
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/remove_selected_criterion
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/out_of_range_index_leaves_criteria_unchanged
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/non_numeric_index_leaves_criteria_unchanged
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/cannot_remove_last_criterion
+=== RUN   TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/unknown_action_defaults_to_save
+--- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/add_criterion (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/remove_selected_criterion (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/out_of_range_index_leaves_criteria_unchanged (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/non_numeric_index_leaves_criteria_unchanged (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/cannot_remove_last_criterion (0.00s)
+    --- PASS: TestApplyBacklogFormActionAddsAndRemovesCriteriaWithoutSaving/unknown_action_defaults_to_save (0.00s)
+=== RUN   TestParseBacklogFormOptionalStoryPointsAndEstimatedHours
+=== RUN   TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/both_estimates_empty
+=== RUN   TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/hours_with_comma_decimal
+=== RUN   TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/hours_with_dot_decimal
+=== RUN   TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/non_numeric_hours_remain_a_field_error
+--- PASS: TestParseBacklogFormOptionalStoryPointsAndEstimatedHours (0.00s)
+    --- PASS: TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/both_estimates_empty (0.00s)
+    --- PASS: TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/hours_with_comma_decimal (0.00s)
+    --- PASS: TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/hours_with_dot_decimal (0.00s)
+    --- PASS: TestParseBacklogFormOptionalStoryPointsAndEstimatedHours/non_numeric_hours_remain_a_field_error (0.00s)
+=== RUN   TestBacklogFormOptionsMatchHU02Validation
+--- PASS: TestBacklogFormOptionsMatchHU02Validation (0.00s)
+=== RUN   TestBacklogHandler_CreateStoryRedirectsAndShowsFlashAndCreatedValues
+--- PASS: TestBacklogHandler_CreateStoryRedirectsAndShowsFlashAndCreatedValues (0.22s)
+=== RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave
+=== RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/add_criterion
+=== RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/remove_selected_criterion
+=== RUN   TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/cannot_remove_last_criterion
+--- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave (0.51s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/add_criterion (0.15s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/remove_selected_criterion (0.14s)
+    --- PASS: TestBacklogHandler_AddAndRemoveCriteriaPreservesValuesAndDoesNotSave/cannot_remove_last_criterion (0.23s)
+=== RUN   TestBacklogHandler_EnterSubmitsSaveAction
+--- PASS: TestBacklogHandler_EnterSubmitsSaveAction (0.20s)
+=== RUN   TestBacklogHandler_IgnoresBlankAcceptanceCriteria
+--- PASS: TestBacklogHandler_IgnoresBlankAcceptanceCriteria (0.17s)
+=== RUN   TestBacklogHandler_MissingStoryPointsCreatesStoryWithWarning
+--- PASS: TestBacklogHandler_MissingStoryPointsCreatesStoryWithWarning (0.16s)
+=== RUN   TestBacklogHandler_MissingEstimatedHoursCreatesStoryWithoutWarning
+--- PASS: TestBacklogHandler_MissingEstimatedHoursCreatesStoryWithoutWarning (0.28s)
+=== RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours
+=== RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/8
+=== RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1,5
+=== RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1.5
+=== RUN   TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/9999,99
+--- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours (0.71s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/8 (0.17s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1,5 (0.19s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/1.5 (0.18s)
+    --- PASS: TestBacklogHandler_ParsesAndDisplaysValidEstimatedHours/9999,99 (0.17s)
+=== RUN   TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash
+--- PASS: TestBacklogHandler_GetAfterPostDoesNotDuplicateOrRepeatFlash (0.17s)
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/no_acceptance_criteria
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_title
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_description
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/invalid_priority
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/invalid_Story_Points
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/non_numeric_Story_Points
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_4
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_0
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_-1
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_abc
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_0
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_-1
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_abc
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_1,555
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_10000
+=== RUN   TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_9999,995
+--- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues (0.26s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/no_acceptance_criteria (0.02s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_title (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/empty_description (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/invalid_priority (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/invalid_Story_Points (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/non_numeric_Story_Points (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_4 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_0 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_-1 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/Story_Points_abc (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_0 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_-1 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_abc (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_1,555 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_10000 (0.01s)
+    --- PASS: TestBacklogHandler_ValidationErrorsReturn422AndPreserveSubmittedValues/estimated_hours_above_maximum_9999,995 (0.01s)
+=== RUN   TestBacklogHandler_StoreFailureReturns500AndKeepsFormValues
+--- PASS: TestBacklogHandler_StoreFailureReturns500AndKeepsFormValues (0.13s)
+=== RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave
+=== RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/no_project_selected
+=== RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/malformed_project_cookie
+=== RUN   TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/deleted_project
+--- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave (0.14s)
+    --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/no_project_selected (0.02s)
+    --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/malformed_project_cookie (0.01s)
+    --- PASS: TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave/deleted_project (0.01s)
+=== RUN   TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst
+--- PASS: TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst (0.16s)
+=== RUN   TestBacklogHandler_GetShowsEmptyStateWhenProjectHasNoStories
+--- PASS: TestBacklogHandler_GetShowsEmptyStateWhenProjectHasNoStories (0.14s)
+=== RUN   TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog
+--- PASS: TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog (0.12s)
+=== RUN   TestBoardPoints_PlanificadosYCompletados
+=== RUN   TestBoardPoints_PlanificadosYCompletados/sin_historias
+=== RUN   TestBoardPoints_PlanificadosYCompletados/planificados_suman_todas_y_completados_solo_las_Hecho
+=== RUN   TestBoardPoints_PlanificadosYCompletados/una_historia_sin_Story_Points_cuenta_0
+=== RUN   TestBoardPoints_PlanificadosYCompletados/En_Sprint_y_En_progreso_no_suman_a_completados
+=== RUN   TestBoardPoints_PlanificadosYCompletados/todas_Hecho:_completados_igual_a_planificados
+--- PASS: TestBoardPoints_PlanificadosYCompletados (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/sin_historias (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/planificados_suman_todas_y_completados_solo_las_Hecho (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/una_historia_sin_Story_Points_cuenta_0 (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/En_Sprint_y_En_progreso_no_suman_a_completados (0.00s)
+    --- PASS: TestBoardPoints_PlanificadosYCompletados/todas_Hecho:_completados_igual_a_planificados (0.00s)
+=== RUN   TestTablero_RecargarDespuesDeUnCambioNoLoRepiteNiRepiteElMensaje
+--- PASS: TestTablero_RecargarDespuesDeUnCambioNoLoRepiteNiRepiteElMensaje (0.25s)
+=== RUN   TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada
+=== RUN   TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/sin_selecci├│n
+=== RUN   TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/cookie_inv├ílida
+=== RUN   TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/proyecto_inexistente
+--- PASS: TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada (0.19s)
+    --- PASS: TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/sin_selecci├│n (0.00s)
+    --- PASS: TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/cookie_inv├ílida (0.00s)
+    --- PASS: TestTablero_SinProyectoActivoValidoRedirigeYNoCambiaNada/proyecto_inexistente (0.01s)
+=== RUN   TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza
+=== RUN   TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza/Pendiente_sin_Sprint
+=== RUN   TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza/de_un_Sprint_finalizado
+--- PASS: TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza (0.26s)
+    --- PASS: TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza/Pendiente_sin_Sprint (0.05s)
+    --- PASS: TestTablero_HistoriaFueraDeUnSprintActivoSeRechaza/de_un_Sprint_finalizado (0.02s)
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/inexistente
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/no_num├®rica
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/vac├¡a
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/negativa
+=== RUN   TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/de_otro_proyecto
+--- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste (0.28s)
+    --- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/inexistente (0.04s)
+    --- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/no_num├®rica (0.01s)
+    --- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/vac├¡a (0.01s)
+    --- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/negativa (0.01s)
+    --- PASS: TestTablero_HistoriaInexistenteONoDelProyectoNoExiste/de_otro_proyecto (0.01s)
+=== RUN   TestTablero_ElProyectoDelFormularioSeIgnora
+--- PASS: TestTablero_ElProyectoDelFormularioSeIgnora (0.27s)
+=== RUN   TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos
+=== RUN   TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos/con_el_estado_que_se_ve├¡a
+=== RUN   TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos/sin_estado_visto
+--- PASS: TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos (0.26s)
+    --- PASS: TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos/con_el_estado_que_se_ve├¡a (0.06s)
+    --- PASS: TestTablero_MarcarDosVecesNoCambiaNiDuplicaPuntos/sin_estado_visto (0.01s)
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida/completar_una_historia_En_Sprint
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_borrar
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_
+=== RUN   TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_COMENZAR
+--- PASS: TestTablero_TransicionNoPermitidaYAccionDesconocida (0.24s)
+    --- PASS: TestTablero_TransicionNoPermitidaYAccionDesconocida/completar_una_historia_En_Sprint (0.04s)
+    --- PASS: TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_borrar (0.01s)
+    --- PASS: TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_ (0.01s)
+    --- PASS: TestTablero_TransicionNoPermitidaYAccionDesconocida/acci├│n_COMENZAR (0.01s)
+=== RUN   TestTablero_EstadoDesactualizadoNoCambiaNada
+--- PASS: TestTablero_EstadoDesactualizadoNoCambiaNada (0.24s)
+=== RUN   TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto
+=== RUN   TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto/comenzar_sobre_una_historia_Hecho
+=== RUN   TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto/reabrir_sobre_una_historia_En_Sprint
+--- PASS: TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto (0.26s)
+    --- PASS: TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto/comenzar_sobre_una_historia_Hecho (0.07s)
+    --- PASS: TestTablero_LaAccionDebeCorresponderAlEstadoRealSinEstadoVisto/reabrir_sobre_una_historia_En_Sprint (0.02s)
+=== RUN   TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado
+--- PASS: TestTablero_FallaDeGuardadoNoMuestraExitoNiCambiaElEstado (0.23s)
+=== RUN   TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos
+--- PASS: TestTablero_LasRespuestasDeErrorNoExponenDetallesInternos (0.25s)
+=== RUN   TestTablero_ComenzarPasaLaHistoriaAEnProgreso
+--- PASS: TestTablero_ComenzarPasaLaHistoriaAEnProgreso (0.31s)
+=== RUN   TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos
+--- PASS: TestTablero_CompletarConHorasPasaAHechoYSumaLosPuntos (0.29s)
+=== RUN   TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje
+--- PASS: TestTablero_CompletarSinHorasAdvierteEnUnSoloMensaje (0.23s)
+=== RUN   TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos
+--- PASS: TestTablero_ReabrirVuelveAEnProgresoYRestaLosPuntos (0.25s)
+=== RUN   TestTablero_CompletarSinHorasSeMuestraComoAdvertenciaYConHorasComoExito
+--- PASS: TestTablero_CompletarSinHorasSeMuestraComoAdvertenciaYConHorasComoExito (0.27s)
+=== RUN   TestTablero_MuestraElSprintActivoConSusHistoriasPorEstado
+--- PASS: TestTablero_MuestraElSprintActivoConSusHistoriasPorEstado (0.30s)
+=== RUN   TestTablero_TituloConHTMLSeVeComoTexto
+--- PASS: TestTablero_TituloConHTMLSeVeComoTexto (0.22s)
+=== RUN   TestTablero_RespondeEnMenosDe500ms
+--- PASS: TestTablero_RespondeEnMenosDe500ms (0.74s)
+=== RUN   TestTablero_CadaHistoriaOfreceSoloLaAccionDeSuEstado
+--- PASS: TestTablero_CadaHistoriaOfreceSoloLaAccionDeSuEstado (0.24s)
+=== RUN   TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion
+=== RUN   TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion/proyecto_sin_Sprints
+=== RUN   TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion/proyecto_con_solo_un_Sprint_finalizado
+--- PASS: TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion (0.23s)
+    --- PASS: TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion/proyecto_sin_Sprints (0.04s)
+    --- PASS: TestTablero_SinSprintActivoMuestraElMensajeYNingunaAccion/proyecto_con_solo_un_Sprint_finalizado (0.01s)
+=== RUN   TestTablero_SprintSinHistoriasMuestraElMensaje
+--- PASS: TestTablero_SprintSinHistoriasMuestraElMensaje (0.19s)
+=== RUN   TestTablero_FallaDeLecturaMuestraLaPaginaDeError
+--- PASS: TestTablero_FallaDeLecturaMuestraLaPaginaDeError (0.15s)
+=== RUN   TestCloseFormCalculatesPendingStoriesSummary
+--- PASS: TestCloseFormCalculatesPendingStoriesSummary (0.00s)
+=== RUN   TestCloseTemplateRendersActiveSummaryAndEscapedStoryTitle
+--- PASS: TestCloseTemplateRendersActiveSummaryAndEscapedStoryTitle (0.00s)
+=== RUN   TestCloseTemplateWithoutActiveSprintHasNoCloseForm
+--- PASS: TestCloseTemplateWithoutActiveSprintHasNoCloseForm (0.00s)
+=== RUN   TestCloseHandler_CierreExitosoSoloCierraElProyectoActivoYConsumeFlashUnaVez
+--- PASS: TestCloseHandler_CierreExitosoSoloCierraElProyectoActivoYConsumeFlashUnaVez (0.34s)
+=== RUN   TestCloseHandler_RecargaDespuesDelCierreNoRepiteOperacionNiMensaje
+--- PASS: TestCloseHandler_RecargaDespuesDelCierreNoRepiteOperacionNiMensaje (0.32s)
+=== RUN   TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar
+=== RUN   TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/sin_selecci├│n
+=== RUN   TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/proyecto_eliminado
+=== RUN   TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/cookie_inv├ílida
+--- PASS: TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar (0.60s)
+    --- PASS: TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/sin_selecci├│n (0.20s)
+    --- PASS: TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/proyecto_eliminado (0.21s)
+    --- PASS: TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar/cookie_inv├ílida (0.19s)
+=== RUN   TestCloseHandler_HistoriasHechoConservadasYDevueltasDisponiblesEnBacklog
+--- PASS: TestCloseHandler_HistoriasHechoConservadasYDevueltasDisponiblesEnBacklog (0.34s)
+=== RUN   TestCloseHandler_SprintSinHistoriasHechoCierraYHU07CalculaVelocidadCero
+--- PASS: TestCloseHandler_SprintSinHistoriasHechoCierraYHU07CalculaVelocidadCero (0.32s)
+=== RUN   TestCloseHandler_ResumenPrevioMuestraSoloDatosDelProyectoActivo
+--- PASS: TestCloseHandler_ResumenPrevioMuestraSoloDatosDelProyectoActivo (0.28s)
+=== RUN   TestCloseHandler_SinSprintActivoMuestraMensajeYSinBoton
+--- PASS: TestCloseHandler_SinSprintActivoMuestraMensajeYSinBoton (0.16s)
+=== RUN   TestCloseHandler_FallaDeLecturaMuestraPaginaDeError
+--- PASS: TestCloseHandler_FallaDeLecturaMuestraPaginaDeError (0.13s)
+=== RUN   TestCloseHandler_TituloConScriptSeMuestraComoTexto
+--- PASS: TestCloseHandler_TituloConScriptSeMuestraComoTexto (0.22s)
+=== RUN   TestCloseHandler_SprintFinalizadoRechazadoSinCerrarElSprintActivo
+--- PASS: TestCloseHandler_SprintFinalizadoRechazadoSinCerrarElSprintActivo (0.20s)
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/texto
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/decimal
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/exponente
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/negativo
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/vac├¡o
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/inexistente
+=== RUN   TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/sprint_de_otro_proyecto
+--- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza (0.28s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/texto (0.05s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/decimal (0.01s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/exponente (0.01s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/negativo (0.01s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/vac├¡o (0.01s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/inexistente (0.01s)
+    --- PASS: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/sprint_de_otro_proyecto (0.01s)
+=== RUN   TestCloseHandler_RechazaCierrePorBloqueoHU07
+--- PASS: TestCloseHandler_RechazaCierrePorBloqueoHU07 (0.28s)
+=== RUN   TestCloseHandler_FallaDeAlmacenamientoNoAplicaCambiosParciales
+--- PASS: TestCloseHandler_FallaDeAlmacenamientoNoAplicaCambiosParciales (0.25s)
+=== RUN   TestCloseHandler_RechazaCargaDeEsfuerzoDespuesDelCierre
+--- PASS: TestCloseHandler_RechazaCargaDeEsfuerzoDespuesDelCierre (0.40s)
+=== RUN   TestLoadConfig_FaltaDatabaseURLNombraLaVariableSinValores
+--- PASS: TestLoadConfig_FaltaDatabaseURLNombraLaVariableSinValores (0.00s)
+=== RUN   TestLoadConfig_DatabaseURLSoloConEspaciosCuentaComoFaltante
+--- PASS: TestLoadConfig_DatabaseURLSoloConEspaciosCuentaComoFaltante (0.00s)
+=== RUN   TestLoadConfig_AddrPorDefecto
+--- PASS: TestLoadConfig_AddrPorDefecto (0.00s)
+=== RUN   TestLoadConfig_AddrConfigurado
+--- PASS: TestLoadConfig_AddrConfigurado (0.00s)
+=== RUN   TestDescribeDatabase_NoMuestraUsuarioClaveNiParametros
+--- PASS: TestDescribeDatabase_NoMuestraUsuarioClaveNiParametros (0.00s)
+=== RUN   TestDescribeDatabase_URLInvalidaNoSeRepite
+--- PASS: TestDescribeDatabase_URLInvalidaNoSeRepite (0.00s)
+=== RUN   TestConfig_RedactQuitaClaveYURLCompleta
+--- PASS: TestConfig_RedactQuitaClaveYURLCompleta (0.00s)
+=== RUN   TestContexto_ErroresNoExponenDetallesInternos
+=== RUN   TestContexto_ErroresNoExponenDetallesInternos/lectura_con_la_selecci├│n_guardada
+=== RUN   TestContexto_ErroresNoExponenDetallesInternos/lista_de_proyectos
+=== RUN   TestContexto_ErroresNoExponenDetallesInternos/elegir_un_proyecto
+--- PASS: TestContexto_ErroresNoExponenDetallesInternos (0.11s)
+    --- PASS: TestContexto_ErroresNoExponenDetallesInternos/lectura_con_la_selecci├│n_guardada (0.00s)
+    --- PASS: TestContexto_ErroresNoExponenDetallesInternos/lista_de_proyectos (0.00s)
+    --- PASS: TestContexto_ErroresNoExponenDetallesInternos/elegir_un_proyecto (0.00s)
+=== RUN   TestSeccion_RequiereProyectoSinProyectoRedirigeConMensajeYVuelveAlElegir
+--- PASS: TestSeccion_RequiereProyectoSinProyectoRedirigeConMensajeYVuelveAlElegir (0.13s)
+=== RUN   TestSeccion_ElDestinoConservaLaConsulta
+--- PASS: TestSeccion_ElDestinoConservaLaConsulta (0.12s)
+=== RUN   TestSeccion_SinRequisitosSeMuestraSinProyecto
+--- PASS: TestSeccion_SinRequisitosSeMuestraSinProyecto (0.11s)
+=== RUN   TestSeccion_ConProyectoYSinIntegranteLaSeccionDeProyectoSeMuestra
+--- PASS: TestSeccion_ConProyectoYSinIntegranteLaSeccionDeProyectoSeMuestra (0.11s)
+=== RUN   TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve
+--- PASS: TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve (0.14s)
+=== RUN   TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen
+--- PASS: TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen (0.13s)
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/https://otro.com
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/\\otro.com
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//\otro.com
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//no-existe
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//contexto/proyecto
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/javascript:alert(1)
+=== RUN   TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/backlog
+--- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio (0.17s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/https://otro.com (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/\\otro.com (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//\otro.com (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//no-existe (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//contexto/proyecto (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/javascript:alert(1) (0.01s)
+    --- PASS: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/backlog (0.01s)
+=== RUN   TestContexto_SinSeleccionNoSeAutoselecciona
+--- PASS: TestContexto_SinSeleccionNoSeAutoselecciona (0.12s)
+=== RUN   TestContexto_ListaDeProyectosPermiteElegir
+--- PASS: TestContexto_ListaDeProyectosPermiteElegir (0.12s)
+=== RUN   TestContexto_ElegirProyectoMuestraSuNombreYSusDatos
+--- PASS: TestContexto_ElegirProyectoMuestraSuNombreYSusDatos (0.14s)
+=== RUN   TestContexto_ElegirSinDestinoVuelveAlInicio
+--- PASS: TestContexto_ElegirSinDestinoVuelveAlInicio (0.12s)
+=== RUN   TestContexto_CambiarDeProyectoLimpiaElIntegrante
+--- PASS: TestContexto_CambiarDeProyectoLimpiaElIntegrante (0.13s)
+=== RUN   TestContexto_VolverAElegirElMismoProyectoConservaElIntegrante
+--- PASS: TestContexto_VolverAElegirElMismoProyectoConservaElIntegrante (0.13s)
+=== RUN   TestContexto_SesionNuevaPideElegirDeNuevo
+--- PASS: TestContexto_SesionNuevaPideElegirDeNuevo (0.12s)
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/no_numerico
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/vacio
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/negativo
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/cero
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/muy_grande
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/inexistente
+=== RUN   TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/html
+--- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior (0.21s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/no_numerico (0.02s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/vacio (0.01s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/negativo (0.01s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/cero (0.01s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/muy_grande (0.01s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/inexistente (0.01s)
+    --- PASS: TestContexto_IdentificadorInvalidoConservaLaSeleccionAnterior/html (0.01s)
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/abc
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/-1
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/0
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/99999999999
+=== RUN   TestContexto_CookieManipuladaSeTrataComoAusencia/<script>
+--- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia (0.12s)
+    --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/abc (0.00s)
+    --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/-1 (0.00s)
+    --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/0 (0.00s)
+    --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/99999999999 (0.00s)
+    --- PASS: TestContexto_CookieManipuladaSeTrataComoAusencia/<script> (0.00s)
+=== RUN   TestContexto_ProyectoEliminadoLimpiaLaSeleccionConAdvertencia
+--- PASS: TestContexto_ProyectoEliminadoLimpiaLaSeleccionConAdvertencia (0.15s)
+=== RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion
+=== RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/sin_la_secci├│n_Proyectos
+=== RUN   TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/con_la_secci├│n_Proyectos
+--- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion (0.24s)
+    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/sin_la_secci├│n_Proyectos (0.12s)
+    --- PASS: TestContexto_SinProyectosMuestraMensajeYAccesoSoloSiExisteLaSeccion/con_la_secci├│n_Proyectos (0.12s)
+=== RUN   TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503
+--- PASS: TestContexto_BaseCaidaNoLimpiaLaSeleccionYResponde503 (0.11s)
+=== RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo
+=== RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_A
+=== RUN   TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_B
+--- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo (0.13s)
+    --- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_A (0.01s)
+    --- PASS: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_B (0.00s)
+=== RUN   TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun
+--- PASS: TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun (0.12s)
+=== RUN   TestIntegrante_CambiarDeNombreReemplazaLaIdentificacion
+--- PASS: TestIntegrante_CambiarDeNombreReemplazaLaIdentificacion (0.13s)
+=== RUN   TestIntegrante_SinProyectoSePideElegirProyectoPrimero
+=== RUN   TestIntegrante_SinProyectoSePideElegirProyectoPrimero/al_abrir_el_selector
+=== RUN   TestIntegrante_SinProyectoSePideElegirProyectoPrimero/al_enviar_una_identificaci├│n
+--- PASS: TestIntegrante_SinProyectoSePideElegirProyectoPrimero (0.12s)
+    --- PASS: TestIntegrante_SinProyectoSePideElegirProyectoPrimero/al_abrir_el_selector (0.01s)
+    --- PASS: TestIntegrante_SinProyectoSePideElegirProyectoPrimero/al_enviar_una_identificaci├│n (0.00s)
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/de_otro_proyecto
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/inexistente
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/no_numerico
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/negativo
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/muy_grande
+=== RUN   TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/vacio
+--- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion (0.22s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/de_otro_proyecto (0.03s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/inexistente (0.02s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/no_numerico (0.02s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/negativo (0.02s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/muy_grande (0.02s)
+    --- PASS: TestIntegrante_AjenoOInvalidoSeRechazaYLimpiaLaIdentificacion/vacio (0.02s)
+=== RUN   TestIntegrante_CookieDeIntegranteAjenoSeLimpiaConAdvertencia
+--- PASS: TestIntegrante_CookieDeIntegranteAjenoSeLimpiaConAdvertencia (0.12s)
+=== RUN   TestIntegrante_QuitadoDelProyectoSeLimpiaConAdvertencia
+--- PASS: TestIntegrante_QuitadoDelProyectoSeLimpiaConAdvertencia (0.15s)
+=== RUN   TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio
+=== RUN   TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/valor_no_numerico
+=== RUN   TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/negativo
+=== RUN   TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/muy_grande
+=== RUN   TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/integrante_sin_proyecto
+--- PASS: TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio (0.13s)
+    --- PASS: TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/valor_no_numerico (0.01s)
+    --- PASS: TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/negativo (0.00s)
+    --- PASS: TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/muy_grande (0.00s)
+    --- PASS: TestIntegrante_CookieManipuladaOSinProyectoSeDescartaEnSilencio/integrante_sin_proyecto (0.00s)
+=== RUN   TestIntegrante_ProyectoInexistenteLimpiaTambienLaIdentificacion
+--- PASS: TestIntegrante_ProyectoInexistenteLimpiaTambienLaIdentificacion (0.12s)
+=== RUN   TestReadIDCookie_SinCookieEsAusencia
+--- PASS: TestReadIDCookie_SinCookieEsAusencia (0.00s)
+=== RUN   TestReadIDCookie_Valores
+=== RUN   TestReadIDCookie_Valores/valido
+=== RUN   TestReadIDCookie_Valores/maximo
+=== RUN   TestReadIDCookie_Valores/vacio
+=== RUN   TestReadIDCookie_Valores/no_numerico
+=== RUN   TestReadIDCookie_Valores/cero
+=== RUN   TestReadIDCookie_Valores/negativo
+=== RUN   TestReadIDCookie_Valores/muy_grande
+=== RUN   TestReadIDCookie_Valores/justo_fuera_de_rango
+=== RUN   TestReadIDCookie_Valores/con_signo
+=== RUN   TestReadIDCookie_Valores/con_ceros_a_la_izquierda
+=== RUN   TestReadIDCookie_Valores/decimal
+=== RUN   TestReadIDCookie_Valores/etiqueta_HTML
+--- PASS: TestReadIDCookie_Valores (0.00s)
+    --- PASS: TestReadIDCookie_Valores/valido (0.00s)
+    --- PASS: TestReadIDCookie_Valores/maximo (0.00s)
+    --- PASS: TestReadIDCookie_Valores/vacio (0.00s)
+    --- PASS: TestReadIDCookie_Valores/no_numerico (0.00s)
+    --- PASS: TestReadIDCookie_Valores/cero (0.00s)
+    --- PASS: TestReadIDCookie_Valores/negativo (0.00s)
+    --- PASS: TestReadIDCookie_Valores/muy_grande (0.00s)
+    --- PASS: TestReadIDCookie_Valores/justo_fuera_de_rango (0.00s)
+    --- PASS: TestReadIDCookie_Valores/con_signo (0.00s)
+    --- PASS: TestReadIDCookie_Valores/con_ceros_a_la_izquierda (0.00s)
+    --- PASS: TestReadIDCookie_Valores/decimal (0.00s)
+    --- PASS: TestReadIDCookie_Valores/etiqueta_HTML (0.00s)
+=== RUN   TestSetContextCookie_AtributosDeSesion
+--- PASS: TestSetContextCookie_AtributosDeSesion (0.00s)
+=== RUN   TestSetContextCookie_SecureConHTTPS
+--- PASS: TestSetContextCookie_SecureConHTTPS (0.00s)
+=== RUN   TestClearContextCookie_Expira
+--- PASS: TestClearContextCookie_Expira (0.00s)
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior)
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/texto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico
+=== RUN   TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante
+--- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/sin_firma_(formato_anterior) (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_vac├¡a (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_vac├¡o (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/texto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/valor_cambiado (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_cookie (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_negativo (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/solo_punto (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firma_de_otra_clave (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_pero_no_num├®rico (0.00s)
+    --- PASS: TestReadIDCookie_FirmaInvalidaEsManipulada/firmado_con_cero_adelante (0.00s)
+=== RUN   TestLoadCookieSecret_Valida
+--- PASS: TestLoadCookieSecret_Valida (0.00s)
+=== RUN   TestLoadCookieSecret_Ausente
+--- PASS: TestLoadCookieSecret_Ausente (0.00s)
+=== RUN   TestLoadCookieSecret_Corta
+--- PASS: TestLoadCookieSecret_Corta (0.00s)
+=== RUN   TestLoadCookieSecret_NoExponeLaClave
+--- PASS: TestLoadCookieSecret_NoExponeLaClave (0.00s)
+=== RUN   TestCookieSigner_RoundTrip
+--- PASS: TestCookieSigner_RoundTrip (0.00s)
+=== RUN   TestCookieSigner_ValorModificado
+--- PASS: TestCookieSigner_ValorModificado (0.00s)
+=== RUN   TestCookieSigner_FirmaModificada
+--- PASS: TestCookieSigner_FirmaModificada (0.00s)
+=== RUN   TestCookieSigner_LigadoAlNombre
+--- PASS: TestCookieSigner_LigadoAlNombre (0.00s)
+=== RUN   TestCookieSigner_SinFirma
+--- PASS: TestCookieSigner_SinFirma (0.00s)
+=== RUN   TestCookieSigner_MalFormada
+--- PASS: TestCookieSigner_MalFormada (0.00s)
+=== RUN   TestCookieSigner_OtraClave
+--- PASS: TestCookieSigner_OtraClave (0.00s)
+=== RUN   TestHU26_ReinicioConMismaClave
+--- PASS: TestHU26_ReinicioConMismaClave (0.00s)
+=== RUN   TestCaidaYRecuperacionDeLaBaseSinReiniciar
+--- PASS: TestCaidaYRecuperacionDeLaBaseSinReiniciar (0.05s)
+=== RUN   TestReintentos_ValoresDelPlan
+--- PASS: TestReintentos_ValoresDelPlan (0.00s)
+=== RUN   TestWaitForDatabase_ConectaAlCuartoIntento
+--- PASS: TestWaitForDatabase_ConectaAlCuartoIntento (0.00s)
+=== RUN   TestWaitForDatabase_AgotaIntentosSinExponerLaClave
+--- PASS: TestWaitForDatabase_AgotaIntentosSinExponerLaClave (0.00s)
+=== RUN   TestWaitForDatabase_SeCortaSiSeCancelaElArranque
+--- PASS: TestWaitForDatabase_SeCortaSiSeCancelaElArranque (0.00s)
+=== RUN   TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved
+=== RUN   TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved/campos_ausentes
+=== RUN   TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved/valores_tal_como_llegaron
+--- PASS: TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved (0.00s)
+    --- PASS: TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved/campos_ausentes (0.00s)
+    --- PASS: TestParseDefectFormMissingFieldsAreEmptyAndSubmittedValuesArePreserved/valores_tal_como_llegaron (0.00s)
+=== RUN   TestParseDefectFormRejectsMissingAndNonNumericStory
+=== RUN   TestParseDefectFormRejectsMissingAndNonNumericStory/historia_vac├¡a
+=== RUN   TestParseDefectFormRejectsMissingAndNonNumericStory/historia_no_num├®rica
+--- PASS: TestParseDefectFormRejectsMissingAndNonNumericStory (0.00s)
+    --- PASS: TestParseDefectFormRejectsMissingAndNonNumericStory/historia_vac├¡a (0.00s)
+    --- PASS: TestParseDefectFormRejectsMissingAndNonNumericStory/historia_no_num├®rica (0.00s)
+=== RUN   TestDefectFieldErrorMapsEachDomainErrorToItsFieldAndMessage
+--- PASS: TestDefectFieldErrorMapsEachDomainErrorToItsFieldAndMessage (0.00s)
+=== RUN   TestDefectsHandler_RegisterSuccessUsesActiveContextAndOneTimeFlash
+--- PASS: TestDefectsHandler_RegisterSuccessUsesActiveContextAndOneTimeFlash (0.28s)
+=== RUN   TestDefectsHandler_RegisterDoneAndUnassignedStories
+--- PASS: TestDefectsHandler_RegisterDoneAndUnassignedStories (0.26s)
+=== RUN   TestDefectsHandler_RegisterEverySeverity
+--- PASS: TestDefectsHandler_RegisterEverySeverity (0.28s)
+=== RUN   TestDefectsHandler_RequiredFieldsReturnAllErrorsAndPreserveValues
+--- PASS: TestDefectsHandler_RequiredFieldsReturnAllErrorsAndPreserveValues (0.23s)
+=== RUN   TestDefectsHandler_DescriptionLengthAndWhitespace
+=== RUN   TestDefectsHandler_DescriptionLengthAndWhitespace/solo_espacios
+=== RUN   TestDefectsHandler_DescriptionLengthAndWhitespace/1001_caracteres
+=== RUN   TestDefectsHandler_DescriptionLengthAndWhitespace/car├ícter_NUL_(%00)
+=== RUN   TestDefectsHandler_DescriptionLengthAndWhitespace/UTF-8_inv├ílido_(%FF)
+--- PASS: TestDefectsHandler_DescriptionLengthAndWhitespace (0.29s)
+    --- PASS: TestDefectsHandler_DescriptionLengthAndWhitespace/solo_espacios (0.05s)
+    --- PASS: TestDefectsHandler_DescriptionLengthAndWhitespace/1001_caracteres (0.01s)
+    --- PASS: TestDefectsHandler_DescriptionLengthAndWhitespace/car├ícter_NUL_(%00) (0.01s)
+    --- PASS: TestDefectsHandler_DescriptionLengthAndWhitespace/UTF-8_inv├ílido_(%FF) (0.01s)
+=== RUN   TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors
+=== RUN   TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_de_otro_proyecto
+=== RUN   TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_inexistente
+=== RUN   TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_no_num├®rica
+=== RUN   TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/severidad_inv├ílida
+--- PASS: TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors (0.29s)
+    --- PASS: TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_de_otro_proyecto (0.06s)
+    --- PASS: TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_inexistente (0.02s)
+    --- PASS: TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/historia_no_num├®rica (0.01s)
+    --- PASS: TestDefectsHandler_InvalidStoryAndSeverityReturnFieldErrors/severidad_inv├ílida (0.01s)
+=== RUN   TestDefectsHandler_NoActiveSprintRejectsGetAndPost
+=== RUN   TestDefectsHandler_NoActiveSprintRejectsGetAndPost/sin_Sprints
+=== RUN   TestDefectsHandler_NoActiveSprintRejectsGetAndPost/todos_finalizados
+--- PASS: TestDefectsHandler_NoActiveSprintRejectsGetAndPost (0.53s)
+    --- PASS: TestDefectsHandler_NoActiveSprintRejectsGetAndPost/sin_Sprints (0.29s)
+    --- PASS: TestDefectsHandler_NoActiveSprintRejectsGetAndPost/todos_finalizados (0.25s)
+=== RUN   TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails
+--- PASS: TestDefectsHandler_StorageFailurePreservesFormAndHidesDetails (0.19s)
+=== RUN   TestDefectsHandler_ErrorResponseDoesNotExposeSQLOrInternalPaths
+--- PASS: TestDefectsHandler_ErrorResponseDoesNotExposeSQLOrInternalPaths (0.16s)
+=== RUN   TestDefectsHandler_NoProjectContextRedirectsWithoutSaving
+=== RUN   TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/sin_selecci├│n
+=== RUN   TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/cookie_inv├ílida
+=== RUN   TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/proyecto_eliminado
+--- PASS: TestDefectsHandler_NoProjectContextRedirectsWithoutSaving (0.20s)
+    --- PASS: TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/sin_selecci├│n (0.01s)
+    --- PASS: TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/cookie_inv├ílida (0.00s)
+    --- PASS: TestDefectsHandler_NoProjectContextRedirectsWithoutSaving/proyecto_eliminado (0.02s)
+=== RUN   TestDefectsHandler_CatalogFailureUsesApplicationErrorPage
+--- PASS: TestDefectsHandler_CatalogFailureUsesApplicationErrorPage (0.13s)
+=== RUN   TestDefectsHandler_ListShowsTraceabilityForActiveProjectWithin500ms
+--- PASS: TestDefectsHandler_ListShowsTraceabilityForActiveProjectWithin500ms (0.24s)
+=== RUN   TestDefectsHandler_EmptyListShowsMessageAndForm
+--- PASS: TestDefectsHandler_EmptyListShowsMessageAndForm (0.23s)
+=== RUN   TestDefectsHandler_ListEscapesDescriptionAndStoryTitle
+--- PASS: TestDefectsHandler_ListEscapesDescriptionAndStoryTitle (0.26s)
+=== RUN   TestDefectsHandler_StoryCatalogFailureUsesApplicationErrorPage
+--- PASS: TestDefectsHandler_StoryCatalogFailureUsesApplicationErrorPage (0.14s)
+=== RUN   TestEffortActions_Validate_TodasLasViolacionesJuntasConSuCampo
+--- PASS: TestEffortActions_Validate_TodasLasViolacionesJuntasConSuCampo (0.00s)
+=== RUN   TestEffortActions_Validate_FechaFuturaEsDeHU03
+--- PASS: TestEffortActions_Validate_FechaFuturaEsDeHU03 (0.00s)
+=== RUN   TestEffortActions_Register
+=== RUN   TestEffortActions_Register/registra_una_carga_v├ílida
+=== RUN   TestEffortActions_Register/integrante_faltante_lo_rechaza_HU-03
+=== RUN   TestEffortActions_Register/historia_fuera_del_Sprint_activo_la_rechaza_HU-03_junto_a_historia
+=== RUN   TestEffortActions_Register/falla_de_guardado_sin_detalles_internos
+=== RUN   TestEffortActions_Register/falla_al_consultar_la_historia
+--- PASS: TestEffortActions_Register (0.00s)
+    --- PASS: TestEffortActions_Register/registra_una_carga_v├ílida (0.00s)
+    --- PASS: TestEffortActions_Register/integrante_faltante_lo_rechaza_HU-03 (0.00s)
+    --- PASS: TestEffortActions_Register/historia_fuera_del_Sprint_activo_la_rechaza_HU-03_junto_a_historia (0.00s)
+    --- PASS: TestEffortActions_Register/falla_de_guardado_sin_detalles_internos (0.00s)
+    --- PASS: TestEffortActions_Register/falla_al_consultar_la_historia (0.00s)
+=== RUN   TestParseEffortForm_Fecha
+=== RUN   TestParseEffortForm_Fecha/vac├¡a_pasa_a_HU-03
+=== RUN   TestParseEffortForm_Fecha/solo_espacios_pasa_a_HU-03
+=== RUN   TestParseEffortForm_Fecha/v├ílida
+=== RUN   TestParseEffortForm_Fecha/formato_dd/mm/aaaa
+=== RUN   TestParseEffortForm_Fecha/d├¡a_inexistente
+=== RUN   TestParseEffortForm_Fecha/texto
+--- PASS: TestParseEffortForm_Fecha (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/vac├¡a_pasa_a_HU-03 (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/solo_espacios_pasa_a_HU-03 (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/v├ílida (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/formato_dd/mm/aaaa (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/d├¡a_inexistente (0.00s)
+    --- PASS: TestParseEffortForm_Fecha/texto (0.00s)
+=== RUN   TestParseEffortForm_Historia
+--- PASS: TestParseEffortForm_Historia (0.00s)
+=== RUN   TestParseEffortForm_HorasYActividadPasanTalCualAHU03
+--- PASS: TestParseEffortForm_HorasYActividadPasanTalCualAHU03 (0.00s)
+=== RUN   TestEffortActions_Validate_HorasConComaPuntoYInvalidas
+--- PASS: TestEffortActions_Validate_HorasConComaPuntoYInvalidas (0.00s)
+=== RUN   TestMergeEffortErrors_UnErrorPorCampoYGenerales
+--- PASS: TestMergeEffortErrors_UnErrorPorCampoYGenerales (0.00s)
+=== RUN   TestFormatEffortHours
+--- PASS: TestFormatEffortHours (0.00s)
+=== RUN   TestEffort_CargaExitosa_RegistraAlIntegranteIdentificadoYMuestraAcumulado
+--- PASS: TestEffort_CargaExitosa_RegistraAlIntegranteIdentificadoYMuestraAcumulado (0.33s)
+=== RUN   TestEffort_FechaDeHoyPorDefectoYHorasConComaOPunto
+--- PASS: TestEffort_FechaDeHoyPorDefectoYHorasConComaOPunto (0.33s)
+=== RUN   TestEffort_SelectorYListaSoloDelSprintActivoDelProyecto
+--- PASS: TestEffort_SelectorYListaSoloDelSprintActivoDelProyecto (0.25s)
+=== RUN   TestEffort_SinSprintActivo
+--- PASS: TestEffort_SinSprintActivo (0.27s)
+=== RUN   TestEffort_SinIntegranteIdentificado
+--- PASS: TestEffort_SinIntegranteIdentificado (0.28s)
+=== RUN   TestEffort_VariosErroresJuntosConLosMensajesDeHU03
+--- PASS: TestEffort_VariosErroresJuntosConLosMensajesDeHU03 (0.27s)
+=== RUN   TestEffort_HorasYFechaInvalidas
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_-1
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_0
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_25
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_24,5
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_abc
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_
+=== RUN   TestEffort_HorasYFechaInvalidas/horas_1e2
+=== RUN   TestEffort_HorasYFechaInvalidas/fecha_2026-13-01
+=== RUN   TestEffort_HorasYFechaInvalidas/fecha_2026-10-21
+=== RUN   TestEffort_HorasYFechaInvalidas/fecha_20/10/2026
+--- PASS: TestEffort_HorasYFechaInvalidas (0.34s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_-1 (0.02s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_0 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_25 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_24,5 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_abc (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_ (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/horas_1e2 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/fecha_2026-13-01 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/fecha_2026-10-21 (0.01s)
+    --- PASS: TestEffort_HorasYFechaInvalidas/fecha_20/10/2026 (0.01s)
+=== RUN   TestEffort_HistoriaNoDisponible
+=== RUN   TestEffort_HistoriaNoDisponible/no_seleccionada
+=== RUN   TestEffort_HistoriaNoDisponible/de_otro_proyecto
+=== RUN   TestEffort_HistoriaNoDisponible/pendiente
+=== RUN   TestEffort_HistoriaNoDisponible/de_un_Sprint_finalizado
+=== RUN   TestEffort_HistoriaNoDisponible/inexistente
+=== RUN   TestEffort_HistoriaNoDisponible/no_num├®rica
+--- PASS: TestEffort_HistoriaNoDisponible (0.32s)
+    --- PASS: TestEffort_HistoriaNoDisponible/no_seleccionada (0.02s)
+    --- PASS: TestEffort_HistoriaNoDisponible/de_otro_proyecto (0.01s)
+    --- PASS: TestEffort_HistoriaNoDisponible/pendiente (0.01s)
+    --- PASS: TestEffort_HistoriaNoDisponible/de_un_Sprint_finalizado (0.01s)
+    --- PASS: TestEffort_HistoriaNoDisponible/inexistente (0.01s)
+    --- PASS: TestEffort_HistoriaNoDisponible/no_num├®rica (0.01s)
+=== RUN   TestEffort_FallaDeGuardado
+--- PASS: TestEffort_FallaDeGuardado (0.28s)
+=== RUN   TestEffort_SprintCerradoEntreAbrirYEnviar
+--- PASS: TestEffort_SprintCerradoEntreAbrirYEnviar (0.29s)
+=== RUN   TestEffort_HistorialDeLaHistoriaYTiempoDeRespuesta
+--- PASS: TestEffort_HistorialDeLaHistoriaYTiempoDeRespuesta (0.29s)
+=== RUN   TestEffort_HistoriaSinRegistros
+--- PASS: TestEffort_HistoriaSinRegistros (0.29s)
+=== RUN   TestEffort_HistoriaInvalidaEnLaDireccionSeIgnora
+--- PASS: TestEffort_HistoriaInvalidaEnLaDireccionSeIgnora (0.32s)
+=== RUN   TestEffort_ActividadConScriptSeMuestraComoTexto
+--- PASS: TestEffort_ActividadConScriptSeMuestraComoTexto (0.36s)
+=== RUN   TestEffort_FallaAlLeerElHistorial
+--- PASS: TestEffort_FallaAlLeerElHistorial (0.30s)
+=== RUN   TestEffort_SinProyectoActivoValido
+=== RUN   TestEffort_SinProyectoActivoValido/sin_selecci├│n
+=== RUN   TestEffort_SinProyectoActivoValido/cookie_inv├ílida
+=== RUN   TestEffort_SinProyectoActivoValido/proyecto_eliminado
+--- PASS: TestEffort_SinProyectoActivoValido (0.32s)
+    --- PASS: TestEffort_SinProyectoActivoValido/sin_selecci├│n (0.00s)
+    --- PASS: TestEffort_SinProyectoActivoValido/cookie_inv├ílida (0.00s)
+    --- PASS: TestEffort_SinProyectoActivoValido/proyecto_eliminado (0.03s)
+=== RUN   TestEffort_FallaAlLeerLasHistorias
+--- PASS: TestEffort_FallaAlLeerLasHistorias (0.29s)
+=== RUN   TestEffort_EnvioDeOtroOrigenSeRechaza
+--- PASS: TestEffort_EnvioDeOtroOrigenSeRechaza (0.27s)
+=== RUN   TestEffort_NoSePuedeCargarEnHistoriasDeOtroProyecto
+--- PASS: TestEffort_NoSePuedeCargarEnHistoriasDeOtroProyecto (0.39s)
+=== RUN   TestEffort_EnvioDemasiadoGrandeNoRegistra
+--- PASS: TestEffort_EnvioDemasiadoGrandeNoRegistra (0.28s)
+=== RUN   TestErrores_404ConEstructuraComun
+--- PASS: TestErrores_404ConEstructuraComun (0.00s)
+=== RUN   TestErrores_IdentificadorValidoFunciona
+--- PASS: TestErrores_IdentificadorValidoFunciona (0.00s)
+=== RUN   TestErrores_405ConEstructuraComunYServidorActivo
+--- PASS: TestErrores_405ConEstructuraComunYServidorActivo (0.00s)
+=== RUN   TestFail_BaseNoDisponibleMuestra503
+--- PASS: TestFail_BaseNoDisponibleMuestra503 (0.00s)
+=== RUN   TestIsDatabaseUnavailable
+--- PASS: TestIsDatabaseUnavailable (0.00s)
+=== RUN   TestErrores_NoExponenDetallesInternos
+--- PASS: TestErrores_NoExponenDetallesInternos (0.00s)
+=== RUN   TestEscape_ValorDelFormularioSeMuestraComoTexto
+--- PASS: TestEscape_ValorDelFormularioSeMuestraComoTexto (0.00s)
+=== RUN   TestEscape_MensajeSeMuestraComoTexto
+--- PASS: TestEscape_MensajeSeMuestraComoTexto (0.00s)
+=== RUN   TestEscape_CookieFlashManipuladaSeMuestraComoTexto
+--- PASS: TestEscape_CookieFlashManipuladaSeMuestraComoTexto (0.00s)
+=== RUN   TestEscape_ProyectoEIntegranteActivosSeMuestranComoTexto
+--- PASS: TestEscape_ProyectoEIntegranteActivosSeMuestranComoTexto (0.00s)
+=== RUN   TestEscape_NingunCodigoMarcaDatosComoSeguros
+--- PASS: TestEscape_NingunCodigoMarcaDatosComoSeguros (0.02s)
+=== RUN   TestSetFlash_AtributosDeLaCookie
+--- PASS: TestSetFlash_AtributosDeLaCookie (0.00s)
+=== RUN   TestFlash_IdaYVuelta
+=== RUN   TestFlash_IdaYVuelta/success
+=== RUN   TestFlash_IdaYVuelta/error
+=== RUN   TestFlash_IdaYVuelta/warning
+--- PASS: TestFlash_IdaYVuelta (0.00s)
+    --- PASS: TestFlash_IdaYVuelta/success (0.00s)
+    --- PASS: TestFlash_IdaYVuelta/error (0.00s)
+    --- PASS: TestFlash_IdaYVuelta/warning (0.00s)
+=== RUN   TestFlashFromRequest_SinCookieEsNil
+--- PASS: TestFlashFromRequest_SinCookieEsNil (0.00s)
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/vacia
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_formato
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/tipo_desconocido
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_tipo
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_texto
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/muy_largo
+=== RUN   TestFlashFromRequest_ValoresInvalidosSeIgnoran/escape_malformado
+--- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/vacia (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_formato (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/tipo_desconocido (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_tipo (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/sin_texto (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/muy_largo (0.00s)
+    --- PASS: TestFlashFromRequest_ValoresInvalidosSeIgnoran/escape_malformado (0.00s)
+=== RUN   TestFormulario_ErrorJuntoAlCampoYConservaDatos
+--- PASS: TestFormulario_ErrorJuntoAlCampoYConservaDatos (0.00s)
+=== RUN   TestFormulario_FalloDeGuardadoConservaDatosYNoMuestraExito
+--- PASS: TestFormulario_FalloDeGuardadoConservaDatosYNoMuestraExito (0.00s)
+=== RUN   TestFormulario_EnvioValidoRedirigeYNoSeDuplicaAlRecargar
+--- PASS: TestFormulario_EnvioValidoRedirigeYNoSeDuplicaAlRecargar (0.00s)
+=== RUN   TestFlash_SoloSeMuestraEnLaPrimeraPantalla
+--- PASS: TestFlash_SoloSeMuestraEnLaPrimeraPantalla (0.00s)
+=== RUN   TestRecover_PanicoMuestra500YElServidorSigue
+--- PASS: TestRecover_PanicoMuestra500YElServidorSigue (0.00s)
+=== RUN   TestRecover_CubreTambienLosMiddlewares
+--- PASS: TestRecover_CubreTambienLosMiddlewares (0.00s)
+=== RUN   TestPokerViewModel_SinCampoDeValorAjeno
+--- PASS: TestPokerViewModel_SinCampoDeValorAjeno (0.00s)
+=== RUN   TestHU05a_AbrirRonda
+--- PASS: TestHU05a_AbrirRonda (0.23s)
+=== RUN   TestHU05a_HistoriaConRondaAbierta
+--- PASS: TestHU05a_HistoriaConRondaAbierta (0.23s)
+=== RUN   TestHU05a_HistoriaYaTuvoRonda
+--- PASS: TestHU05a_HistoriaYaTuvoRonda (0.22s)
+=== RUN   TestHU05a_SelectorTodasLasHistorias
+--- PASS: TestHU05a_SelectorTodasLasHistorias (0.25s)
+=== RUN   TestHU05a_VotoRegistrado
+--- PASS: TestHU05a_VotoRegistrado (0.24s)
+=== RUN   TestHU05a_VotoActualizado
+--- PASS: TestHU05a_VotoActualizado (0.26s)
+=== RUN   TestHU05a_ValorFueraDeSerie
+--- PASS: TestHU05a_ValorFueraDeSerie (0.26s)
+=== RUN   TestHU05a_VotoSinValor
+--- PASS: TestHU05a_VotoSinValor (0.20s)
+=== RUN   TestHU05a_RondaCerrada
+--- PASS: TestHU05a_RondaCerrada (0.23s)
+=== RUN   TestHU05a_RondaInexistente
+--- PASS: TestHU05a_RondaInexistente (0.32s)
+=== RUN   TestHU05a_HistoriaInexistente
+--- PASS: TestHU05a_HistoriaInexistente (0.25s)
+=== RUN   TestHU05a_ErrorAlGuardar
+--- PASS: TestHU05a_ErrorAlGuardar (0.22s)
+=== RUN   TestHU05a_SinIdentificarme
+--- PASS: TestHU05a_SinIdentificarme (0.18s)
+=== RUN   TestHU05a_VotosAjenosOcultos
+--- PASS: TestHU05a_VotosAjenosOcultos (0.31s)
+=== RUN   TestHU05a_CambioDeIdentificacion
+--- PASS: TestHU05a_CambioDeIdentificacion (0.27s)
+=== RUN   TestHU05a_PantallaVacia
+--- PASS: TestHU05a_PantallaVacia (0.22s)
+=== RUN   TestHU05a_TituloEscapado
+--- PASS: TestHU05a_TituloEscapado (0.26s)
+=== RUN   TestHU05a_ErrorAlLeer
+=== RUN   TestHU05a_ErrorAlLeer/falla_inesperada
+=== RUN   TestHU05a_ErrorAlLeer/base_sin_respuesta
+--- PASS: TestHU05a_ErrorAlLeer (0.38s)
+    --- PASS: TestHU05a_ErrorAlLeer/falla_inesperada (0.22s)
+    --- PASS: TestHU05a_ErrorAlLeer/base_sin_respuesta (0.15s)
+=== RUN   TestHU05a_RecargaSinReenviar
+--- PASS: TestHU05a_RecargaSinReenviar (0.21s)
+=== RUN   TestHU05a_Rendimiento
+    poker_view_test.go:207: GET /planning-poker con 50 historias, 20 rondas y 10 integrantes: 17.9965ms
+--- PASS: TestHU05a_Rendimiento (1.29s)
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado/proyecto_A
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado/proyecto_B_no_ve_datos_del_A_y_viceversa
+--- PASS: TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado (0.23s)
+    --- PASS: TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado/proyecto_A (0.02s)
+    --- PASS: TestPostgreSQLBoardCatalog_SprintActivoAgrupadoPorEstado/proyecto_B_no_ve_datos_del_A_y_viceversa (0.01s)
+=== RUN   TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError
+=== RUN   TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_sin_Sprints
+=== RUN   TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_con_solo_un_Sprint_finalizado
+=== RUN   TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_inexistente
+--- PASS: TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError (0.10s)
+    --- PASS: TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_sin_Sprints (0.01s)
+    --- PASS: TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_con_solo_un_Sprint_finalizado (0.00s)
+    --- PASS: TestPostgreSQLBoardCatalog_SinSprintActivoNoEsUnError/proyecto_inexistente (0.00s)
+=== RUN   TestPostgreSQLBoardCatalog_SprintActivoSinHistorias
+--- PASS: TestPostgreSQLBoardCatalog_SprintActivoSinHistorias (0.08s)
+=== RUN   TestPostgreSQLBoardCatalog_FallaDeLecturaEsUnError
+--- PASS: TestPostgreSQLBoardCatalog_FallaDeLecturaEsUnError (0.00s)
+=== RUN   TestPostgreSQLContextStore_ListProjects_MasRecientesPrimero
+--- PASS: TestPostgreSQLContextStore_ListProjects_MasRecientesPrimero (0.11s)
+=== RUN   TestPostgreSQLContextStore_ListMembers_SoloLosDelProyecto
+--- PASS: TestPostgreSQLContextStore_ListMembers_SoloLosDelProyecto (0.12s)
+=== RUN   TestPostgreSQLContextStore_ResolveContext
+=== RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_v├ílidos
+=== RUN   TestPostgreSQLContextStore_ResolveContext/sin_integrante
+=== RUN   TestPostgreSQLContextStore_ResolveContext/integrante_de_otro_proyecto
+=== RUN   TestPostgreSQLContextStore_ResolveContext/integrante_inexistente
+=== RUN   TestPostgreSQLContextStore_ResolveContext/integrante_fuera_de_rango
+=== RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_inexistente
+=== RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_negativo
+=== RUN   TestPostgreSQLContextStore_ResolveContext/proyecto_fuera_de_rango
+--- PASS: TestPostgreSQLContextStore_ResolveContext (0.12s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_v├ílidos (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/sin_integrante (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/integrante_de_otro_proyecto (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/integrante_inexistente (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/integrante_fuera_de_rango (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/proyecto_inexistente (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/proyecto_negativo (0.00s)
+    --- PASS: TestPostgreSQLContextStore_ResolveContext/proyecto_fuera_de_rango (0.00s)
+=== RUN   TestPostgreSQLContextStore_BaseCaidaEsNoDisponible
+--- PASS: TestPostgreSQLContextStore_BaseCaidaEsNoDisponible (0.00s)
+=== RUN   TestPostgreSQLContextStore_ResolveContext_MenosDe50ms
+--- PASS: TestPostgreSQLContextStore_ResolveContext_MenosDe50ms (0.15s)
+=== RUN   TestPostgreSQLDefectCatalog_DefectsAreProjectScopedAndNewestFirst
+--- PASS: TestPostgreSQLDefectCatalog_DefectsAreProjectScopedAndNewestFirst (0.14s)
+=== RUN   TestPostgreSQLDefectCatalog_StoryOptionsAndActiveSprint
+--- PASS: TestPostgreSQLDefectCatalog_StoryOptionsAndActiveSprint (0.16s)
+=== RUN   TestPostgreSQLEffortCatalog_ActiveSprintStories_SoloDelSprintActivoConHoras
+--- PASS: TestPostgreSQLEffortCatalog_ActiveSprintStories_SoloDelSprintActivoConHoras (0.26s)
+=== RUN   TestPostgreSQLEffortCatalog_ActiveSprintStories_OtroProyectoYSinSprint
+--- PASS: TestPostgreSQLEffortCatalog_ActiveSprintStories_OtroProyectoYSinSprint (0.25s)
+=== RUN   TestPostgreSQLEffortCatalog_ConDosSprintsActivosTomaElDeMayorNumero
+--- PASS: TestPostgreSQLEffortCatalog_ConDosSprintsActivosTomaElDeMayorNumero (0.28s)
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_MasRecientesPrimeroYTotal
+--- PASS: TestPostgreSQLEffortCatalog_StoryHistory_MasRecientesPrimeroYTotal (0.25s)
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/pendiente_sin_Sprint
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/de_un_Sprint_finalizado
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/de_otro_proyecto
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/propia_pedida_desde_otro
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/inexistente
+=== RUN   TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/proyecto_sin_Sprint_activo
+--- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas (0.27s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/pendiente_sin_Sprint (0.00s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/de_un_Sprint_finalizado (0.00s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/de_otro_proyecto (0.00s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/propia_pedida_desde_otro (0.00s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/inexistente (0.00s)
+    --- PASS: TestPostgreSQLEffortCatalog_StoryHistory_SinCargasYNoEncontradas/proyecto_sin_Sprint_activo (0.00s)
+=== RUN   TestPostgresPokerCatalog_Historias
+--- PASS: TestPostgresPokerCatalog_Historias (0.17s)
+=== RUN   TestPostgresPokerCatalog_RondasAbiertas
+--- PASS: TestPostgresPokerCatalog_RondasAbiertas (0.22s)
+=== RUN   TestPostgresPokerCatalog_Vacio
+--- PASS: TestPostgresPokerCatalog_Vacio (0.18s)
+=== RUN   TestPostgresPokerCatalog_Participantes
+--- PASS: TestPostgresPokerCatalog_Participantes (0.18s)
+=== RUN   TestPostgresPokerCatalog_VotoPropio
+--- PASS: TestPostgresPokerCatalog_VotoPropio (0.19s)
+=== RUN   TestPostgresPokerCatalog_SinValoresAjenos
+--- PASS: TestPostgresPokerCatalog_SinValoresAjenos (0.19s)
+=== RUN   TestPostgreSQLProjectCatalog_ListProjects
+--- PASS: TestPostgreSQLProjectCatalog_ListProjects (0.13s)
+=== RUN   TestPostgreSQLProjectCatalog_ListMembersOrdersByNameAndID
+--- PASS: TestPostgreSQLProjectCatalog_ListMembersOrdersByNameAndID (0.13s)
+=== RUN   TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices
+--- PASS: TestPostgreSQLProjectCatalog_EmptyTablesReturnEmptySlices (0.07s)
+=== RUN   TestPostgreSQLSchemaVersionReader_SinTablaEsVersionCero
+--- PASS: TestPostgreSQLSchemaVersionReader_SinTablaEsVersionCero (0.05s)
+=== RUN   TestPostgreSQLSchemaVersionReader_LeeVersionYDirty
+--- PASS: TestPostgreSQLSchemaVersionReader_LeeVersionYDirty (0.09s)
+=== RUN   TestPostgreSQLSchemaVersionReader_TablaVaciaEsVersionCero
+--- PASS: TestPostgreSQLSchemaVersionReader_TablaVaciaEsVersionCero (0.07s)
+=== RUN   TestPostgreSQLSprintCatalog_ActiveSprintAndStoryOptions
+--- PASS: TestPostgreSQLSprintCatalog_ActiveSprintAndStoryOptions (0.23s)
+=== RUN   TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInDescendingOrder
+--- PASS: TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInDescendingOrder (0.09s)
+=== RUN   TestParseProjectForm_ValidDatesAndPreservedValues
+--- PASS: TestParseProjectForm_ValidDatesAndPreservedValues (0.00s)
+=== RUN   TestParseProjectForm_InvalidDateFormat
+--- PASS: TestParseProjectForm_InvalidDateFormat (0.00s)
+=== RUN   TestParseProjectForm_MissingDates
+=== RUN   TestParseProjectForm_MissingDates/fecha_de_inicio_ausente
+=== RUN   TestParseProjectForm_MissingDates/fecha_de_fin_ausente
+--- PASS: TestParseProjectForm_MissingDates (0.00s)
+    --- PASS: TestParseProjectForm_MissingDates/fecha_de_inicio_ausente (0.00s)
+    --- PASS: TestParseProjectForm_MissingDates/fecha_de_fin_ausente (0.00s)
+=== RUN   TestParseProjectForm_DeduplicatesMemberIDsAndPreservesSubmittedValues
+--- PASS: TestParseProjectForm_DeduplicatesMemberIDsAndPreservesSubmittedValues (0.00s)
+=== RUN   TestParseProjectForm_RejectsNamesLongerThan255Characters
+=== RUN   TestParseProjectForm_RejectsNamesLongerThan255Characters/255_caracteres
+=== RUN   TestParseProjectForm_RejectsNamesLongerThan255Characters/256_caracteres
+--- PASS: TestParseProjectForm_RejectsNamesLongerThan255Characters (0.00s)
+    --- PASS: TestParseProjectForm_RejectsNamesLongerThan255Characters/255_caracteres (0.00s)
+    --- PASS: TestParseProjectForm_RejectsNamesLongerThan255Characters/256_caracteres (0.00s)
+=== RUN   TestProjects_ListShowsDataNewestFirstWithin500Milliseconds
+--- PASS: TestProjects_ListShowsDataNewestFirstWithin500Milliseconds (0.14s)
+=== RUN   TestProjects_EmptyListShowsMessageAndCreationForm
+--- PASS: TestProjects_EmptyListShowsMessageAndCreationForm (0.13s)
+=== RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage
+=== RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_proyectos
+=== RUN   TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_integrantes
+--- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage (0.25s)
+    --- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_proyectos (0.12s)
+    --- PASS: TestProjects_CatalogReadFailureShowsGenericErrorPage/lectura_de_integrantes (0.13s)
+=== RUN   TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject
+--- PASS: TestProjects_CreateSuccess_RedirectsShowsFlashAndProjectWithoutChangingActiveProject (0.17s)
+=== RUN   TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted
+--- PASS: TestProjects_EqualDatesAreRejectedAndNextDayIsAccepted (0.17s)
+=== RUN   TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash
+--- PASS: TestProjects_RefreshAfterCreationDoesNotDuplicateOrRepeatFlash (0.17s)
+=== RUN   TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission
+--- PASS: TestProjects_NoAvailableMembersShowsMessageAndRejectsDirectSubmission (0.14s)
+=== RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues
+=== RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_vac├¡o
+=== RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_solo_con_espacios
+=== RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/fecha_de_fin_anterior
+=== RUN   TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/sin_integrantes_marcados
+--- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues (0.56s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_vac├¡o (0.14s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/nombre_solo_con_espacios (0.14s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/fecha_de_fin_anterior (0.15s)
+    --- PASS: TestProjects_ValidationErrorsAreShownByFieldAndPreserveValues/sin_integrantes_marcados (0.14s)
+=== RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues
+=== RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_inicio
+=== RUN   TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_fin
+--- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues (0.28s)
+    --- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_inicio (0.14s)
+    --- PASS: TestProjects_MissingDatesAreShownByFieldAndPreserveValues/falta_fecha_de_fin (0.14s)
+=== RUN   TestProjects_InvalidDateFormatIsShownByFieldAndPreservesValues
+--- PASS: TestProjects_InvalidDateFormatIsShownByFieldAndPreservesValues (0.13s)
+=== RUN   TestProjects_InvalidMemberIsShownByFieldAndPreservesValues
+=== RUN   TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_no_num├®rico
+=== RUN   TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_inexistente
+--- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues (0.28s)
+    --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_no_num├®rico (0.13s)
+    --- PASS: TestProjects_InvalidMemberIsShownByFieldAndPreservesValues/integrante_inexistente (0.14s)
+=== RUN   TestProjects_SaveFailureShowsGenericErrorAndPreservesValues
+--- PASS: TestProjects_SaveFailureShowsGenericErrorAndPreservesValues (0.14s)
+=== RUN   TestPage_InicioMuestraSinProyectoSeleccionadoYUTF8
+--- PASS: TestPage_InicioMuestraSinProyectoSeleccionadoYUTF8 (0.00s)
+=== RUN   TestPage_MuestraElContextoActivo
+--- PASS: TestPage_MuestraElContextoActivo (0.00s)
+=== RUN   TestPage_TildesEnieYSimbolosSeVenCorrectamente
+--- PASS: TestPage_TildesEnieYSimbolosSeVenCorrectamente (0.00s)
+=== RUN   TestPage_NoReferenciaOtrosOrigenes
+--- PASS: TestPage_NoReferenciaOtrosOrigenes (0.00s)
+=== RUN   TestStatic_SirveLosEstilosLocales
+--- PASS: TestStatic_SirveLosEstilosLocales (0.04s)
+=== RUN   TestPage_FalloAMitadDelRenderMuestraPaginaDeErrorCompleta
+--- PASS: TestPage_FalloAMitadDelRenderMuestraPaginaDeErrorCompleta (0.00s)
+=== RUN   TestSanitizeReturnTo
+=== RUN   TestSanitizeReturnTo/vacio
+=== RUN   TestSanitizeReturnTo/inicio
+=== RUN   TestSanitizeReturnTo/seccion_registrada
+=== RUN   TestSanitizeReturnTo/subruta_de_seccion_registrada
+=== RUN   TestSanitizeReturnTo/con_consulta
+=== RUN   TestSanitizeReturnTo/con_fragmento
+=== RUN   TestSanitizeReturnTo/doble_barra_inicial
+=== RUN   TestSanitizeReturnTo/doble_barra_interna
+=== RUN   TestSanitizeReturnTo/url_absoluta_https
+=== RUN   TestSanitizeReturnTo/esquema_sin_dobles_barras
+=== RUN   TestSanitizeReturnTo/javascript
+=== RUN   TestSanitizeReturnTo/contrabarra_inicial
+=== RUN   TestSanitizeReturnTo/barra_y_contrabarra
+=== RUN   TestSanitizeReturnTo/salto_de_linea
+=== RUN   TestSanitizeReturnTo/caracter_nulo
+=== RUN   TestSanitizeReturnTo/con_espacio
+=== RUN   TestSanitizeReturnTo/espacio_inicial
+=== RUN   TestSanitizeReturnTo/sin_barra_inicial
+=== RUN   TestSanitizeReturnTo/seccion_no_registrada
+=== RUN   TestSanitizeReturnTo/prefijo_parecido
+=== RUN   TestSanitizeReturnTo/pantalla_de_seleccion
+--- PASS: TestSanitizeReturnTo (0.00s)
+    --- PASS: TestSanitizeReturnTo/vacio (0.00s)
+    --- PASS: TestSanitizeReturnTo/inicio (0.00s)
+    --- PASS: TestSanitizeReturnTo/seccion_registrada (0.00s)
+    --- PASS: TestSanitizeReturnTo/subruta_de_seccion_registrada (0.00s)
+    --- PASS: TestSanitizeReturnTo/con_consulta (0.00s)
+    --- PASS: TestSanitizeReturnTo/con_fragmento (0.00s)
+    --- PASS: TestSanitizeReturnTo/doble_barra_inicial (0.00s)
+    --- PASS: TestSanitizeReturnTo/doble_barra_interna (0.00s)
+    --- PASS: TestSanitizeReturnTo/url_absoluta_https (0.00s)
+    --- PASS: TestSanitizeReturnTo/esquema_sin_dobles_barras (0.00s)
+    --- PASS: TestSanitizeReturnTo/javascript (0.00s)
+    --- PASS: TestSanitizeReturnTo/contrabarra_inicial (0.00s)
+    --- PASS: TestSanitizeReturnTo/barra_y_contrabarra (0.00s)
+    --- PASS: TestSanitizeReturnTo/salto_de_linea (0.00s)
+    --- PASS: TestSanitizeReturnTo/caracter_nulo (0.00s)
+    --- PASS: TestSanitizeReturnTo/con_espacio (0.00s)
+    --- PASS: TestSanitizeReturnTo/espacio_inicial (0.00s)
+    --- PASS: TestSanitizeReturnTo/sin_barra_inicial (0.00s)
+    --- PASS: TestSanitizeReturnTo/seccion_no_registrada (0.00s)
+    --- PASS: TestSanitizeReturnTo/prefijo_parecido (0.00s)
+    --- PASS: TestSanitizeReturnTo/pantalla_de_seleccion (0.00s)
+=== RUN   TestCheckSchema
+=== RUN   TestCheckSchema/versi├│n_menor
+=== RUN   TestCheckSchema/sin_tabla_de_migraciones
+=== RUN   TestCheckSchema/estado_dirty
+=== RUN   TestCheckSchema/versi├│n_igual
+=== RUN   TestCheckSchema/versi├│n_mayor
+=== RUN   TestCheckSchema/error_de_lectura
+--- PASS: TestCheckSchema (0.00s)
+    --- PASS: TestCheckSchema/versi├│n_menor (0.00s)
+    --- PASS: TestCheckSchema/sin_tabla_de_migraciones (0.00s)
+    --- PASS: TestCheckSchema/estado_dirty (0.00s)
+    --- PASS: TestCheckSchema/versi├│n_igual (0.00s)
+    --- PASS: TestCheckSchema/versi├│n_mayor (0.00s)
+    --- PASS: TestCheckSchema/error_de_lectura (0.00s)
+=== RUN   TestMenu_SoloSeccionesRegistradasConInicioPrimero
+--- PASS: TestMenu_SoloSeccionesRegistradasConInicioPrimero (0.00s)
+=== RUN   TestMenu_ResaltaLaSeccionActual
+--- PASS: TestMenu_ResaltaLaSeccionActual (0.00s)
+=== RUN   TestServer_NuevaSeccionApareceEnElMenuSinTocarElLayout
+--- PASS: TestServer_NuevaSeccionApareceEnElMenuSinTocarElLayout (0.00s)
+=== RUN   TestRegistry_DireccionDuplicadaFalla
+--- PASS: TestRegistry_DireccionDuplicadaFalla (0.00s)
+=== RUN   TestServer_RegisterConDireccionDuplicadaDevuelveError
+--- PASS: TestServer_RegisterConDireccionDuplicadaDevuelveError (0.00s)
+=== RUN   TestServer_RegisterConRutaEnConflictoDevuelveErrorSinPanico
+--- PASS: TestServer_RegisterConRutaEnConflictoDevuelveErrorSinPanico (0.00s)
+=== RUN   TestSeguridad_EnvioDeOtroSitioSeRechazaCon403
+=== RUN   TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/Sec-Fetch-Site_cross-site
+=== RUN   TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/Origin_de_otro_sitio
+=== RUN   TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/ambas_cabeceras
+--- PASS: TestSeguridad_EnvioDeOtroSitioSeRechazaCon403 (0.01s)
+    --- PASS: TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/Sec-Fetch-Site_cross-site (0.00s)
+    --- PASS: TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/Origin_de_otro_sitio (0.00s)
+    --- PASS: TestSeguridad_EnvioDeOtroSitioSeRechazaCon403/ambas_cabeceras (0.00s)
+=== RUN   TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa
+=== RUN   TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/sin_cabeceras_(curl,_pruebas)
+=== RUN   TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Sec-Fetch-Site_same-origin
+=== RUN   TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Sec-Fetch-Site_none
+=== RUN   TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Origin_de_la_aplicaci├│n
+--- PASS: TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa (0.01s)
+    --- PASS: TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/sin_cabeceras_(curl,_pruebas) (0.00s)
+    --- PASS: TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Sec-Fetch-Site_same-origin (0.00s)
+    --- PASS: TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Sec-Fetch-Site_none (0.00s)
+    --- PASS: TestSeguridad_EnvioDeLaPropiaAplicacionSeProcesa/Origin_de_la_aplicaci├│n (0.00s)
+=== RUN   TestSeguridad_ConsultasDeOtroSitioNoSeBloquean
+--- PASS: TestSeguridad_ConsultasDeOtroSitioNoSeBloquean (0.00s)
+=== RUN   TestServe_ApagadoOrdenadoCompletaLaSolicitudEnCurso
+--- PASS: TestServe_ApagadoOrdenadoCompletaLaSolicitudEnCurso (0.00s)
+=== RUN   TestServe_ApagadoNoEsperaMasDelLimite
+--- PASS: TestServe_ApagadoNoEsperaMasDelLimite (0.20s)
+=== RUN   TestListen_PuertoNoValido
+--- PASS: TestListen_PuertoNoValido (0.00s)
+=== RUN   TestListen_PuertoEnUsoInformaElPuerto
+--- PASS: TestListen_PuertoEnUsoInformaElPuerto (0.00s)
+=== RUN   TestBuildSprintFormInput_ParsesValidFieldsAndDeduplicatesStories
+--- PASS: TestBuildSprintFormInput_ParsesValidFieldsAndDeduplicatesStories (0.00s)
+=== RUN   TestBuildSprintFormInput_ReportsMissingDates
+=== RUN   TestBuildSprintFormInput_ReportsMissingDates/missing_start_date
+=== RUN   TestBuildSprintFormInput_ReportsMissingDates/missing_end_date
+--- PASS: TestBuildSprintFormInput_ReportsMissingDates (0.00s)
+    --- PASS: TestBuildSprintFormInput_ReportsMissingDates/missing_start_date (0.00s)
+    --- PASS: TestBuildSprintFormInput_ReportsMissingDates/missing_end_date (0.00s)
+=== RUN   TestBuildSprintFormInput_ReportsInvalidDateFormatAndPreservesValues
+--- PASS: TestBuildSprintFormInput_ReportsInvalidDateFormatAndPreservesValues (0.00s)
+=== RUN   TestBuildSprintFormInput_RejectsNonNumericStoryID
+--- PASS: TestBuildSprintFormInput_RejectsNonNumericStoryID (0.00s)
+=== RUN   TestSprintsHandler_CreateSprintSuccess_UsesSelectedProject
+--- PASS: TestSprintsHandler_CreateSprintSuccess_UsesSelectedProject (0.00s)
+=== RUN   TestSprintsHandler_CreateSprintWithoutStoriesShowsWarning
+--- PASS: TestSprintsHandler_CreateSprintWithoutStoriesShowsWarning (0.00s)
+=== RUN   TestSprintsHandler_ActiveSprintBlocksFormAndPost
+--- PASS: TestSprintsHandler_ActiveSprintBlocksFormAndPost (0.00s)
+=== RUN   TestSprintsHandler_ActiveSprintViewRendersAllDetails
+--- PASS: TestSprintsHandler_ActiveSprintViewRendersAllDetails (0.00s)
+=== RUN   TestSprintsHandler_NoActiveSprintShowsLiteralAndCreationForm
+--- PASS: TestSprintsHandler_NoActiveSprintShowsLiteralAndCreationForm (0.00s)
+=== RUN   TestSprintsHandler_CatalogReadFailureShowsGenericErrorPage
+--- PASS: TestSprintsHandler_CatalogReadFailureShowsGenericErrorPage (0.00s)
+=== RUN   TestSprintsHandler_PostRedirectGetDoesNotCreateDuplicateOrRepeatFlash
+--- PASS: TestSprintsHandler_PostRedirectGetDoesNotCreateDuplicateOrRepeatFlash (0.00s)
+=== RUN   TestSprintsHandler_AssignStoriesRouteContract
+--- PASS: TestSprintsHandler_AssignStoriesRouteContract (0.00s)
+=== RUN   TestSprintsHandler_ListDisablesUnavailableStoriesWithReason
+--- PASS: TestSprintsHandler_ListDisablesUnavailableStoriesWithReason (0.00s)
+=== RUN   TestSprintsHandler_StoryTakenWhileFillingFormPreservesValues
+--- PASS: TestSprintsHandler_StoryTakenWhileFillingFormPreservesValues (0.00s)
+=== RUN   TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods
+=== RUN   TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/empty_Goal
+=== RUN   TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/Goal_with_whitespace_only
+=== RUN   TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_before_start
+=== RUN   TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_equals_start
+--- PASS: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods (0.01s)
+    --- PASS: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/empty_Goal (0.00s)
+    --- PASS: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/Goal_with_whitespace_only (0.00s)
+    --- PASS: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_before_start (0.00s)
+    --- PASS: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_equals_start (0.00s)
+=== RUN   TestSprintsHandler_RejectsMissingOrMalformedDates
+=== RUN   TestSprintsHandler_RejectsMissingOrMalformedDates/missing_start
+=== RUN   TestSprintsHandler_RejectsMissingOrMalformedDates/missing_end
+=== RUN   TestSprintsHandler_RejectsMissingOrMalformedDates/malformed_start
+--- PASS: TestSprintsHandler_RejectsMissingOrMalformedDates (0.01s)
+    --- PASS: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_start (0.00s)
+    --- PASS: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_end (0.00s)
+    --- PASS: TestSprintsHandler_RejectsMissingOrMalformedDates/malformed_start (0.00s)
+=== RUN   TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs
+=== RUN   TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/non_numeric_ID
+=== RUN   TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/story_from_another_project
+--- PASS: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs (0.01s)
+    --- PASS: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/non_numeric_ID (0.00s)
+    --- PASS: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/story_from_another_project (0.00s)
+=== RUN   TestSprintsHandler_StoreFailureShowsGenericErrorAndPreservesForm
+--- PASS: TestSprintsHandler_StoreFailureShowsGenericErrorAndPreservesForm (0.00s)
+=== RUN   TestSprintsHandler_RequiresValidProjectContextForPost
+=== RUN   TestSprintsHandler_RequiresValidProjectContextForPost/no_project_selected
+=== RUN   TestSprintsHandler_RequiresValidProjectContextForPost/deleted_project
+=== RUN   TestSprintsHandler_RequiresValidProjectContextForPost/invalid_project_cookie
+--- PASS: TestSprintsHandler_RequiresValidProjectContextForPost (0.01s)
+    --- PASS: TestSprintsHandler_RequiresValidProjectContextForPost/no_project_selected (0.00s)
+    --- PASS: TestSprintsHandler_RequiresValidProjectContextForPost/deleted_project (0.00s)
+    --- PASS: TestSprintsHandler_RequiresValidProjectContextForPost/invalid_project_cookie (0.00s)
+=== RUN   TestSprintsHandler_AssignStoriesPersistsAllAndShowsFlash
+--- PASS: TestSprintsHandler_AssignStoriesPersistsAllAndShowsFlash (0.21s)
+=== RUN   TestSprintsHandler_AssignStoriesWithoutSelectionShowsMessageAndDoesNotMutate
+--- PASS: TestSprintsHandler_AssignStoriesWithoutSelectionShowsMessageAndDoesNotMutate (0.19s)
+=== RUN   TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically
+--- PASS: TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically (0.21s)
+=== RUN   TestSprintsHandler_RemoveStoryReturnsItToBacklog
+--- PASS: TestSprintsHandler_RemoveStoryReturnsItToBacklog (0.25s)
+=== RUN   TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories
+--- PASS: TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories (0.36s)
+PASS
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	44.807s

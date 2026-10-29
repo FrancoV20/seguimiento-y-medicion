@@ -126,7 +126,7 @@
 - [ ] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
 - [ ] T047 Coordinar con quien tome HU-10 que los Story Points planificados y el porcentaje de historias completadas de un Sprint finalizado salen de `sprint_story_results`; con HU-16 que las historias no completadas salen de ahí (las devueltas ya no están asignadas); con HU-25 que el escenario "Cierre bloqueado" ya está cubierto acá y que lee la velocidad de HU-07; con HU-13 y HU-17 que las historias "Hecho" quedan en el Sprint finalizado (bloqueadas) y las devueltas son editables; y con HU-07 que una historia devuelta puede entrar a otro Sprint con horas ya registradas
-- [ ] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
 - [ ] T050 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
@@ -185,26 +185,26 @@
 
 | Requisito | Pruebas |
 |---|---|
-| FR-001 | T019, T021, T042 |
-| FR-002 | T008, T031 |
-| FR-003 | T032 |
-| FR-004 | T006, T012 |
-| FR-005 | T006, T007, T013 |
-| FR-006 | T007, T013 |
-| FR-007 | T005, T007, T015 |
-| FR-008 | T006, T022 |
-| FR-009 | T006, T014 |
-| FR-010 | T006, T023 |
-| FR-011 | T016, T026 |
-| FR-012 | T007, T025 |
+| FR-001 | T019, T021 |
+| FR-002 | T008, T031, T036 |
+| FR-003 | T032, T036 |
+| FR-004 | T006, T012, T017, T042 |
+| FR-005 | T007, T013, T015, T017 |
+| FR-006 | T007, T013, T017 |
+| FR-007 | T005, T007, T015, T017 |
+| FR-008 | T006, T022, T027 |
+| FR-009 | T006, T014, T017 |
+| FR-010 | T006, T023, T027 |
+| FR-011 | T016, T026, T027 |
+| FR-012 | T007, T025, T027 |
 | FR-013 | T006, T024, T043 |
 | FR-014 | T033 |
 | FR-015 | T030, T039 |
-| FR-016 | T015 |
-| SC-001 | T006, T007, T012, T013 |
-| SC-002 | T007, T015 |
-| SC-003 | T006, T007, T022, T023, T025 |
-| SC-004 | T015 |
+| FR-016 | T015, T017 |
+| SC-001 | T006, T007, T012, T013, T017, T042 |
+| SC-002 | T007, T015, T017 |
+| SC-003 | T006, T007, T022, T023, T024, T025, T027 |
+| SC-004 | T015, T017 |
 | SC-005 | T007 |
-| SC-006 | T016, T026 |
+| SC-006 | T016, T026, T027 |
 | SC-007 | Verificación de tiempo en T031 |
