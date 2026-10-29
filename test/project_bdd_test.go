@@ -27,7 +27,7 @@ func TestProjectCreation_BDD(t *testing.T) {
 	service := project.NewProjectService(store)
 	result, err := service.CreateProject(request)
 
-	// Then: creation succeeds and returns an activo project with an ID.
+	// Then: creation succeeds and returns a project with an ID and status "Activo".
 	if err != nil {
 		t.Fatalf("expected project creation to succeed, got error: %v", err)
 	}

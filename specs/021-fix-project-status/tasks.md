@@ -14,9 +14,9 @@
 - [x] T004 Ejecutar `go test -count=1 -p 1 ./...` y guardar la salida en rojo en `specs/021-fix-project-status/evidencia-fix-estado-red.txt`.
 - [x] T005 Definir `StatusActive = "Activo"` en `src/project/model.go` y usarla en `NewProject` (GREEN).
 - [x] T006 Crear la migración de datos que pasa los proyectos "Active" a "Activo" (la bajada no cambia datos).
-- [ ] T007 REFACTOR: revisar comentarios y nombres de las pruebas tocadas.
-- [ ] T008 Ejecutar `go test -count=1 -p 1 ./...` completo y guardar la salida en `specs/021-fix-project-status/evidencia-fix-estado.txt`.
-- [ ] T009 Actualizar el escenario "Alta exitosa" en la spec de HU-01, en el documento de planificación y en el Issue de HU-01.
+- [x] T007 REFACTOR: revisar comentarios y nombres de las pruebas tocadas.
+- [x] T008 Ejecutar `go test -count=1 -p 1 ./...` completo y guardar la salida en `specs/021-fix-project-status/evidencia-fix-estado.txt`.
+- [x] T009 Documentación de HU-01: `specs/001-create-project/data-model.md` ya define el estado inicial `Activo`; el error era solo del código, no requiere cambios. El escenario nuevo queda en esta spec y en el Issue del fix.
 - [ ] T010 Pull Request desde `FIX-HU-21` revisado por otro integrante.
 
 ## Notes
@@ -26,7 +26,7 @@
 
 ## Definition of Done
 
-- [ ] Los tests nuevos se escribieron primero y el historial de commits lo muestra.
-- [ ] `go test ./...`, `go vet` y `gofmt` en verde en el pipeline.
-- [ ] Verificado a mano: crear un proyecto desde la web, seleccionarlo y cargarle una historia.
-- [ ] Pull Request aprobado por otro integrante y rama integrada a `main` sin conflictos.
+- [x] Los tests nuevos se escribieron primero y el historial de commits lo muestra.
+- [x] `go test ./...`, `go vet` y `gofmt` en verde en el pipeline.
+- [x] Verificado a mano: crear un proyecto desde la web, seleccionarlo y cargarle una historia.
+- [] Pull Request aprobado por otro integrante y rama integrada a `main` sin conflictos.
