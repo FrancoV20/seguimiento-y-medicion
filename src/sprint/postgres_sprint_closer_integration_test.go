@@ -358,3 +358,34 @@ func testDatabaseURL(t *testing.T) string {
 	}
 	return dsn
 }
+
+func TestPostgreSQLSprintCloserFindSprint(t *testing.T) {
+	db, projectID, sprintID, _ := newSprintCloserIntegrationFixture(t)
+	closer := NewPostgreSQLSprintCloser(db)
+
+	t.Run("lectura exitosa", func(t *testing.T) {
+		got, err := closer.FindSprint(context.Background(), projectID, sprintID)
+		if err != nil {
+			t.Fatalf("FindSprint() devolvió error: %v", err)
+		}
+		if got.ID != sprintID || got.ProjectID != projectID || got.Number != 1 || got.Status != SprintActive {
+			t.Errorf("FindSprint() = %+v; se esperaba el Sprint %d del proyecto %d activo",
+				got, sprintID, projectID)
+		}
+	})
+
+	t.Run("Sprint inexistente para el proyecto", func(t *testing.T) {
+		otherProjectID := newStatusProject(t, db, "Proyecto distinto HU-15")
+		_, err := closer.FindSprint(context.Background(), otherProjectID, sprintID)
+		if !errors.Is(err, ErrSprintNotFound) {
+			t.Errorf("FindSprint() error = %v; se esperaba ErrSprintNotFound", err)
+		}
+	})
+
+	t.Run("sin conexión", func(t *testing.T) {
+		_, err := NewPostgreSQLSprintCloser(nil).FindSprint(context.Background(), projectID, sprintID)
+		if !errors.Is(err, ErrPersistence) {
+			t.Errorf("FindSprint() error = %v; se esperaba ErrPersistence", err)
+		}
+	})
+}

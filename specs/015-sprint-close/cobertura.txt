@@ -2,14 +2,14 @@
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/close_sprint.go:39:			CloseSprint			63.6%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:28:				Error				100.0%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:33:				Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:42:				Error				66.7%
+github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:42:				Error				100.0%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:50:				Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:52:				persistenceError		0.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:65:				Error				0.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:74:				Message				0.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:52:				persistenceError		100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:65:				Error				100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:74:				Message				100.0%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:82:				Is				100.0%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:18:		NewPostgreSQLSprintCloser	100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:23:		FindSprint			0.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:23:		FindSprint			90.9%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:48:		CloseSprint			67.2%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:23:		NewPostgreSQLSprintStore	66.7%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:38:		Close				66.7%
@@ -52,4 +52,4 @@ github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:50:			Creat
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:121:			AssignStories			77.5%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:178:			withSprintNumber		100.0%
 github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:185:			RemoveStory			75.0%
-total:												(statements)			77.5%
+total:												(statements)			80.5%

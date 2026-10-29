@@ -102,7 +102,7 @@
 
 - [x] T031 [P] [US3] Escribir la prueba de handler del resumen: Sprint, completadas, a devolver, Story Points completados sobre planificados y botón, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/close_handlers_test.go`
 - [x] T032 [P] [US3] Escribir la prueba de handler sin Sprint activo: "No hay un Sprint activo para cerrar" y sin botón, en `src/web/close_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/close_handlers_test.go`
+- [x] T033 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/close_handlers_test.go`
 - [x] T034 [P] [US3] Escribir la prueba de handler de un título con `<script>`: se muestra como texto, en `src/web/close_handlers_test.go`
 - [x] T035 [P] [US3] Completar `close.html` con el estado "No hay un Sprint activo para cerrar" y sin botón en `src/web/templates/close.html`
 - [x] T036 [P] [US3] Escribir los escenarios BDD de resumen antes de cerrar y sin Sprint activo en `test/web_close_bdd_test.go`
@@ -124,7 +124,7 @@
 - [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cierra nada, en `src/web/close_handlers_test.go`
 - [x] T044 [P] Verificar que `T033` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura
 - [ ] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
+- [x] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
 - [ ] T047 Coordinar con quien tome HU-10 que los Story Points planificados y el porcentaje de historias completadas de un Sprint finalizado salen de `sprint_story_results`; con HU-16 que las historias no completadas salen de ahí (las devueltas ya no están asignadas); con HU-25 que el escenario "Cierre bloqueado" ya está cubierto acá y que lee la velocidad de HU-07; con HU-13 y HU-17 que las historias "Hecho" quedan en el Sprint finalizado (bloqueadas) y las devueltas son editables; y con HU-07 que una historia devuelta puede entrar a otro Sprint con horas ya registradas
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
