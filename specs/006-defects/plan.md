@@ -16,16 +16,19 @@ La pantalla tiene una sección con `RequiresProject: true`, un catálogo propio 
 opciones de historia y número del Sprint activo) y handlers que solo arman el envío, llaman al servicio y
 traducen sus errores. No modifica HU-02, HU-04, HU-15, HU-20a ni HU-20b.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta de los paquetes de historias y Sprints, los nombres de tablas y columnas (`sprints.status` con
->    `'Activo'` y `'Finalizado'`, `user_stories.project_id`, `title`, `status`) y que no exista ya un paquete o
->    nombres de defectos (`git grep -n -i defect`).
-> 2. El último número de migración en `main` (hoy `008` y la de HU-15 si ya está integrada) y que nadie más haya
->    tomado el siguiente.
-> 3. HU-20a y HU-20b completas en `main`: `Server.Register` con rutas `GET` y `POST`, `Section.RequiresProject`,
->    `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`,
->    redirección 303 y protección contra envíos de otro origen.
-> 4. Los identificadores ya definidos en el paquete `web` para que los nombres con prefijo `Defect` no choquen.
+> **Verificación inicial (T001)**: en `main`, los paquetes son `src/backlog` y `src/sprint`; las tablas son
+> `user_stories` y `sprints`. `projects.id` es `SERIAL`/`INTEGER`; `user_stories.id` y `sprints.id` son
+> `BIGSERIAL`/`BIGINT`, aunque los modelos Go usan `int64`. Los Sprints admiten `'Activo'` y `'Finalizado'`;
+> las historias admiten `'Pendiente'`, `'En Sprint'`, `'En progreso'` y `'Hecho'`. No hay paquete ni
+> identificadores de defectos existentes en `src`; los nombres nuevos con prefijo `Defect` no colisionan.
+> No se encontró una operación de cierre de Sprint en `main`; los bloqueos `FOR UPDATE` existentes son de
+> asignación/remoción de historias, por lo que el contrato de HU-15 sigue pendiente.
+>
+> **Setup verificado (T002-T004)**: los contratos comunes están disponibles. Los parciales son definiciones
+> `alert` y `field` dentro de `templates/layout.html` (no archivos separados `alert.html` y `field.html`).
+> `origin/main` llega a `011` (HU-05a); `012` es candidato, sin reserva en ramas remotas visibles. HU-15 todavía no tiene
+> responsable ni implementación, por lo que su cierre con `FOR UPDATE` no pudo verificarse en el código. Ver
+> [data-model.md](data-model.md); coordinar nuevamente el número y el contrato cuando HU-15 se asigne.
 
 ## Technical Context
 

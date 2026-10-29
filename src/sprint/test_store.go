@@ -190,11 +190,11 @@ func (s *memorySprintStore) RemoveStory(ctx context.Context, sprintID int64, sto
 	defer s.mu.Unlock()
 	sprint, exists := s.sprints[sprintID]
 	if !exists || sprint.Status != SprintActive {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	story, exists := s.stories[storyID]
 	if !exists {
-		return ErrStoryNotAvailable
+		return &StoryRemovalError{StoryID: storyID}
 	}
 	if err := RemoveStoryFromSprint(&story, sprintID); err != nil {
 		return err

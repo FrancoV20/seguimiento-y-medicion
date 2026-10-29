@@ -109,3 +109,27 @@ func TestRemoveStoryFromSprintRejectsNonMatchingSprintWithoutMutation(t *testing
 		t.Fatalf("la historia cambió ante el error: antes=%+v después=%+v", before, story)
 	}
 }
+
+func TestCanRemoveStoryReportsEligibilityAndBlockedReason(t *testing.T) {
+	tests := []struct {
+		name       string
+		status     StoryStatus
+		hasEffort  bool
+		canRemove  bool
+		wantReason string
+	}{
+		{name: "En Sprint sin horas", status: EnSprint, canRemove: true},
+		{name: "en progreso", status: InProgress, wantReason: "Ya está en progreso"},
+		{name: "hecha", status: Done, wantReason: "Ya está hecha"},
+		{name: "con horas registradas", status: EnSprint, hasEffort: true, wantReason: "Tiene horas registradas"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			canRemove, reason := CanRemoveStory(test.status, test.hasEffort)
+			if canRemove != test.canRemove || reason != test.wantReason {
+				t.Errorf("CanRemoveStory(%q, %t) = (%t, %q); se esperaba (%t, %q)",
+					test.status, test.hasEffort, canRemove, reason, test.canRemove, test.wantReason)
+			}
+		})
+	}
+}

@@ -1,0 +1,17 @@
+Prueba de usabilidad HU-23 (SC-009 y SC-010) – Sprint Review <AAAA-MM-DD>
+Consigna leída a cada persona: "Creá un Sprint con el objetivo que quieras, fechas a elección y tres historias del Backlog."
+Cronómetro: desde que toca la pantalla Inicio hasta que ve "Sprint creado correctamente". Sin ayuda.
+
+Persona 1: m:ss – primer intento: sí/no – observación:
+Persona 2: m:ss – primer intento: sí/no – observación:
+Persona 3: m:ss – primer intento: sí/no – observación:
+Persona 4: m:ss – primer intento: sí/no – observación:
+Persona 5: m:ss – primer intento: sí/no – observación:
+
+Tiempo promedio: m:ss
+Éxito al primer intento: _/5 = __ %
+
+SC-009 (al menos 90 % al primer intento): CUMPLE / NO CUMPLE
+SC-010 (menos de 3 minutos): CUMPLE / NO CUMPLE
+
+Observaciones para la retrospectiva:
