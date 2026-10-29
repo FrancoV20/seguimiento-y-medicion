@@ -1,0 +1,14 @@
+﻿=== RUN   TestCloseSprintServiceValidatesStoriesChangedWhileWaitingForLock
+    close_sprint_consistency_test.go:68: error = <nil>, se esperaba ErrCloseBlocked por la historia 1472 que quedó Hecho sin Story Points
+--- FAIL: TestCloseSprintServiceValidatesStoriesChangedWhileWaitingForLock (0.51s)
+=== RUN   TestCloseSprintServiceValidatesTheSameStoriesItCloses
+=== RUN   TestCloseSprintServiceValidatesTheSameStoriesItCloses/una_historia_del_Sprint_sin_fila_de_asignación_se_valida
+    close_sprint_consistency_test.go:98: error = <nil>, se esperaba ErrCloseBlocked: la historia 1473 se cierra con el Sprint y es inválida
+=== RUN   TestCloseSprintServiceValidatesTheSameStoriesItCloses/una_fila_de_asignación_sin_active_sprint_id_no_se_valida_ni_se_cierra
+    close_sprint_consistency_test.go:124: CloseSprint() devolvió error: el Sprint no se puede cerrar: Historia 1476: Story Points inválidos; la historia 1476 no forma parte del cierre
+--- FAIL: TestCloseSprintServiceValidatesTheSameStoriesItCloses (0.42s)
+    --- FAIL: TestCloseSprintServiceValidatesTheSameStoriesItCloses/una_historia_del_Sprint_sin_fila_de_asignación_se_valida (0.21s)
+    --- FAIL: TestCloseSprintServiceValidatesTheSameStoriesItCloses/una_fila_de_asignación_sin_active_sprint_id_no_se_valida_ni_se_cierra (0.21s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.098s
+FAIL
