@@ -2,8 +2,8 @@ package test
 
 import (
 	"context"
-	"errors"
 	"database/sql"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
