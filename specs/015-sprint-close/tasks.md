@@ -116,8 +116,8 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T038 [P] Documentar en `specs/015-sprint-close/quickstart.md` los pasos para probar a mano con un Sprint con historias en distintos estados y la nota de puerto
-- [ ] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/close_handlers.go` y `src/web/close_form.go`
+- [x] T038 [P] Documentar en `specs/015-sprint-close/quickstart.md` los pasos para probar a mano con un Sprint con historias en distintos estados y la nota de puerto
+- [x] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/close_handlers.go` y `src/web/close_form.go`
 - [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [ ] T042 [P] Escribir la prueba de handler de recarga después de cerrar: no se cierra nada más ni se repite el mensaje, en `src/web/close_handlers_test.go`

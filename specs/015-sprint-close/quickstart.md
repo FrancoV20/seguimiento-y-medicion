@@ -38,6 +38,23 @@ $env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_m
 go run ./src/cmd/server
 ```
 
+### Prueba manual del cierre
+
+El puerto del host para PostgreSQL es `5433`, mapeado al puerto `5432` del contenedor. Configurar
+`DATABASE_URL` con `localhost:5433` antes de ejecutar migraciones o iniciar el servidor. Sustituir las
+credenciales locales de la URL por las propias y no subirlas al repositorio.
+
+1. Iniciar PostgreSQL con `docker compose up -d postgres` y aplicar las migraciones usando
+   `DATABASE_URL`.
+2. Crear y seleccionar un proyecto por HU-20b. Crear un Sprint activo y asignarle al menos tres
+   historias: una en "Hecho", una en "En progreso" y una en "En Sprint". Usar Story Points válidos para
+   HU-07. Si HU-21, HU-22 o HU-23 no están disponibles, preparar esos datos por SQL respetando
+   `data-model.md`.
+3. Ejecutar `go run ./src/cmd/server` y abrir `http://localhost:8080/cierre`.
+4. Verificar que la vista previa separa la historia completada de las que volverán al Backlog. Confirmar
+   el cierre: debe redirigir con el mensaje de resultado, conservar "Hecho" en el Sprint finalizado y
+   devolver las otras historias al Backlog en estado "Pendiente".
+
 Las pruebas automáticas no dependen de HU-21, HU-22, HU-23 ni de las pantallas de HU-14: crean sus propios
 proyectos, historias, Sprints y horas.
 
