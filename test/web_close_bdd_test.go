@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
@@ -44,6 +45,15 @@ func (s *cierreBDDStore) FindSprint(ctx context.Context, projectID, sprintID int
 
 func (s *cierreBDDStore) CloseSprint(ctx context.Context, sprintID int64) (sprint.CloseResult, error) {
 	return s.closer.CloseSprint(ctx, sprintID)
+}
+
+type cierreBDDFallaAlCerrarStore struct {
+	*cierreBDDStore
+	err error
+}
+
+func (s cierreBDDFallaAlCerrarStore) CloseSprint(context.Context, int64) (sprint.CloseResult, error) {
+	return sprint.CloseResult{}, s.err
 }
 
 type cierreBDDValidator struct {
@@ -80,19 +90,45 @@ func nuevaCierreBDDAppSinSprint(t *testing.T) *cierreBDDApp {
 }
 
 func nuevaCierreBDDAppConSprint(t *testing.T, crearSprint bool, estados ...sprint.StoryStatus) *cierreBDDApp {
+	return nuevaCierreBDDAppConSprintYStore(t, crearSprint, nil, estados...)
+}
+
+func nuevaCierreBDDAppConSprintYStore(
+	t *testing.T,
+	crearSprint bool,
+	nuevoStore func(*sql.DB) sprint.SprintCloseStore,
+	estados ...sprint.StoryStatus,
+) *cierreBDDApp {
 	t.Helper()
 	fixture := nuevaSeleccionFixture(t)
 	server := web.NewServer(silencioso())
 	web.RegisterContext(server, web.NewPostgreSQLContextStore(fixture.db))
+	var closeStore sprint.SprintCloseStore = &cierreBDDStore{
+		db:     fixture.db,
+		closer: sprint.NewPostgreSQLSprintCloser(fixture.db),
+	}
+	if nuevoStore != nil {
+		closeStore = nuevoStore(fixture.db)
+	}
 	service := sprint.NewCloseSprintService(
-		&cierreBDDStore{
-			db:     fixture.db,
-			closer: sprint.NewPostgreSQLSprintCloser(fixture.db),
-		},
+		closeStore,
 		cierreBDDValidator{store: metrics.NewPostgreSQLMetricsStore(fixture.db)},
 	)
 	if err := web.RegisterClose(server, service, web.NewPostgreSQLBoardCatalog(fixture.db)); err != nil {
 		t.Fatalf("no se pudo registrar la sección Cierre de Sprint: %v", err)
+	}
+	effortService := effort.NewService(
+		effort.NewPostgreSQLEffortStore(fixture.db),
+		func() time.Time { return time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC) },
+	)
+	if err := web.RegisterEffort(server,
+		web.NewEffortActions(effortService, func() time.Time {
+			return time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC)
+		}),
+		web.NewPostgreSQLEffortCatalog(fixture.db),
+		func() time.Time { return time.Date(2026, 10, 20, 12, 0, 0, 0, time.UTC) },
+	); err != nil {
+		t.Fatalf("no se pudo registrar Registro de esfuerzo para HU-03: %v", err)
 	}
 	httpServer := httptest.NewServer(server.Handler())
 	t.Cleanup(httpServer.Close)
@@ -148,6 +184,22 @@ func (a *cierreBDDApp) elegirProyecto(t *testing.T) *http.Client {
 			response.StatusCode, response.Header.Get("Location"))
 	}
 	return client
+}
+
+func (a *cierreBDDApp) elegirIntegrante(t *testing.T, client *http.Client) {
+	t.Helper()
+	response, err := client.PostForm(a.httpServer.URL+"/contexto/integrante", url.Values{
+		"integrante_id": {idTexto(a.integranteA)},
+		"volver_a":      {"/esfuerzo"},
+	})
+	if err != nil {
+		t.Fatalf("no se pudo elegir el integrante: %v", err)
+	}
+	_ = formCuerpo(t, response)
+	if response.StatusCode != http.StatusSeeOther || response.Header.Get("Location") != "/esfuerzo" {
+		t.Fatalf("elegir integrante: se esperaba 303 a /esfuerzo, se obtuvo %d a %q",
+			response.StatusCode, response.Header.Get("Location"))
+	}
 }
 
 func (a *cierreBDDApp) cerrar(t *testing.T, client *http.Client) (*http.Response, string) {
@@ -386,6 +438,179 @@ func TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo(t *testing.T) {
 	for _, story := range returned {
 		assertCierreBDDStoryState(t, app.db, story.id, sprint.EnSprint, created.Sprint.ID)
 	}
+}
+
+func TestCloseBDD_SprintYaCerradoSeRechaza(t *testing.T) {
+	// Dado un Sprint que ya se cerró correctamente desde la aplicación.
+	app := nuevaCierreBDDApp(t, sprint.Done)
+	client := app.elegirProyecto(t)
+	first, _ := app.cerrar(t, client)
+	if !app.exigirRedireccionDeCierre(t, first) {
+		return
+	}
+
+	// Cuando vuelvo a enviar el mismo formulario de cierre.
+	response, body := app.cerrar(t, client)
+
+	// Entonces recibo 409 y el mensaje de Sprint ya cerrado; no se cierra nuevamente.
+	if response.StatusCode != http.StatusConflict {
+		t.Errorf("cerrar un Sprint ya finalizado = %d; se esperaba 409", response.StatusCode)
+	}
+	if !strings.Contains(body, web.MsgSprintAlreadyClosed) {
+		t.Errorf("la respuesta debía mostrar %q", web.MsgSprintAlreadyClosed)
+	}
+	var status string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, app.sprintID).Scan(&status); err != nil {
+		t.Fatalf("no se pudo leer el estado del Sprint: %v", err)
+	}
+	if status != string(sprint.SprintFinished) {
+		t.Errorf("el Sprint quedó %q; se esperaba que siguiera Finalizado", status)
+	}
+}
+
+func TestCloseBDD_CierreBloqueadoPorValidacionHU07(t *testing.T) {
+	// Dado un Sprint activo con una historia Hecho cuyos Story Points son inválidos para HU-07.
+	app := nuevaCierreBDDApp(t, sprint.Done, sprint.InProgress)
+	invalidStory := app.historias[0]
+	if _, err := app.db.Exec(`UPDATE user_stories SET story_points = NULL WHERE id = $1`, invalidStory.id); err != nil {
+		t.Fatalf("no se pudieron preparar los datos inválidos para HU-07: %v", err)
+	}
+	client := app.elegirProyecto(t)
+
+	// Cuando solicito el cierre por HTTP y se ejecuta la validación real de HU-07.
+	response, body := app.cerrar(t, client)
+
+	// Entonces recibo 409 con el motivo y la historia a corregir, sin cambios al Sprint ni sus historias.
+	if response.StatusCode != http.StatusConflict {
+		t.Errorf("cierre bloqueado por HU-07 = %d; se esperaba 409", response.StatusCode)
+	}
+	want := fmt.Sprintf("Historia %d: Story Points inválidos", invalidStory.id)
+	if !strings.Contains(body, want) {
+		t.Errorf("la respuesta debía identificar el dato inválido %q", want)
+	}
+	var status string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, app.sprintID).Scan(&status); err != nil {
+		t.Fatalf("no se pudo leer el estado del Sprint: %v", err)
+	}
+	if status != string(sprint.SprintActive) {
+		t.Errorf("el Sprint quedó %q; se esperaba Activo", status)
+	}
+	var results int
+	if err := app.db.QueryRow(`SELECT count(*) FROM sprint_story_results WHERE sprint_id = $1`, app.sprintID).Scan(&results); err != nil {
+		t.Fatalf("no se pudo consultar el registro del cierre: %v", err)
+	}
+	if results != 0 {
+		t.Errorf("se registraron %d resultados aunque HU-07 bloqueó el cierre", results)
+	}
+}
+
+func TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico(t *testing.T) {
+	// Dado un Sprint activo y una falla de almacenamiento durante el cierre.
+	app := nuevaCierreBDDAppConSprintYStore(t, true, func(db *sql.DB) sprint.SprintCloseStore {
+		return cierreBDDFallaAlCerrarStore{
+			cierreBDDStore: &cierreBDDStore{db: db, closer: sprint.NewPostgreSQLSprintCloser(db)},
+			err:            errors.New("db connection timeout during sprint close"),
+		}
+	}, sprint.Done, sprint.InProgress)
+	client := app.elegirProyecto(t)
+
+	// Cuando solicito el cierre por HTTP.
+	response, body := app.cerrar(t, client)
+
+	// Entonces recibo 500 y el mensaje genérico, sin el detalle técnico ni mensaje de éxito.
+	if response.StatusCode != http.StatusInternalServerError {
+		t.Errorf("falla interna al cerrar = %d; se esperaba 500", response.StatusCode)
+	}
+	if !strings.Contains(body, web.MsgOperationFailed) {
+		t.Errorf("la respuesta debía mostrar %q", web.MsgOperationFailed)
+	}
+	if strings.Contains(body, "db connection timeout") || strings.Contains(body, "sprint close") {
+		t.Errorf("la respuesta expuso detalles internos de persistencia")
+	}
+	if strings.Contains(body, "cerrado correctamente") {
+		t.Errorf("la respuesta comunicó un cierre exitoso")
+	}
+	var status string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, app.sprintID).Scan(&status); err != nil {
+		t.Fatalf("no se pudo leer el estado del Sprint: %v", err)
+	}
+	if status != string(sprint.SprintActive) {
+		t.Errorf("el Sprint quedó %q; se esperaba que siguiera Activo", status)
+	}
+	if results := len(readCierreBDDSnapshot(t, app.db, app.sprintID)); results != 0 {
+		t.Errorf("se persistieron %d resultados pese a la falla", results)
+	}
+}
+
+func TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza(t *testing.T) {
+	// Dado un Sprint cerrado y un Sprint siguiente activo para el mismo proyecto.
+	app := nuevaCierreBDDApp(t, sprint.Done, sprint.InProgress)
+	client := app.elegirProyecto(t)
+	response, _ := app.cerrar(t, client)
+	if !app.exigirRedireccionDeCierre(t, response) {
+		return
+	}
+	nextSprint := app.insertar(t, `
+		INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		VALUES ($1, 2, 'Sprint posterior BDD', DATE '2026-10-16', DATE '2026-10-30', 'Activo')
+		RETURNING id`, app.proyectoA)
+	newStory := app.insertar(t, `
+		INSERT INTO user_stories (project_id, title, description, priority, story_points, status, active_sprint_id)
+		VALUES ($1, 'Historia del Sprint posterior', 'Fixture BDD', 'Media', 3, 'En Sprint', $2)
+		RETURNING id`, app.proyectoA, nextSprint)
+	if _, err := app.db.Exec(`INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES ($1, $2)`,
+		nextSprint, newStory); err != nil {
+		t.Fatalf("no se pudo asignar la historia al Sprint posterior: %v", err)
+	}
+	app.elegirIntegrante(t, client)
+	before := countCierreBDDEffort(t, app.db, app.historias[0].id, app.historias[1].id)
+
+	// Cuando intento registrar horas por HTTP sobre la historia Hecho conservada y la devuelta.
+	for _, story := range app.historias {
+		response, body := app.postEsfuerzo(t, client, story.id)
+
+		// Entonces HU-03 rechaza la historia porque no pertenece al Sprint activo.
+		if response.StatusCode != http.StatusUnprocessableEntity {
+			t.Errorf("registrar esfuerzo sobre historia cerrada %d = %d; se esperaba 422",
+				story.id, response.StatusCode)
+		}
+		if !strings.Contains(body, web.MsgEffortStoryNotInSprint) {
+			t.Errorf("la respuesta debía mostrar %q", web.MsgEffortStoryNotInSprint)
+		}
+		if strings.Contains(body, effort.SuccessMessage) {
+			t.Errorf("la respuesta indicó que se registraron horas")
+		}
+	}
+	if after := countCierreBDDEffort(t, app.db, app.historias[0].id, app.historias[1].id); after != before {
+		t.Errorf("se guardaron horas después del cierre: antes %d, después %d", before, after)
+	}
+}
+
+func (a *cierreBDDApp) postEsfuerzo(t *testing.T, client *http.Client, storyID int64) (*http.Response, string) {
+	t.Helper()
+	response, err := client.PostForm(a.httpServer.URL+"/esfuerzo", url.Values{
+		"historia":  {idTexto(storyID)},
+		"fecha":     {"2026-10-20"},
+		"actividad": {"Trabajo posterior al cierre"},
+		"horas":     {"2"},
+	})
+	if err != nil {
+		t.Fatalf("POST /esfuerzo: %v", err)
+	}
+	return response, formCuerpo(t, response)
+}
+
+func countCierreBDDEffort(t *testing.T, db *sql.DB, storyIDs ...int64) int {
+	t.Helper()
+	var count int
+	for _, storyID := range storyIDs {
+		var storyCount int
+		if err := db.QueryRow(`SELECT count(*) FROM effort_logs WHERE story_id = $1`, storyID).Scan(&storyCount); err != nil {
+			t.Fatalf("no se pudo contar el esfuerzo de la historia %d: %v", storyID, err)
+		}
+		count += storyCount
+	}
+	return count
 }
 
 type cierreBDDSnapshot struct {

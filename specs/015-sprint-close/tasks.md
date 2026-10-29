@@ -80,7 +80,7 @@
 - [x] T024 [P] [US2] Escribir la prueba de handler con `sprint_id` no numérico, inexistente o de otro proyecto: "El Sprint no existe" y 422, y un campo de proyecto enviado se ignora, en `src/web/close_handlers_test.go`
 - [x] T025 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito, Sprint activo y sin cambios parciales, en `src/web/close_handlers_test.go`
 - [x] T026 [P] [US2] Escribir la prueba de handler de la carga de esfuerzo después del cierre: se rechaza (regla de HU-03), en `src/web/close_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir los escenarios BDD de cierre bloqueado por HU-07, Sprint ya finalizado, carga de esfuerzo posterior y error al cerrar en `test/web_close_bdd_test.go`
+- [x] T027 [P] [US2] Escribir los escenarios BDD de cierre bloqueado por HU-07, Sprint ya finalizado, carga de esfuerzo posterior y error al cerrar en `test/web_close_bdd_test.go`
 
 ### Implementation for User Story 2
 
