@@ -1,0 +1,78 @@
+HU-06 — Evidencia de recorrido end-to-end
+Fecha: 2026-10-28
+
+Entorno
+- Aplicación Go ejecutada localmente en http://localhost:8080.
+- PostgreSQL local de Docker Compose saludable en el puerto publicado 5433.
+- Esquema en migración 12 (la migración de defectos se renumeró de 009 a 012 al integrar `main`, que ya tenía
+  la 011 de HU-05a; su contenido no cambió).
+- Fixtures de prueba únicos para tres proyectos (A, B y C), sus Sprints e historias.
+- Las fixtures y los registros generados fueron eliminados al terminar. Se comprobó que no quedaran los
+  proyectos, el trigger ni su función temporal.
+
+Método y límites de observación
+- Recorrido con el navegador integrado contra la aplicación y PostgreSQL reales.
+- Los escenarios que la pantalla no permite enviar (historia de otro proyecto, falta de Sprint y fallo de
+  almacenamiento) se enviaron a la ruta local con solicitudes del mismo origen para observar la respuesta real
+  del handler.
+- Para provocar el error de guardado se instaló un trigger temporal que falla solo con una descripción centinela;
+  se retiraron el trigger y la función inmediatamente después.
+- El cierre concurrente se simuló sobre un Sprint de fixture con una transacción que actualizó su estado mientras
+  mantenía el bloqueo de fila; no se modificó código de HU-15.
+- El navegador siguió el redirect exitoso hasta `/defectos` y mostró el flash de una sola vez. El código HTTP 303
+  se confirma específicamente con las pruebas automatizadas de handlers; el navegador informó el 200 de la
+  página final después de seguir el redirect.
+
+Escenarios de aceptación del Issue
+1. Registro válido: PASÓ. Se mostró el mensaje con Sprint 1; la lista mostró el defecto Abierto, historia y
+   Sprints de detección/resolución. Recargar no duplicó el registro ni repitió el flash. También se enviaron
+   `project_id` y `sprint_id` ajenos al formulario: la persistencia quedó en el proyecto activo y Sprint 1.
+2. Campos obligatorios: PASÓ. Descripción, severidad e historia vacías devolvieron 422 con los tres mensajes
+   específicos y sin nuevo registro. El espacio en blanco también devolvió el error de descripción obligatoria.
+3. Longitud de descripción: PASÓ. 1001 caracteres devolvieron 422, preservando la entrada; 1000 caracteres se
+   aceptaron.
+4. Sin Sprint activo y cierre concurrente: PASÓ. El proyecto C mostró el mensaje de falta de Sprint y no mostró
+   el formulario; un POST válido devolvió 409 y no guardó. Durante el cierre concurrente del Sprint de prueba,
+   el POST esperó el bloqueo y devolvió 409 sin crear un defecto incoherente.
+5. Historia ajena: PASÓ. Enviar una historia del proyecto B con el proyecto A activo devolvió 422 con
+   “La historia no pertenece al proyecto”; no se guardó.
+6. Historia de Sprint anterior: PASÓ. Se registró sobre una historia Hecho de un Sprint finalizado. La consulta
+   posterior confirmó estado Hecho y la asignación original sin cambios. También se aceptó una historia sin Sprint,
+   que conservó estado Pendiente y Sprint nulo.
+7. Lista y aislamiento: PASÓ. Se mostraron las columnas requeridas, los registros más recientes primero y “—”
+   como Sprint de resolución. El proyecto B solo mostró sus datos; el proyecto A no mostró el registro de B.
+8. Lista vacía: PASÓ. El proyecto B inicialmente mostró “Aún no hay defectos” junto con el formulario.
+9. Error al guardar: PASÓ. El trigger centinela provocó 500 con “La operación no pudo completarse”, conservó los
+   valores enviados, no mostró éxito ni detalles internos y no persistió el defecto.
+
+Recorrido adicional de quickstart.md
+- Sin contexto de proyecto válido, `/defectos` redirigió a la selección de proyecto.
+- Se comprobaron las cuatro opciones de severidad y se registraron ejemplos de cada una.
+- Una descripción con `<script>` apareció como texto y no creó elementos script.
+- Una severidad fuera de la lista y una historia no numérica devolvieron 422; no se agregó ningún registro.
+- La lista de A se mantuvo aislada de B. El proyecto sin Sprint no mostró el formulario.
+- El mensaje de éxito desapareció al recargar y el número de filas permaneció igual.
+
+Verificación automatizada asociada
+- `go test -count=1 -p 1 ./...`: pasó en todos los paquetes; salida guardada en `evidencia-pruebas.txt`.
+- `go test -count=1 -p 1 -cover ./...`: pasó; `src/defect` alcanzó 89,4%, registrado en `cobertura.txt`
+  (regenerado tras integrar `main`; ahora incluye `src/poker`).
+
+Revisión del Scrum Master — ajuste 1 (2026-10-28)
+- Hallazgo: una descripción con carácter NUL (`%00`) o UTF-8 inválido (`%FF`) devolvía 500 "La operación no
+  pudo completarse", porque PostgreSQL rechaza esos bytes en TEXT.
+- Corrección: `defect.Validate` rechaza la descripción con `ErrDescriptionInvalid` si no es UTF-8 válido o
+  contiene NUL. Pruebas escritas primero en rojo (`evidencia-red-caracteres.txt`).
+- Recorrido contra el servidor real (binario de `src/cmd/server`, PostgreSQL 16, esquema en migración 12), con
+  un proyecto, un Sprint activo y una historia de fixture creados para la prueba y borrados al terminar:
+  - `descripcion=falla%00al guardar` → 422 con "La descripción contiene caracteres no válidos" junto al campo;
+    no se guardó.
+  - `descripcion=falla %FF al guardar` → 422 con el mismo mensaje; no se guardó.
+  - Control con una descripción válida → 303, registrado normalmente.
+  - El log del servidor no registró errores.
+
+Nota de ejecución
+- Durante un intento de capturar el 303 mediante interceptación de red del navegador, la herramienta de
+  interceptación expiró y se generaron dos filas idénticas en las fixtures. No se usó ese intento como evidencia
+  de idempotencia; los registros se eliminaron junto con el resto de fixtures. La verificación de recarga sin
+  duplicación corresponde al recorrido anterior y a las pruebas automatizadas.

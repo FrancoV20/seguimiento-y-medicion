@@ -1,43 +1,72 @@
 # Quickstart: Registro y trazabilidad de defectos
 
-## Prerequisites
+## Requisitos previos
 
 - Go 1.27.1 instalado; verificar con `go version`.
 - Docker Desktop instalado y en ejecución.
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
-- HU-02, HU-04, FIX-HU-04, HU-20a y HU-20b (completa) integradas en `main`; en tu rama, traerlas con
-  `git merge origin/main`.
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml` o
-  `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
-- No subir al repositorio claves personales; usar `docker-compose.override.yml`.
+- HU-02, HU-04, FIX-HU-04, HU-20a y HU-20b (completa) integradas en `main`.
+- PostgreSQL configurado con `docker-compose.override.yml` local. El compose base publica el puerto `5433` del
+  host (`5432` dentro del contenedor); el override puede cambiarlo. Verificar el puerto efectivo con
+  `docker compose port postgres 5432`.
+- Configurar `DATABASE_URL` en la sesión de PowerShell con los valores locales, sin guardar ni compartir la
+  contraseña:
 
-## Run the application
+  ```powershell
+  $env:DATABASE_URL = "postgres://USUARIO:CLAVE@localhost:PUERTO/seguimiento_y_medicion?sslmode=disable"
+  ```
 
-La migración de esta feature se aplica con el resto. Probar `up` y `down`:
+No escribas claves personales en el repositorio ni compartas la salida completa de `docker compose config`.
+
+## Preparar el entorno
+
+Levantar PostgreSQL, revisar que esté saludable y confirmar el puerto publicado:
 
 ```powershell
 docker compose up -d postgres
-migrate -path db/migrations -database $env:DATABASE_URL up
-migrate -path db/migrations -database $env:DATABASE_URL down 1
+docker compose ps
+docker compose port postgres 5432
+```
+
+Aplicar las migraciones pendientes:
+
+```powershell
 migrate -path db/migrations -database $env:DATABASE_URL up
 ```
 
-Para probar a mano hace falta un proyecto con un Sprint activo y al menos una historia:
+No ejecutes `down 1` sobre una base compartida o con datos que quieras conservar. La reversión de la migración se
+verifica en una base local desechable siguiendo T005; para el uso normal basta con aplicar `up`.
 
-1. Crear el proyecto (HU-21) y elegirlo en `http://localhost:8080/contexto/proyecto` (HU-20b).
-2. Crear una historia (HU-22) y un Sprint (HU-23). Si esas pantallas todavía no están integradas, insertar los
-   datos por SQL respetando el esquema de `data-model.md`.
-3. Abrir `http://localhost:8080/defectos`.
+## Probar la pantalla manualmente
+
+Se necesita un proyecto elegido como contexto activo, un Sprint con estado `Activo` y al menos una historia de ese
+mismo proyecto. La historia puede estar en cualquier estado, pertenecer a un Sprint finalizado o no tener Sprint.
+Iniciar la aplicación desde la misma sesión de PowerShell donde configuraste `DATABASE_URL`:
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
 
+1. Crear o seleccionar un proyecto y abrir `http://localhost:8080/contexto/proyecto` para elegirlo (HU-20b).
+2. Crear una historia y un Sprint activo para ese proyecto. Si las pantallas de gestión todavía no están
+   integradas, preparar datos locales mediante SQL respetando el esquema de [data-model.md](./data-model.md); no
+   reutilizar datos de otro proyecto.
+3. Abrir `http://localhost:8080/defectos`. Confirmar que el formulario muestra los campos descripción, severidad
+   e historia relacionada, y que las opciones corresponden al proyecto activo.
+4. Registrar una descripción breve, una severidad admitida y la historia creada. Confirmar la redirección a
+   `/defectos`, el mensaje de éxito con el Sprint de detección y la fila nueva con estado `Abierto`. Recargar:
+   no debe duplicar el defecto ni repetir el mensaje.
+5. Probar un envío con campos vacíos y verificar que muestra los errores junto a cada campo, conserva los valores
+   y no agrega filas. Probar una descripción de más de 1000 caracteres y una severidad no válida.
+6. Cambiar a una historia `Hecho` de un Sprint finalizado (o sin Sprint), si está disponible. Debe poder elegirse
+   y asociarse al defecto sin cambiar su estado ni asignación.
+7. En un proyecto sin Sprint activo, abrir `Defectos`: debe aparecer el mensaje correspondiente y no el
+   formulario. La lista visible debe contener solo defectos del proyecto seleccionado, con los más recientes
+   primero.
+
 Las pruebas automáticas no dependen de HU-21, HU-22 ni HU-23: crean sus propios proyectos, historias y Sprints.
 
-## Run the tests
+## Ejecutar las pruebas
 
 ```powershell
 docker compose up -d postgres
@@ -46,7 +75,7 @@ go test -count=1 -p 1 ./...
 
 `-count=1` evita resultados en caché y `-p 1` evita que los paquetes de integración se pisen al compartir una base.
 
-## Required validation scenarios
+## Escenarios de validación requeridos
 
 Las pruebas deben cubrir como mínimo:
 
@@ -75,13 +104,13 @@ Las pruebas deben cubrir como mínimo:
    - sin Sprint activo: `GET` con el mensaje y sin formulario, `POST` con 409 y nada guardado;
    - falla de guardado: "La operación no pudo completarse", datos conservados y sin éxito;
    - lista con columnas, orden y "—" en el Sprint de resolución; lista vacía con el mensaje y el formulario;
-   - descripción con `<script>`: se ve como texto;
+   - descripción y título con `<script>`: se muestran como texto;
    - recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje;
    - sin proyecto activo: redirección de HU-20b y nada guardado;
    - falla de lectura: página de error de la aplicación.
 5. Seguridad: ninguna respuesta de error contiene texto de consultas ni rutas.
 
-## Acceptance evidence
+## Evidencia de aceptación
 
 Para cada escenario, conservar el caso de prueba y su resultado en la revisión del cambio. Las pruebas ejecutan las
 reglas reales y el almacenamiento real; solo se usa un almacenamiento que falla para simular la falla de guardado y

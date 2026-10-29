@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-26
 
-**Status**: Draft
+**Status**: Implementada (pendiente de revisión en el Pull Request)
 
 **Input**: User description: "HU-06 / Registro y Trazabilidad de Defectos: Como Product Builder, quiero registrar un defecto indicando su descripción, severidad e historia relacionada, para darle seguimiento desde su detección hasta su resolución. Depende de HU-02, HU-04, FIX-HU-04, HU-20a y HU-20b."
 
@@ -97,6 +97,9 @@ aislamiento; sin defectos, verificar el mensaje.
 - Un defecto sin Sprint de resolución muestra "—" en esa columna; HU-19 lo completa al resolver.
 - La descripción se guarda sin espacios en los bordes; una descripción de solo espacios es vacía y una de 1000
   caracteres exactos es válida, una de 1001 no.
+- Una descripción con el carácter NUL (`%00`) o con bytes que no son UTF-8 válido (por ejemplo `%FF`) se rechaza
+  con 422 y "La descripción contiene caracteres no válidos": es un dato del usuario, no un error del servidor
+  (PostgreSQL no admite esos bytes en TEXT).
 - Dos defectos con la misma descripción se aceptan: no hay detección de duplicados.
 - El Sprint de detección es el Sprint activo del proyecto al confirmar; un campo de Sprint enviado en el
   formulario se ignora.
@@ -128,7 +131,8 @@ aislamiento; sin defectos, verificar el mensaje.
 - **FR-005**: La descripción, la severidad y la historia MUST ser obligatorias; ante datos faltantes o inválidos
   el sistema MUST mostrar todos los errores juntos, cada uno junto a su campo, conservar los datos y no guardar
   nada.
-- **FR-006**: La descripción MUST guardarse sin espacios en los bordes y tener entre 1 y 1000 caracteres.
+- **FR-006**: La descripción MUST guardarse sin espacios en los bordes, tener entre 1 y 1000 caracteres y ser
+  texto UTF-8 válido sin el carácter NUL.
 - **FR-007**: Sin Sprint activo el sistema MUST bloquear el registro, mostrar "No hay un Sprint activo; no se
   puede registrar un defecto" y MUST NOT mostrar el formulario.
 - **FR-008**: Una historia inexistente, no numérica o de otro proyecto MUST rechazarse con un error junto al campo
@@ -155,7 +159,7 @@ aislamiento; sin defectos, verificar el mensaje.
 
 | Formulario | Campo | Tipo | Obligatorio | Notas |
 |---|---|---|---|---|
-| `POST /defectos` | `descripcion` | texto | sí | 1 a 1000 caracteres sin espacios en los bordes |
+| `POST /defectos` | `descripcion` | texto | sí | 1 a 1000 caracteres sin espacios en los bordes; UTF-8 válido, sin NUL |
 | `POST /defectos` | `severidad` | `Crítica`, `Alta`, `Media`, `Baja` | sí | |
 | `POST /defectos` | `historia` | identificador numérico | sí | Historia del proyecto activo |
 
@@ -194,6 +198,7 @@ El proyecto y el Sprint de detección no son campos: salen del servidor.
 |---|---|---|
 | Descripción vacía o solo espacios | "La descripción es obligatoria" | 422 |
 | Descripción de más de 1000 caracteres | "La descripción no puede superar 1000 caracteres" | 422 |
+| Descripción con carácter NUL o UTF-8 inválido | "La descripción contiene caracteres no válidos" | 422 |
 | Severidad vacía | "Seleccione la severidad" | 422 |
 | Severidad fuera de la lista | "La severidad no es válida" | 422 |
 | Historia vacía | "Seleccione la historia relacionada" | 422 |
@@ -242,17 +247,18 @@ Los textos propios de HU-06 son una propuesta del equipo y se definen en un solo
 
 ## Trazabilidad *(Historia → Spec → Criterios → Escenarios BDD → Tests → Código)*
 
-| Escenario del Issue | Requisitos | Tests | BDD | Código |
-|---|---|---|---|---|
-| 1. Vinculación de defecto a historia | FR-002, FR-003, FR-015 | T006, T007, T016, T018 | T019 | `src/defect` (dominio), `defects_handlers.go` |
-| 2. Omisión de datos obligatorios | FR-005 | T006, T014, T024 | T029 | `defects_form.go`, `src/defect` |
-| 3. Descripción obligatoria | FR-005, FR-006 | T006, T025 | T029 | `src/defect`, `defects_form.go` |
-| 4. Sin Sprint activo | FR-007, FR-016 | T007, T027 | T029 | `postgres_store.go`, `defects.html` |
-| 5. Historia de otro proyecto | FR-008 | T007, T026 | T029 | `postgres_store.go`, `defects_form.go` |
-| 6. Historia de un Sprint anterior | FR-004 | T017 | T019 | `postgres_store.go` |
-| 7. Lista de defectos | FR-009, FR-014 | T012, T032, T034 | T035 | `postgres_defects_catalog.go`, `defects.html` |
-| 8. Lista vacía | FR-010 | T033 | T035 | `defects.html` |
-| 9. Error al guardar | FR-011, FR-013 | T007, T028, T031 | T029 | `defects_handlers.go` |
-| (HU-20b) Recarga sin duplicar | FR-003 | T042 | | `defects_handlers.go` |
-| (HU-20b) Sin proyecto activo | FR-015 | T043 | | `defects_handlers.go` |
-| (HU-20a) Error al leer | FR-012 | T037, T044 | | `defects_handlers.go` |
+| Escenario del Issue | Requisitos | Criterios | Tests | BDD | Código |
+|---|---|---|---|---|---|
+| Sección Defectos protegida por proyecto | FR-001 | | T023, T043 | | `src/cmd/server/main.go`, `src/web/defects_handlers.go` |
+| 1. Vinculación de defecto a historia | FR-002, FR-003, FR-015 | SC-001 | T006, T007, T016, T018 | T019 | `src/defect`, `src/web/defects_handlers.go`, `src/web/templates/defects.html` |
+| 2. Omisión de datos obligatorios | FR-005 | SC-002 | T006, T014, T024 | T029 | `src/web/defects_form.go`, `src/defect/service.go` |
+| 3. Descripción obligatoria y límite | FR-005, FR-006 | SC-002 | T006, T025, T052 | T029, T052 | `src/defect/service.go`, `src/web/defects_form.go` |
+| 4. Sin Sprint activo y cierre atómico | FR-007, FR-016 | SC-003, SC-004 | T007, T027 | T029 | `src/defect/postgres_store.go`, `src/web/defects_handlers.go`, `src/web/templates/defects.html` |
+| 5. Historia de otro proyecto | FR-008 | SC-003 | T007, T026 | T029 | `src/defect/postgres_store.go`, `src/web/defects_form.go` |
+| 6. Historia de un Sprint anterior | FR-004 | SC-001 | T017 | T019 | `src/defect/postgres_store.go` |
+| 7. Lista de defectos | FR-009, FR-014 | SC-005, SC-006 | T012, T032, T034 | T035 | `src/web/postgres_defects_catalog.go`, `src/web/templates/defects.html` |
+| 8. Lista vacía | FR-010 | | T033 | T035 | `src/web/templates/defects.html` |
+| 9. Error al guardar | FR-011, FR-013 | SC-002 | T007, T028, T031 | T029 | `src/web/defects_handlers.go`, `src/web/defects_form.go` |
+| (HU-20b) Recarga sin duplicar | FR-003 | SC-001 | T042 | | `src/web/defects_handlers.go` |
+| (HU-20b) Sin proyecto activo | FR-015 | | T043 | | `src/web/defects_handlers.go` |
+| (HU-20a) Error al leer | FR-012 | | T037, T044 | | `src/web/defects_handlers.go` |
