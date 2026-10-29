@@ -65,6 +65,8 @@ func defectFieldError(err error) (string, string, bool) {
 		return DefectDescriptionField, MsgDefectDescriptionRequired, true
 	case errors.Is(err, defect.ErrDescriptionTooLong):
 		return DefectDescriptionField, MsgDefectDescriptionTooLong, true
+	case errors.Is(err, defect.ErrDescriptionInvalid):
+		return DefectDescriptionField, MsgDefectDescriptionInvalid, true
 	case errors.Is(err, defect.ErrSeverityRequired):
 		return DefectSeverityField, MsgDefectSeverityRequired, true
 	case errors.Is(err, defect.ErrSeverityInvalid):

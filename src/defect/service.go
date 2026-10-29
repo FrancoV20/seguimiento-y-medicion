@@ -42,6 +42,9 @@ func Validate(input RegisterInput) (RegisterInput, []FieldError) {
 	switch {
 	case input.Description == "":
 		violations = append(violations, FieldError{Field: FieldDescription, Err: ErrDescriptionRequired})
+	case !utf8.ValidString(input.Description) || strings.ContainsRune(input.Description, '\x00'):
+		// PostgreSQL rechaza estos bytes en TEXT: es un dato del usuario, no un error del servidor.
+		violations = append(violations, FieldError{Field: FieldDescription, Err: ErrDescriptionInvalid})
 	case utf8.RuneCountInString(input.Description) > 1000:
 		violations = append(violations, FieldError{Field: FieldDescription, Err: ErrDescriptionTooLong})
 	}
