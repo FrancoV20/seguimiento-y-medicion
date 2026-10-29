@@ -468,3 +468,69 @@ func TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza(t *tes
 		})
 	}
 }
+
+func TestCloseHandler_RechazaCierrePorBloqueoHU07(t *testing.T) {
+	// Dado un Sprint activo con historias Hecho que HU-07 no puede validar.
+	app := newCloseHandlerFixture(t)
+	projectID := newCatProject(t, app.db, "bloqueo de validación HU-07")
+	sprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+	invalidStoryIDs := []int64{
+		newCatStory(t, app.db, projectID, sprintID, "Hecho sin puntos 1", nil, sprint.Done),
+		newCatStory(t, app.db, projectID, sprintID, "Hecho sin puntos 2", nil, sprint.Done),
+	}
+	incompleteStoryID := newCatStory(
+		t, app.db, projectID, sprintID, "Historia incompleta", boardPuntos(5), sprint.InProgress,
+	)
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	// Cuando se solicita cerrar el Sprint, el validador real de HU-07 rechaza los datos inválidos.
+	resp, body := closeHandlerPost(t, app, client, sprintID)
+	defer resp.Body.Close()
+
+	// Entonces responde 409, enumera las historias que deben corregirse y no modifica el Sprint,
+	// las asignaciones ni el registro del cierre.
+	if resp.StatusCode != http.StatusConflict {
+		t.Errorf("POST /cierre con datos inválidos para HU-07 = %d; se esperaba 409", resp.StatusCode)
+	}
+	for _, storyID := range invalidStoryIDs {
+		want := fmt.Sprintf("Historia %d: Story Points inválidos", storyID)
+		if !strings.Contains(body, want) {
+			t.Errorf("la respuesta no identifica el dato que debe corregirse %q", want)
+		}
+	}
+
+	var sprintStatus string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, sprintID).Scan(&sprintStatus); err != nil {
+		t.Fatalf("no se pudo consultar el Sprint después del rechazo: %v", err)
+	}
+	if sprintStatus != string(sprint.SprintActive) {
+		t.Errorf("estado del Sprint = %q; se esperaba %q", sprintStatus, sprint.SprintActive)
+	}
+
+	for _, storyID := range append(invalidStoryIDs, incompleteStoryID) {
+		var status string
+		var activeSprintID sql.NullInt64
+		var assignments, results int
+		err := app.db.QueryRow(`
+			SELECT us.status, us.active_sprint_id,
+			       (SELECT count(*) FROM sprint_story_assignments a WHERE a.story_id = us.id),
+			       (SELECT count(*) FROM sprint_story_results r WHERE r.sprint_id = $2 AND r.story_id = us.id)
+			FROM user_stories us
+			WHERE us.id = $1`, storyID, sprintID,
+		).Scan(&status, &activeSprintID, &assignments, &results)
+		if err != nil {
+			t.Fatalf("no se pudo consultar la historia %d después del rechazo: %v", storyID, err)
+		}
+		if !activeSprintID.Valid || activeSprintID.Int64 != sprintID || assignments != 1 || results != 0 {
+			t.Errorf("historia %d cambió tras el rechazo: active_sprint_id=%v asignaciones=%d registros=%d",
+				storyID, activeSprintID, assignments, results)
+		}
+		if storyID == incompleteStoryID && status != string(sprint.InProgress) {
+			t.Errorf("estado de la historia incompleta = %q; se esperaba %q", status, sprint.InProgress)
+		}
+		if storyID != incompleteStoryID && status != string(sprint.Done) {
+			t.Errorf("estado de la historia inválida = %q; se esperaba %q", status, sprint.Done)
+		}
+	}
+}

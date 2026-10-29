@@ -75,7 +75,7 @@
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Escribir la prueba de handler de cierre bloqueado por HU-07: 409 con el mensaje y la lista de historias a corregir, Sprint activo y sin cambios, en `src/web/close_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler de cierre bloqueado por HU-07: 409 con el mensaje y la lista de historias a corregir, Sprint activo y sin cambios, en `src/web/close_handlers_test.go`
 - [x] T023 [P] [US2] Escribir la prueba de handler de Sprint ya finalizado, incluido un `sprint_id` viejo con un Sprint nuevo activo: "El Sprint ya está cerrado", 409 y el Sprint nuevo sigue activo, en `src/web/close_handlers_test.go`
 - [x] T024 [P] [US2] Escribir la prueba de handler con `sprint_id` no numérico, inexistente o de otro proyecto: "El Sprint no existe" y 422, y un campo de proyecto enviado se ignora, en `src/web/close_handlers_test.go`
 - [ ] T025 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", sin éxito, Sprint activo y sin cambios parciales, en `src/web/close_handlers_test.go`
