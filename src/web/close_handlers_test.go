@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 )
@@ -47,6 +48,15 @@ func (s *closeHandlerStore) CloseSprint(ctx context.Context, sprintID int64) (sp
 	return s.closer.CloseSprint(ctx, sprintID)
 }
 
+type failingCloseHandlerStore struct {
+	*closeHandlerStore
+	err error
+}
+
+func (s failingCloseHandlerStore) CloseSprint(context.Context, int64) (sprint.CloseResult, error) {
+	return sprint.CloseResult{}, s.err
+}
+
 type closeHandlerValidator struct {
 	store *metrics.PostgreSQLMetricsStore
 }
@@ -76,6 +86,28 @@ func newCloseHandlerFixture(t *testing.T) *closeHandlerFixture {
 		}
 		service := sprint.NewCloseSprintService(
 			store,
+			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(serviceDB)},
+		)
+		if err := RegisterClose(server, service, NewPostgreSQLBoardCatalog(serviceDB)); err != nil {
+			t.Fatalf("no se pudo registrar la sección de cierre: %v", err)
+		}
+	})
+	return &closeHandlerFixture{ctxApp: app}
+}
+
+func newCloseHandlerFixtureWithStore(
+	t *testing.T,
+	newStore func(*sql.DB) sprint.SprintCloseStore,
+) *closeHandlerFixture {
+	t.Helper()
+	if newStore == nil {
+		t.Fatal("se requiere un store de prueba")
+	}
+	var serviceDB *sql.DB
+	app := newCtxApp(t, nil, func(server *Server) {
+		serviceDB = openContextTestDB(t)
+		service := sprint.NewCloseSprintService(
+			newStore(serviceDB),
 			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(serviceDB)},
 		)
 		if err := RegisterClose(server, service, NewPostgreSQLBoardCatalog(serviceDB)); err != nil {
@@ -532,5 +564,128 @@ func TestCloseHandler_RechazaCierrePorBloqueoHU07(t *testing.T) {
 		if storyID != incompleteStoryID && status != string(sprint.Done) {
 			t.Errorf("estado de la historia inválida = %q; se esperaba %q", status, sprint.Done)
 		}
+	}
+}
+
+func TestCloseHandler_FallaDeAlmacenamientoNoAplicaCambiosParciales(t *testing.T) {
+	// Dado un Sprint activo y un almacenamiento de cierre que devuelve un error de persistencia.
+	app := newCloseHandlerFixtureWithStore(t, func(db *sql.DB) sprint.SprintCloseStore {
+		return failingCloseHandlerStore{
+			closeHandlerStore: &closeHandlerStore{db: db, closer: sprint.NewPostgreSQLSprintCloser(db)},
+			err:               errors.New("db connection timeout during sprint_story_results insert"),
+		}
+	})
+	projectID := newCatProject(t, app.db, "falla de persistencia al cerrar")
+	sprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+	points := 3
+	doneStoryID := newCatStory(t, app.db, projectID, sprintID, "Hecho válido", &points, sprint.Done)
+	incompleteStoryID := newCatStory(t, app.db, projectID, sprintID, "Historia a devolver", boardPuntos(5), sprint.InProgress)
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	// Cuando se solicita el cierre, el puerto de almacenamiento falla.
+	resp, body := closeHandlerPost(t, app, client, sprintID)
+	defer resp.Body.Close()
+
+	// Entonces responde 500 con el mensaje genérico, sin exponer el detalle técnico ni confirmar éxito.
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Errorf("POST /cierre ante falla de almacenamiento = %d; se esperaba 500", resp.StatusCode)
+	}
+	if !strings.Contains(body, MsgOperationFailed) {
+		t.Errorf("la respuesta debía mostrar %q", MsgOperationFailed)
+	}
+	if strings.Contains(body, "db connection timeout") || strings.Contains(body, "sprint_story_results insert") {
+		t.Errorf("la respuesta expuso detalles internos del almacenamiento")
+	}
+	if strings.Contains(body, MsgSprintClosed) {
+		t.Errorf("la respuesta indicó éxito pese a la falla de almacenamiento")
+	}
+
+	var sprintStatus string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, sprintID).Scan(&sprintStatus); err != nil {
+		t.Fatalf("no se pudo consultar el Sprint después del fallo: %v", err)
+	}
+	if sprintStatus != string(sprint.SprintActive) {
+		t.Errorf("estado del Sprint = %q; se esperaba que siguiera %q", sprintStatus, sprint.SprintActive)
+	}
+	for _, storyID := range []int64{doneStoryID, incompleteStoryID} {
+		var status string
+		var activeSprintID sql.NullInt64
+		var assignments, results int
+		err := app.db.QueryRow(`
+				SELECT us.status, us.active_sprint_id,
+				       (SELECT count(*) FROM sprint_story_assignments a WHERE a.story_id = us.id),
+				       (SELECT count(*) FROM sprint_story_results r WHERE r.sprint_id = $2 AND r.story_id = us.id)
+				FROM user_stories us
+				WHERE us.id = $1`, storyID, sprintID,
+		).Scan(&status, &activeSprintID, &assignments, &results)
+		if err != nil {
+			t.Fatalf("no se pudo consultar la historia %d después del fallo: %v", storyID, err)
+		}
+		if !activeSprintID.Valid || activeSprintID.Int64 != sprintID || assignments != 1 || results != 0 {
+			t.Errorf("historia %d cambió tras el fallo: estado=%q active_sprint_id=%v asignaciones=%d registros=%d",
+				storyID, status, activeSprintID, assignments, results)
+		}
+	}
+}
+
+func TestCloseHandler_RechazaCargaDeEsfuerzoDespuesDelCierre(t *testing.T) {
+	// Dado un Sprint que se cierra con una historia Hecho y otra que vuelve al Backlog.
+	app := newEffortApp(t)
+	points := 3
+	if _, err := app.fx.db.Exec(`UPDATE user_stories SET story_points = $1 WHERE id = $2`, points, app.fx.hecho); err != nil {
+		t.Fatalf("no se pudieron preparar los Story Points para HU-07: %v", err)
+	}
+	store := &closeHandlerStore{
+		db:     app.fx.db,
+		closer: sprint.NewPostgreSQLSprintCloser(app.fx.db),
+	}
+	service := sprint.NewCloseSprintService(
+		store,
+		closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(app.fx.db)},
+	)
+	if _, err := service.CloseSprint(context.Background(), app.fx.projectA, app.fx.sprintA); err != nil {
+		t.Fatalf("no se pudo cerrar el Sprint con el servicio real: %v", err)
+	}
+	activeSprint, _ := newCatSprint(t, app.fx.db, app.fx.projectA, string(sprint.SprintActive))
+	newCatStory(t, app.fx.db, app.fx.projectA, activeSprint, "Historia del Sprint siguiente",
+		boardPuntos(5), sprint.EnSprint)
+	client := app.login(t, app.fx.projectA, app.fx.ana)
+	before := app.fx.countAllEffort(t)
+
+	// Cuando HU-03 recibe horas para la historia que quedó en el Sprint finalizado o fue devuelta.
+	for _, storyID := range []int64{app.fx.hecho, app.fx.enSprint} {
+		result := effort.NewService(effort.NewPostgreSQLEffortStore(app.fx.db), effortClock).LogEffort(
+			context.Background(),
+			effort.LogEffortRequest{
+				StoryID:  id64(storyID),
+				MemberID: id64(app.fx.ana),
+				WorkDate: effortClock(),
+				Activity: "Trabajo posterior al cierre",
+				Hours:    "2",
+			},
+		)
+		if result.Succeeded() || result.StorageError != nil {
+			t.Errorf("HU-03 debía rechazar la carga para la historia %d sin guardarla; resultado=%+v", storyID, result)
+		}
+		var rejectsStory bool
+		for _, validationErr := range result.ValidationErrors {
+			if validationErr.Field == effort.FieldStory && errors.Is(validationErr.Err, effort.ErrStoryNotInSprint) {
+				rejectsStory = true
+			}
+		}
+		if !rejectsStory {
+			t.Errorf("HU-03 no devolvió ErrStoryNotInSprint para la historia %d: %+v", storyID, result.ValidationErrors)
+		}
+
+		resp, body := app.submit(t, client, effortForm(storyID, "2026-10-20", "Trabajo posterior al cierre", "2"))
+
+		// Entonces el handler rechaza cada carga y no se agrega ningún registro de horas.
+		assertStatus(t, resp, http.StatusUnprocessableEntity)
+		assertContains(t, body, fieldErrorHTML(EffortFieldStory, MsgEffortStoryNotInSprint))
+		assertNotContains(t, body, MsgEffortRecorded)
+	}
+	if after := app.fx.countAllEffort(t); after != before {
+		t.Errorf("HU-03 no debía registrar horas después del cierre: antes %d, después %d", before, after)
 	}
 }
