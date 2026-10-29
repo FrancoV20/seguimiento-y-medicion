@@ -1,4 +1,6 @@
-﻿=== RUN   TestCloseSprintServiceRejectsMissingSprint
---- PASS: TestCloseSprintServiceRejectsMissingSprint (0.24s)
-PASS
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.563s
+﻿=== RUN   TestPostgreSQLSprintCloserCloseSprintPersistsSnapshotAndReturnsIncompleteStories
+--- FAIL: TestPostgreSQLSprintCloserCloseSprintPersistsSnapshotAndReturnsIncompleteStories (0.00s)
+    postgres_sprint_closer_integration_test.go:45: expected sprint status to be 'Finalizado', got 'Activo'
+FAIL
+FAIL    github.com/FrancoV20/seguimiento-y-medicion/src/sprint   0.15s
+Evidencia Fase RED: Falla documentada antes de implementar la transacción atómica en PostgreSQLSprintCloser.

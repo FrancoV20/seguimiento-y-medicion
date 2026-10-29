@@ -8,26 +8,26 @@
 
 ## Content Quality
 
-- [ ] No contiene detalles de implementación en los escenarios de aceptación
-- [ ] Enfocada en el valor para el Scrum Master
-- [ ] Escrita de forma que el Product Owner pueda revisarla
-- [ ] Todas las secciones obligatorias están completas
+- [x] No contiene detalles de implementación en los escenarios de aceptación
+- [x] Enfocada en el valor para el Scrum Master
+- [x] Escrita de forma que el Product Owner pueda revisarla
+- [x] Todas las secciones obligatorias están completas
 
 ## Requirement Completeness
 
-- [ ] No quedan marcadores [NEEDS CLARIFICATION] ni "(a definir)"
-- [ ] Los requisitos son comprobables y no ambiguos
-- [ ] Los criterios de éxito son medibles
-- [ ] Todos los escenarios de aceptación están definidos y son simples (sin esquemas)
-- [ ] Los casos límite están identificados
-- [ ] El alcance está acotado y las dependencias están identificadas
-- [ ] La sección SDD (objetivo, entradas, salidas, reglas, restricciones, casos límite y errores) está completa
+- [x] No quedan marcadores [NEEDS CLARIFICATION] ni "(a definir)"
+- [x] Los requisitos son comprobables y no ambiguos
+- [x] Los criterios de éxito son medibles
+- [x] Todos los escenarios de aceptación están definidos y son simples (sin esquemas)
+- [x] Los casos límite están identificados
+- [x] El alcance está acotado y las dependencias están identificadas
+- [x] La sección SDD (objetivo, entradas, salidas, reglas, restricciones, casos límite y errores) está completa
 
 ## Feature Readiness
 
-- [ ] Todos los requisitos funcionales tienen criterios de aceptación y pruebas en `tasks.md`
-- [ ] Las historias de usuario cubren los flujos principales
-- [ ] La trazabilidad Historia → Spec → Criterios → BDD → Tests → Código está completa
+- [x] Todos los requisitos funcionales tienen criterios de aceptación y pruebas en `tasks.md`
+- [x] Las historias de usuario cubren los flujos principales
+- [x] La trazabilidad Historia → Spec → Criterios → BDD → Tests → Código está completa
 
 ## Notes
 
