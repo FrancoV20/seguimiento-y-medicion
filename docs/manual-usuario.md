@@ -38,7 +38,6 @@ valores ingresados:
 Si todavía no hay integrantes cargados, la pantalla informa **No hay integrantes disponibles** y
 no permite enviar el formulario.
 
-<<<<<<< HEAD
 ### Modificar un proyecto
 
 En la lista de **Gestión de Proyectos**, presioná **Modificar** en la fila del proyecto. El
@@ -61,7 +60,7 @@ Además de los mensajes de la creación, al modificar pueden aparecer:
 
 Si quitás a un integrante que estaba identificado, la próxima vez que navegue se le pide elegir
 otro integrante.
-=======
+
 ## Registro y trazabilidad de defectos
 
 Elegí primero el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/defectos`. Para
@@ -97,7 +96,6 @@ Si se detectan varios problemas, se muestran juntos y no se guarda el defecto.
 | `La historia no pertenece al proyecto` | Cambiá a una historia del proyecto activo. |
 | `No hay un Sprint activo; no se puede registrar un defecto` | Iniciá un Sprint para el proyecto antes de registrar. |
 | `La operación no pudo completarse` | Hubo un problema al guardar. Intentá nuevamente más tarde. |
->>>>>>> origin/main
 
 ## Registro de esfuerzo
 
