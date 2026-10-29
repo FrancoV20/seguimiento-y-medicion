@@ -12,8 +12,8 @@
 - [x] T002 [P] Ajustar las pruebas de HU-01 para esperar "Activo": `src/project/project_test.go`, `src/project/service_test.go`, `src/project/postgres_store_integration_test.go` y `test/project_bdd_test.go`.
 - [x] T003 [P] Escribir la prueba de integración `test/project_backlog_flow_test.go`: un proyecto creado con `ProjectService` sobre PostgreSQL admite una historia con `BacklogService`.
 - [x] T004 Ejecutar `go test -count=1 -p 1 ./...` y guardar la salida en rojo en `specs/021-fix-project-status/evidencia-fix-estado-red.txt`.
-- [ ] T005 Definir `StatusActive = "Activo"` en `src/project/model.go` y usarla en `NewProject` (GREEN).
-- [ ] T006 Crear la migración de datos que pasa los proyectos "Active" a "Activo" (la bajada no cambia datos).
+- [x] T005 Definir `StatusActive = "Activo"` en `src/project/model.go` y usarla en `NewProject` (GREEN).
+- [x] T006 Crear la migración de datos que pasa los proyectos "Active" a "Activo" (la bajada no cambia datos).
 - [ ] T007 REFACTOR: revisar comentarios y nombres de las pruebas tocadas.
 - [ ] T008 Ejecutar `go test -count=1 -p 1 ./...` completo y guardar la salida en `specs/021-fix-project-status/evidencia-fix-estado.txt`.
 - [ ] T009 Actualizar el escenario "Alta exitosa" en la spec de HU-01, en el documento de planificación y en el Issue de HU-01.
@@ -21,7 +21,7 @@
 
 ## Notes
 
-- La rama `HU-15` ya usa la migración 013. Quien integre segundo renumera la suya, como se hizo en HU-06.
+- La migración de este fix es la `013`: se integra antes que HU-15 por ser un bug que bloquea la carga de historias, y HU-15 pasa a la `014`.
 - Las pruebas fijan el literal "Activo" a propósito: si alguien cambia la constante, el test lo detecta.
 
 ## Definition of Done
