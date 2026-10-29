@@ -395,3 +395,20 @@ func TestAccumulatedHoursEqualsSumOfEntriesAndIsReproducible(t *testing.T) {
 		t.Errorf("el acumulado debía ser 7,8 horas (780), fue %d", first)
 	}
 }
+
+// HU-11, T023: si al guardar el integrante ya no pertenece al proyecto, se informa como
+// integrante no válido y no como falla de almacenamiento.
+func TestLogEffort_IntegranteQuitadoAlGuardar(t *testing.T) {
+	svc, store := newTestService(t)
+	store.SaveErr = errMemberNotInProject
+	res := svc.LogEffort(context.Background(), validRequest())
+	if res.StorageError != nil {
+		t.Errorf("no debía informarse una falla de almacenamiento: %v", res.StorageError)
+	}
+	if len(res.ValidationErrors) != 1 || res.ValidationErrors[0].Field != FieldMember || res.ValidationErrors[0].Err != ErrMemberRequired {
+		t.Errorf("se esperaba el error de integrante de HU-03, se obtuvo %+v", res.ValidationErrors)
+	}
+	if res.Succeeded() || res.SuccessMessage != "" {
+		t.Error("no debía informarse éxito")
+	}
+}

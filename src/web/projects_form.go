@@ -40,6 +40,15 @@ const (
 	MsgProjectNameTooLong = "El nombre no puede superar los 255 caracteres"
 )
 
+// Textos de HU-11 (modificación de proyecto).
+const (
+	TitleProjectEdit    = "Modificar proyecto"
+	MsgProjectUpdated   = "Proyecto modificado exitosamente"
+	MsgMemberHasEffort  = "No se puede quitar a %s: tiene horas registradas en este proyecto"
+	MsgSprintOutOfRange = "El Sprint %d queda fuera de las nuevas fechas del proyecto"
+	LinkEditProject     = "Modificar"
+)
+
 func parseProjectForm(values url.Values) (ProjectForm, ProjectFormInput, map[string]string) {
 	form := ProjectForm{
 		Name:      values.Get(ProjectNameField),

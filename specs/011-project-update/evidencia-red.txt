@@ -1,0 +1,196 @@
+﻿== Fundamentos (T005-T023) ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/project 
+[github.com/FrancoV20/seguimiento-y-medicion/src/project.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "DatesChanged|MembershipChanges|Sprints ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...c/project.test]:String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\project\postgres_store_update_integration_test.go:134:80: undefined: ProjectUpdate
+src\project\postgres_store_update_integration_test.go:135:9: undefined: ProjectUpdate
+src\project\postgres_store_update_integration_test.go:163:18: store.Update undefined (type 
+*PostgreSQLProjectStore has no field or method Update)
+src\project\postgres_store_update_integration_test.go:179:44: 
+NewPostgreSQLProjectStore(f.db).Update undefined (type *PostgreSQLProjectStore has no field or 
+method Update)
+src\project\postgres_store_update_integration_test.go:191:44: 
+NewPostgreSQLProjectStore(f.db).Update undefined (type *PostgreSQLProjectStore has no field or 
+method Update)
+src\project\postgres_store_update_integration_test.go:206:41: 
+NewPostgreSQLProjectStore(f.db).Update undefined (type *PostgreSQLProjectStore has no field or 
+method Update)
+src\project\postgres_store_update_integration_test.go:207:17: undefined: MemberHasEffortError
+src\project\postgres_store_update_integration_test.go:219:41: 
+NewPostgreSQLProjectStore(f.db).Update undefined (type *PostgreSQLProjectStore has no field or 
+method Update)
+src\project\postgres_store_update_integration_test.go:220:17: undefined: MemberHasEffortError
+src\project\update_service_test.go:12:20: undefined: ProjectUpdateRequest
+src\project\postgres_store_update_integration_test.go:220:17: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/src/effort 
+[github.com/FrancoV20/seguimiento-y-medicion/src/effort.test]
+src\effort\postgres_effort_store_membership_integration_test.go:45:21: undefined: 
+errMemberNotInProject
+src\effort\postgres_effort_store_membership_integration_test.go:89:34: undefined: 
+errMemberNotInProject
+src\effort\service_test.go:403:18: undefined: errMemberNotInProject
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/effort [build failed]
+FAIL
+
+== Datos del proyecto (T034-T044) ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web 
+[github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "PostgresProjectForEdit|HU11_(EnlaceMod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\projects_handlers_test.go:62:66: undefined: project.ProjectUpdate
+src\web\projects_update_handlers_test.go:203:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:204:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:212:33: undefined: TitleProjectEdit
+src\web\projects_update_handlers_test.go:228:30: undefined: MsgProjectUpdated
+src\web\projects_update_handlers_test.go:331:67: undefined: ProjectEdit
+src\web\projects_update_handlers_test.go:519:59: undefined: project.ProjectUpdate
+src\web\postgres_project_catalog_edit_integration_test.go:14:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:32:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:40:44: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\projects_update_handlers_test.go:228:30: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test 
+[github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_project_update_bdd_test.go:110:57: undefined: project.ProjectUpdate
+test\web_project_update_bdd_test.go:193:29: undefined: web.MsgProjectUpdated
+test\web_project_update_bdd_test.go:260:19: undefined: web.MsgMemberHasEffort
+test\web_project_update_bdd_test.go:281:19: undefined: web.MsgSprintOutOfRange
+test\web_project_update_bdd_test.go:302:34: undefined: web.MsgProjectUpdated
+test\web_projects_bdd_test.go:48:63: undefined: project.ProjectUpdate
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+== Integrantes (T053-T059) ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web 
+[github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "HU11_(AgregarIntegrante|QuitarSinHoras ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\projects_handlers_test.go:62:66: undefined: project.ProjectUpdate
+src\web\projects_update_handlers_test.go:203:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:204:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:212:33: undefined: TitleProjectEdit
+src\web\projects_update_handlers_test.go:228:30: undefined: MsgProjectUpdated
+src\web\projects_update_handlers_test.go:331:67: undefined: ProjectEdit
+src\web\projects_update_handlers_test.go:519:59: undefined: project.ProjectUpdate
+src\web\postgres_project_catalog_edit_integration_test.go:14:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:32:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:40:44: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\projects_update_handlers_test.go:228:30: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test 
+[github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_project_update_bdd_test.go:110:57: undefined: project.ProjectUpdate
+test\web_project_update_bdd_test.go:193:29: undefined: web.MsgProjectUpdated
+test\web_project_update_bdd_test.go:260:19: undefined: web.MsgMemberHasEffort
+test\web_project_update_bdd_test.go:281:19: undefined: web.MsgSprintOutOfRange
+test\web_project_update_bdd_test.go:302:34: undefined: web.MsgProjectUpdated
+test\web_projects_bdd_test.go:48:63: undefined: project.ProjectUpdate
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+== Fechas y Sprints (T064-T067) ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web 
+[github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "HU11_(SprintQuedaFuera|SprintYaFuera|S ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\projects_handlers_test.go:62:66: undefined: project.ProjectUpdate
+src\web\projects_update_handlers_test.go:203:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:204:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:212:33: undefined: TitleProjectEdit
+src\web\projects_update_handlers_test.go:228:30: undefined: MsgProjectUpdated
+src\web\projects_update_handlers_test.go:331:67: undefined: ProjectEdit
+src\web\projects_update_handlers_test.go:519:59: undefined: project.ProjectUpdate
+src\web\postgres_project_catalog_edit_integration_test.go:14:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:32:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:40:44: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\projects_update_handlers_test.go:228:30: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test 
+[github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_project_update_bdd_test.go:110:57: undefined: project.ProjectUpdate
+test\web_project_update_bdd_test.go:193:29: undefined: web.MsgProjectUpdated
+test\web_project_update_bdd_test.go:260:19: undefined: web.MsgMemberHasEffort
+test\web_project_update_bdd_test.go:281:19: undefined: web.MsgSprintOutOfRange
+test\web_project_update_bdd_test.go:302:34: undefined: web.MsgProjectUpdated
+test\web_projects_bdd_test.go:48:63: undefined: project.ProjectUpdate
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+== Errores (T071-T075) ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web 
+[github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "HU11_(ProyectoInexistente|404AntesQue4 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteE 
+   xception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\projects_handlers_test.go:62:66: undefined: project.ProjectUpdate
+src\web\projects_update_handlers_test.go:203:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:204:70: undefined: LinkEditProject
+src\web\projects_update_handlers_test.go:212:33: undefined: TitleProjectEdit
+src\web\projects_update_handlers_test.go:228:30: undefined: MsgProjectUpdated
+src\web\projects_update_handlers_test.go:331:67: undefined: ProjectEdit
+src\web\projects_update_handlers_test.go:519:59: undefined: project.ProjectUpdate
+src\web\postgres_project_catalog_edit_integration_test.go:14:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:32:46: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\postgres_project_catalog_edit_integration_test.go:40:44: 
+NewPostgreSQLProjectCatalog(db).ProjectForEdit undefined (type *PostgreSQLProjectCatalog has no 
+field or method ProjectForEdit)
+src\web\projects_update_handlers_test.go:228:30: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test 
+[github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_project_update_bdd_test.go:110:57: undefined: project.ProjectUpdate
+test\web_project_update_bdd_test.go:193:29: undefined: web.MsgProjectUpdated
+test\web_project_update_bdd_test.go:260:19: undefined: web.MsgMemberHasEffort
+test\web_project_update_bdd_test.go:281:19: undefined: web.MsgSprintOutOfRange
+test\web_project_update_bdd_test.go:302:34: undefined: web.MsgProjectUpdated
+test\web_projects_bdd_test.go:48:63: undefined: project.ProjectUpdate
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

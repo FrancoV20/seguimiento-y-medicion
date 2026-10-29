@@ -58,6 +58,11 @@ func (s failingCreateProjectStore) MemberExists(id int) (bool, error) {
 	return id == s.memberID, nil
 }
 
+// Update cumple el puerto ampliado por HU-11.
+func (failingCreateProjectStore) Update(context.Context, project.ProjectUpdate) error {
+	return errors.New("simulated update error")
+}
+
 func (emptyProjectMembersCatalog) ListMembers(context.Context) ([]MemberOption, error) {
 	return []MemberOption{}, nil
 }

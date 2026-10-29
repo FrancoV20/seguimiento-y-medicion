@@ -12,3 +12,8 @@ var (
 	ErrStoryNotInSprint = errors.New("La historia no está asignada a un Sprint activo")
 	ErrStorage          = errors.New("La operación no pudo completarse")
 )
+
+// errMemberNotInProject lo devuelve el almacenamiento cuando, al guardar, el integrante ya no
+// pertenece al proyecto de la historia (por ejemplo, HU-11 lo quitó mientras cargaba horas).
+// El servicio lo informa como ErrMemberRequired.
+var errMemberNotInProject = errors.New("el integrante ya no pertenece al proyecto de la historia")
