@@ -59,9 +59,9 @@
 ### Implementation for User Story 1
 
 - [x] T018 [US1] Implementar en `src/web/close_form.go` el armado del envío (`sprint_id`), el resumen a partir de `BoardCatalog` y los textos propios en un solo lugar (`MsgSprintClosed`, `MsgSprintAlreadyClosed`, `MsgSprintNotFound`, `MsgCloseBlocked`, `MsgNoSprintToClose`)
-- [ ] T019 [US1] Implementar los handlers `GET /cierre` y `POST /cierre` en `src/web/close_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` y la redirección 303
+- [x] T019 [US1] Implementar los handlers `GET /cierre` y `POST /cierre` en `src/web/close_handlers.go`: llaman al servicio con el proyecto de `ActiveContext` y usan `SetFlash` y la redirección 303
 - [x] T020 [US1] Crear `close.html` con el resumen (Sprint, completadas, a devolver, Story Points), el aviso de que no se puede deshacer y el formulario con `sprint_id` y el botón "Cerrar Sprint", usando el parcial `"alert"` definido en `layout.html`, en `src/web/templates/close.html`
-- [ ] T021 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Cierre de Sprint" (`/cierre`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T021 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Cierre de Sprint" (`/cierre`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 cierra Sprints desde la web; HU-07, HU-10, HU-16 y HU-25 ya tienen un Sprint finalizado con su registro.
 
@@ -106,7 +106,7 @@
 - [x] T034 [P] [US3] Escribir la prueba de handler de un título con `<script>`: se muestra como texto, en `src/web/close_handlers_test.go`
 - [x] T035 [P] [US3] Completar `close.html` con el estado "No hay un Sprint activo para cerrar" y sin botón en `src/web/templates/close.html`
 - [x] T036 [P] [US3] Escribir los escenarios BDD de resumen antes de cerrar y sin Sprint activo en `test/web_close_bdd_test.go`
-- [ ] T037 [US3] Usar `Fail` en `src/web/close_handlers.go` cuando falla la lectura del Sprint o de las historias
+- [x] T037 [US3] Usar `Fail` en `src/web/close_handlers.go` cuando falla la lectura del Sprint o de las historias
 
 **Checkpoint**: US3 muestra el efecto del cierre antes de confirmarlo.
 

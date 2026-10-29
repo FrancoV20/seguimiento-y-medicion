@@ -12,9 +12,36 @@ type PostgreSQLSprintCloser struct {
 	db *sql.DB
 }
 
+var _ SprintCloseStore = (*PostgreSQLSprintCloser)(nil)
+
 // NewPostgreSQLSprintCloser crea un closer sobre una conexión ya abierta.
 func NewPostgreSQLSprintCloser(db *sql.DB) *PostgreSQLSprintCloser {
 	return &PostgreSQLSprintCloser{db: db}
+}
+
+// FindSprint devuelve un Sprint si pertenece al proyecto indicado.
+func (s *PostgreSQLSprintCloser) FindSprint(ctx context.Context, projectID, sprintID int64) (Sprint, error) {
+	if s == nil || s.db == nil {
+		return Sprint{}, fmt.Errorf("%w: PostgreSQL database connection is required", ErrPersistence)
+	}
+
+	var found Sprint
+	var status string
+	err := s.db.QueryRowContext(ctx, `
+		SELECT id, project_id, number, status
+		FROM sprints
+		WHERE project_id = $1 AND id = $2`,
+		projectID,
+		sprintID,
+	).Scan(&found.ID, &found.ProjectID, &found.Number, &status)
+	if errors.Is(err, sql.ErrNoRows) {
+		return Sprint{}, ErrSprintNotFound
+	}
+	if err != nil {
+		return Sprint{}, fmt.Errorf("%w: find sprint %d for project %d: %w", ErrPersistence, sprintID, projectID, err)
+	}
+	found.Status = SprintStatus(status)
+	return found, nil
 }
 
 // CloseSprint cierra el Sprint y devuelve las historias incompletas al Backlog en una transacción.
