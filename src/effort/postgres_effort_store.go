@@ -90,6 +90,22 @@ func (s *PostgreSQLEffortStore) SaveEntry(ctx context.Context, entry EffortEntry
 	}
 	defer tx.Rollback() // sin efecto si ya se hizo Commit
 
+	// HU-11: la pertenencia se vuelve a comprobar dentro de la transacción, bloqueando la fila
+	// para que una baja en curso espere a esta carga (o esta carga espere a la baja).
+	var member int
+	err = tx.QueryRowContext(ctx, `
+		SELECT 1
+		FROM user_stories us
+		JOIN project_members pm ON pm.project_id = us.project_id
+		WHERE us.id = $1 AND pm.member_id = $2
+		FOR SHARE OF pm`, sid, mid).Scan(&member)
+	if errors.Is(err, sql.ErrNoRows) {
+		return EffortEntry{}, 0, errMemberNotInProject
+	}
+	if err != nil {
+		return EffortEntry{}, 0, err
+	}
+
 	year, month, day := entry.WorkDate.Date()
 	var id int64
 	err = tx.QueryRowContext(ctx, `

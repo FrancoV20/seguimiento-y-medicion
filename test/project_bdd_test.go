@@ -27,7 +27,7 @@ func TestProjectCreation_BDD(t *testing.T) {
 	service := project.NewProjectService(store)
 	result, err := service.CreateProject(request)
 
-	// Then: creation succeeds and returns an active project with an ID.
+	// Then: creation succeeds and returns a project with an ID and status "Activo".
 	if err != nil {
 		t.Fatalf("expected project creation to succeed, got error: %v", err)
 	}
@@ -37,8 +37,8 @@ func TestProjectCreation_BDD(t *testing.T) {
 	if result.Project.ID <= 0 {
 		t.Errorf("expected project ID to be greater than 0, got %d", result.Project.ID)
 	}
-	if result.Project.Status != "Active" {
-		t.Errorf("expected project status %q, got %q", "Active", result.Project.Status)
+	if result.Project.Status != "Activo" {
+		t.Errorf("expected project status %q, got %q", "Activo", result.Project.Status)
 	}
 	if !strings.Contains(result.Message, "Proyecto creado exitosamente") {
 		t.Errorf("expected success message, got %q", result.Message)

@@ -1,0 +1,22 @@
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	2.466s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.740s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	4.801s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	3.596s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.674s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.408s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	5.010s
+--- FAIL: TestNewProject_SuccessInitialState (0.00s)
+    project_test.go:83: expected initial status "Activo", got "Active"
+--- FAIL: TestProjectService_CreateProject_Success (0.00s)
+    service_test.go:36: expected initial status "Activo", got "Active"
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.455s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	7.637s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	33.664s
+--- FAIL: TestEscenario_ProyectoRecienCreadoAdmiteHistorias (0.07s)
+    project_backlog_flow_test.go:76: el proyecto recién creado debía admitir historias: el proyecto no existe o no está activo
+--- FAIL: TestProjectCreation_BDD (0.00s)
+    project_bdd_test.go:41: expected project status "Activo", got "Active"
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	13.918s
+FAIL

@@ -39,6 +39,7 @@
         <th scope="col">Fecha de inicio</th>
         <th scope="col">Fecha de fin</th>
         <th scope="col">Integrantes</th>
+        <th scope="col">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -48,6 +49,7 @@
         <td>{{.StartDate.Format "02/01/2006"}}</td>
         <td>{{.EndDate.Format "02/01/2006"}}</td>
         <td>{{.MemberCount}}</td>
+        <td><a href="/proyectos/{{.ID}}/modificar">{{$.Data.EditLabel}}</a></td>
       </tr>
     {{end}}
     </tbody>

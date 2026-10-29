@@ -288,3 +288,9 @@ migrate -path db/migrations -database $env:DATABASE_URL up
   backlog (HU-02), `004` Sprints (HU-04), `007` métricas (HU-07), `003` esfuerzo (HU-03).
 - No subas a ningún archivo del repositorio (README, specs, `docker-compose.yml`) tu clave
   personal. Va solo en tu `docker-compose.override.yml`, que está en el `.gitignore`.
+
+# LEVANTAR EL SERVIDOR WEB
+$env:ADDR = ":8081"
+go run ./src/cmd/server
+# En web
+http://localhost:8081
