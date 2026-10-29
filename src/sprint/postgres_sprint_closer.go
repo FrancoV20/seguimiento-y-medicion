@@ -117,7 +117,7 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 
 	if _, err := tx.ExecContext(ctx, `
 		INSERT INTO sprint_story_results (sprint_id, story_id, final_status, story_points)
-		SELECT $1::integer, id, status, story_points
+		SELECT $1::bigint, id, status, story_points
 		FROM user_stories
 		WHERE active_sprint_id = $2`,
 		sprintID,
