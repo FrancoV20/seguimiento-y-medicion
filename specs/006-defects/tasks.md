@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza.
 
-- [ ] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04 y HU-15: ruta de los paquetes de historias y Sprints, nombres de tablas y columnas (`sprints.status` con `'Activo'` y `'Finalizado'`, `user_stories.project_id`, `title`, `status`), tipo de los identificadores, que no existan paquetes ni nombres de defectos (`git grep -n -i defect`), cómo cierra HU-15 el Sprint (bloqueo de la fila) y los identificadores del paquete `web` para que los de prefijo `Defect` no choquen; anotar el resultado en `specs/006-defects/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET` y `POST`, `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/006-defects/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar el último número de migración en `main` y que nadie más haya tomado el siguiente (HU-15 usa `sprint_story_results`); avisar al equipo si cambió
+- [x] T001 Revisar en `main` HU-02, HU-04, FIX-HU-04 y HU-15: ruta de los paquetes de historias y Sprints, nombres de tablas y columnas (`sprints.status` con `'Activo'` y `'Finalizado'`, `user_stories.project_id`, `title`, `status`), tipo de los identificadores, que no existan paquetes ni nombres de defectos (`git grep -n -i defect`), cómo cierra HU-15 el Sprint (bloqueo de la fila) y los identificadores del paquete `web` para que los de prefijo `Defect` no choquen; anotar el resultado en `specs/006-defects/data-model.md` y ajustar `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET` y `POST`, `Section.RequiresProject`, `ActiveContextFrom`, `SetFlash`, `FormView`, `MsgOperationFailed`, parciales `alert.html` y `field.html`, redirección 303 y protección contra envíos de otro origen
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/006-defects/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar el último número de migración en `main` y que nadie más haya tomado el siguiente (HU-15 usa `sprint_story_results`); avisar al equipo si cambió
 
 ---
 
@@ -29,17 +29,17 @@
 
 **Purpose**: Migración, dominio, almacenamiento, catálogo y formulario compartidos por las tres historias.
 
-- [ ] T005 Escribir la migración `.up.sql` y `.down.sql` de `defects` con el siguiente número de `main` en `db/migrations/`, probarla en ambos sentidos (`up`, `down 1`, `up`) y comprobar que los `CHECK` rechazan severidad inválida, estado inválido, descripción vacía y un estado incoherente con el Sprint de resolución
-- [ ] T006 [P] Escribir las pruebas del servicio `Register` y de `Validate` en `src/defect/service_test.go`: descripción vacía, solo espacios, de 1000 y de 1001 caracteres (caracteres, no bytes), severidad vacía y fuera de la lista, historia vacía, todas las violaciones juntas y la descripción recortada
-- [ ] T007 [P] Escribir la prueba de integración de `PostgreSQLStore` con fixtures propias (dos proyectos; un Sprint activo y uno finalizado; historias "Pendiente", "En progreso" y "Hecho" de un Sprint finalizado): registro válido con estado "Abierto", Sprint de detección activo y sin Sprint de resolución; historia sin cambios; sin Sprint activo; historia de otro proyecto; Sprint activo del proyecto A no afecta al B; falla a mitad que revierte todo; y registro y cierre de Sprint simultáneos sin incoherencias, en `src/defect/postgres_store_integration_test.go`
-- [ ] T008 Definir en `src/defect` `Severity`, `Status`, `RegisterInput`, `Registered`, los errores del dominio y la interfaz `Store` en `model.go`, `errors.go` y `store.go`
-- [ ] T009 Implementar el servicio con `Validate` completo y `Register` en `src/defect/service.go`
-- [ ] T010 Implementar `PostgreSQLStore` con `database/sql` y pgx y la transacción de `data-model.md` (Sprint activo con `FOR SHARE`, historia del proyecto, alta) en `src/defect/postgres_store.go`
-- [ ] T011 [P] Definir `DefectRow`, `DefectStoryOption` y la interfaz `DefectCatalog` con `Defects`, `StoryOptions` y `ActiveSprintNumber` en `src/web/defects_catalog.go`
-- [ ] T012 [P] Escribir la prueba de integración de `PostgreSQLDefectCatalog` con fixtures propias (dos proyectos con defectos, historias y Sprints): lista del proyecto correcto, más recientes primero, historia y Sprints, "sin Sprint de resolución", ningún dato de otro proyecto, opciones de historia, número del Sprint activo y proyecto sin defectos, en `src/web/postgres_defects_catalog_integration_test.go`
-- [ ] T013 Implementar `PostgreSQLDefectCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_defects_catalog.go`
-- [ ] T014 [P] Escribir las pruebas unitarias del armado del formulario: campos ausentes como vacíos, valores devueltos tal como llegaron, `historia` vacía y no numérica, mapeo de cada error del dominio al campo y mensaje y un error por campo, en `src/web/defects_form_test.go`
-- [ ] T015 Implementar en `src/web/defects_form.go` los nombres de los campos (`descripcion`, `severidad`, `historia`), los textos propios en un solo lugar (`MsgDefectRegistered`, `MsgDefectDescriptionRequired`, `MsgDefectDescriptionTooLong`, `MsgDefectSeverityRequired`, `MsgDefectSeverityInvalid`, `MsgDefectStoryRequired`, `MsgDefectStoryNotInProject`, `MsgDefectNoSprint`, `MsgDefectNone`), el armado del envío y el mapeo de errores
+- [x] T005 Escribir la migración `.up.sql` y `.down.sql` de `defects` con el siguiente número de `main` en `db/migrations/`, probarla en ambos sentidos (`up`, `down 1`, `up`) y comprobar que los `CHECK` rechazan severidad inválida, estado inválido, descripción vacía y un estado incoherente con el Sprint de resolución
+- [x] T006 [P] Escribir las pruebas del servicio `Register` y de `Validate` en `src/defect/service_test.go`: descripción vacía, solo espacios, de 1000 y de 1001 caracteres (caracteres, no bytes), severidad vacía y fuera de la lista, historia vacía, todas las violaciones juntas y la descripción recortada
+- [x] T007 [P] Escribir la prueba de integración de `PostgreSQLStore` con fixtures propias (dos proyectos; un Sprint activo y uno finalizado; historias "Pendiente", "En progreso" y "Hecho" de un Sprint finalizado): registro válido con estado "Abierto", Sprint de detección activo y sin Sprint de resolución; historia sin cambios; sin Sprint activo; historia de otro proyecto; Sprint activo del proyecto A no afecta al B; falla a mitad que revierte todo; y registro y cierre de Sprint simultáneos sin incoherencias, en `src/defect/postgres_store_integration_test.go`
+- [x] T008 Definir en `src/defect` `Severity`, `Status`, `RegisterInput`, `Registered`, los errores del dominio y la interfaz `Store` en `model.go`, `errors.go` y `store.go`
+- [x] T009 Implementar el servicio con `Validate` completo y `Register` en `src/defect/service.go`
+- [x] T010 Implementar `PostgreSQLStore` con `database/sql` y pgx y la transacción de `data-model.md` (Sprint activo con `FOR SHARE`, historia del proyecto, alta) en `src/defect/postgres_store.go`
+- [x] T011 [P] Definir `DefectRow`, `DefectStoryOption` y la interfaz `DefectCatalog` con `Defects`, `StoryOptions` y `ActiveSprintNumber` en `src/web/defects_catalog.go`
+- [x] T012 [P] Escribir la prueba de integración de `PostgreSQLDefectCatalog` con fixtures propias (dos proyectos con defectos, historias y Sprints): lista del proyecto correcto, más recientes primero, historia y Sprints, "sin Sprint de resolución", ningún dato de otro proyecto, opciones de historia, número del Sprint activo y proyecto sin defectos, en `src/web/postgres_defects_catalog_integration_test.go`
+- [x] T013 Implementar `PostgreSQLDefectCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_defects_catalog.go`
+- [x] T014 [P] Escribir las pruebas unitarias del armado del formulario: campos ausentes como vacíos, valores devueltos tal como llegaron, `historia` vacía y no numérica, mapeo de cada error del dominio al campo y mensaje y un error por campo, en `src/web/defects_form_test.go`
+- [x] T015 Implementar en `src/web/defects_form.go` los nombres de los campos (`descripcion`, `severidad`, `historia`), los textos propios en un solo lugar (`MsgDefectRegistered`, `MsgDefectDescriptionRequired`, `MsgDefectDescriptionTooLong`, `MsgDefectSeverityRequired`, `MsgDefectSeverityInvalid`, `MsgDefectStoryRequired`, `MsgDefectStoryNotInProject`, `MsgDefectNoSprint`, `MsgDefectNone`), el armado del envío y el mapeo de errores
 
 **Checkpoint**: La migración, el dominio, el catálogo y el formulario están listos y probados contra PostgreSQL.
 
@@ -53,17 +53,17 @@
 
 ### Tests for User Story 1
 
-- [ ] T016 [P] [US1] Escribir la prueba de handler de registro exitoso con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/defectos`, "Defecto registrado correctamente. Sprint de detección: Sprint N" una sola vez, defecto "Abierto" con el Sprint activo, un campo de Sprint o de proyecto enviado ignorado y, con dos proyectos, solo registra en el activo, en `src/web/defects_handlers_test.go`
-- [ ] T017 [P] [US1] Escribir la prueba de handler de una historia "Hecho" de un Sprint finalizado y de una historia sin Sprint: el defecto queda "Abierto" con el Sprint activo y la historia no cambia de estado ni de asignación, en `src/web/defects_handlers_test.go`
-- [ ] T018 [P] [US1] Escribir la prueba de handler de las cuatro severidades (Crítica, Alta, Media y Baja) guardadas tal cual, en `src/web/defects_handlers_test.go`
-- [ ] T019 [P] [US1] Escribir los escenarios BDD de vinculación de defecto a historia e historia de un Sprint anterior en `test/web_defects_bdd_test.go`
+- [x] T016 [P] [US1] Escribir la prueba de handler de registro exitoso con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/defectos`, "Defecto registrado correctamente. Sprint de detección: Sprint N" una sola vez, defecto "Abierto" con el Sprint activo, un campo de Sprint o de proyecto enviado ignorado y, con dos proyectos, solo registra en el activo, en `src/web/defects_handlers_test.go`
+- [x] T017 [P] [US1] Escribir la prueba de handler de una historia "Hecho" de un Sprint finalizado y de una historia sin Sprint: el defecto queda "Abierto" con el Sprint activo y la historia no cambia de estado ni de asignación, en `src/web/defects_handlers_test.go`
+- [x] T018 [P] [US1] Escribir la prueba de handler de las cuatro severidades (Crítica, Alta, Media y Baja) guardadas tal cual, en `src/web/defects_handlers_test.go`
+- [x] T019 [P] [US1] Escribir los escenarios BDD de vinculación de defecto a historia e historia de un Sprint anterior en `test/web_defects_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T020 [US1] Implementar el handler `GET /defectos` en `src/web/defects_handlers.go`: lee los defectos, las historias y el Sprint activo del proyecto del contexto y usa `Fail` si falla la lectura
-- [ ] T021 [US1] Implementar el camino exitoso de `POST /defectos` en `src/web/defects_handlers.go`: arma el envío, llama al servicio con el proyecto del contexto, usa `SetFlash` con el número del Sprint y redirige con 303 a `/defectos`
-- [ ] T022 [US1] Crear `defects.html` con el formulario (descripción, severidad, historia) y la lista, usando los parciales `alert.html` y `field.html`, en `src/web/templates/defects.html`
-- [ ] T023 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Defectos" (`/defectos`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T020 [US1] Implementar el handler `GET /defectos` en `src/web/defects_handlers.go`: lee los defectos, las historias y el Sprint activo del proyecto del contexto y usa `Fail` si falla la lectura
+- [x] T021 [US1] Implementar el camino exitoso de `POST /defectos` en `src/web/defects_handlers.go`: arma el envío, llama al servicio con el proyecto del contexto, usa `SetFlash` con el número del Sprint y redirige con 303 a `/defectos`
+- [x] T022 [US1] Crear `defects.html` con el formulario (descripción, severidad, historia) y la lista, usando los parciales `alert.html` y `field.html`, en `src/web/templates/defects.html`
+- [x] T023 [US1] Construir el servicio, el almacenamiento y el catálogo y registrar la sección "Defectos" (`/defectos`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 registra defectos desde la web; HU-19, HU-10, HU-08 y HU-09 ya tienen datos de defectos.
 
@@ -77,17 +77,17 @@
 
 ### Tests for User Story 2
 
-- [ ] T024 [P] [US2] Escribir la prueba de handler de errores juntos: descripción vacía, severidad vacía y historia vacía a la vez, con los tres mensajes junto a su campo, datos conservados, 422 y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T025 [P] [US2] Escribir la prueba de handler de descripción solo con espacios y de 1001 caracteres (y de 1000 aceptada), cada una con su mensaje junto al campo, en `src/web/defects_handlers_test.go`
-- [ ] T026 [P] [US2] Escribir la prueba de handler de historia de otro proyecto, inexistente y no numérica, y de severidad fuera de la lista: error junto al campo, datos conservados y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T027 [P] [US2] Escribir la prueba de handler sin Sprint activo (sin Sprints y con todos finalizados): `GET` con "No hay un Sprint activo; no se puede registrar un defecto" y sin formulario, `POST` con 409 y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T028 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada guardado, en `src/web/defects_handlers_test.go`
-- [ ] T029 [P] [US2] Escribir los escenarios BDD de omisión de datos obligatorios, descripción obligatoria, sin Sprint activo, historia de otro proyecto y error al guardar en `test/web_defects_bdd_test.go`
+- [x] T024 [P] [US2] Escribir la prueba de handler de errores juntos: descripción vacía, severidad vacía y historia vacía a la vez, con los tres mensajes junto a su campo, datos conservados, 422 y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T025 [P] [US2] Escribir la prueba de handler de descripción solo con espacios y de 1001 caracteres (y de 1000 aceptada), cada una con su mensaje junto al campo, en `src/web/defects_handlers_test.go`
+- [x] T026 [P] [US2] Escribir la prueba de handler de historia de otro proyecto, inexistente y no numérica, y de severidad fuera de la lista: error junto al campo, datos conservados y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T027 [P] [US2] Escribir la prueba de handler sin Sprint activo (sin Sprints y con todos finalizados): `GET` con "No hay un Sprint activo; no se puede registrar un defecto" y sin formulario, `POST` con 409 y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T028 [P] [US2] Escribir la prueba de handler con un almacenamiento que falla al guardar: "La operación no pudo completarse", 500, datos conservados, sin éxito y nada guardado, en `src/web/defects_handlers_test.go`
+- [x] T029 [P] [US2] Escribir los escenarios BDD de omisión de datos obligatorios, descripción obligatoria, sin Sprint activo, historia de otro proyecto y error al guardar en `test/web_defects_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T030 [US2] Implementar en `src/web/defects_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo, ocultando el formulario sin Sprint activo
-- [ ] T031 [US2] Verificar en `src/web/defects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T030 [US2] Implementar en `src/web/defects_handlers.go` las respuestas 422, 409 y 500 con la pantalla, el formulario con los datos conservados y los errores junto a cada campo, ocultando el formulario sin Sprint activo
+- [x] T031 [US2] Verificar en `src/web/defects_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 evita defectos inválidos y mantiene los datos.
 
@@ -101,12 +101,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T032 [P] [US3] Escribir la prueba de handler de la lista: identificador, descripción, severidad, estado, historia, Sprint de detección y Sprint de resolución ("—"), más recientes primero, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/defects_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir la prueba de handler de la lista vacía: "Aún no hay defectos" y el formulario, en `src/web/defects_handlers_test.go`
-- [ ] T034 [P] [US3] Escribir la prueba de handler de una descripción y un título de historia con `<script>`: se muestran como texto, en `src/web/defects_handlers_test.go`
-- [ ] T035 [P] [US3] Escribir los escenarios BDD de lista de defectos y lista vacía en `test/web_defects_bdd_test.go`
-- [ ] T036 [US3] Completar `defects.html` con las columnas de la lista, el "—" del Sprint de resolución y el mensaje de lista vacía en `src/web/templates/defects.html`
-- [ ] T037 [US3] Usar `Fail` en `src/web/defects_handlers.go` cuando falla la lectura de la lista o de las historias y escribir su prueba con un catálogo que falla
+- [x] T032 [P] [US3] Escribir la prueba de handler de la lista: identificador, descripción, severidad, estado, historia, Sprint de detección y Sprint de resolución ("—"), más recientes primero, solo del proyecto activo, con verificación de tiempo de respuesta, en `src/web/defects_handlers_test.go`
+- [x] T033 [P] [US3] Escribir la prueba de handler de la lista vacía: "Aún no hay defectos" y el formulario, en `src/web/defects_handlers_test.go`
+- [x] T034 [P] [US3] Escribir la prueba de handler de una descripción y un título de historia con `<script>`: se muestran como texto, en `src/web/defects_handlers_test.go`
+- [x] T035 [P] [US3] Escribir los escenarios BDD de lista de defectos y lista vacía en `test/web_defects_bdd_test.go`
+- [x] T036 [US3] Completar `defects.html` con las columnas de la lista, el "—" del Sprint de resolución y el mensaje de lista vacía en `src/web/templates/defects.html`
+- [x] T037 [US3] Usar `Fail` en `src/web/defects_handlers.go` cuando falla la lectura de la lista o de las historias y escribir su prueba con un catálogo que falla
 
 **Checkpoint**: US3 muestra los defectos y su trazabilidad.
 
@@ -116,20 +116,25 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T038 [P] Documentar en `specs/006-defects/quickstart.md` los pasos para probar a mano con un Sprint activo y la nota de puerto
-- [ ] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/defects_handlers.go` y `src/web/defects_form.go`
-- [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T042 [P] Escribir la prueba de handler de recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje, en `src/web/defects_handlers_test.go`
-- [ ] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/defects_handlers_test.go`
-- [ ] T044 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/defects_handlers_test.go`
-- [ ] T045 Guardar en `specs/006-defects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
-- [ ] T047 Coordinar con quien tome HU-19 que extiende `defects.html` y `defects_handlers.go` (acciones de resolver y reabrir) y completa `resolution_sprint_id` y el estado; con quien tome HU-10 que cuenta defectos por `detection_sprint_id` y `resolution_sprint_id`; con HU-08 y HU-09 que leen la misma tabla; con HU-15 que su cierre bloquea la fila del Sprint con `FOR UPDATE`; y el número de migración con quien tenga la de HU-15
-- [ ] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/006-defects/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Defectos"
-- [ ] T050 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md`
+- [x] T038 [P] Documentar en `specs/006-defects/quickstart.md` los pasos para probar a mano con un Sprint activo y la nota de puerto
+- [x] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/defects_handlers.go` y `src/web/defects_form.go`
+- [x] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T042 [P] Escribir la prueba de handler de recarga después de registrar: no se crea un segundo defecto ni se repite el mensaje, en `src/web/defects_handlers_test.go`
+- [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/defects_handlers_test.go`
+- [x] T044 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/defects_handlers_test.go`
+- [x] T045 Guardar en `specs/006-defects/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
+- [x] T047 Coordinar con quien tome HU-19 que extiende `defects.html` y `defects_handlers.go` (acciones de resolver y reabrir) y completa `resolution_sprint_id` y el estado; con quien tome HU-10 que cuenta defectos por `detection_sprint_id` y `resolution_sprint_id`; con HU-08 y HU-09 que leen la misma tabla; con HU-15 que su cierre bloquea la fila del Sprint con `FOR UPDATE`; y el número de migración con quien tenga la de HU-15
+- [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/006-defects/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Defectos" (nota: `gofmt -l src db test` no reporta archivos en Linux ni en el CI. Los 117 archivos que aparecían en Windows no eran de formato sino de saltos de línea CRLF del checkout local por `core.autocrlf`: en el repositorio los archivos están con LF. El check de GitHub Actions se verifica en el PR, T051)
+- [x] T050 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T051 Abrir el Pull Request desde `HU-06`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+
+**Ajustes de la revisión del Scrum Master** (antes del merge):
+
+- [x] T052 Rechazar con 422 y "La descripción contiene caracteres no válidos" una descripción con el carácter NUL o UTF-8 inválido (antes daba 500): pruebas primero en rojo en `src/defect/service_test.go`, `src/web/defects_form_test.go`, `src/web/defects_handlers_test.go` y `test/web_defects_bdd_test.go` (`evidencia-red-caracteres.txt`); validación en `defect.Validate` y mensaje en `src/web/defects_form.go`; documentado en `spec.md` y en `docs/manual-usuario.md`
+- [x] T053 Regenerar `evidencia-pruebas.txt` y `cobertura.txt` tras integrar `main` (ahora incluyen `src/poker`) y actualizar en `evidencia-manual.txt` el número de migración a `012`
 
 ---
 
@@ -190,7 +195,7 @@
 | FR-003 | T006, T007, T016, T042 |
 | FR-004 | T007, T017 |
 | FR-005 | T006, T014, T024 |
-| FR-006 | T006, T025 |
+| FR-006 | T006, T025, T052 |
 | FR-007 | T007, T027 |
 | FR-008 | T007, T026 |
 | FR-009 | T012, T032 |

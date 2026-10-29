@@ -1,0 +1,71 @@
+{{define "content"}}
+<h1>{{.Title}}</h1>
+
+{{with .Data}}
+{{if .HasActiveSprint}}
+<form method="post" action="/defectos">
+  {{template "field" ($.Form.Field "descripcion" "Descripción" "text")}}
+
+  <div class="field{{if index $.Form.Errors "severidad"}} field-invalid{{end}}">
+    <label for="severidad">Severidad</label>
+    <select id="severidad" name="severidad"{{if index $.Form.Errors "severidad"}} aria-invalid="true" aria-describedby="severidad-error"{{end}}>
+      <option value="">Seleccione la severidad</option>
+      {{if index $.Form.Errors "severidad"}}<option value="{{$.Form.Values.severidad}}" selected>{{$.Form.Values.severidad}}</option>{{end}}
+      {{range .Severities}}
+      <option value="{{.}}"{{if eq $.Form.Values.severidad (printf "%s" .)}} selected{{end}}>{{.}}</option>
+      {{end}}
+    </select>
+    {{with index $.Form.Errors "severidad"}}<p class="field-error" id="severidad-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+  </div>
+
+  <div class="field{{if index $.Form.Errors "historia"}} field-invalid{{end}}">
+    <label for="historia">Historia relacionada</label>
+    <select id="historia" name="historia"{{if index $.Form.Errors "historia"}} aria-invalid="true" aria-describedby="historia-error"{{end}}>
+      <option value="">Seleccione la historia relacionada</option>
+      {{if index $.Form.Errors "historia"}}<option value="{{$.Form.Values.historia}}" selected>{{$.Form.Values.historia}}</option>{{end}}
+      {{range .Stories}}
+      <option value="{{.ID}}"{{if eq $.Form.Values.historia (printf "%d" .ID)}} selected{{end}}>{{.Title}}</option>
+      {{end}}
+    </select>
+    {{with index $.Form.Errors "historia"}}<p class="field-error" id="historia-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+  </div>
+
+  <button type="submit">Registrar defecto</button>
+</form>
+{{end}}
+
+<section aria-labelledby="defects-list-title">
+  <h2 id="defects-list-title">Defectos</h2>
+  {{if .Defects}}
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Identificador</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Severidad</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Historia relacionada</th>
+        <th scope="col">Sprint de detección</th>
+        <th scope="col">Sprint de resolución</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{range .Defects}}
+      <tr>
+        <td>{{.ID}}</td>
+        <td>{{.Description}}</td>
+        <td>{{.Severity}}</td>
+        <td>{{.Status}}</td>
+        <td>{{.StoryTitle}}</td>
+        <td>Sprint {{.DetectionSprint}}</td>
+        <td>{{if .ResolutionSprint}}Sprint {{.ResolutionSprint}}{{else}}—{{end}}</td>
+      </tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <p>{{.NoDefectsMessage}}</p>
+  {{end}}
+</section>
+{{end}}
+{{end}}

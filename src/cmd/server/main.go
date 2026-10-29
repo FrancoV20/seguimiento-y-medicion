@@ -14,6 +14,7 @@ import (
 
 	"github.com/FrancoV20/seguimiento-y-medicion/db"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/defect"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/poker"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
@@ -123,6 +124,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = ln.Close()
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Registro de esfuerzo")
+	}
+
+	defectService := defect.NewService(defect.NewPostgreSQLStore(database))
+	defectCatalog := web.NewPostgreSQLDefectCatalog(database)
+	if err := web.RegisterDefects(srv, defectService, defectCatalog); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Defectos")
 	}
 
 	// Sprints: creación, asignación y remoción de historias del Sprint activo (HU-23, T018).
