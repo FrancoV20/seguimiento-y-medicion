@@ -19,7 +19,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-12 y ajustar `data-model.md` si alguno cambió:
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-12 y ajustar `data-model.md` si alguno cambió:
   - de HU-14: `BoardCatalog.ActiveBoard`, `BoardView` (`Label`, `Goal`, `StartDate`, `EndDate`),
     `NewPostgreSQLBoardCatalog` y `projectIDFrom` en `src/web`;
   - de HU-20a/b: `Server.Register`, `Section.RequiresProject`, `Routes`, `Renderer.Page`, `Renderer.Fail`,
@@ -31,7 +31,7 @@ Formato: `[ID] [P] [E#] descripción`
   - si HU-07 exportó una función de redondeo, anotarlo en research.md §3 para reutilizarla.
 
   Revisar también "Planificación de proyecto.pdf": si contradice la spec, corregirla antes de T002.
-- [ ] T002 Crear la rama `HU-12` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-12` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-12`.
 - [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
 - [ ] T004 Coordinar con quien tenga HU-08, HU-09, HU-10, HU-11 y HU-25 el bloque de registro que se suma al final de
@@ -155,8 +155,8 @@ comprobar los valores de "Datos de ejemplo".
   `time.Now`; argumentos `nil` → error sin registrar; `Section{Name: TitleProjectStatus, Path: "/estado",
   RequiresProject: true}`; `Routes{"GET /estado": …}`; los pasos 1 a 3 de `data-model.md`, sin escribir nada antes de
   tener los dos datos) y la plantilla `src/web/templates/project_status.html`, sin `<script>` ni formularios.
-- [ ] T021 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-24,
-  `RegisterEffort`), el bloque que llama a `web.RegisterProjectStatus(srv, web.NewPostgreSQLProjectStatusCatalog(database),
+- [ ] T021 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-23,
+  `RegisterSprints`) y antes de `srv.Serve`, el bloque que llama a `web.RegisterProjectStatus(srv, web.NewPostgreSQLProjectStatusCatalog(database),
   web.NewPostgreSQLBoardCatalog(database), nil)`. Si falla, cerrar `ln` y `database`, como los otros bloques.
 - [ ] T022 Ejecutar T014–T017 en verde y `go test -count=1 -p 1 ./...` completo.
 
