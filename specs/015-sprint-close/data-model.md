@@ -122,9 +122,18 @@ escucha en `5432`. FIX-HU-21 ocupa la migración `013`; la migración de HU-15 e
 
 ## CloseSprint (servicio)
 
-`CloseSprint(ctx, projectID, sprintID)`: comprueba que el Sprint exista en el proyecto (`ErrSprintNotFound`),
-que esté activo (`ErrSprintAlreadyClosed`), invoca la validación de HU-07 (`ErrCloseBlocked` con las
-historias a corregir) y cierra de forma transaccional. Devuelve un `CloseResult`.
+`CloseSprint(ctx, projectID, sprintID)`: comprueba que el Sprint exista en el proyecto (`ErrSprintNotFound`)
+y que esté activo (`ErrSprintAlreadyClosed`), y delega el cierre transaccional pasándole la validación de
+HU-07 como `ClosureCheck`. El almacenamiento la ejecuta dentro de la transacción, después de bloquear el
+Sprint y sus historias; si falla, el cierre se revierte y el servicio devuelve `ErrCloseBlocked` con las
+historias a corregir. Devuelve un `CloseResult`.
+
+### ClosingStory
+
+- `id`, `status`, `storyPoints` (opcional) y `actualHours` (suma de `effort_logs`, opcional), leídos con la
+  transacción de cierre.
+- La única fuente de las historias del cierre es `user_stories.active_sprint_id`: la validación y el cierre
+  usan el mismo conjunto aunque `sprint_story_assignments` no coincida (ajustes 1 y 2 de la revisión).
 
 ### CloseResult
 
@@ -142,8 +151,9 @@ Puerto de almacenamiento del dominio.
 ### Operations
 
 - `FindSprint(ctx, projectID, sprintID)`: devuelve número y estado, o `ErrSprintNotFound`.
-- `CloseSprint(ctx, sprintID)`: cierra en una transacción y devuelve los conteos, o `ErrSprintAlreadyClosed`
-  si ya no estaba activo.
+- `CloseSprint(ctx, sprintID, check)`: cierra en una transacción y devuelve los conteos,
+  `ErrSprintAlreadyClosed` si ya no estaba activo o el error de `check` si la validación de HU-07 rechaza
+  las historias bloqueadas.
 
 ### Transacción de cierre
 
@@ -151,24 +161,26 @@ Puerto de almacenamiento del dominio.
 BEGIN;
 -- 1. Bloquear el Sprint y sus historias
 SELECT status FROM sprints WHERE id = $1 FOR UPDATE;           -- 'Finalizado' => ErrSprintAlreadyClosed
-SELECT us.id FROM user_stories us
-JOIN sprint_story_assignments a ON a.story_id = us.id
-WHERE a.sprint_id = $1 FOR UPDATE OF us;
+SELECT id, status, story_points FROM user_stories
+WHERE active_sprint_id = $1 ORDER BY id FOR UPDATE;
 
--- 2. Registro del Sprint (todas las historias)
+-- 2. Validación de HU-07 (check) sobre las historias bloqueadas y sus horas
+SELECT el.story_id, SUM(el.hours)::text FROM effort_logs el
+JOIN user_stories us ON us.id = el.story_id
+WHERE us.active_sprint_id = $1 GROUP BY el.story_id;          -- error de check => ROLLBACK
+
+-- 3. Registro del Sprint (todas las historias)
 INSERT INTO sprint_story_results (sprint_id, story_id, final_status, story_points)
-SELECT a.sprint_id, us.id, us.status, us.story_points
-FROM sprint_story_assignments a JOIN user_stories us ON us.id = a.story_id
-WHERE a.sprint_id = $1;
+SELECT $1, id, status, story_points FROM user_stories WHERE active_sprint_id = $1;
 
--- 3. Devolver las no completadas
+-- 4. Devolver las no completadas
 DELETE FROM sprint_story_assignments a USING user_stories us
-WHERE a.sprint_id = $1 AND us.id = a.story_id AND us.status <> 'Hecho'
-RETURNING a.story_id;                                          -- ids devueltos
+WHERE a.sprint_id = $1 AND us.id = a.story_id
+  AND us.active_sprint_id = $1 AND us.status <> 'Hecho';
 UPDATE user_stories SET status = 'Pendiente', active_sprint_id = NULL
-WHERE id = ANY($2);                                            -- $2 = ids devueltos
+WHERE active_sprint_id = $1 AND status <> 'Hecho';
 
--- 4. Finalizar
+-- 5. Finalizar
 UPDATE sprints SET status = 'Finalizado' WHERE id = $1;
 COMMIT;
 ```

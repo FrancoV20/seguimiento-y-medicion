@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-21
 
-**Status**: Draft
+**Status**: Implementada (pendiente de revisión en el Pull Request)
 
 **Input**: User description: "HU-15 / Cierre de Sprint: Como Scrum Master, quiero cerrar el Sprint activo desde la web, para congelar sus datos y habilitar el cálculo de métricas. Depende de HU-14, HU-07, HU-04, FIX-HU-04, HU-03, HU-20a y HU-20b."
 
@@ -188,13 +188,16 @@ métricas se calculen sobre datos que no cambian.
   de historias a corregir en el primer caso).
 - Identificador inválido o de otro proyecto: respuesta 422 con "El Sprint no existe".
 - Falla de guardado: respuesta 500 con "La operación no pudo completarse" y el Sprint intacto.
-- Falla de lectura: página de error de HU-20a.
+- Falla de lectura al armar el resumen (`GET /cierre`): página de servicio no disponible de HU-20a (503).
+- Cualquier falla durante el cierre (`POST /cierre`), incluida la lectura de las historias dentro de la
+  transacción: respuesta 500 con "La operación no pudo completarse" y el Sprint intacto.
 - Vista: Sprint, historias completadas, historias que volverán, Story Points y botón.
 
 **Reglas de negocio**:
 
 - Solo se cierra un Sprint activo del proyecto activo.
-- Antes de cerrar se aplica la validación de HU-07.
+- La validación de HU-07 se aplica dentro de la transacción de cierre, después de bloquear el Sprint y sus
+  historias, sobre las mismas historias que se cierran (las de `user_stories.active_sprint_id`).
 - Las historias en "Hecho" quedan en el Sprint; las demás pasan a "Pendiente" y pierden la asignación.
 - Se guarda el estado final y los Story Points de todas las historias del Sprint.
 - El cierre es todo o nada.
@@ -217,8 +220,8 @@ métricas se calculen sobre datos que no cambian.
 | Datos inválidos según HU-07 | El de HU-07 con las historias a corregir | 409 |
 | Sprint ya cerrado | "El Sprint ya está cerrado" | 409 |
 | Sprint inexistente, no numérico o de otro proyecto | "El Sprint no existe" | 422 |
-| Falla de guardado | "La operación no pudo completarse" | 500 |
-| Falla de lectura | Página de error de HU-20a | 500 o 503 |
+| Falla de guardado o de lectura durante el cierre (`POST`) | "La operación no pudo completarse" | 500 |
+| Falla de lectura del resumen (`GET`) | Página de servicio no disponible de HU-20a | 503 |
 | Sin proyecto activo válido | Mensaje de HU-20b | 303 |
 
 Los textos propios de HU-15 son una propuesta del equipo y se definen en un solo lugar (`close_form.go`).
