@@ -52,9 +52,9 @@
 - [x] T012 [P] [US1] Escribir la prueba de handler de cierre exitoso con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: 303 a `/cierre`, "Sprint N cerrado correctamente. Historias devueltas al Backlog: Y" una sola vez, Sprint "Finalizado" y, con dos proyectos, solo cierra el activo, en `src/web/close_handlers_test.go`
 - [x] T013 [P] [US1] Escribir la prueba de handler de las historias después del cierre: las "Hecho" siguen en el Sprint finalizado y las demás quedan "Pendiente" y disponibles en el Backlog, en `src/web/close_handlers_test.go`
 - [x] T014 [P] [US1] Escribir la prueba de handler del Sprint sin historias completadas: se cierra y HU-07 calcula velocidad cero, en `src/web/close_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de que las historias devueltas se pueden asignar a un Sprint nuevo con el servicio de HU-04 y de que el registro del Sprint cerrado no cambia, en `src/sprint/close_sprint_test.go`
-- [ ] T016 [US1] Si T001 muestra que HU-03 no rechaza horas en historias fuera del Sprint activo, escribir su prueba (Sprint finalizado y historia devuelta) y agregar la regla en el dominio de HU-03 junto a sus reglas; si ya existe, escribir solo la prueba y avisar a quien mantiene HU-03
-- [ ] T017 [P] [US1] Escribir los escenarios BDD de cierre exitoso, historias completadas conservadas, datos del Sprint congelados, Sprint sin historias completadas e historias devueltas disponibles en `test/web_close_bdd_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de que las historias devueltas se pueden asignar a un Sprint nuevo con el servicio de HU-04 y de que el registro del Sprint cerrado no cambia, en `src/sprint/close_sprint_test.go`
+- [x] T016 [US1] Si T001 muestra que HU-03 no rechaza horas en historias fuera del Sprint activo, escribir su prueba (Sprint finalizado y historia devuelta) y agregar la regla en el dominio de HU-03 junto a sus reglas; si ya existe, escribir solo la prueba y avisar a quien mantiene HU-03
+- [x] T017 [P] [US1] Escribir los escenarios BDD de cierre exitoso, historias completadas conservadas, datos del Sprint congelados, Sprint sin historias completadas e historias devueltas disponibles en `test/web_close_bdd_test.go`
 
 ### Implementation for User Story 1
 
