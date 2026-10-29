@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
@@ -43,8 +44,12 @@ func (s *cierreBDDStore) FindSprint(ctx context.Context, projectID, sprintID int
 	return found, nil
 }
 
-func (s *cierreBDDStore) CloseSprint(ctx context.Context, sprintID int64) (sprint.CloseResult, error) {
-	return s.closer.CloseSprint(ctx, sprintID)
+func (s *cierreBDDStore) CloseSprint(
+	ctx context.Context,
+	sprintID int64,
+	check sprint.ClosureCheck,
+) (sprint.CloseResult, error) {
+	return s.closer.CloseSprint(ctx, sprintID, check)
 }
 
 type cierreBDDFallaAlCerrarStore struct {
@@ -52,18 +57,22 @@ type cierreBDDFallaAlCerrarStore struct {
 	err error
 }
 
-func (s cierreBDDFallaAlCerrarStore) CloseSprint(context.Context, int64) (sprint.CloseResult, error) {
+func (s cierreBDDFallaAlCerrarStore) CloseSprint(context.Context, int64, sprint.ClosureCheck) (sprint.CloseResult, error) {
 	return sprint.CloseResult{}, s.err
 }
 
-type cierreBDDValidator struct {
-	store *metrics.PostgreSQLMetricsStore
-}
+type cierreBDDValidator struct{}
 
-func (v cierreBDDValidator) ValidateSprintClosure(_ context.Context, sprintID int64) error {
-	data, err := v.store.LoadSprintData(sprintID)
-	if err != nil {
-		return err
+// ValidateSprintClosure aplica HU-07 a las historias que el cierre bloqueó, como el adaptador de main.
+func (cierreBDDValidator) ValidateSprintClosure(_ context.Context, stories []sprint.ClosingStory) error {
+	data := metrics.SprintData{Stories: make([]metrics.CompletedStory, 0, len(stories))}
+	for _, story := range stories {
+		data.Stories = append(data.Stories, metrics.CompletedStory{
+			ID:          story.ID,
+			Status:      backlog.StoryStatus(story.Status),
+			StoryPoints: story.StoryPoints,
+			ActualHours: story.ActualHours,
+		})
 	}
 	return metrics.ValidateSprintClosure(data)
 }
@@ -112,7 +121,7 @@ func nuevaCierreBDDAppConSprintYStore(
 	}
 	service := sprint.NewCloseSprintService(
 		closeStore,
-		cierreBDDValidator{store: metrics.NewPostgreSQLMetricsStore(fixture.db)},
+		cierreBDDValidator{},
 	)
 	if err := web.RegisterClose(server, service, web.NewPostgreSQLBoardCatalog(fixture.db)); err != nil {
 		t.Fatalf("no se pudo registrar la sección Cierre de Sprint: %v", err)

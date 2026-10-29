@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math/big"
 )
 
 // PostgreSQLSprintCloser conecta el puerto de cierre a PostgreSQL.
@@ -45,9 +46,14 @@ func (s *PostgreSQLSprintCloser) FindSprint(ctx context.Context, projectID, spri
 }
 
 // CloseSprint cierra el Sprint y devuelve las historias incompletas al Backlog en una transacción.
-func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64) (CloseResult, error) {
+// Las historias del cierre son las de user_stories.active_sprint_id; check las valida después de
+// bloquearlas, con los datos leídos en la misma transacción.
+func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64, check ClosureCheck) (CloseResult, error) {
 	if s == nil || s.db == nil {
 		return CloseResult{}, errors.New("PostgreSQL database connection is required")
+	}
+	if check == nil {
+		return CloseResult{}, errors.New("closure check is required")
 	}
 	if sprintID <= 0 {
 		return CloseResult{}, ErrSprintNotFound
@@ -78,8 +84,10 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 		return CloseResult{}, fmt.Errorf("sprint %d has unsupported status %q", sprintID, status)
 	}
 
+	// FOR UPDATE espera a las transacciones que modifican estas historias y devuelve su versión
+	// confirmada: la validación ve el estado con el que se va a cerrar.
 	storyRows, err := tx.QueryContext(ctx, `
-		SELECT id
+		SELECT id, status, story_points
 		FROM user_stories
 		WHERE active_sprint_id = $1
 		ORDER BY id
@@ -89,12 +97,23 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 	if err != nil {
 		return CloseResult{}, fmt.Errorf("lock stories for sprint %d: %w", sprintID, err)
 	}
+	var stories []ClosingStory
 	for storyRows.Next() {
-		var storyID int64
-		if err := storyRows.Scan(&storyID); err != nil {
+		var (
+			story       ClosingStory
+			status      string
+			storyPoints sql.NullInt64
+		)
+		if err := storyRows.Scan(&story.ID, &status, &storyPoints); err != nil {
 			_ = storyRows.Close()
 			return CloseResult{}, fmt.Errorf("scan story locked for sprint %d: %w", sprintID, err)
 		}
+		story.Status = StoryStatus(status)
+		if storyPoints.Valid {
+			points := int(storyPoints.Int64)
+			story.StoryPoints = &points
+		}
+		stories = append(stories, story)
 	}
 	if err := storyRows.Err(); err != nil {
 		_ = storyRows.Close()
@@ -102,6 +121,13 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 	}
 	if err := storyRows.Close(); err != nil {
 		return CloseResult{}, fmt.Errorf("close story rows for sprint %d: %w", sprintID, err)
+	}
+
+	if err := loadClosingStoryHours(ctx, tx, sprintID, stories); err != nil {
+		return CloseResult{}, err
+	}
+	if err := check(ctx, stories); err != nil {
+		return CloseResult{}, err
 	}
 
 	var completedCount int
@@ -180,4 +206,52 @@ func (s *PostgreSQLSprintCloser) CloseSprint(ctx context.Context, sprintID int64
 		CompletedCount: completedCount,
 		ReturnedCount:  int(returnedCount),
 	}, nil
+}
+
+// loadClosingStoryHours completa las horas registradas de las historias bloqueadas, leídas con la
+// misma transacción del cierre.
+func loadClosingStoryHours(ctx context.Context, tx *sql.Tx, sprintID int64, stories []ClosingStory) error {
+	if len(stories) == 0 {
+		return nil
+	}
+	index := make(map[int64]int, len(stories))
+	for i, story := range stories {
+		index[story.ID] = i
+	}
+
+	rows, err := tx.QueryContext(ctx, `
+		SELECT el.story_id, SUM(el.hours)::text
+		FROM effort_logs AS el
+		JOIN user_stories AS us ON us.id = el.story_id
+		WHERE us.active_sprint_id = $1
+		GROUP BY el.story_id`,
+		sprintID,
+	)
+	if err != nil {
+		return fmt.Errorf("load effort of stories for sprint %d: %w", sprintID, err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			storyID int64
+			total   string
+		)
+		if err := rows.Scan(&storyID, &total); err != nil {
+			return fmt.Errorf("scan effort of story for sprint %d: %w", sprintID, err)
+		}
+		i, ok := index[storyID]
+		if !ok {
+			continue
+		}
+		hours, ok := new(big.Rat).SetString(total)
+		if !ok {
+			return fmt.Errorf("parse effort of story %d: invalid decimal %q", storyID, total)
+		}
+		stories[i].ActualHours = hours
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("iterate effort of stories for sprint %d: %w", sprintID, err)
+	}
+	return nil
 }

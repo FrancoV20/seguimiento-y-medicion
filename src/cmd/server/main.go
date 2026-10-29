@@ -155,7 +155,7 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	// Cierre de Sprint: valida con HU-07 y persiste el cierre atómico (HU-15).
 	closeService := sprint.NewCloseSprintService(
 		sprint.NewPostgreSQLSprintCloser(database),
-		sprintClosureValidator{store: metrics.NewPostgreSQLMetricsStore(database)},
+		sprintClosureValidator{},
 	)
 	if err := web.RegisterClose(srv, closeService, web.NewPostgreSQLBoardCatalog(database)); err != nil {
 		_ = ln.Close()
@@ -173,14 +173,18 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	return 0
 }
 
-type sprintClosureValidator struct {
-	store *metrics.PostgreSQLMetricsStore
-}
+// sprintClosureValidator aplica las reglas de HU-07 a las historias que el cierre bloqueó (HU-15).
+type sprintClosureValidator struct{}
 
-func (v sprintClosureValidator) ValidateSprintClosure(_ context.Context, sprintID int64) error {
-	data, err := v.store.LoadSprintData(sprintID)
-	if err != nil {
-		return err
+func (sprintClosureValidator) ValidateSprintClosure(_ context.Context, stories []sprint.ClosingStory) error {
+	data := metrics.SprintData{Stories: make([]metrics.CompletedStory, 0, len(stories))}
+	for _, story := range stories {
+		data.Stories = append(data.Stories, metrics.CompletedStory{
+			ID:          story.ID,
+			Status:      backlog.StoryStatus(story.Status),
+			StoryPoints: story.StoryPoints,
+			ActualHours: story.ActualHours,
+		})
 	}
 	return metrics.ValidateSprintClosure(data)
 }

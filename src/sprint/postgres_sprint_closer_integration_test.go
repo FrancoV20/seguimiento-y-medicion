@@ -19,7 +19,7 @@ func TestPostgreSQLSprintCloserCloseSprintPersistsSnapshotAndReturnsIncompleteSt
 	)
 	closer := NewPostgreSQLSprintCloser(db)
 
-	result, err := closer.CloseSprint(context.Background(), sprintID)
+	result, err := closer.CloseSprint(context.Background(), sprintID, allowClosure)
 	if err != nil {
 		t.Fatalf("CloseSprint() devolvió error: %v", err)
 	}
@@ -84,7 +84,7 @@ func TestPostgreSQLSprintCloserSnapshotDoesNotChangeAfterReassignmentOrStoryPoin
 	db, projectID, sprintID, stories := newSprintCloserIntegrationFixture(t, InProgress)
 	closer := NewPostgreSQLSprintCloser(db)
 
-	if _, err := closer.CloseSprint(context.Background(), sprintID); err != nil {
+	if _, err := closer.CloseSprint(context.Background(), sprintID, allowClosure); err != nil {
 		t.Fatalf("CloseSprint() devolvió error: %v", err)
 	}
 	story := stories[0]
@@ -183,7 +183,7 @@ func TestPostgreSQLSprintCloserRollsBackWhenFinalSprintUpdateFails(t *testing.T)
 		}
 	})
 
-	_, closeErr := NewPostgreSQLSprintCloser(db).CloseSprint(context.Background(), sprintID)
+	_, closeErr := NewPostgreSQLSprintCloser(db).CloseSprint(context.Background(), sprintID, allowClosure)
 	if closeErr == nil {
 		t.Fatal("CloseSprint() no devolvió error ante el fallo inyectado")
 	}
@@ -245,7 +245,7 @@ func TestPostgreSQLSprintCloserConcurrentCloseAppliesOnlyOnce(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			<-start
-			_, err := closer.CloseSprint(context.Background(), sprintID)
+			_, err := closer.CloseSprint(context.Background(), sprintID, allowClosure)
 			results <- err
 		}()
 	}
@@ -349,6 +349,9 @@ func assertSprintStoryResult(t *testing.T, db *sql.DB, sprintID int64, story spr
 			story.id, storyPoints, story.storyPoints)
 	}
 }
+
+// allowClosure es una validación que acepta cualquier conjunto de historias.
+func allowClosure(context.Context, []ClosingStory) error { return nil }
 
 func testDatabaseURL(t *testing.T) string {
 	t.Helper()

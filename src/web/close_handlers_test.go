@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
@@ -44,8 +45,12 @@ func (s *closeHandlerStore) FindSprint(ctx context.Context, projectID, sprintID 
 	return found, nil
 }
 
-func (s *closeHandlerStore) CloseSprint(ctx context.Context, sprintID int64) (sprint.CloseResult, error) {
-	return s.closer.CloseSprint(ctx, sprintID)
+func (s *closeHandlerStore) CloseSprint(
+	ctx context.Context,
+	sprintID int64,
+	check sprint.ClosureCheck,
+) (sprint.CloseResult, error) {
+	return s.closer.CloseSprint(ctx, sprintID, check)
 }
 
 type failingCloseHandlerStore struct {
@@ -53,18 +58,22 @@ type failingCloseHandlerStore struct {
 	err error
 }
 
-func (s failingCloseHandlerStore) CloseSprint(context.Context, int64) (sprint.CloseResult, error) {
+func (s failingCloseHandlerStore) CloseSprint(context.Context, int64, sprint.ClosureCheck) (sprint.CloseResult, error) {
 	return sprint.CloseResult{}, s.err
 }
 
-type closeHandlerValidator struct {
-	store *metrics.PostgreSQLMetricsStore
-}
+type closeHandlerValidator struct{}
 
-func (v closeHandlerValidator) ValidateSprintClosure(_ context.Context, sprintID int64) error {
-	data, err := v.store.LoadSprintData(sprintID)
-	if err != nil {
-		return err
+// ValidateSprintClosure aplica HU-07 a las historias que el cierre bloqueó, como el adaptador de main.
+func (closeHandlerValidator) ValidateSprintClosure(_ context.Context, stories []sprint.ClosingStory) error {
+	data := metrics.SprintData{Stories: make([]metrics.CompletedStory, 0, len(stories))}
+	for _, story := range stories {
+		data.Stories = append(data.Stories, metrics.CompletedStory{
+			ID:          story.ID,
+			Status:      backlog.StoryStatus(story.Status),
+			StoryPoints: story.StoryPoints,
+			ActualHours: story.ActualHours,
+		})
 	}
 	return metrics.ValidateSprintClosure(data)
 }
@@ -86,7 +95,7 @@ func newCloseHandlerFixture(t *testing.T) *closeHandlerFixture {
 		}
 		service := sprint.NewCloseSprintService(
 			store,
-			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(serviceDB)},
+			closeHandlerValidator{},
 		)
 		if err := RegisterClose(server, service, NewPostgreSQLBoardCatalog(serviceDB)); err != nil {
 			t.Fatalf("no se pudo registrar la sección de cierre: %v", err)
@@ -108,7 +117,7 @@ func newCloseHandlerFixtureWithStore(
 		serviceDB = openContextTestDB(t)
 		service := sprint.NewCloseSprintService(
 			newStore(serviceDB),
-			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(serviceDB)},
+			closeHandlerValidator{},
 		)
 		if err := RegisterClose(server, service, NewPostgreSQLBoardCatalog(serviceDB)); err != nil {
 			t.Fatalf("no se pudo registrar la sección de cierre: %v", err)
@@ -532,7 +541,7 @@ func TestCloseHandler_FallaDeLecturaMuestraPaginaDeError(t *testing.T) {
 		store := &closeHandlerStore{db: db, closer: sprint.NewPostgreSQLSprintCloser(db)}
 		service := sprint.NewCloseSprintService(
 			store,
-			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(db)},
+			closeHandlerValidator{},
 		)
 		if err := RegisterClose(server, service, failingCloseBoardCatalog{}); err != nil {
 			t.Fatalf("no se pudo registrar la sección de cierre: %v", err)
@@ -825,7 +834,7 @@ func TestCloseHandler_RechazaCargaDeEsfuerzoDespuesDelCierre(t *testing.T) {
 	}
 	service := sprint.NewCloseSprintService(
 		store,
-		closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(app.fx.db)},
+		closeHandlerValidator{},
 	)
 	if _, err := service.CloseSprint(context.Background(), app.fx.projectA, app.fx.sprintA); err != nil {
 		t.Fatalf("no se pudo cerrar el Sprint con el servicio real: %v", err)

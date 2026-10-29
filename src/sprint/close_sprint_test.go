@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 )
@@ -496,8 +497,9 @@ func (s *postgresCloseSprintServiceStore) FindSprint(
 func (s *postgresCloseSprintServiceStore) CloseSprint(
 	ctx context.Context,
 	sprintID int64,
+	check ClosureCheck,
 ) (CloseResult, error) {
-	return s.closer.CloseSprint(ctx, sprintID)
+	return s.closer.CloseSprint(ctx, sprintID, check)
 }
 
 type closeSprintTestValidator struct {
@@ -505,13 +507,19 @@ type closeSprintTestValidator struct {
 	calls int
 }
 
-func (v *closeSprintTestValidator) ValidateSprintClosure(_ context.Context, sprintID int64) error {
+// ValidateSprintClosure aplica HU-07 a las historias que el cierre bloqueó, como el adaptador de main.
+func (v *closeSprintTestValidator) ValidateSprintClosure(_ context.Context, stories []ClosingStory) error {
 	v.calls++
-	sprintData, err := metrics.NewPostgreSQLMetricsStore(v.db).LoadSprintData(sprintID)
-	if err != nil {
-		return err
+	data := metrics.SprintData{Stories: make([]metrics.CompletedStory, 0, len(stories))}
+	for _, story := range stories {
+		data.Stories = append(data.Stories, metrics.CompletedStory{
+			ID:          story.ID,
+			Status:      backlog.StoryStatus(story.Status),
+			StoryPoints: story.StoryPoints,
+			ActualHours: story.ActualHours,
+		})
 	}
-	return metrics.ValidateSprintClosure(sprintData)
+	return metrics.ValidateSprintClosure(data)
 }
 
 func intPointer(value int) *int {

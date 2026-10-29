@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/big"
 )
 
 // CloseResult informa el resultado del cierre confirmado.
@@ -13,15 +14,31 @@ type CloseResult struct {
 	ReturnedCount  int
 }
 
-// SprintCloseStore consulta la pertenencia del Sprint y delega el cierre atómico.
-type SprintCloseStore interface {
-	FindSprint(ctx context.Context, projectID, sprintID int64) (Sprint, error)
-	CloseSprint(ctx context.Context, sprintID int64) (CloseResult, error)
+// ClosingStory es una historia que forma parte del cierre, leída dentro de la transacción de
+// cierre después de bloquearla. Las historias del cierre son las que tienen active_sprint_id igual
+// al Sprint que se cierra.
+type ClosingStory struct {
+	ID          int64
+	Status      StoryStatus
+	StoryPoints *int
+	ActualHours *big.Rat
 }
 
-// SprintClosureValidator aplica las reglas de cierre definidas por HU-07.
+// ClosureCheck valida las historias bloqueadas antes de aplicar el cierre. Si devuelve error, el
+// cierre se revierte sin cambios.
+type ClosureCheck func(ctx context.Context, stories []ClosingStory) error
+
+// SprintCloseStore consulta la pertenencia del Sprint y delega el cierre atómico. CloseSprint debe
+// ejecutar check dentro de la transacción, después de bloquear el Sprint y sus historias.
+type SprintCloseStore interface {
+	FindSprint(ctx context.Context, projectID, sprintID int64) (Sprint, error)
+	CloseSprint(ctx context.Context, sprintID int64, check ClosureCheck) (CloseResult, error)
+}
+
+// SprintClosureValidator aplica las reglas de cierre definidas por HU-07 sobre las historias que
+// se cierran.
 type SprintClosureValidator interface {
-	ValidateSprintClosure(ctx context.Context, sprintID int64) error
+	ValidateSprintClosure(ctx context.Context, stories []ClosingStory) error
 }
 
 // CloseSprintService orquesta las validaciones del caso de uso y el cierre persistente.
@@ -35,7 +52,8 @@ func NewCloseSprintService(store SprintCloseStore, validator SprintClosureValida
 	return &CloseSprintService{store: store, validator: validator}
 }
 
-// CloseSprint valida la pertenencia, el estado activo y las reglas HU-07 antes de cerrar.
+// CloseSprint valida la pertenencia y el estado activo, y cierra el Sprint aplicando las reglas de
+// HU-07 dentro de la transacción de cierre.
 func (s *CloseSprintService) CloseSprint(
 	ctx context.Context,
 	projectID int64,
@@ -59,19 +77,25 @@ func (s *CloseSprintService) CloseSprint(
 		return CloseResult{}, ErrSprintAlreadyClosed
 	}
 
-	if err := s.validator.ValidateSprintClosure(ctx, sprintID); err != nil {
-		return CloseResult{}, fmt.Errorf("%w: %w", ErrCloseBlocked, err)
+	check := func(ctx context.Context, stories []ClosingStory) error {
+		if err := s.validator.ValidateSprintClosure(ctx, stories); err != nil {
+			return fmt.Errorf("%w: %w", ErrCloseBlocked, err)
+		}
+		return nil
 	}
 
-	result, err := s.store.CloseSprint(ctx, sprintID)
+	result, err := s.store.CloseSprint(ctx, sprintID, check)
 	if err != nil {
-		if errors.Is(err, ErrSprintNotFound) {
+		switch {
+		case errors.Is(err, ErrCloseBlocked):
+			return CloseResult{}, err
+		case errors.Is(err, ErrSprintNotFound):
 			return CloseResult{}, ErrSprintNotFound
-		}
-		if errors.Is(err, ErrSprintAlreadyClosed) {
+		case errors.Is(err, ErrSprintAlreadyClosed):
 			return CloseResult{}, ErrSprintAlreadyClosed
+		default:
+			return CloseResult{}, fmt.Errorf("%w: cerrar Sprint", ErrPersistence)
 		}
-		return CloseResult{}, fmt.Errorf("%w: cerrar Sprint", ErrPersistence)
 	}
 	result.SprintNumber = sprint.Number
 	return result, nil
