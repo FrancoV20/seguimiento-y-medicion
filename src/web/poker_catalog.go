@@ -2,8 +2,9 @@ package web
 
 import "context"
 
-// Modelo de vista de Planning Poker (HU-05a). Ningún tipo guarda el valor del voto de otro
-// integrante: el único valor es OwnVote, el del integrante identificado.
+// Modelo de vista de Planning Poker (HU-05a). Ningún tipo de las rondas abiertas guarda el valor
+// del voto de otro integrante: el único valor es OwnVote, el del integrante identificado. Los
+// valores ajenos solo viven en PokerRevealedVoteView, que se llena desde rondas cerradas (HU-05b).
 
 // PokerStoryOption es una historia del selector "Abrir ronda".
 type PokerStoryOption struct {
@@ -29,10 +30,27 @@ type PokerRoundView struct {
 	OwnVote      *int // voto del integrante identificado; nil si no votó
 }
 
+// PokerRevealedVoteView es un integrante en una ronda cerrada (HU-05b): su valor ya revelado, o
+// nil si no votó.
+type PokerRevealedVoteView struct {
+	MemberID int64
+	Name     string
+	Value    *int
+}
+
+// PokerClosedRoundView es una ronda cerrada del proyecto con sus votos revelados (HU-05b).
+type PokerClosedRoundView struct {
+	ID, StoryID int64
+	StoryTitle  string
+	Number      int
+	Votes       []PokerRevealedVoteView
+}
+
 // PokerBoard es todo lo que muestra la pantalla.
 type PokerBoard struct {
-	Stories []PokerStoryOption
-	Rounds  []PokerRoundView
+	Stories      []PokerStoryOption
+	Rounds       []PokerRoundView
+	ClosedRounds []PokerClosedRoundView // HU-05b: de la más recientemente cerrada a la más antigua
 }
 
 // PokerCatalog es la lectura de la pantalla, filtrada por el proyecto del contexto.

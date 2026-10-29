@@ -35,7 +35,27 @@
     </fieldset>
     <button type="submit">Votar</button>
   </form>
+  <form method="post" action="/planning-poker/cerrar">
+    <input type="hidden" name="ronda" value="{{.ID}}">
+    <button type="submit">Cerrar ronda</button>
+  </form>
 </section>
 {{end}}
+
+<section aria-labelledby="poker-closed-title">
+  <h2 id="poker-closed-title">Rondas cerradas</h2>
+  {{if not .ClosedRounds}}<p class="empty">{{.NoClosedRounds}}</p>{{end}}
+  {{range .ClosedRounds}}
+  <section class="poker-closed-round" data-ronda-cerrada="{{.ID}}" aria-labelledby="poker-closed-{{.ID}}">
+    <h3 id="poker-closed-{{.ID}}">{{.StoryTitle}}</h3>
+    <p>Ronda {{.Number}}</p>
+    <ul class="poker-revealed">
+      {{range .Votes}}<li data-integrante="{{.MemberID}}">{{.Name}}: {{if .Value}}{{.Value}}{{else}}{{$.Data.DidNotVote}}{{end}}</li>
+      {{end}}
+    </ul>
+    {{with .Alert}}{{template "alert" .}}{{else}}{{with .Range}}<p class="poker-range">{{.}}</p>{{end}}{{end}}
+  </section>
+  {{end}}
+</section>
 {{end}}
 {{end}}

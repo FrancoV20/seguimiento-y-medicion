@@ -194,30 +194,30 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
 
 ### Implementación (GREEN)
 
-- [ ] T021 Agregar en `src/web/poker_catalog.go` `PokerRevealedVoteView{MemberID int64; Name string; Value *int}`,
+- [x] T021 Agregar en `src/web/poker_catalog.go` `PokerRevealedVoteView{MemberID int64; Name string; Value *int}`,
   `PokerClosedRoundView{ID, StoryID int64; StoryTitle string; Number int; Votes []PokerRevealedVoteView}` y
   `PokerBoard.ClosedRounds`; en `src/web/postgres_poker_catalog.go`, las consultas `pokerClosedRoundsQuery` y
   `pokerRevealedVotesQuery` de `data-model.md` dentro de la misma transacción de `PokerBoard`, con `pokerEach` y un
   índice por id (`ClosedRounds` nunca nil).
-- [ ] T022 [P] Agregar en `src/web/poker_messages.go` `MsgPokerNoVotes` "La ronda no tiene votos",
+- [x] T022 [P] Agregar en `src/web/poker_messages.go` `MsgPokerNoVotes` "La ronda no tiene votos",
   `MsgPokerNoClosedRounds` "Aún no hay rondas cerradas", `LabelPokerDidNotVote` "No votó",
   `pokerRoundClosedMessage(title)` → "Ronda cerrada para la historia «title»", `pokerDivergenceMessage(low, high)` →
   "Divergencia: los votos van de X a Y. Debatan antes de acordar la estimación" y `pokerNoDivergenceMessage(low,
   high)` → "Sin divergencia: los votos van de X a Y"; y en `src/web/poker_form.go` el caso `poker.ErrNoVotes` → 409
   `MsgPokerNoVotes` en `pokerOutcomeFor`.
-- [ ] T023 En `src/web/poker_handlers.go`: `CloseRound(ctx, projectID, roundID, memberID int64) (poker.ClosedRound,
+- [x] T023 En `src/web/poker_handlers.go`: `CloseRound(ctx, projectID, roundID, memberID int64) (poker.ClosedRound,
   error)` en `PokerActions`; `"POST " + pathPoker + "/cerrar": http.HandlerFunc(h.close)` en el mismo `Routes` de
   `RegisterPlanningPoker`; `close` (lee `ronda` con `pokerFormIDs`, llama a `CloseRound` con proyecto e integrante de
   `ActiveContextFrom`, `reject` o `done(w, r, pokerRoundClosedMessage(closed.StoryTitle))`); y en `render`,
   `pokerClosedRoundPage{PokerClosedRoundView; Alert *Flash; Range string}` armado con `poker.Spread` (`data-model.md`,
   "Modelo de vista": divergencia → `FlashWarning`; sin divergencia → `Range`; error → ninguno) y `pokerPageData` con
   `ClosedRounds`, `NoClosedRounds` y `DidNotVote`.
-- [ ] T024 Completar `src/web/templates/poker.html` según `data-model.md`, "Pantalla": formulario "Cerrar ronda" en
+- [x] T024 Completar `src/web/templates/poker.html` según `data-model.md`, "Pantalla": formulario "Cerrar ronda" en
   cada ronda abierta y, al final de la página, la sección "Rondas cerradas" (`data-ronda-cerrada`, `data-integrante`,
   valor o "No votó",
   `{{with .Alert}}{{template "alert" .}}{{end}}` o `<p class="poker-range">`, "Aún no hay rondas cerradas"). Sin
   JavaScript.
-- [ ] T025 Ejecutar T016–T019 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a.
+- [x] T025 Ejecutar T016–T019 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a.
 
 **Punto de control**: el Scrum Master cierra rondas y el equipo ve los votos y las divergencias.
 
