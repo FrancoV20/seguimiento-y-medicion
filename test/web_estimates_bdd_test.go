@@ -413,3 +413,118 @@ func TestWebEstimatesBDD_ErrorAlGuardar(t *testing.T) {
 		t.Errorf("el valor anterior cambió a %q", got)
 	}
 }
+
+// --- US3: ver las estimaciones (T033) ---
+
+func (a *hu17BDDApp) givenStoryWith(t *testing.T, name string, points *int, hours *float64, status string, effort ...string) (int64, string) {
+	t.Helper()
+	title := fmt.Sprintf("HU17 BDD %s %d", name, a.stamp)
+	var id int64
+	if err := a.db.QueryRow(`
+		INSERT INTO user_stories (project_id, title, description, priority, story_points, estimated_hours, status)
+		VALUES ($1, $2, 'Historia BDD de HU-17', 'Media', $3, $4, $5) RETURNING id`,
+		a.projectID, title, points, hours, status).Scan(&id); err != nil {
+		t.Fatalf("crear la historia %q: %v", title, err)
+	}
+	for _, h := range effort {
+		if _, err := a.db.Exec(`
+			INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
+			VALUES ($1, $2, CURRENT_DATE, 'Trabajo BDD', $3::numeric)`, id, a.memberID, h); err != nil {
+			t.Fatalf("registrar horas reales: %v", err)
+		}
+	}
+	return id, title
+}
+
+func (a *hu17BDDApp) whenOpenEstimates(t *testing.T) string {
+	t.Helper()
+	resp, body := a.do(t, http.MethodGet, "/estimaciones", nil)
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("abrir Estimaciones: estado %d; se esperaba 200", resp.StatusCode)
+	}
+	return body
+}
+
+func hu17BDDRowOf(t *testing.T, body, title string) string {
+	t.Helper()
+	for _, row := range hu17BDDRow.FindAllString(body, -1) {
+		if strings.Contains(row, title) {
+			return row
+		}
+	}
+	t.Fatalf("no se encontró la historia %q en la pantalla Estimaciones", title)
+	return ""
+}
+
+// Escenario: Lista de estimaciones.
+func TestWebEstimatesBDD_ListaDeEstimaciones(t *testing.T) {
+	// Given un proyecto con historias
+	app := newHU17BDDApp(t)
+	five, eight := 5, 8.0
+	_, title := app.givenStoryWith(t, "lista", &five, &eight, "En progreso", "1.5", "0.5")
+
+	// When abro "Estimaciones"
+	body := app.whenOpenEstimates(t)
+
+	// Then veo cada historia con su título, estado, Story Points, horas estimadas y horas reales
+	hu17BDDThenRowShows(t, body, title, "En progreso", "5", "8", "2")
+	if strings.Contains(body, "Sin estimar") {
+		t.Error("una historia estimada no debía mostrarse como \"Sin estimar\"")
+	}
+}
+
+// Escenario: Historia sin estimar.
+func TestWebEstimatesBDD_HistoriaSinEstimar(t *testing.T) {
+	// Given una historia sin horas estimadas
+	app := newHU17BDDApp(t)
+	five := 5
+	_, title := app.givenStoryWith(t, "sin estimar", &five, nil, "Pendiente")
+
+	// When abro "Estimaciones"
+	body := app.whenOpenEstimates(t)
+
+	// Then la veo como "Sin estimar" y no como cero (las horas reales sí se muestran como 0)
+	row := hu17BDDRowOf(t, body, title)
+	hu17BDDThenRowShows(t, body, title, "Sin estimar", "5", "0")
+	if n := len(regexp.MustCompile(`>\s*0\s*<`).FindAllString(row, -1)); n != 1 {
+		t.Errorf("solo las horas reales debían mostrarse como 0; apareció %d veces: %s", n, row)
+	}
+}
+
+// Escenario: Historia bloqueada en la lista.
+func TestWebEstimatesBDD_HistoriaBloqueadaEnLaLista(t *testing.T) {
+	// Given una historia de un Sprint finalizado
+	app := newHU17BDDApp(t)
+	five := 5.0
+	storyID, title := app.givenStoryWith(t, "bloqueada", nil, &five, "Hecho")
+	app.givenFinishedSprintWith(t, storyID)
+
+	// When abro "Estimaciones"
+	body := app.whenOpenEstimates(t)
+
+	// Then su campo de horas aparece deshabilitado con el motivo "Sprint finalizado"
+	row := hu17BDDRowOf(t, body, title)
+	if !regexp.MustCompile(`<input\b[^>]*\bname="horas_estimadas"[^>]*\bdisabled\b`).MatchString(row) {
+		t.Errorf("el campo de horas debía estar deshabilitado: %s", row)
+	}
+	if !strings.Contains(row, "Sprint finalizado") {
+		t.Errorf("la fila debía mostrar el motivo \"Sprint finalizado\": %s", row)
+	}
+}
+
+// Escenario: Sin historias.
+func TestWebEstimatesBDD_SinHistorias(t *testing.T) {
+	// Given un proyecto sin historias
+	app := newHU17BDDApp(t)
+
+	// When abro "Estimaciones"
+	body := app.whenOpenEstimates(t)
+
+	// Then veo "Aún no hay historias"
+	if n := strings.Count(body, "Aún no hay historias"); n != 1 {
+		t.Errorf("el estado vacío debía aparecer una vez; apareció %d", n)
+	}
+	if strings.Contains(body, `name="horas_estimadas"`) {
+		t.Error("sin historias no debían mostrarse campos de horas")
+	}
+}

@@ -48,14 +48,23 @@ func newHU17EstimatesApp(t *testing.T) *hu17EstimatesApp {
 // una falla de guardado).
 func newHU17EstimatesAppWithStore(t *testing.T, wrap func(backlog.EstimateStore) backlog.EstimateStore) *hu17EstimatesApp {
 	t.Helper()
+	return newHU17EstimatesAppWith(t, wrap, nil)
+}
+
+// newHU17EstimatesAppWith permite además reemplazar el catálogo de lectura (por ejemplo, para
+// simular una falla al leer las historias).
+func newHU17EstimatesAppWith(t *testing.T, wrap func(backlog.EstimateStore) backlog.EstimateStore, catalogFor func(*sql.DB) EstimateCatalog) *hu17EstimatesApp {
+	t.Helper()
 	app := newCtxApp(t, nil)
 	var store backlog.EstimateStore = backlog.NewPostgreSQLEstimateStore(app.db)
 	if wrap != nil {
 		store = wrap(store)
 	}
-	if err := RegisterEstimates(app.srv,
-		backlog.NewEstimateService(store),
-		NewPostgreSQLEstimateCatalog(app.db)); err != nil {
+	var catalog EstimateCatalog = NewPostgreSQLEstimateCatalog(app.db)
+	if catalogFor != nil {
+		catalog = catalogFor(app.db)
+	}
+	if err := RegisterEstimates(app.srv, backlog.NewEstimateService(store), catalog); err != nil {
 		t.Fatalf("no se pudo registrar la sección Estimaciones: %v", err)
 	}
 	// Corre antes que la limpieza del fixture de contexto: libera horas e historias.
@@ -505,4 +514,152 @@ func TestEstimatesHandler_ErroresNoExponenDetallesInternos(t *testing.T) {
 	if got := app.storedHours(t, storyID); got != "8.00" {
 		t.Errorf("el valor anterior cambió a %q", got)
 	}
+}
+
+// --- US3: ver las estimaciones (T028 a T032) ---
+
+const (
+	hu17MsgNotEstimated = "Sin estimar"
+	hu17MsgNoStories    = "Aún no hay historias"
+	hu17LockedReason    = "Sprint finalizado"
+)
+
+// insertStoryWith crea una historia con Story Points, horas estimadas y estado a elección.
+func (a *hu17EstimatesApp) insertStoryWith(t *testing.T, projectID int64, name string, points *int, hours *float64, status string) (int64, string) {
+	t.Helper()
+	title := fmt.Sprintf("HU17 %s %d", name, a.stamp)
+	var id int64
+	if err := a.db.QueryRow(`
+		INSERT INTO user_stories (project_id, title, description, priority, story_points, estimated_hours, status)
+		VALUES ($1, $2, 'Historia de prueba HU-17', 'Media', $3, $4, $5) RETURNING id`,
+		projectID, title, points, hours, status).Scan(&id); err != nil {
+		t.Fatalf("no se pudo crear la historia %q: %v", title, err)
+	}
+	return id, title
+}
+
+var hu17DisabledInputPattern = regexp.MustCompile(`<input\b[^>]*\bname="horas_estimadas"[^>]*\bdisabled\b[^>]*>`)
+
+// T028: la lista muestra título, estado, Story Points, horas estimadas y reales, solo del proyecto
+// activo, más recientes primero y en menos de 500 ms (SC-007).
+func TestEstimatesHandler_ListaLasHistoriasDelProyectoActivo(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	five, thirteen := 5, 13
+	eight, twoAndHalf := 8.0, 2.5
+	oldest, oldestTitle := app.insertStoryWith(t, app.fx.projectA, "lista antigua", &five, &eight, "Pendiente")
+	app.addEffort(t, oldest, "1.5", "2.25")
+	_, newestTitle := app.insertStoryWith(t, app.fx.projectA, "lista reciente", &thirteen, &twoAndHalf, "En progreso")
+	_, foreignTitle := app.insertStoryWith(t, app.fx.projectB, "lista ajena", &five, &eight, "Pendiente")
+	app.chooseProject(t, app.fx.projectA)
+
+	start := time.Now()
+	resp, body := app.page(t)
+	elapsed := time.Since(start)
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET %s: estado %d; se esperaba 200", hu17PathEstimates, resp.StatusCode)
+	}
+	if elapsed >= 500*time.Millisecond {
+		t.Errorf("la pantalla tardó %v; se esperaba menos de 500 ms", elapsed)
+	}
+
+	old := hu17StoryRow(t, body, oldestTitle)
+	for value, what := range map[string]string{"Pendiente": "el estado", "5": "los Story Points", "8": "las horas estimadas", "3,75": "las horas reales"} {
+		hu17AssertCell(t, old, value, what)
+	}
+	recent := hu17StoryRow(t, body, newestTitle)
+	for value, what := range map[string]string{"En progreso": "el estado", "13": "los Story Points", "2,5": "las horas estimadas", "0": "las horas reales"} {
+		hu17AssertCell(t, recent, value, what)
+	}
+	if strings.Index(body, newestTitle) > strings.Index(body, oldestTitle) {
+		t.Error("las historias más recientes debían aparecer primero")
+	}
+	if strings.Contains(body, foreignTitle) {
+		t.Errorf("no debían aparecer historias de otro proyecto (%q)", foreignTitle)
+	}
+}
+
+// T029: "Sin estimar" nunca se muestra como 0; sin horas reales se muestra 0.
+func TestEstimatesHandler_SinEstimarNuncaSeMuestraComoCero(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	_, title := app.insertStoryWith(t, app.fx.projectA, "sin estimar", nil, nil, "Pendiente")
+	app.chooseProject(t, app.fx.projectA)
+
+	_, body := app.page(t)
+	row := hu17StoryRow(t, body, title)
+	if n := strings.Count(row, hu17MsgNotEstimated); n != 2 {
+		t.Errorf("la fila debía mostrar %q en Story Points y en horas estimadas (2 veces); apareció %d: %s", hu17MsgNotEstimated, n, row)
+	}
+	if n := len(regexp.MustCompile(`>\s*0\s*<`).FindAllString(row, -1)); n != 1 {
+		t.Errorf("solo las horas reales debían mostrarse como 0 (1 vez); apareció %d: %s", n, row)
+	}
+	if got := hu17InputValue(t, row); got != "" {
+		t.Errorf("el campo de horas de una historia sin estimar debía estar vacío; tiene %q", got)
+	}
+}
+
+// T030: una historia de un Sprint finalizado tiene el campo deshabilitado con el motivo.
+func TestEstimatesHandler_HistoriaDeSprintFinalizadoTieneElCampoDeshabilitado(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	five := 5.0
+	locked, lockedTitle := app.insertStory(t, app.fx.projectA, "bloqueada", &five)
+	app.finishSprintWith(t, app.fx.projectA, locked)
+	_, editableTitle := app.insertStory(t, app.fx.projectA, "editable", &five)
+	app.chooseProject(t, app.fx.projectA)
+
+	_, body := app.page(t)
+	lockedRow := hu17StoryRow(t, body, lockedTitle)
+	if !hu17DisabledInputPattern.MatchString(lockedRow) {
+		t.Errorf("el campo de horas de la historia bloqueada debía estar deshabilitado: %s", lockedRow)
+	}
+	if !strings.Contains(lockedRow, hu17LockedReason) {
+		t.Errorf("la fila bloqueada debía mostrar el motivo %q: %s", hu17LockedReason, lockedRow)
+	}
+	hu17AssertCell(t, lockedRow, "5", "las horas estimadas")
+	editableRow := hu17StoryRow(t, body, editableTitle)
+	if hu17DisabledInputPattern.MatchString(editableRow) || strings.Contains(editableRow, hu17LockedReason) {
+		t.Errorf("una historia fuera de un Sprint finalizado no debía estar bloqueada: %s", editableRow)
+	}
+}
+
+// T031: un proyecto sin historias muestra "Aún no hay historias".
+func TestEstimatesHandler_SinHistoriasMuestraElEstadoVacio(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	app.insertStory(t, app.fx.projectA, "de otro proyecto", nil)
+	app.chooseProject(t, app.fx.projectB)
+
+	resp, body := app.page(t)
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET %s: estado %d; se esperaba 200", hu17PathEstimates, resp.StatusCode)
+	}
+	if n := strings.Count(body, hu17MsgNoStories); n != 1 {
+		t.Errorf("el estado vacío %q debía aparecer una vez; apareció %d", hu17MsgNoStories, n)
+	}
+	if strings.Contains(body, `name="horas_estimadas"`) || strings.Contains(body, "<table") {
+		t.Error("sin historias no debía mostrarse la tabla ni campos de horas")
+	}
+}
+
+// hu17FailingCatalog simula una falla al leer las historias.
+type hu17FailingCatalog struct{}
+
+func (hu17FailingCatalog) ListEstimates(context.Context, int64) ([]EstimateRow, error) {
+	return []EstimateRow{{ID: 1, Title: "HU17 fila parcial"}}, errors.New("simulated database failure: SELECT FROM user_stories")
+}
+
+// T032: si falla la lectura, se ve la página de error de HU-20a y no una lista incompleta.
+func TestEstimatesHandler_FallaDeLecturaMuestraLaPaginaDeError(t *testing.T) {
+	app := newHU17EstimatesAppWith(t, nil, func(*sql.DB) EstimateCatalog { return hu17FailingCatalog{} })
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, body := app.page(t)
+	if resp.StatusCode < http.StatusInternalServerError {
+		t.Errorf("estado = %d; se esperaba la página de error (500 o 503)", resp.StatusCode)
+	}
+	if !strings.Contains(body, TitleInternal) && !strings.Contains(body, TitleUnavailable) {
+		t.Errorf("debía verse la página de error de la aplicación: %s", body)
+	}
+	if strings.Contains(body, "HU17 fila parcial") || strings.Contains(body, `name="horas_estimadas"`) || strings.Contains(body, "<table") {
+		t.Error("no debía mostrarse una lista incompleta")
+	}
+	hu17AssertNoInternalDetails(t, body)
 }

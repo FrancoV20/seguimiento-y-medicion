@@ -97,12 +97,12 @@
 
 ### Tests for User Story 3
 
-- [ ] T028 [P] [US3] Escribir la prueba de handler de la lista: título, estado, Story Points, horas estimadas y reales, solo las historias del proyecto activo, más recientes primero y tiempo de respuesta, en `src/web/estimates_handlers_test.go`
-- [ ] T029 [P] [US3] Escribir la prueba de handler de "Sin estimar": una historia sin horas estimadas (o sin Story Points) nunca se muestra como 0 y una sin horas reales muestra 0, en `src/web/estimates_handlers_test.go`
-- [ ] T030 [P] [US3] Escribir la prueba de handler de una historia de un Sprint finalizado: campo deshabilitado con el motivo "Sprint finalizado", en `src/web/estimates_handlers_test.go`
-- [ ] T031 [P] [US3] Escribir la prueba de handler sin historias: "Aún no hay historias", en `src/web/estimates_handlers_test.go`
-- [ ] T032 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una lista incompleta, en `src/web/estimates_handlers_test.go`
-- [ ] T033 [P] [US3] Escribir los escenarios BDD de lista de estimaciones, historia sin estimar, historia bloqueada en la lista y sin historias en `test/web_estimates_bdd_test.go`
+- [x] T028 [P] [US3] Escribir la prueba de handler de la lista: título, estado, Story Points, horas estimadas y reales, solo las historias del proyecto activo, más recientes primero y tiempo de respuesta, en `src/web/estimates_handlers_test.go`
+- [x] T029 [P] [US3] Escribir la prueba de handler de "Sin estimar": una historia sin horas estimadas (o sin Story Points) nunca se muestra como 0 y una sin horas reales muestra 0, en `src/web/estimates_handlers_test.go`
+- [x] T030 [P] [US3] Escribir la prueba de handler de una historia de un Sprint finalizado: campo deshabilitado con el motivo "Sprint finalizado", en `src/web/estimates_handlers_test.go`
+- [x] T031 [P] [US3] Escribir la prueba de handler sin historias: "Aún no hay historias", en `src/web/estimates_handlers_test.go`
+- [x] T032 [P] [US3] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una lista incompleta, en `src/web/estimates_handlers_test.go`
+- [x] T033 [P] [US3] Escribir los escenarios BDD de lista de estimaciones, historia sin estimar, historia bloqueada en la lista y sin historias en `test/web_estimates_bdd_test.go`
 
 ### Implementation for User Story 3
 
