@@ -33,7 +33,7 @@ Formato: `[ID] [P] [E#] descripción`
   Revisar también "Planificación de proyecto.pdf": si contradice la spec, corregirla antes de T002.
 - [x] T002 Crear la rama `HU-12` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-12`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
 - [ ] T004 Coordinar con quien tenga HU-08, HU-09, HU-10, HU-11 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`, y con HU-09 el contrato `StatusOn` / `ProgressPercentage` de `data-model.md`.
 
@@ -45,7 +45,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [E1, E2, E3, E4, E5, E6] Escribir en `src/project/status_test.go`, como pruebas de tabla con los casos de
+- [x] T005 [E1, E2, E3, E4, E5, E6] Escribir en `src/project/status_test.go`, como pruebas de tabla con los casos de
   `data-model.md`:
   - `TestStatusOn`: «Alfa» "En curso", «Beta» "No iniciado", «Gamma» "Finalizado", «Delta» y «Épsilon» "En curso" a
     las 00:00 y a las 23:59 del 28/10/2026, el día anterior al inicio "No iniciado", el día siguiente al fin
@@ -53,16 +53,16 @@ Formato: `[ID] [P] [E#] descripción`
     iniciado";
   - `TestProgressPercentage`: 4 y 8 → "50.00"; 3 y 3 → "100.00"; 0 y 0 → "0.00"; 0 y 5 → "0.00"; 2 y 3 → "66.67"; 1 y
     3 → "33.33"; 1 y 8 → "12.50"; 4 y 7 → "57.14"; 1 y 6 → "16.67"; 7 y 11 → "63.64"; 1 y 32 → "3.13".
-- [ ] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
+- [x] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
   sección "Reglas".
 
 ### Implementación (GREEN)
 
-- [ ] T007 Crear `src/project/status.go` con `DateStatus`, las tres constantes ("No iniciado", "En curso",
+- [x] T007 Crear `src/project/status.go` con `DateStatus`, las tres constantes ("No iniciado", "En curso",
   "Finalizado"), `StatusOn` (compara `(año, mes, día)` de `t.Date()`; los dos bordes son "En curso") y
   `ProgressPercentage` (`total <= 0` → "0.00"; si no, `(done*10000*2 + total) / (2*total)` centésimas, con
   `fmt.Sprintf("%d.%02d", …)`). No editar otros archivos de `src/project`.
-- [ ] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/project/...`.
+- [x] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/project/...`.
 
 **Punto de control**: HU-09 ya puede programar contra `StatusOn` y `ProgressPercentage`.
 
@@ -74,7 +74,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T009 Crear los datos de prueba en `src/web/project_status_fixtures_test.go` (los usan T010, T015 y T016), con
+- [x] T009 Crear los datos de prueba en `src/web/project_status_fixtures_test.go` (los usan T010, T015 y T016), con
   los proyectos del Issue y research.md §10:
   - «Alfa» (01/10/2026 al 30/11/2026): Sprint 1 "Finalizado" (05/10/2026 al 18/10/2026) con 3 historias "Hecho"
     asignadas; Sprint 2 "Activo" ("Pagos online", 19/10/2026 al 01/11/2026) con 1 "Hecho", 1 "En Sprint" y 1 "En
@@ -85,13 +85,13 @@ Formato: `[ID] [P] [E#] descripción`
   - «Delta» (28/10/2026 al 15/12/2026) y «Épsilon» (01/09/2026 al 28/10/2026), sin historias ni Sprints.
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T010 [E1, E3, E6, E8, E10] Escribir `TestPostgresProjectStatusCatalog` en
+- [x] T010 [E1, E3, E6, E8, E10] Escribir `TestPostgresProjectStatusCatalog` en
   `src/web/postgres_project_status_catalog_integration_test.go`:
   - «Alfa»: nombre, fechas 01/10/2026 y 30/11/2026, cantidades {2, 1, 1, 4} y total 8;
   - «Gamma»: {0, 0, 0, 3}; si se mezclara con «Alfa», el total daría 11;
   - «Beta»: {0, 0, 0, 0};
   - identificador 2147483647 → `KindOf(err) == KindNotFound`.
-- [ ] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
+- [x] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
 
 ### Implementación (GREEN)
 

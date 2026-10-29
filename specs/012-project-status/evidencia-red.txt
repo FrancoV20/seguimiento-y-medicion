@@ -13,3 +13,13 @@ src\project\status_test.go:32:114: undefined: StatusFinished
 src\project\status_test.go:32:114: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project [build failed]
 FAIL
+
+## Catálogo (RED)
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\postgres_project_status_catalog_integration_test.go:12:13: undefined: NewPostgreSQLProjectStatusCatalog
+src\web\postgres_project_status_catalog_integration_test.go:33:11: undefined: ProjectStatusCounts
+src\web\postgres_project_status_catalog_integration_test.go:47:11: undefined: ProjectStatusCounts
+src\web\postgres_project_status_catalog_integration_test.go:62:21: undefined: ProjectStatusCounts
+src\web\postgres_project_status_catalog_integration_test.go:78:13: undefined: NewPostgreSQLProjectStatusCatalog
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
