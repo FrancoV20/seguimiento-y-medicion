@@ -663,3 +663,109 @@ func TestEstimatesHandler_FallaDeLecturaMuestraLaPaginaDeError(t *testing.T) {
 	}
 	hu17AssertNoInternalDetails(t, body)
 }
+
+// --- Fase 6: casos borde (T040 y T041) ---
+
+// T040: recargar después de guardar (patrón Post/Redirect/Get) no repite el cambio ni el mensaje.
+func TestEstimatesHandler_RecargarDespuesDeGuardarNoRepiteElCambio(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	previous := 8.0
+	storyID, title := app.insertStory(t, app.fx.projectA, "recarga PRG", &previous)
+	app.addEffort(t, storyID, "1")
+	app.chooseProject(t, app.fx.projectA)
+
+	resp, _ := app.save(t, storyID, "6,5")
+	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != hu17PathEstimates {
+		t.Fatalf("guardar: estado/location = %d/%q; se esperaba 303 %s (Post/Redirect/Get)",
+			resp.StatusCode, resp.Header.Get("Location"), hu17PathEstimates)
+	}
+	_, first := app.page(t)
+	if strings.Count(first, hu17MsgUpdated) != 1 {
+		t.Fatalf("después de guardar debía verse %q una vez", hu17MsgUpdated)
+	}
+	// El usuario cambia el valor por otro medio (otra pestaña) y recarga la pantalla dos veces:
+	// la recarga es un GET y no vuelve a enviar 6,5.
+	if _, err := app.db.Exec(`UPDATE user_stories SET estimated_hours = 7 WHERE id = $1`, storyID); err != nil {
+		t.Fatalf("no se pudo cambiar el valor de control: %v", err)
+	}
+	for i := 1; i <= 2; i++ {
+		reloadResp, body := app.page(t)
+		if reloadResp.StatusCode != http.StatusOK {
+			t.Fatalf("recarga %d: estado %d; se esperaba 200", i, reloadResp.StatusCode)
+		}
+		if strings.Contains(body, hu17MsgUpdated) || strings.Contains(body, hu17MsgRegistered) {
+			t.Errorf("recarga %d: no debía repetirse el mensaje de éxito", i)
+		}
+		hu17AssertCell(t, hu17StoryRow(t, body, title), "7", "el valor vigente (sin reenviar 6,5)")
+	}
+	if got := app.storedHours(t, storyID); got != "7.00" {
+		t.Errorf("la recarga repitió el guardado: estimated_hours = %q; se esperaba 7.00", got)
+	}
+	if got := app.actualHours(t, storyID); got != "1.00" {
+		t.Errorf("las horas reales cambiaron a %q", got)
+	}
+}
+
+// T041: sin proyecto activo válido (sin selección, cookie inválida o proyecto eliminado) HU-20b
+// redirige a la selección de proyecto y no se guarda nada.
+func TestEstimatesHandler_SinProyectoActivoValidoRedirigeYNoGuarda(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	previous := 8.0
+	storyID, _ := app.insertStory(t, app.fx.projectA, "sin proyecto", &previous)
+
+	cases := []struct {
+		name    string
+		cookies []*http.Cookie
+	}{
+		{name: "sin selección"},
+		{name: "cookie inválida", cookies: []*http.Cookie{{Name: CookieProject, Value: "invalida", Path: "/"}}},
+		{name: "proyecto eliminado", cookies: []*http.Cookie{idCookie(CookieProject, 9223372036854775807)}},
+	}
+	const wantLocation = "/contexto/proyecto?volver_a=%2Festimaciones"
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			client := app.ctxApp.client(false)
+			if len(c.cookies) > 0 {
+				app.setCookies(t, client, c.cookies...)
+			}
+			for _, method := range []string{http.MethodGet, http.MethodPost} {
+				var resp *http.Response
+				if method == http.MethodGet {
+					resp, _ = app.get(t, client, hu17PathEstimates)
+				} else {
+					resp, _ = app.post(t, client, hu17PathEstimates, url.Values{
+						hu17FieldStoryID: {id64(storyID)},
+						hu17FieldHours:   {"3"},
+						"proyecto_id":    {id64(app.fx.projectA)},
+					})
+				}
+				if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != wantLocation {
+					t.Errorf("%s: estado/location = %d/%q; se esperaba 303 %q",
+						method, resp.StatusCode, resp.Header.Get("Location"), wantLocation)
+				}
+			}
+			selection, body := app.get(t, client, "/contexto/proyecto")
+			if selection.StatusCode != http.StatusOK || !strings.Contains(body, MsgProjectRequired) {
+				t.Errorf("la selección de proyecto debía mostrar %q (estado %d)", MsgProjectRequired, selection.StatusCode)
+			}
+			if got := app.storedHours(t, storyID); got != "8.00" {
+				t.Errorf("sin proyecto activo se guardó: estimated_hours = %q", got)
+			}
+		})
+	}
+}
+
+// Caso borde de spec.md: un título con HTML o scripts se muestra como texto.
+func TestEstimatesHandler_TituloConHTMLSeVeComoTexto(t *testing.T) {
+	app := newHU17EstimatesApp(t)
+	storyID, _ := app.insertStory(t, app.fx.projectA, `<script>alert("hu17")</script>`, nil)
+	app.chooseProject(t, app.fx.projectA)
+
+	_, body := app.page(t)
+	if strings.Contains(body, `<script>alert("hu17")</script>`) {
+		t.Fatal("el título con <script> no debía insertarse como HTML")
+	}
+	if !strings.Contains(body, `&lt;script&gt;alert(&#34;hu17&#34;)&lt;/script&gt;`) {
+		t.Errorf("el título debía verse escapado como texto en la fila de la historia %d", storyID)
+	}
+}

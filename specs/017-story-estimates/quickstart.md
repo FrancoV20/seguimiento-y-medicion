@@ -56,6 +56,53 @@ go run ./src/cmd/server
 Las pruebas automáticas no dependen de HU-21, HU-22 ni HU-23: crean sus propios proyectos, historias,
 Sprints y horas. Esta feature no agrega migraciones.
 
+## Manual check: recorrido completo
+
+Con el servidor en ejecución y un proyecto activo con al menos cuatro historias (ver "Run the
+application"): una sin horas estimadas ni Story Points, una con horas estimadas, una con horas reales
+registradas y una asignada a un Sprint finalizado.
+
+1. Abrir `http://localhost:8080/estimaciones`. Cada fila muestra título, estado, Story Points, horas
+   estimadas y horas reales, las historias más recientes primero. La historia sin estimar muestra "Sin
+   estimar" (nunca 0) y una historia sin horas reales muestra 0.
+2. En la historia sin estimar, escribir `8` y pulsar "Guardar": se ve "Horas estimadas registradas" una
+   sola vez y la fila muestra 8. Recargar la página (F5) no repite el mensaje ni el guardado.
+3. En la historia con horas reales, escribir `1,5` (o `1.5`) y "Guardar": "Horas estimadas actualizadas",
+   la fila muestra 1,5 y las horas reales no cambian.
+4. Probar valores rechazados en cualquier fila editable: `0`, `-1`, `abc`, vacío y `1,555` muestran "El
+   valor de horas no es válido" junto al campo; `10000` muestra "Las horas estimadas no pueden superar
+   9999,99". En todos los casos lo escrito queda en el campo y el valor anterior no cambia.
+5. La historia del Sprint finalizado tiene el campo y el botón deshabilitados con el motivo "Sprint
+   finalizado". Para probar el rechazo directo, quitar el atributo `disabled` con las herramientas del
+   navegador (F12) y enviar: responde 409 con "La historia pertenece a un Sprint finalizado; sus horas
+   estimadas no se pueden modificar" y el valor no cambia.
+6. Elegir un proyecto sin historias: se ve "Aún no hay historias".
+7. Con la página abierta, detener PostgreSQL (`docker compose stop postgres`) y recargar: se ve la página
+   de error de la aplicación, sin texto de consultas ni rutas. Volver a iniciarlo con
+   `docker compose start postgres`.
+
+Datos de apoyo por SQL (reemplazar los identificadores):
+
+```sql
+-- horas reales para una historia
+INSERT INTO effort_logs (story_id, member_id, work_date, activity, hours)
+VALUES (<ID_HISTORIA>, <ID_INTEGRANTE>, CURRENT_DATE, 'Prueba manual', 2.5);
+
+-- historia en un Sprint finalizado (HU-15 todavía no cierra Sprints)
+INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+VALUES (<ID_PROYECTO>, 99, 'Sprint de prueba HU-17', DATE '2026-10-01', DATE '2026-10-15', 'Finalizado')
+RETURNING id;
+INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES (<ID_SPRINT>, <ID_HISTORIA>);
+```
+
+### Nota de puerto (recordatorio)
+
+`DATABASE_URL` usa el puerto del host: `5433` con el `docker-compose.yml` del repositorio, o el que
+publique tu `docker-compose.override.yml`. Si las pruebas de integración aparecen como `SKIP` o fallan
+con `connection refused`, verificar que Docker Desktop esté en ejecución y que `docker compose ps`
+muestre el contenedor `healthy`. Después de traer `main`, ejecutar
+`migrate -path db/migrations -database $env:DATABASE_URL up`.
+
 ## Run the tests
 
 ```powershell
@@ -89,7 +136,7 @@ Las pruebas deben cubrir como mínimo:
    - historia no numérica, inexistente o de otro proyecto: "La historia no existe"; un campo de proyecto
      enviado se ignora;
    - falla de guardado: "La operación no pudo completarse", sin éxito y valor anterior intacto;
-   - recarga después de guardar: no se repite ni repite el mensaje;
+   - recarga después de guardar: no se repite el guardado ni el mensaje;
    - sin proyecto activo: redirección de HU-20b y nada cambia.
 3. Vista:
    - título, estado, Story Points, horas estimadas y horas reales de cada historia, solo del proyecto
@@ -123,3 +170,31 @@ historia, la ejecución final y la cobertura:
 go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/017-story-estimates/evidencia-pruebas.txt
 go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/017-story-estimates/cobertura.txt
 ```
+
+## Manual breve de usuario: pantalla "Estimaciones"
+
+La pantalla "Estimaciones" (`/estimaciones`) permite registrar y modificar las horas estimadas de las
+historias del proyecto activo, para compararlas después con las horas reales. Si no hay un proyecto
+elegido, la aplicación pide elegirlo primero.
+
+**Qué se ve**: una fila por historia, las más recientes primero, con el título, el estado, los Story
+Points, las horas estimadas y las horas reales registradas. Lo que todavía no se estimó aparece como "Sin
+estimar"; las horas reales aparecen como 0 si nadie registró horas.
+
+**Registrar o modificar**: escribir las horas en el campo de la fila y pulsar "Guardar". Se acepta coma o
+punto como separador decimal (`1,5` o `1.5`), con hasta dos decimales y hasta 9999,99 horas; no se usan
+separadores de miles. El primer valor muestra "Horas estimadas registradas" y los siguientes "Horas
+estimadas actualizadas". Las horas siempre se muestran con coma.
+
+**Historias bloqueadas**: las historias de un Sprint finalizado muestran el campo deshabilitado con el
+motivo "Sprint finalizado"; sus horas estimadas ya no se pueden cambiar.
+
+**Mensajes de error**:
+- "El valor de horas no es válido": el valor es 0, negativo, vacío, no numérico o tiene más de dos
+  decimales.
+- "Las horas estimadas no pueden superar 9999,99".
+- "La historia no existe": la historia no es del proyecto activo.
+- "La operación no pudo completarse": no se guardó nada; volver a intentarlo más tarde.
+
+Ante un error, lo escrito queda en el campo para corregirlo y el valor anterior no cambia. Cambiar las
+horas estimadas no modifica las horas reales ni ningún otro dato de la historia.

@@ -257,17 +257,18 @@ Los textos propios de HU-17 son una propuesta del equipo y se definen en un solo
 
 | Escenario del Issue | Requisitos | Tests | BDD | Código |
 |---|---|---|---|---|
-| 1. Estimación registrada | FR-004, FR-014 | T005, T006, T012 | T015 | `src/story` (dominio), `estimates_handlers.go` |
-| 2. Modificar la estimación | FR-005 | T005, T006, T013 | T015 | `src/story`, `estimates_handlers.go` |
-| 3. Horas con coma decimal | FR-006 | T005, T014 | T015 | `src/story`, `estimates_form.go` |
-| 4. Horas inválidas | FR-007 | T005, T020 | T025 | `src/story`, `estimates_form.go` |
-| 5. Horas por encima del máximo | FR-008 | T005, T021 | T025 | `src/story`, `estimates_form.go` |
-| 6. Historia de un Sprint finalizado | FR-009, FR-013 | T005, T006, T022, T023 | T025 | `postgres_estimated_hours_store.go`, `estimates_form.go` |
-| 7. Error al guardar | FR-011, FR-016 | T024, T027 | T025 | `estimates_handlers.go` |
+| 1. Estimación registrada | FR-004, FR-014 | T005, T006, T012 | T015 | `src/backlog/update_estimated_hours.go` (dominio), `postgres_estimate_store.go`, `estimates_handlers.go` |
+| 2. Modificar la estimación | FR-005 | T005, T006, T013 | T015 | `src/backlog/update_estimated_hours.go`, `postgres_estimate_store.go`, `estimates_handlers.go` |
+| 3. Horas con coma decimal | FR-006 | T005, T014 | T015 | `src/backlog/update_estimated_hours.go` (`ParseEstimatedHours`), `estimates_form.go` |
+| 4. Horas inválidas | FR-007 | T005, T020 | T025 | `src/backlog/update_estimated_hours.go`, `estimates_form.go`, `estimates.html` |
+| 5. Horas por encima del máximo | FR-008 | T005, T021 | T025 | `src/backlog/update_estimated_hours.go`, `estimates_form.go`, `estimates.html` |
+| 6. Historia de un Sprint finalizado | FR-009, FR-013 | T005, T006, T022, T023 | T025 | `src/backlog/postgres_estimate_store.go`, `estimates_form.go` |
+| 7. Error al guardar | FR-011, FR-016 | T024, T027, T037 | T025 | `estimates_form.go`, `estimates_handlers.go` |
 | 8. Lista de estimaciones | FR-002 | T008, T028 | T033 | `postgres_estimate_catalog.go`, `estimates.html` |
-| 9. Historia sin estimar | FR-003 | T008, T029 | T033 | `estimates.html` |
+| 9. Historia sin estimar | FR-003 | T008, T029 | T033 | `estimates_handlers.go`, `estimates.html` |
 | 10. Historia bloqueada en la lista | FR-010 | T008, T030 | T033 | `postgres_estimate_catalog.go`, `estimates.html` |
-| 11. Sin historias | FR-012 | T031 | T033 | `estimates.html` |
-| (HU-20b) Recarga sin repetir | FR-001 | T040 | | `estimates_handlers.go` |
-| (HU-20b) Sin proyecto activo | FR-013 | T041 | | `estimates_handlers.go` |
-| (HU-20a) Error al leer | FR-015 | T032 | | `estimates_handlers.go` |
+| 11. Sin historias | FR-012 | T031 | T033 | `estimates_handlers.go`, `estimates.html` |
+| (HU-20b) Recarga sin repetir | FR-001 | T012, T040 | | `estimates_handlers.go` |
+| (HU-20b) Sin proyecto activo | FR-013 | T041 | | `estimates_handlers.go` (sección con `RequiresProject`) |
+| (HU-20a) Error al leer | FR-015 | T032, T035 | | `estimates_handlers.go` |
+| (HU-20a) Título con HTML visto como texto | FR-016 | `TestEstimatesHandler_TituloConHTMLSeVeComoTexto` | | `estimates.html` |

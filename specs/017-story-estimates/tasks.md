@@ -117,18 +117,18 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T036 [P] Documentar en `specs/017-story-estimates/quickstart.md` los pasos para probar a mano con historias estimadas, horas reales y un Sprint finalizado, y la nota de puerto
-- [ ] T037 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/estimates_handlers.go` y `src/web/estimates_form.go`
+- [x] T036 [P] Documentar en `specs/017-story-estimates/quickstart.md` los pasos para probar a mano con historias estimadas, horas reales y un Sprint finalizado, y la nota de puerto
+- [x] T037 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/estimates_handlers.go` y `src/web/estimates_form.go`
 - [ ] T038 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T039 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T040 [P] Escribir la prueba de handler de recarga después de guardar: no se repite el cambio ni el mensaje, en `src/web/estimates_handlers_test.go`
-- [ ] T041 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/estimates_handlers_test.go`
+- [x] T039 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md` *(Suite completa en verde con main integrado y migración 012; escenarios de `quickstart.md` verificados el 2026-10-29.)*
+- [x] T040 [P] Escribir la prueba de handler de recarga después de guardar: no se repite el cambio ni el mensaje, en `src/web/estimates_handlers_test.go`
+- [x] T041 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se guarda nada, en `src/web/estimates_handlers_test.go`
 - [ ] T042 Guardar en `specs/017-story-estimates/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T043 Guardar en `specs/017-story-estimates/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/017-story-estimates/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en el paquete de historias
+- [x] T043 Guardar en `specs/017-story-estimates/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/017-story-estimates/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en el paquete de historias
 - [ ] T044 Coordinar con quien tome HU-07 y HU-25 que la estimación está en `user_stories.estimated_hours` y que una historia sin estimar es ausente y no 0; con HU-15 que las "Hecho" quedan en el Sprint finalizado (bloqueadas) y las no terminadas pierden la asignación (editables); con HU-13 que la lista de Estimaciones es independiente y la edición de la historia no toca las horas; y con HU-09 que las horas estimadas del reporte salen de la misma columna
-- [ ] T045 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/017-story-estimates/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T045 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/017-story-estimates/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [ ] T046 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Estimaciones"
-- [ ] T047 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
+- [x] T047 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md` *(Los 11 escenarios del Issue y los casos borde del quickstart verificados el 2026-10-29 con la aplicación en ejecución y navegador: 26/26 comprobaciones OK.)*
 - [ ] T048 Abrir el Pull Request desde `HU-17`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
@@ -187,26 +187,26 @@
 
 | Requisito | Pruebas |
 |---|---|
-| FR-001 | T017, T019, T040 |
-| FR-002 | T008, T028 |
-| FR-003 | T029 |
-| FR-004 | T005, T012 |
-| FR-005 | T005, T006, T013 |
-| FR-006 | T005, T014 |
-| FR-007 | T005, T020 |
-| FR-008 | T005, T021 |
-| FR-009 | T005, T006, T022 |
-| FR-010 | T008, T030 |
-| FR-011 | T024 |
-| FR-012 | T031 |
+| FR-001 | T012, T017, T019, T040 |
+| FR-002 | T008, T028, T033 |
+| FR-003 | T029, T033 |
+| FR-004 | T005, T012, T015 |
+| FR-005 | T005, T006, T013, T015 |
+| FR-006 | T005, T014, T015 |
+| FR-007 | T005, T020, T025 |
+| FR-008 | T005, T021, T025 |
+| FR-009 | T005, T006, T022, T025 |
+| FR-010 | T008, T030, T033 |
+| FR-011 | T024, T025 |
+| FR-012 | T031, T033 |
 | FR-013 | T023, T041 |
 | FR-014 | T001, T005, T006 |
-| FR-015 | T032 |
-| FR-016 | T027, T037 |
+| FR-015 | T032, T035 |
+| FR-016 | T027, T037 (y título con HTML escapado) |
 | SC-001 | T005, T014 |
-| SC-002 | T005, T020, T021 |
-| SC-003 | T005, T006, T022 |
+| SC-002 | T005, T020, T021, T025 |
+| SC-003 | T005, T006, T022, T025, T030 |
 | SC-004 | T005, T006, T013 |
-| SC-005 | T024 |
-| SC-006 | T029 |
+| SC-005 | T024, T025 |
+| SC-006 | T029, T033 |
 | SC-007 | Verificación de tiempo en T028 |

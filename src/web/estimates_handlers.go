@@ -82,7 +82,12 @@ func (h *estimatesHandlers) post(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := h.actions.UpdateEstimatedHours(r.Context(), active.ProjectID, submission.StoryID, submission.Hours)
 	if err != nil {
-		h.reject(w, r, active.ProjectID, submission, mapEstimateError(err))
+		failure := mapEstimateError(err)
+		if failure.Status == http.StatusInternalServerError {
+			// El detalle queda solo en el registro del servidor; la respuesta muestra MsgOperationFailed (T037).
+			h.server.logger.Error("no se pudo guardar la estimación", "metodo", r.Method, "ruta", r.URL.Path, "detalle", err.Error())
+		}
+		h.reject(w, r, active.ProjectID, submission, failure)
 		return
 	}
 	SetFlash(w, r, FlashSuccess, estimateSuccessMessage(result))
