@@ -1,0 +1,38 @@
+HU-11 — Evidencia de verificación manual (T082)
+Fecha: 2026-10-__
+Verificó: Alejandro Raúl Ruiz Andreola
+
+Entorno
+- Rama HU-11 mergeada con origin/main (commit: ________).
+- Aplicación ejecutada localmente con `go run ./src/cmd/server` en http://localhost:8081 (ADDR=:8081).
+- PostgreSQL local en el puerto 5433, base seguimiento_y_medicion, migraciones aplicadas hasta la ___.
+- Integrantes cargados con db/seeds/members.sql.
+
+Método
+- Recorrido con el navegador contra la aplicación y PostgreSQL reales, siguiendo quickstart.md
+  ("Verificación manual"). Para los pasos que piden otra sesión se usó una ventana privada.
+- Para el escenario 8 el Sprint se creó desde /sprints; para cerrarlo o borrarlo se usó psql.
+
+Escenarios (completar con PASÓ / FALLÓ y lo observado)
+1. Enlace "Modificar" en cada fila de /proyectos: ______
+2. Formulario con nombre, fechas e integrantes actuales marcados: ______
+3. Renombrar el proyecto activo: "Proyecto modificado exitosamente", nombre nuevo en la lista y en la
+   estructura común: ______
+4. Nombre vacío: error junto al nombre y datos conservados: ______
+5. Fecha de fin igual a la de inicio: mensaje de HU-01 junto a la fecha de fin: ______
+6. Quitar a un integrante con horas registradas: "No se puede quitar a [nombre]: tiene horas registradas en
+   este proyecto": ______
+7. Agregar un integrante: aparece en /contexto/integrante del proyecto: ______
+8. Fecha de fin que deja afuera un Sprint que estaba dentro: "El Sprint N queda fuera de las nuevas fechas del
+   proyecto" junto a la fecha de fin: ______
+9. Ampliar la fecha de fin para incluir el Sprint: se guarda: ______
+10. Quitar a un integrante identificado sin horas: al navegar aparece la advertencia de HU-20b y se limpia la
+    identificación: ______
+11. /proyectos/999999/modificar y /proyectos/abc/modificar: página 404: ______
+
+Observaciones
+- Un Sprint que ya estaba fuera de las fechas antes de modificar no bloquea el guardado (escenario 11b de la
+  spec); se verificó primero ese caso y luego el bloqueo con un Sprint que sí estaba dentro.
+- ______
+
+Resultado: __ de 11 escenarios PASÓ.

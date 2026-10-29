@@ -25,7 +25,7 @@ Formato: `[ID] [P] [E#] descripción`
     fakes `failingCreateProjectStore` (`src/web/projects_handlers_test.go`) y `failingBDDProjectStore`
     (`test/web_projects_bdd_test.go`);
   - con quien hizo HU-03: `src/effort/postgres_effort_store.go`, `src/effort/service.go` y `src/effort/errors.go`.
-- [ ] T004 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base, incluidas las pruebas de HU-01, HU-03
+- [X] T004 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base, incluidas las pruebas de HU-01, HU-03
   y HU-21)
 
 ## Fase 2: Fundamentos (dominio, almacenamiento y HU-03; bloquea todo lo demás)
@@ -143,7 +143,7 @@ Formato: `[ID] [P] [E#] descripción`
   `... JOIN project_members pm ... FOR SHARE OF pm`; sin fila, devolver `errMemberNotInProject`.
 - [X] T032 En `Service.LogEffort` (`src/effort/service.go`), traducir `errMemberNotInProject` a
   `ValidationErrors: []FieldError{{Field: FieldMember, Err: ErrMemberRequired}}`
-- [ ] T033 Ejecutar T005–T023 en verde, junto con las pruebas existentes de `./src/project/...` y `./src/effort/...`
+- [X] T033 Ejecutar T005–T023 en verde, junto con las pruebas existentes de `./src/project/...` y `./src/effort/...`
 
 **Punto de control**: el dominio, el almacenamiento y el cierre de la carrera con HU-03 funcionan sin tocar la
 pantalla.
@@ -296,7 +296,7 @@ cambiar solo el nombre o los integrantes.
 - [X] T069 En `src/web/projects_update_handlers.go`, mapear `*SprintOutOfRangeError` a 409 con
   `fmt.Sprintf(MsgSprintOutOfRange, e.Number)` junto a `fecha_inicio` si `Field == DateFieldStart` y, si no, junto a
   `fecha_fin`
-- [ ] T070 Ejecutar T064–T067 en verde
+- [X] T070 Ejecutar T064–T067 en verde
 
 ## Fase 6: Bloque D – Proyecto inexistente y fallas (escenarios 14a, 14b y 16)
 
@@ -332,8 +332,8 @@ cambiar solo el nombre o los integrantes.
 - [X] T079 REFACTOR: revisar la duplicación entre el `post` de HU-21 y el `update` de HU-11 (armado de `FormView` y — `update` reutiliza `parseProjectForm`, `projectFormView` y `projectFieldError` de HU-21; solo se agregó `renderEdit` para la plantilla propia. Archivos nuevos formateados y `go vet ./...` limpio
   render) y extraer una función local sin cambiar comportamiento. Formatear solo los archivos nuevos y dejar
   `go vet ./...` limpio.
-- [ ] T080 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde
-- [ ] T081 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/project`
+- [X] T080 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde
+- [X] T081 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/project`
 - [ ] T082 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual)
 - [X] T083 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual — Manual: sección "Modificar un proyecto" en `docs/manual-usuario.md`
   breve de usuario con la acción "Modificar" de "Gestión de Proyectos"
