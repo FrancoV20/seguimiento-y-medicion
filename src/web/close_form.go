@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 )
@@ -105,4 +106,21 @@ func buildCloseSummary(board BoardView) CloseSummary {
 
 func closeSprintSuccessMessage(sprintNumber int64, returnedCount int) string {
 	return fmt.Sprintf(MsgSprintClosed, sprintNumber, returnedCount)
+}
+
+func closeSprintErrorResponse(err error) (int, string) {
+	switch {
+	case errors.Is(err, sprint.ErrSprintNotFound):
+		return http.StatusUnprocessableEntity, MsgSprintNotFound
+	case errors.Is(err, sprint.ErrSprintAlreadyClosed):
+		return http.StatusConflict, MsgSprintAlreadyClosed
+	case errors.Is(err, sprint.ErrCloseBlocked):
+		detail := strings.TrimSpace(strings.TrimPrefix(err.Error(), sprint.ErrCloseBlocked.Error()+":"))
+		if detail == "" {
+			detail = MsgCloseBlocked
+		}
+		return http.StatusConflict, detail
+	default:
+		return http.StatusInternalServerError, MsgOperationFailed
+	}
 }

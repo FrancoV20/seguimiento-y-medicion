@@ -3,7 +3,6 @@ package web
 import (
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 )
@@ -72,20 +71,18 @@ func (h *closeHandlers) post(w http.ResponseWriter, r *http.Request) {
 
 	result, err := h.service.CloseSprint(r.Context(), active.ProjectID, form.SprintID)
 	if err != nil {
-		switch {
-		case errors.Is(err, sprint.ErrSprintNotFound):
-			h.renderError(w, r, http.StatusUnprocessableEntity, MsgSprintNotFound)
-		case errors.Is(err, sprint.ErrSprintAlreadyClosed):
-			h.renderError(w, r, http.StatusConflict, MsgSprintAlreadyClosed)
-		case errors.Is(err, sprint.ErrCloseBlocked):
-			detail := strings.TrimSpace(strings.TrimPrefix(err.Error(), sprint.ErrCloseBlocked.Error()+":"))
-			if detail == "" {
-				detail = MsgCloseBlocked
-			}
-			h.renderError(w, r, http.StatusConflict, detail)
-		default:
-			h.server.renderer.Fail(w, r, err)
+		status, message := closeSprintErrorResponse(err)
+		if status == http.StatusInternalServerError {
+			h.server.renderer.logger.Error(
+				"error inesperado al cerrar el Sprint",
+				"metodo", r.Method,
+				"ruta", r.URL.Path,
+				"detalle", err.Error(),
+			)
+			h.server.renderer.RenderError(w, r, status, TitleInternal, message)
+			return
 		}
+		h.renderError(w, r, status, message)
 		return
 	}
 

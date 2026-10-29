@@ -84,9 +84,9 @@
 
 ### Implementation for User Story 2
 
-- [ ] T028 [US2] Implementar en `src/web/close_form.go` el mapeo de los errores del dominio a mensajes y la lista de historias a corregir, con `MsgOperationFailed` para cualquier otro
-- [ ] T029 [US2] Implementar en `src/web/close_handlers.go` las respuestas 409, 422 y 500 con la pantalla y el mensaje
-- [ ] T030 [US2] Verificar en `src/web/close_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
+- [x] T028 [US2] Implementar en `src/web/close_form.go` el mapeo de los errores del dominio a mensajes y la lista de historias a corregir, con `MsgOperationFailed` para cualquier otro
+- [x] T029 [US2] Implementar en `src/web/close_handlers.go` las respuestas 409, 422 y 500 con la pantalla y el mensaje
+- [x] T030 [US2] Verificar en `src/web/close_handlers_test.go` que ninguna respuesta de error contiene texto de consultas ni rutas internas
 
 **Checkpoint**: US2 evita cierres inválidos, duplicados o parciales y mantiene los datos del Sprint coherentes.
 
