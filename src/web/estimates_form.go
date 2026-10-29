@@ -22,6 +22,11 @@ const (
 	MsgHoursUpdated      = "Horas estimadas actualizadas"
 	MsgStoryNotFound     = "La historia no existe"
 	MsgHoursLockedSprint = "La historia pertenece a un Sprint finalizado; sus horas estimadas no se pueden modificar"
+
+	// MsgNotEstimated y MsgEstimatesNoStories repiten los textos de HU-22 ("Sin estimar" y
+	// "Aún no hay historias"), que allí están escritos literalmente en backlog.html.
+	MsgNotEstimated       = "Sin estimar"
+	MsgEstimatesNoStories = "Aún no hay historias"
 )
 
 // estimateSubmission es el envío de una fila: la historia y el texto de horas tal como llegó.

@@ -4,6 +4,7 @@
 
 <section aria-labelledby="estimates-heading">
   <h2 id="estimates-heading">Historias</h2>
+  {{if .Data.Rows}}
   <table>
     <thead>
       <tr>
@@ -27,8 +28,14 @@
           <form method="post" action="/estimaciones" class="estimate-form">
             <input type="hidden" name="historia_id" value="{{.ID}}">
             <div class="field{{if .Error}} field-invalid{{end}}">
+              {{if .Locked}}
+              <input type="text" id="horas-{{.ID}}" name="horas_estimadas" value="{{.InputValue}}" aria-label="Horas estimadas de {{.Title}}" aria-describedby="horas-{{.ID}}-motivo" disabled>
+              <button type="submit" disabled>Guardar</button>
+              <span class="unavailable-reason" id="horas-{{.ID}}-motivo">{{.LockedReason}}</span>
+              {{else}}
               <input type="text" id="horas-{{.ID}}" name="horas_estimadas" value="{{.InputValue}}" inputmode="decimal" autocomplete="off" aria-label="Horas estimadas de {{.Title}}"{{if .Error}} aria-invalid="true" aria-describedby="horas-{{.ID}}-error"{{end}}>
               <button type="submit">Guardar</button>
+              {{end}}
               {{if .Error}}<p class="field-error" id="horas-{{.ID}}-error"><span class="field-error-label">Error:</span> {{.Error}}</p>{{end}}
             </div>
           </form>
@@ -37,5 +44,8 @@
       {{end}}
     </tbody>
   </table>
+  {{else}}
+  <p>{{.Data.EmptyMessage}}</p>
+  {{end}}
 </section>
 {{end}}

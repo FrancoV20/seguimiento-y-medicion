@@ -106,8 +106,8 @@
 
 ### Implementation for User Story 3
 
-- [ ] T034 [US3] Completar `estimates.html` con "Sin estimar", el campo deshabilitado con el motivo y el estado vacío "Aún no hay historias" en `src/web/templates/estimates.html`
-- [ ] T035 [US3] Usar `Fail` en `src/web/estimates_handlers.go` cuando falla la lectura de las historias
+- [x] T034 [US3] Completar `estimates.html` con "Sin estimar", el campo deshabilitado con el motivo y el estado vacío "Aún no hay historias" en `src/web/templates/estimates.html`
+- [x] T035 [US3] Usar `Fail` en `src/web/estimates_handlers.go` cuando falla la lectura de las historias
 
 **Checkpoint**: US3 muestra qué falta estimar, qué se puede cambiar y cómo se compara con lo real.
 

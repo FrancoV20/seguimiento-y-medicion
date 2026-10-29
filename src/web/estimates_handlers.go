@@ -42,7 +42,8 @@ type estimatesHandlers struct {
 }
 
 type estimatesPageData struct {
-	Rows []estimateRowView
+	Rows         []estimateRowView
+	EmptyMessage string
 }
 
 // estimateRowView es una fila ya formateada para la plantilla.
@@ -120,10 +121,11 @@ func (h *estimatesHandlers) render(w http.ResponseWriter, r *http.Request, statu
 func (h *estimatesHandlers) renderWith(w http.ResponseWriter, r *http.Request, status int, projectID int64, flash *Flash, submitted *estimateRowState) {
 	rows, err := h.catalog.ListEstimates(r.Context(), projectID)
 	if err != nil {
+		// T035: página de error de HU-20a, nunca una lista incompleta (se descarta lo leído).
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
-	data := estimatesPageData{Rows: make([]estimateRowView, 0, len(rows))}
+	data := estimatesPageData{Rows: make([]estimateRowView, 0, len(rows)), EmptyMessage: MsgEstimatesNoStories}
 	for _, row := range rows {
 		view := newEstimateRowView(row)
 		if submitted != nil && submitted.StoryID == row.ID {
@@ -144,12 +146,14 @@ func (h *estimatesHandlers) renderWith(w http.ResponseWriter, r *http.Request, s
 
 func newEstimateRowView(row EstimateRow) estimateRowView {
 	view := estimateRowView{
-		ID:           row.ID,
-		Title:        row.Title,
-		Status:       row.Status,
-		ActualHours:  formatEstimateHours(row.ActualHours),
-		Locked:       row.Locked,
-		LockedReason: row.LockedReason,
+		ID:             row.ID,
+		Title:          row.Title,
+		Status:         row.Status,
+		StoryPoints:    MsgNotEstimated,
+		EstimatedHours: MsgNotEstimated, // nunca 0: la ausencia de estimación se muestra con texto
+		ActualHours:    formatEstimateHours(row.ActualHours),
+		Locked:         row.Locked,
+		LockedReason:   row.LockedReason,
 	}
 	if row.StoryPoints != nil {
 		view.StoryPoints = strconv.Itoa(*row.StoryPoints)
