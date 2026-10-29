@@ -517,6 +517,54 @@ func TestCloseHandler_SinSprintActivoMuestraMensajeYSinBoton(t *testing.T) {
 	}
 }
 
+type failingCloseBoardCatalog struct{}
+
+func (failingCloseBoardCatalog) ActiveBoard(context.Context, int64) (BoardView, bool, error) {
+	return BoardView{}, false, errors.New(
+		`pq: SELECT id FROM sprints failed at C:\internal\close_catalog.go:42`,
+	)
+}
+
+func TestCloseHandler_FallaDeLecturaMuestraPaginaDeError(t *testing.T) {
+	// Dado un proyecto válido cuyo catálogo de tablero falla al leer el Sprint activo.
+	app := newCtxApp(t, nil, func(server *Server) {
+		db := openContextTestDB(t)
+		store := &closeHandlerStore{db: db, closer: sprint.NewPostgreSQLSprintCloser(db)}
+		service := sprint.NewCloseSprintService(
+			store,
+			closeHandlerValidator{store: metrics.NewPostgreSQLMetricsStore(db)},
+		)
+		if err := RegisterClose(server, service, failingCloseBoardCatalog{}); err != nil {
+			t.Fatalf("no se pudo registrar la sección de cierre: %v", err)
+		}
+	})
+	projectID := newCatProject(t, app.db, "falla de lectura del cierre")
+	client := app.client(false)
+	closeHandlerSelectProject(t, &closeHandlerFixture{ctxApp: app}, client, projectID)
+
+	// Cuando se solicita la vista previa y el catálogo devuelve un error de lectura.
+	resp, body := app.get(t, client, closePath)
+	defer resp.Body.Close()
+
+	// Entonces se muestra la página de error común, no una pantalla incompleta ni el detalle interno.
+	if resp.StatusCode != http.StatusServiceUnavailable {
+		t.Errorf("GET /cierre ante falla de lectura = %d; se esperaba 503", resp.StatusCode)
+	}
+	for _, expected := range []string{TitleUnavailable, MsgUnavailable, LinkBackHome} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("la página de error debía contener %q", expected)
+		}
+	}
+	for _, unexpected := range []string{
+		MsgNoSprintToClose, "name=\"sprint_id\"", "Cerrar Sprint",
+		"SELECT id FROM sprints", "pq:", "close_catalog.go", `C:\internal`,
+	} {
+		if strings.Contains(body, unexpected) {
+			t.Errorf("la respuesta contiene contenido incompleto o interno %q", unexpected)
+		}
+	}
+}
+
 func TestCloseHandler_TituloConScriptSeMuestraComoTexto(t *testing.T) {
 	// Dado un Sprint activo cuya historia tiene un título que contiene una etiqueta script.
 	app := newCloseHandlerFixture(t)
