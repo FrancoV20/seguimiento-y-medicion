@@ -66,6 +66,7 @@ Si se detectan varios problemas, se muestran juntos y no se guarda el defecto.
 |---|---|
 | `La descripción es obligatoria` | Escribí una descripción con contenido. |
 | `La descripción no puede superar 1000 caracteres` | Acortá la descripción a 1000 caracteres o menos. |
+| `La descripción contiene caracteres no válidos` | Quitá los caracteres invisibles o dañados (suelen aparecer al pegar texto copiado de otro programa) y escribí la descripción como texto común. |
 | `Seleccione la severidad` | Elegí una de las severidades disponibles. |
 | `La severidad no es válida` | Seleccioná una severidad de la lista. |
 | `Seleccione la historia relacionada` | Elegí una historia del proyecto activo. |

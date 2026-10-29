@@ -127,9 +127,14 @@
 - [x] T046 Guardar en `specs/006-defects/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/006-defects/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/defect`
 - [x] T047 Coordinar con quien tome HU-19 que extiende `defects.html` y `defects_handlers.go` (acciones de resolver y reabrir) y completa `resolution_sprint_id` y el estado; con quien tome HU-10 que cuenta defectos por `detection_sprint_id` y `resolution_sprint_id`; con HU-08 y HU-09 que leen la misma tabla; con HU-15 que su cierre bloquea la fila del Sprint con `FOR UPDATE`; y el número de migración con quien tenga la de HU-15
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-006 en `specs/006-defects/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Defectos" (nota: los archivos Go de HU-06 están formateados; `gofmt -l .` reporta 117 archivos de otros módulos. CI para HU-06 pendiente de ejecutarse con el PR)
+- [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Defectos" (nota: `gofmt -l src db test` no reporta archivos en Linux ni en el CI. Los 117 archivos que aparecían en Windows no eran de formato sino de saltos de línea CRLF del checkout local por `core.autocrlf`: en el repositorio los archivos están con LF. El check de GitHub Actions se verifica en el PR, T051)
 - [x] T050 Verificar a mano con la aplicación en ejecución los 9 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T051 Abrir el Pull Request desde `HU-06`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+
+**Ajustes de la revisión del Scrum Master** (antes del merge):
+
+- [x] T052 Rechazar con 422 y "La descripción contiene caracteres no válidos" una descripción con el carácter NUL o UTF-8 inválido (antes daba 500): pruebas primero en rojo en `src/defect/service_test.go`, `src/web/defects_form_test.go`, `src/web/defects_handlers_test.go` y `test/web_defects_bdd_test.go` (`evidencia-red-caracteres.txt`); validación en `defect.Validate` y mensaje en `src/web/defects_form.go`; documentado en `spec.md` y en `docs/manual-usuario.md`
+- [x] T053 Regenerar `evidencia-pruebas.txt` y `cobertura.txt` tras integrar `main` (ahora incluyen `src/poker`) y actualizar en `evidencia-manual.txt` el número de migración a `012`
 
 ---
 
@@ -190,7 +195,7 @@
 | FR-003 | T006, T007, T016, T042 |
 | FR-004 | T007, T017 |
 | FR-005 | T006, T014, T024 |
-| FR-006 | T006, T025 |
+| FR-006 | T006, T025, T052 |
 | FR-007 | T007, T027 |
 | FR-008 | T007, T026 |
 | FR-009 | T012, T032 |

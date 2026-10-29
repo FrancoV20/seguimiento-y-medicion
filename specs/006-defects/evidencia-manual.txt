@@ -4,7 +4,8 @@ Fecha: 2026-10-28
 Entorno
 - Aplicación Go ejecutada localmente en http://localhost:8080.
 - PostgreSQL local de Docker Compose saludable en el puerto publicado 5433.
-- Esquema en migración 9.
+- Esquema en migración 12 (la migración de defectos se renumeró de 009 a 012 al integrar `main`, que ya tenía
+  la 011 de HU-05a; su contenido no cambió).
 - Fixtures de prueba únicos para tres proyectos (A, B y C), sus Sprints e historias.
 - Las fixtures y los registros generados fueron eliminados al terminar. Se comprobó que no quedaran los
   proyectos, el trigger ni su función temporal.
@@ -54,7 +55,21 @@ Recorrido adicional de quickstart.md
 
 Verificación automatizada asociada
 - `go test -count=1 -p 1 ./...`: pasó en todos los paquetes; salida guardada en `evidencia-pruebas.txt`.
-- `go test -count=1 -p 1 -cover ./...`: pasó; `src/defect` alcanzó 89,1%, registrado en `cobertura.txt`.
+- `go test -count=1 -p 1 -cover ./...`: pasó; `src/defect` alcanzó 89,4%, registrado en `cobertura.txt`
+  (regenerado tras integrar `main`; ahora incluye `src/poker`).
+
+Revisión del Scrum Master — ajuste 1 (2026-10-28)
+- Hallazgo: una descripción con carácter NUL (`%00`) o UTF-8 inválido (`%FF`) devolvía 500 "La operación no
+  pudo completarse", porque PostgreSQL rechaza esos bytes en TEXT.
+- Corrección: `defect.Validate` rechaza la descripción con `ErrDescriptionInvalid` si no es UTF-8 válido o
+  contiene NUL. Pruebas escritas primero en rojo (`evidencia-red-caracteres.txt`).
+- Recorrido contra el servidor real (binario de `src/cmd/server`, PostgreSQL 16, esquema en migración 12), con
+  un proyecto, un Sprint activo y una historia de fixture creados para la prueba y borrados al terminar:
+  - `descripcion=falla%00al guardar` → 422 con "La descripción contiene caracteres no válidos" junto al campo;
+    no se guardó.
+  - `descripcion=falla %FF al guardar` → 422 con el mismo mensaje; no se guardó.
+  - Control con una descripción válida → 303, registrado normalmente.
+  - El log del servidor no registró errores.
 
 Nota de ejecución
 - Durante un intento de capturar el 303 mediante interceptación de red del navegador, la herramienta de
