@@ -50,11 +50,11 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T005 Agregar `ErrNoVotes = errors.New("poker: la ronda no tiene votos")` en `src/poker/errors.go` y crear
+- [x] T005 Agregar `ErrNoVotes = errors.New("poker: la ronda no tiene votos")` en `src/poker/errors.go` y crear
   `src/poker/spread.go` con `VoteSpread{Low, High int; Divergent bool}`, `level(v)` (posición en `Series` + 1),
   `maxLevelGap = 2` y `Spread(values []int) (VoteSpread, error)` según `data-model.md` (sin ordenar ni modificar
   `values`).
-- [ ] T006 Ejecutar T003 en verde junto con las pruebas existentes de `./src/poker/...`.
+- [x] T006 Ejecutar T003 en verde junto con las pruebas existentes de `./src/poker/...`.
 
 **Punto de control**: HU-18 ya puede programar contra `poker.Spread`.
 
