@@ -129,7 +129,7 @@
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
 - [x] T050 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
-- [] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [ ] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 
