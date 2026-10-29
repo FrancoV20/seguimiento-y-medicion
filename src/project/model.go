@@ -2,6 +2,10 @@ package project
 
 import "time"
 
+// StatusActive es el estado con el que nace todo proyecto (FIX-HU-21).
+// Debe coincidir con el que usan la base, el Product Backlog y los defectos.
+const StatusActive = "Activo"
+
 type Project struct {
 	ID        int
 	Name      string

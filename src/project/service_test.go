@@ -25,15 +25,15 @@ func TestProjectService_CreateProject_Success(t *testing.T) {
 	// When / Act: a valid project is created.
 	result, err := service.CreateProject(req)
 
-	// Then / Assert: creation succeeds with the Active initial status.
+	// Then / Assert: creation succeeds with the Activo initial status.
 	if err != nil {
 		t.Fatalf("did not expect an error, got: %v", err)
 	}
 	if result == nil || result.Project == nil {
 		t.Fatal("expected a project creation result, got nil")
 	}
-	if result.Project.Status != "Active" {
-		t.Errorf("expected initial status %q, got %q", "Active", result.Project.Status)
+	if result.Project.Status != "Activo" {
+		t.Errorf("expected initial status %q, got %q", "Activo", result.Project.Status)
 	}
 	if !strings.Contains(result.Message, "Proyecto creado exitosamente") {
 		t.Errorf("expected success message, got %q", result.Message)
