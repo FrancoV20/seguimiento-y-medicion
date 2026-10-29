@@ -1,38 +1,60 @@
 HU-11 — Evidencia de verificación manual (T082)
-Fecha: 2026-10-__
-Verificó: Alejandro Raúl Ruiz Andreola
+Fecha: 2026-10-29
+Realizó: Claude (asistente de IA), a pedido de Alejandro Raúl Ruiz Andreola, que revisó el resultado.
 
 Entorno
-- Rama HU-11 mergeada con origin/main (commit: ________).
-- Aplicación ejecutada localmente con `go run ./src/cmd/server` en http://localhost:8081 (ADDR=:8081).
-- PostgreSQL local en el puerto 5433, base seguimiento_y_medicion, migraciones aplicadas hasta la ___.
-- Integrantes cargados con db/seeds/members.sql.
+- Código de la rama HU-11 en el commit 9315ad1 (con origin/main mergeado, incluido FIX-HU-21). Se comprobó que
+  src/, test/ y db/ son idénticos byte a byte (sin contar finales de línea) a los de la PC de Alejandro.
+- Servidor compilado con `go build ./src/cmd/server` y ejecutado en http://127.0.0.1:8091, en un entorno Linux
+  aislado (no en la PC de Alejandro).
+- PostgreSQL 16 local con una base nueva: migraciones 001 a 013 aplicadas (schema_migrations = 13),
+  db/seeds/members.sql y tres integrantes de prueba (Ana Prueba, Beto Prueba y Carla Prueba).
 
 Método
-- Recorrido con el navegador contra la aplicación y PostgreSQL reales, siguiendo quickstart.md
-  ("Verificación manual"). Para los pasos que piden otra sesión se usó una ventana privada.
-- Para el escenario 8 el Sprint se creó desde /sprints; para cerrarlo o borrarlo se usó psql.
+- Recorrido de quickstart.md ("Verificación manual") con Chromium real (Playwright): se completaron y enviaron
+  los formularios de la aplicación como lo haría una persona. Cada sesión distinta (Ana, Beto, Carla) usó un
+  contexto de navegador propio, equivalente a una ventana privada.
+- Los datos se cargaron desde la aplicación: el proyecto en /proyectos, la historia en /backlog, el Sprint en
+  /sprints y las horas de Beto en /esfuerzo. La base solo se consultó para confirmar el resultado.
+- Se registró el código HTTP de cada envío.
 
-Escenarios (completar con PASÓ / FALLÓ y lo observado)
-1. Enlace "Modificar" en cada fila de /proyectos: ______
-2. Formulario con nombre, fechas e integrantes actuales marcados: ______
-3. Renombrar el proyecto activo: "Proyecto modificado exitosamente", nombre nuevo en la lista y en la
-   estructura común: ______
-4. Nombre vacío: error junto al nombre y datos conservados: ______
-5. Fecha de fin igual a la de inicio: mensaje de HU-01 junto a la fecha de fin: ______
-6. Quitar a un integrante con horas registradas: "No se puede quitar a [nombre]: tiene horas registradas en
-   este proyecto": ______
-7. Agregar un integrante: aparece en /contexto/integrante del proyecto: ______
-8. Fecha de fin que deja afuera un Sprint que estaba dentro: "El Sprint N queda fuera de las nuevas fechas del
-   proyecto" junto a la fecha de fin: ______
-9. Ampliar la fecha de fin para incluir el Sprint: se guarda: ______
-10. Quitar a un integrante identificado sin horas: al navegar aparece la advertencia de HU-20b y se limpia la
-    identificación: ______
-11. /proyectos/999999/modificar y /proyectos/abc/modificar: página 404: ______
+Escenarios
+1. Enlace "Modificar" en cada fila de /proyectos: PASÓ. un enlace "Modificar" por proyecto; el de «Alfa»
+   apunta a /proyectos/1/modificar.
+2. Formulario con los datos actuales: PASÓ. nombre «Alfa», inicio 2026-03-01, fin 2026-06-30; marcados Ana
+   Prueba y Beto Prueba, sin marcar Carla Prueba.
+3. Renombrar el proyecto activo: PASÓ. POST 303; mensaje «Éxito: Proyecto modificado exitosamente»; «Alfa 2»
+   en la lista y en la cabecera (Proyecto: Alfa 2).
+4. Nombre vacío: PASÓ. POST 422; error junto al nombre: «project name cannot be empty»; fechas conservadas
+   2026-03-01 / 2026-06-30.
+5. Fecha de fin igual a la de inicio: PASÓ. POST 422; error junto a la fecha de fin: «La fecha de finalización
+   debe ser posterior a la fecha de inicio».
+6. Quitar a un integrante con horas registradas: PASÓ. Beto tenía 1 registro de 3 horas cargado desde /esfuerzo;
+   POST 409; mensaje «No se puede quitar a Beto Prueba: tiene horas registradas en este proyecto»; Beto
+   sigue en el proyecto.
+7. Agregar un integrante: PASÓ. POST 303; «Carla Prueba» aparece en /contexto/integrante.
+8. Fechas que dejan afuera un Sprint que estaba dentro: PASÓ. Sprint 1 del 2026-06-01 al 2026-06-14 (Activo);
+   POST 409; junto a la fecha de fin: «El Sprint 1 queda fuera de las nuevas fechas del proyecto»; el fin sigue
+   en 2026-06-30.
+9. Ampliar la fecha de fin: PASÓ. POST 303; mensaje «Éxito: Proyecto modificado exitosamente»; fin guardado
+   2026-07-31.
+10. Quitar a un integrante identificado sin horas: PASÓ. Con la ventana de Carla identificada, Ana la quitó
+    (POST 303). Al navegar con la ventana de Carla a /backlog apareció «Advertencia: Tu identificación ya no es
+    válida: el integrante no pertenece al proyecto activo. Elegí otro.» y la cabecera pasó de «Integrante: Carla
+    Prueba» a «Identificarme»; la página siguiente ya no repite el aviso.
+11. Proyecto inexistente o identificador inválido: PASÓ. /proyectos/999999/modificar → 404;
+    /proyectos/abc/modificar → 404.
 
 Observaciones
-- Un Sprint que ya estaba fuera de las fechas antes de modificar no bloquea el guardado (escenario 11b de la
-  spec); se verificó primero ese caso y luego el bloqueo con un Sprint que sí estaba dentro.
-- ______
+- Escenario 6: «Alfa» se creó del 2026-03-01 al 2026-06-30 con Ana y Beto. Beto cargó 3 horas en la historia
+  «Login» del Sprint 1 desde /esfuerzo antes de que Ana intentara quitarlo.
+- Escenario 8: el Sprint 1 (2026-06-01 a 2026-06-14) estaba dentro de las fechas del proyecto antes del cambio.
+  Un Sprint que ya estaba afuera no bloquea el guardado (escenario 11b de la spec, cubierto por
+  TestHU11_SprintYaFueraNoBloquea).
+- Escenario 10: si después de quitarla Carla navega a una pantalla que exige integrante (por ejemplo
+  /esfuerzo), la identificación también se limpia, pero se la redirige a /contexto/integrante con el aviso
+  general «Para esta acción primero tenés que identificarte…» en lugar del aviso específico de HU-20b. Es
+  comportamiento de HU-20b, no de HU-11.
+- Al terminar se detuvo el servidor y se descartó la base de prueba.
 
-Resultado: __ de 11 escenarios PASÓ.
+Resultado: 11 de 11 escenarios PASÓ.

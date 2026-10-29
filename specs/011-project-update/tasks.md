@@ -339,9 +339,9 @@ cambiar solo el nombre o los integrantes.
   breve de usuario con la acción "Modificar" de "Gestión de Proyectos"
 - [X] T084 [P] Avisar a quienes hicieron HU-21 y HU-03 qué cambió en sus archivos (lista de T003) y que el guardado de
   horas ahora rechaza a un integrante quitado durante la carga
-- [X] T085 Abrir el Pull Request desde `HU-11` citando HU-11, con las evidencias y la lista de archivos ajenos
+- [ ] T085 Abrir el Pull Request desde `HU-11` citando HU-11, con las evidencias y la lista de archivos ajenos
   editados
-- [X] T086 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
+- [ ] T086 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
 
 ## Dependencias y orden de ejecución
 
