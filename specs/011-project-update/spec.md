@@ -2,7 +2,7 @@
 
 **Rama**: `HU-11`
 **Creada**: 2026-10-27
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-01, FIX-HU-01, HU-03, HU-04, HU-20a, HU-20b, HU-21
 **Prioridad**: Media (Should Have) · **Valor**: 70 · **Estimación**: 5 SP (sugerida)
@@ -439,6 +439,11 @@ Supuestos:
   prueba de punta a punta.
 - El formulario lista todos los integrantes del sistema, como el alta de HU-21.
 - La sección "Proyectos" no exige contexto (HU-21).
+
+## Deuda técnica conocida
+
+- Un nombre con el carácter NUL (`%00`) devuelve 500 en lugar de 422: PostgreSQL rechaza ese byte antes de que la validación lo vea. Pasa igual en la creación (HU-21) y en otras pantallas; queda para una corrección general de la validación de texto (como la que HU-06 aplicó en `defect.Validate`).
+- La regla que impide quitar a un integrante solo mira `effort_logs`. Si se agregan otros datos ligados al integrante dentro del proyecto (votos de Planning Poker, asignaciones), hay que revisar si también deben bloquear la baja.
 
 ## Trazabilidad
 

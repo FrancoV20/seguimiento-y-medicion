@@ -14,6 +14,7 @@ type projectsPageData struct {
 	Members         []MemberOption
 	NoMembers       string
 	SelectedMembers map[string]bool
+	EditLabel       string // HU-11: texto del enlace "Modificar"
 }
 
 type projectsHandlers struct {
@@ -28,6 +29,9 @@ func RegisterProjects(s *Server, service *project.ProjectService, catalog Projec
 	return s.Register(Section{Name: "Proyectos", Path: "/proyectos"}, Routes{
 		"GET /proyectos":  http.HandlerFunc(handlers.get),
 		"POST /proyectos": http.HandlerFunc(handlers.post),
+		// HU-11: modificación de un proyecto (la sección no admite un segundo registro).
+		"GET /proyectos/{id}/modificar":  http.HandlerFunc(handlers.edit),
+		"POST /proyectos/{id}/modificar": http.HandlerFunc(handlers.update),
 	})
 }
 
@@ -110,6 +114,7 @@ func (h projectsHandlers) pageData(r *http.Request, selected []string) (projects
 		Projects:        projects,
 		Members:         members,
 		SelectedMembers: selectedMembers,
+		EditLabel:       LinkEditProject,
 	}, nil
 }
 
