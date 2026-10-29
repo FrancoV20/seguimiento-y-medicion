@@ -35,7 +35,7 @@
 - [ ] T008 [P] Escribir la prueba del armado del resumen a partir de `BoardView` de HU-14 (completadas, a devolver, Story Points planificados y completados) en `src/web/close_form_test.go`
 - [ ] T009 Definir en `src/sprint/close_sprint.go` el servicio `CloseSprint`, `CloseResult`, los errores `ErrSprintNotFound`, `ErrSprintAlreadyClosed` y `ErrCloseBlocked` y la interfaz `SprintCloseStore`
 - [ ] T010 Implementar el servicio `CloseSprint` con el orden de validación y la invocación de la validación de HU-07 en `src/sprint/close_sprint.go`
-- [ ] T011 Implementar `PostgreSQLSprintCloser` con `database/sql` y pgx y la transacción de `data-model.md` (bloqueo del Sprint y sus historias, registro, devolución y finalización) en `src/sprint/postgres_sprint_closer.go`
+- [x] T011 Implementar `PostgreSQLSprintCloser` con `database/sql` y pgx y la transacción de `data-model.md` (bloqueo del Sprint y sus historias, registro, devolución y finalización) en `src/sprint/postgres_sprint_closer.go`
 
 **Checkpoint**: La migración, el servicio y el almacenamiento están listos y probados contra PostgreSQL.
 
