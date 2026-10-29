@@ -20,7 +20,7 @@ Formato: `[ID] [P] [E#] descripción`
   - comprobar con `git grep -n` que no existen `ProjectUpdate`, `UpdateProject`, `ProjectForEdit`,
     `ErrProjectNotFound`, `MemberHasEffortError`, `SprintOutOfRangeError` ni `errMemberNotInProject`;
   - ajustar `plan.md` si algún nombre cambió.
-- [ ] T003 Coordinar los archivos ajenos que HU-11 edita:
+- [X] T003 Coordinar los archivos ajenos que HU-11 edita:
   - con quien hizo HU-21: `projects_handlers.go`, `projects_catalog.go`, `projects_form.go`, `projects.html` y los
     fakes `failingCreateProjectStore` (`src/web/projects_handlers_test.go`) y `failingBDDProjectStore`
     (`test/web_projects_bdd_test.go`);
@@ -334,10 +334,10 @@ cambiar solo el nombre o los integrantes.
   `go vet ./...` limpio.
 - [X] T080 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde
 - [X] T081 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/project`
-- [ ] T082 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual)
+- [X] T082 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual)
 - [X] T083 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual — Manual: sección "Modificar un proyecto" en `docs/manual-usuario.md`
   breve de usuario con la acción "Modificar" de "Gestión de Proyectos"
-- [ ] T084 [P] Avisar a quienes hicieron HU-21 y HU-03 qué cambió en sus archivos (lista de T003) y que el guardado de
+- [X] T084 [P] Avisar a quienes hicieron HU-21 y HU-03 qué cambió en sus archivos (lista de T003) y que el guardado de
   horas ahora rechaza a un integrante quitado durante la carga
 - [ ] T085 Abrir el Pull Request desde `HU-11` citando HU-11, con las evidencias y la lista de archivos ajenos
   editados
