@@ -2,7 +2,7 @@
 
 **Rama**: `HU-05b`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-05a, HU-20a, HU-20b
 **Habilita**: HU-18 (nueva ronda y estimación acordada), que reutiliza la regla de divergencia
