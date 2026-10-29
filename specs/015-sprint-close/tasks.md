@@ -118,17 +118,17 @@
 
 - [x] T038 [P] Documentar en `specs/015-sprint-close/quickstart.md` los pasos para probar a mano con un Sprint con historias en distintos estados y la nota de puerto
 - [x] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/close_handlers.go` y `src/web/close_form.go`
-- [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T042 [P] Escribir la prueba de handler de recarga después de cerrar: no se cierra nada más ni se repite el mensaje, en `src/web/close_handlers_test.go`
 - [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cierra nada, en `src/web/close_handlers_test.go`
 - [x] T044 [P] Verificar que `T033` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura
-- [ ] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [x] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
 - [ ] T047 Coordinar con quien tome HU-10 que los Story Points planificados y el porcentaje de historias completadas de un Sprint finalizado salen de `sprint_story_results`; con HU-16 que las historias no completadas salen de ahí (las devueltas ya no están asignadas); con HU-25 que el escenario "Cierre bloqueado" ya está cubierto acá y que lee la velocidad de HU-07; con HU-13 y HU-17 que las historias "Hecho" quedan en el Sprint finalizado (bloqueadas) y las devueltas son editables; y con HU-07 que una historia devuelta puede entrar a otro Sprint con horas ya registradas
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
-- [ ] T050 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
+- [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
+- [x] T050 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
