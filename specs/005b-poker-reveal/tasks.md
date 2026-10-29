@@ -223,11 +223,11 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
 
 ## Fase 5: Cierre
 
-- [ ] T026 REFACTOR sin cambiar comportamiento: duplicación entre `open`, `vote` y `close`, y entre los ayudantes de
+- [x] T026 REFACTOR sin cambiar comportamiento: duplicación entre `open`, `vote` y `close`, y entre los ayudantes de
   fixtures; nombres y comentarios de `src/poker` y `src/web/poker_*`. Comprobar con `git diff --stat main` que no hay
   migraciones, que `src/cmd/server/main.go` no cambió y que solo se editaron archivos de HU-05a. Todas las pruebas en
   verde.
-- [ ] T027 `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y `go test ./... -p 1 -race` en
+- [x] T027 `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y `go test ./... -p 1 -race` en
   verde, como en el CI; guardar `specs/005b-poker-reveal/evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y
   `specs/005b-poker-reveal/cobertura.txt` (`go test -count=1 -p 1 -cover ./...`), verificando al menos 80% en
   `src/poker`.
