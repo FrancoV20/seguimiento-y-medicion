@@ -6,24 +6,22 @@ almacenamiento de Sprint es `src/sprint`.
 
 ## Migración
 
-Número: `012`, el último número de migración presente en `origin/main` es `011` (HU-05a, Planning Poker).
-La `008` corresponde al fix de HU-01, pero no es la última; no hay migraciones `009` ni `010` en el árbol
-actual. Nadie edita una migración ajena.
+Número: `013`. En el árbol sincronizado, `012_create_defects` ya ocupa el número 012 (HU-06); el equipo
+confirmó que esa migración pertenece a otra historia. La migración de HU-15 usa el siguiente número y no
+edita migraciones ajenas.
 
 ```sql
--- 012_create_sprint_story_results.up.sql
+-- 013_sprint_story_results.up.sql
 CREATE TABLE sprint_story_results (
-    sprint_id    BIGINT      NOT NULL REFERENCES sprints(id) ON DELETE CASCADE,
-    story_id     BIGINT      NOT NULL REFERENCES user_stories(id) ON DELETE CASCADE,
-    final_status VARCHAR(20) NOT NULL CHECK (final_status IN ('En Sprint', 'En progreso', 'Hecho')),
+    sprint_id    INTEGER     NOT NULL REFERENCES sprints(id) ON DELETE CASCADE,
+    story_id     INTEGER     NOT NULL REFERENCES user_stories(id) ON DELETE CASCADE,
+    final_status VARCHAR(20) NOT NULL,
     story_points INTEGER,
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
     PRIMARY KEY (sprint_id, story_id)
 );
-CREATE INDEX idx_sprint_story_results_story ON sprint_story_results (story_id);
 
--- 012_create_sprint_story_results.down.sql
-DROP TABLE sprint_story_results;
+-- 013_sprint_story_results.down.sql
+DROP TABLE IF EXISTS sprint_story_results;
 ```
 
 La columna `user_stories.story_points` es `INTEGER` nullable y restringe los valores a la secuencia
@@ -106,8 +104,8 @@ puntos planificados y solo suma como completados los de historias `'Hecho'`.
 ### Verificación de base de datos (T003 y T004)
 
 `docker-compose.yml` publica PostgreSQL como `5433:5432`: el host usa el puerto `5433` y el contenedor
-escucha en `5432`. El árbol de `origin/main` contiene migraciones hasta `011_create_poker`; el esquema
-base coincide con las tablas usadas aquí y la siguiente migración de HU-15 es la `012`.
+escucha en `5432`. El árbol sincronizado contiene `012_create_defects` de HU-06; la migración de HU-15
+es la `013`.
 
 ## SprintResult (registro del Sprint)
 
