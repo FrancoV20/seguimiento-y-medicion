@@ -16,6 +16,7 @@ const (
 	MsgDefectRegistered          = "Defecto registrado correctamente. Sprint de detección: Sprint %d"
 	MsgDefectDescriptionRequired = "La descripción es obligatoria"
 	MsgDefectDescriptionTooLong  = "La descripción no puede superar 1000 caracteres"
+	MsgDefectDescriptionInvalid  = "La descripción contiene caracteres no válidos"
 	MsgDefectSeverityRequired    = "Seleccione la severidad"
 	MsgDefectSeverityInvalid     = "La severidad no es válida"
 	MsgDefectStoryRequired       = "Seleccione la historia relacionada"

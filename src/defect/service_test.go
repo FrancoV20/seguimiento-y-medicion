@@ -41,6 +41,8 @@ func TestValidateDescriptionBoundariesAndTrim(t *testing.T) {
 		{name: "1000 caracteres unicode", description: strings.Repeat("á", 1000), wantTrimmed: strings.Repeat("á", 1000)},
 		{name: "1001 caracteres unicode", description: strings.Repeat("界", 1001), wantError: ErrDescriptionTooLong},
 		{name: "recortada", description: "  defecto  ", wantTrimmed: "defecto"},
+		{name: "carácter NUL", description: "falla\x00al guardar", wantError: ErrDescriptionInvalid},
+		{name: "UTF-8 inválido", description: "falla \xff al guardar", wantError: ErrDescriptionInvalid},
 	}
 
 	for _, test := range tests {

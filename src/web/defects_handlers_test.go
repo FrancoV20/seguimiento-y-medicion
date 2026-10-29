@@ -257,6 +257,8 @@ func TestDefectsHandler_DescriptionLengthAndWhitespace(t *testing.T) {
 	}{
 		{"solo espacios", " \t ", MsgDefectDescriptionRequired, http.StatusUnprocessableEntity},
 		{"1001 caracteres", strings.Repeat("ñ", 1001), MsgDefectDescriptionTooLong, http.StatusUnprocessableEntity},
+		{"carácter NUL (%00)", "falla\x00al guardar", MsgDefectDescriptionInvalid, http.StatusUnprocessableEntity},
+		{"UTF-8 inválido (%FF)", "falla \xff al guardar", MsgDefectDescriptionInvalid, http.StatusUnprocessableEntity},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			values := url.Values{

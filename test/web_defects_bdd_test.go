@@ -213,10 +213,10 @@ func TestScenarioMissingRequiredDefectFields(t *testing.T) {
 	}
 }
 
-// Scenario: una descripción vacía o demasiado larga no se registra.
+// Scenario: una descripción vacía, demasiado larga o con caracteres no válidos no se registra.
 //
 //	Given un Product Builder que carga un defecto
-//	When la descripción está vacía o supera los 1000 caracteres
+//	When la descripción está vacía, supera los 1000 caracteres o contiene NUL o UTF-8 inválido
 //	Then el servicio rechaza la solicitud sin persistirla
 func TestScenarioInvalidDefectDescriptionIsRejected(t *testing.T) {
 	scenario := givenDefectBDDScenario(t)
@@ -231,6 +231,8 @@ func TestScenarioInvalidDefectDescriptionIsRejected(t *testing.T) {
 		{"vacía", "", defect.ErrDescriptionRequired},
 		{"solo espacios", " \t ", defect.ErrDescriptionRequired},
 		{"supera el límite", strings.Repeat("x", 1001), defect.ErrDescriptionTooLong},
+		{"carácter NUL", "falla\x00al guardar", defect.ErrDescriptionInvalid},
+		{"UTF-8 inválido", "falla \xff al guardar", defect.ErrDescriptionInvalid},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := scenario.service.Register(context.Background(), defect.RegisterInput{

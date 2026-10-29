@@ -98,6 +98,7 @@ func TestDefectFieldErrorMapsEachDomainErrorToItsFieldAndMessage(t *testing.T) {
 	}{
 		{defect.ErrDescriptionRequired, DefectDescriptionField, "La descripción es obligatoria"},
 		{defect.ErrDescriptionTooLong, DefectDescriptionField, "La descripción no puede superar 1000 caracteres"},
+		{defect.ErrDescriptionInvalid, DefectDescriptionField, "La descripción contiene caracteres no válidos"},
 		{defect.ErrSeverityRequired, DefectSeverityField, "Seleccione la severidad"},
 		{defect.ErrSeverityInvalid, DefectSeverityField, "La severidad no es válida"},
 		{defect.ErrStoryRequired, DefectStoryField, "Seleccione la historia relacionada"},
