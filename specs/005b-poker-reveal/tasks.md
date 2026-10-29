@@ -111,18 +111,18 @@ pantalla.
 
 T012 y T013 van en el mismo commit: el puerto, el adaptador y las dos pruebas falsas cambian juntos.
 
-- [ ] T012 Agregar en `src/poker/round.go` `CheckClose(status RoundStatus, votes int) error` (`status != StatusOpen` →
+- [x] T012 Agregar en `src/poker/round.go` `CheckClose(status RoundStatus, votes int) error` (`status != StatusOpen` →
   `ErrRoundClosed`; `votes == 0` → `ErrNoVotes`) y `ClosedRound{RoundID, StoryID int64; StoryTitle string; Number
   int}`; el método `CloseRound(ctx context.Context, projectID, roundID int64) (ClosedRound, error)` en `Store`
   (`src/poker/store.go`); `Service.CloseRound(ctx, projectID, roundID, memberID int64) (ClosedRound, error)` en
   `src/poker/service.go` (validaciones de `data-model.md`); `fakeStore.CloseRound` en `src/poker/service_test.go` y
   `failingPokerStore.CloseRound` (devuelve `errPokerStoreInternal`) en `src/web/poker_handlers_test.go`.
-- [ ] T013 Implementar `PostgreSQLStore.CloseRound` en `src/poker/postgres_store.go` con la transacción de
+- [x] T013 Implementar `PostgreSQLStore.CloseRound` en `src/poker/postgres_store.go` con la transacción de
   `data-model.md`: `SELECT r.status, r.story_id, r.round_number, us.title … WHERE r.id = $1 AND r.project_id = $2 FOR
   UPDATE OF r` (`sql.ErrNoRows` → `ErrRoundNotFound`), `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`,
   `CheckClose` y `UPDATE poker_rounds SET status = 'Cerrada', closed_at = now() WHERE id = $1`; errores técnicos
   envueltos con `fmt.Errorf("…: %w", err)` como en `CastVote`.
-- [ ] T014 Ejecutar T007–T010 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a sin
+- [x] T014 Ejecutar T007–T010 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a sin
   cambios).
 
 **Punto de control**: el cierre funciona en el dominio y en PostgreSQL, sin pantalla.

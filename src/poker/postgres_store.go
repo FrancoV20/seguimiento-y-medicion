@@ -130,3 +130,48 @@ func (s *PostgreSQLStore) CastVote(ctx context.Context, projectID, roundID, memb
 	}
 	return VoteOutcome{RoundID: roundID, Value: value, Updated: !inserted}, nil
 }
+
+// CloseRound cierra la ronda del proyecto en una transacción (HU-05b): la toma con bloqueo
+// exclusivo (un voto en curso la tiene FOR SHARE y el cierre lo espera; un voto que llega
+// después espera al cierre), cuenta sus votos, aplica CheckClose y la cierra con una sola
+// sentencia. Sin fila, la ronda no existe o es de otro proyecto: ErrRoundNotFound antes que
+// cualquier otro rechazo.
+func (s *PostgreSQLStore) CloseRound(ctx context.Context, projectID, roundID int64) (ClosedRound, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return ClosedRound{}, fmt.Errorf("begin close round: %w", err)
+	}
+	defer tx.Rollback()
+
+	closed := ClosedRound{RoundID: roundID}
+	var status string
+	err = tx.QueryRowContext(ctx, `
+		SELECT r.status, r.story_id, r.round_number, us.title
+		  FROM poker_rounds r
+		  JOIN user_stories us ON us.id = r.story_id
+		 WHERE r.id = $1 AND r.project_id = $2
+		   FOR UPDATE OF r`, roundID, projectID).Scan(&status, &closed.StoryID, &closed.Number, &closed.StoryTitle)
+	if errors.Is(err, sql.ErrNoRows) {
+		return ClosedRound{}, ErrRoundNotFound
+	}
+	if err != nil {
+		return ClosedRound{}, fmt.Errorf("lock round: %w", err)
+	}
+
+	var votes int
+	if err := tx.QueryRowContext(ctx, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, roundID).Scan(&votes); err != nil {
+		return ClosedRound{}, fmt.Errorf("count votes: %w", err)
+	}
+	if err := CheckClose(RoundStatus(status), votes); err != nil {
+		return ClosedRound{}, err
+	}
+
+	if _, err := tx.ExecContext(ctx,
+		`UPDATE poker_rounds SET status = 'Cerrada', closed_at = now() WHERE id = $1`, roundID); err != nil {
+		return ClosedRound{}, fmt.Errorf("close round: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return ClosedRound{}, fmt.Errorf("commit close round: %w", err)
+	}
+	return closed, nil
+}

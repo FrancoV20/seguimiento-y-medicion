@@ -35,6 +35,12 @@ func (f *fakeStore) CastVote(_ context.Context, projectID, roundID, memberID int
 	return f.outcome, f.err
 }
 
+func (f *fakeStore) CloseRound(_ context.Context, projectID, roundID int64) (ClosedRound, error) {
+	f.closeCalls++
+	f.gotClose = [2]int64{projectID, roundID}
+	return f.closed, f.err
+}
+
 func TestService_OpenRound_OK(t *testing.T) {
 	store := &fakeStore{opened: OpenedRound{RoundID: 9, StoryID: 4, StoryTitle: "Login", Number: 1}}
 	got, err := NewService(store).OpenRound(context.Background(), 1, 4, 7)

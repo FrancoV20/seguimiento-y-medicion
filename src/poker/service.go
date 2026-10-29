@@ -38,3 +38,15 @@ func (s *Service) Vote(ctx context.Context, projectID, roundID, memberID int64, 
 	}
 	return s.store.CastVote(ctx, projectID, roundID, memberID, value)
 }
+
+// CloseRound cierra una ronda del proyecto (HU-05b). El integrante es obligatorio aunque no se
+// guarda quién cerró: HU-28 agregará aquí la comprobación de su rol.
+func (s *Service) CloseRound(ctx context.Context, projectID, roundID, memberID int64) (ClosedRound, error) {
+	if roundID == 0 {
+		return ClosedRound{}, ErrRoundNotFound
+	}
+	if memberID == 0 {
+		return ClosedRound{}, ErrMemberRequired
+	}
+	return s.store.CloseRound(ctx, projectID, roundID)
+}
