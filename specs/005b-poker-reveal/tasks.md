@@ -18,7 +18,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` en `src/poker`, `src/web/poker_*.go`, `src/web/postgres_poker_catalog.go`,
+- [x] T001 Confirmar con `git grep -n` en `src/poker`, `src/web/poker_*.go`, `src/web/postgres_poker_catalog.go`,
   `src/web/templates/poker.html` y `db/migrations/011_create_poker.up.sql` los nombres de `research.md` ("Datos
   verificados"): `Series`, `InSeries`, `RoundStatus`, `StatusOpen`/`StatusClosed`, `CheckVote`, `OpenedRound`, los ocho
   `Err…`, `Store`, `Service`, `PostgreSQLStore`, `fakeStore`, `waitForLock`, `PokerBoard`, `PokerCatalog`,
@@ -27,7 +27,7 @@ Formato: `[ID] [P] [E#] descripción`
   `newPokerApp`, `participantRow`, `newPokerWebFixture`, y el parcial `alert` de `templates/layout.html`. Confirmar que
   no existen `CloseRound`, `CheckClose`, `Spread`, `VoteSpread`, `ErrNoVotes`, `ClosedRounds` ni
   `/planning-poker/cerrar`. Si algo cambió, ajustar `data-model.md` y este archivo antes de seguir.
-- [ ] T002 Crear la rama `HU-05b` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-05b` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-05b`. Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y
   `go vet ./...` en verde.
 
