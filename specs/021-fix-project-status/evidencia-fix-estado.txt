@@ -1,0 +1,11 @@
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	2.201s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.717s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	2.713s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	1.749s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.804s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	3.495s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	5.013s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.379s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	7.699s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	33.810s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	15.180s

@@ -22,4 +22,4 @@
 ## Notes
 
 - Bug detectado al usar la pantalla Proyectos (HU-21) el 29/10/2026.
-- La rama `HU-15` también usa la migración 013: quien integre segundo renumera la suya.
+- Migración `013`: el fix se integra antes que HU-15, que pasa a la `014`.
