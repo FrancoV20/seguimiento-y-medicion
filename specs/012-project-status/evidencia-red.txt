@@ -1,0 +1,15 @@
+﻿## Reglas (RED)
+# github.com/FrancoV20/seguimiento-y-medicion/src/project [github.com/FrancoV20/seguimiento-y-medicion/src/project.test]
+src\project\status_test.go:15:12: undefined: StatusNotStarted
+src\project\status_test.go:16:10: undefined: StatusInProgress
+src\project\status_test.go:17:10: undefined: StatusFinished
+src\project\status_test.go:18:46: undefined: StatusNotStarted
+src\project\status_test.go:18:64: undefined: StatusInProgress
+src\project\status_test.go:18:82: undefined: StatusFinished
+src\project\status_test.go:28:14: undefined: DateStatus
+src\project\status_test.go:30:113: undefined: StatusInProgress
+src\project\status_test.go:31:115: undefined: StatusNotStarted
+src\project\status_test.go:32:114: undefined: StatusFinished
+src\project\status_test.go:32:114: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/project [build failed]
+FAIL
