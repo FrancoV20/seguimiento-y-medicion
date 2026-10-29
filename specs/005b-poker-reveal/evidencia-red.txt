@@ -37,3 +37,68 @@ src/poker/close_integration_test.go:293:36: NewPostgreSQLStore(f.db).CloseRound 
 src/poker/round_test.go:56:10: undefined: CheckClose
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
 FAIL
+
+== Pantalla (T015-T020): sin ClosedRounds, sin la sección "Rondas cerradas" ni la ruta POST /planning-poker/cerrar ==
+$ go test -count=1 -p 1 -v -gcflags=-e -run 'HU05b|PokerCatalog_(RondasCerradas|VotosRevelados|IntegranteQuitado|SoloRondasCerradas)' ./src/web/ ./test/
+# src/web no compila: faltan PokerBoard.ClosedRounds, PokerClosedRoundView y PokerRevealedVoteView.
+# test (BDD, API pública): compila y falla porque POST /planning-poker/cerrar responde 404 (la ruta no existe).
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/postgres_poker_reveal_integration_test.go:14:50: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:15:9: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:19:49: undefined: PokerClosedRoundView
+src/web/postgres_poker_reveal_integration_test.go:20:26: board.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:25:9: undefined: PokerClosedRoundView
+src/web/postgres_poker_reveal_integration_test.go:48:26: board.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:55:14: board.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:70:12: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:75:11: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:80:62: beto.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:80:82: board.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:81:94: board.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:81:113: beto.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:96:12: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:101:11: undefined: PokerRevealedVoteView
+src/web/postgres_poker_reveal_integration_test.go:112:12: before.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:113:110: before.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:118:15: after.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:119:83: after.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+src/web/postgres_poker_reveal_integration_test.go:121:26: after.ClosedRounds undefined (type PokerBoard has no field or method ClosedRounds)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+=== RUN   TestBDD_HU05b_RevelacionDeVotos
+    web_poker_reveal_bdd_test.go:225: se esperaba volver a Planning Poker, se obtuvo http://127.0.0.1:PUERTO/planning-poker/cerrar (404)
+--- FAIL: TestBDD_HU05b_RevelacionDeVotos (0.02s)
+=== RUN   TestBDD_HU05b_AlertaDeDivergencia
+    web_poker_reveal_bdd_test.go:252: no se pudo cerrar «Login»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_AlertaDeDivergencia (0.02s)
+=== RUN   TestBDD_HU05b_SinDivergenciaEnElLimite
+    web_poker_reveal_bdd_test.go:266: no se pudo cerrar «Pagos»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_SinDivergenciaEnElLimite (0.02s)
+=== RUN   TestBDD_HU05b_DivergenciaDeTresNiveles
+    web_poker_reveal_bdd_test.go:282: no se pudo cerrar «Reportes»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_DivergenciaDeTresNiveles (0.02s)
+=== RUN   TestBDD_HU05b_CerrarSinQueTodosVoten
+    web_poker_reveal_bdd_test.go:296: no se pudo cerrar «Perfil»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarSinQueTodosVoten (0.02s)
+=== RUN   TestBDD_HU05b_RondaSinVotos
+    web_poker_reveal_bdd_test.go:323: se esperaba 409, se obtuvo 404
+--- FAIL: TestBDD_HU05b_RondaSinVotos (0.02s)
+=== RUN   TestBDD_HU05b_VotosParaTodos
+    web_poker_reveal_bdd_test.go:336: no se pudo cerrar «Login»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_VotosParaTodos (0.02s)
+=== RUN   TestBDD_HU05b_VotarEnRondaCerrada
+    web_poker_reveal_bdd_test.go:355: no se pudo cerrar «Login»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_VotarEnRondaCerrada (0.02s)
+=== RUN   TestBDD_HU05b_CerrarDosVeces
+    web_poker_reveal_bdd_test.go:376: no se pudo cerrar «Login»: 404 http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarDosVeces (0.02s)
+=== RUN   TestBDD_HU05b_RondaInexistente
+    web_poker_reveal_bdd_test.go:408: ronda 2147483647 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:408: ronda 207 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:408: ronda 208 debía mostrar "La ronda no existe"
+--- FAIL: TestBDD_HU05b_RondaInexistente (0.02s)
+=== RUN   TestBDD_HU05b_SinIdentificarme
+    web_poker_reveal_bdd_test.go:428: se esperaba la pantalla de identificación con regreso a Planning Poker, se obtuvo http://127.0.0.1:PUERTO/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_SinIdentificarme (0.02s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.247s
+FAIL

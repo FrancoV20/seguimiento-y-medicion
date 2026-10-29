@@ -136,13 +136,13 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
 
 ### Pruebas (RED)
 
-- [ ] T015 Crear `src/web/poker_reveal_fixtures_test.go` con `newAlfaWebFixture(t, db)` (usa `openContextTestDB`): los
+- [x] T015 Crear `src/web/poker_reveal_fixtures_test.go` con `newAlfaWebFixture(t, db)` (usa `openContextTestDB`): los
   mismos datos de T008 y un ayudante `closeAt(round, ts)` que hace `UPDATE poker_rounds SET status = 'Cerrada',
   closed_at = $2 WHERE id = $1` (fecha explícita para el orden), `removeMember(member)` (borra su fila de
   `project_members`), y `roundRow(t, body, round, member)` / `closedRow(t, body, round, member)`, que devuelven el
   texto de la fila `data-integrante` dentro de la sección `data-ronda` / `data-ronda-cerrada` de esa ronda (el atributo
   se repite entre secciones). Limpieza en `t.Cleanup`.
-- [ ] T016 [P] [E1, E5, E7, E10] Escribir en `src/web/postgres_poker_reveal_integration_test.go`:
+- [x] T016 [P] [E1, E5, E7, E10] Escribir en `src/web/postgres_poker_reveal_integration_test.go`:
   - `TestPostgresPokerCatalog_RondasCerradas`: con «Login» cerrada a las 10:00 y «Pagos» a las 10:05, `ClosedRounds` =
     [Pagos, Login] con historia, id y número 1; con el mismo `closed_at`, la de id mayor primero;
   - `TestPostgresPokerCatalog_VotosRevelados`: «Login» → Ana 2, Beto 13, Caro 5 en ese orden; «Perfil» cerrada → Caro
@@ -151,7 +151,7 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     «Perfil» cerrada sin Caro en el proyecto → Caro no figura;
   - `TestPostgresPokerCatalog_SoloRondasCerradas`: «Pagos» abierta no está en `ClosedRounds`, ningún voto de
     `ClosedRounds` es de «Pagos», y `Rounds`/`Participants` de HU-05a no cambian; las rondas de «Beta» no aparecen.
-- [ ] T017 [P] [E2, E3, E4, E5, E7] Escribir en `src/web/poker_reveal_view_test.go` (servidor de `newPokerApp`, datos
+- [x] T017 [P] [E2, E3, E4, E5, E7] Escribir en `src/web/poker_reveal_view_test.go` (servidor de `newPokerApp`, datos
   de T015, rondas cerradas con `closeAt`):
   - `TestHU05b_AlertaDeDivergencia`: «Login» y «Reportes» → dentro de `data-ronda-cerrada` de cada una, un `div` con
     `alert alert-warning`, "Advertencia:" y "Divergencia: los votos van de 2 a 13. Debatan antes de acordar la
@@ -166,7 +166,7 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     sin votos preparada en la base: 200, todos "No votó", sin rango ni alerta), `TestHU05b_TextosEscapados` (título e
     integrante con `<script>` escapados en "Rondas cerradas" y en el mensaje de cierre) y `TestHU05b_Rendimiento` (20
     rondas abiertas, 50 cerradas y 10 integrantes → `GET /planning-poker` en menos de 500 ms).
-- [ ] T018 [P] [E1, E5, E6, E8, E9, E10, E11, E12] Escribir en `src/web/poker_close_handlers_test.go`:
+- [x] T018 [P] [E1, E5, E6, E8, E9, E10, E11, E12] Escribir en `src/web/poker_close_handlers_test.go`:
   - `TestHU05b_BotonCerrarRonda`: cada ronda abierta tiene un formulario `action="/planning-poker/cerrar"` con su
     `ronda` oculto y el botón "Cerrar ronda"; las rondas cerradas no;
   - `TestHU05b_CerrarRonda` (E1): Ana cierra «Login» → 303 a `/planning-poker`; el GET muestra una sola vez "Ronda
@@ -183,13 +183,13 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     cerrada para"; «Login» sigue abierta, "Aún no hay rondas cerradas" y `roundRow` de Beto en «Login» dice "Votó" sin "13"; el
     cuerpo no contiene "poker_", "SQL", "pgx" ni el texto del error;
   - `TestHU05b_RecargaSinReenviar`: después de cerrar, dos GET → el mensaje aparece una sola vez.
-- [ ] T019 [P] [E1–E11] Escribir `test/web_poker_reveal_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
+- [x] T019 [P] [E1–E11] Escribir `test/web_poker_reveal_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
   comentarios, igual que `test/web_poker_bdd_test.go`, con el servidor y el servicio reales):
   `TestBDD_HU05b_RevelacionDeVotos`, `_AlertaDeDivergencia`, `_SinDivergenciaEnElLimite`, `_DivergenciaDeTresNiveles`,
   `_CerrarSinQueTodosVoten`, `_RondaSinVotos`, `_VotosParaTodos`, `_VotarEnRondaCerrada`, `_CerrarDosVeces`,
   `_RondaInexistente` y `_SinIdentificarme`. Las rondas cerradas se cierran desde la pantalla (en `_VotosParaTodos`,
   Ana cierra «Login» y Beto abre "Planning Poker", como dice el escenario 7).
-- [ ] T020 Ejecutar T016–T019, confirmar que fallan (no existen `ClosedRounds`, la sección ni la ruta) y guardar la
+- [x] T020 Ejecutar T016–T019, confirmar que fallan (no existen `ClosedRounds`, la sección ni la ruta) y guardar la
   salida en `evidencia-red.txt`, sección "Pantalla".
 
 ### Implementación (GREEN)
