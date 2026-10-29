@@ -13,7 +13,7 @@ en archivos nuevos: comprueba que el Sprint sea del proyecto y esté activo, inv
 propio (`SprintCloseStore`) con su adaptador PostgreSQL. El
 adaptador hace todo en una sola transacción: bloquea el Sprint y sus historias, guarda el registro de
 cada historia en `sprint_story_results`, devuelve a "Pendiente" las no completadas quitándoles la
-asignación y pasa el Sprint a "Finalizado". La migración `013` crea la tabla del registro. La pantalla
+asignación y pasa el Sprint a "Finalizado". La migración `014` crea la tabla del registro. La pantalla
 reutiliza `BoardCatalog` de HU-14 para el resumen, tiene una sección con `RequiresProject: true` y los
 handlers solo arman el envío, llaman al servicio y traducen sus errores. No modifica HU-03, HU-04,
 HU-14, HU-20a ni HU-20b.
@@ -35,7 +35,7 @@ HU-14, HU-20a ni HU-20b.
 > 5. HU-20a/b ya están integradas: `Server.Register` registra varias rutas y aplica `RequireContext`;
 >    `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed` y 303 están disponibles. El parcial `"alert"`
 >    está definido en `layout.html` (no hay archivo `alert.html`) y `CrossOriginGuard` está instalado.
->    `012_create_defects` ya ocupa el número 012 (HU-06); la migración de HU-15 es `013`.
+>    `013` ya está ocupada por FIX-HU-21; la migración de HU-15 es `014`.
 
 ## Technical Context
 
@@ -45,7 +45,7 @@ HU-14, HU-20a ni HU-20b.
 `github.com/jackc/pgx/v5/stdlib` ya incorporado. No se agregan dependencias nuevas.
 
 **Storage**: PostgreSQL con Docker Compose (puerto host `5433` hacia `5432` del contenedor). La migración
-`013` crea `sprint_story_results`. El cierre usa
+`014` crea `sprint_story_results`. El cierre usa
 `sprints`, `sprint_story_assignments`, `user_stories` y `sprint_story_results` en una transacción de
 `database/sql`.
 
@@ -103,8 +103,8 @@ direcciones y campos, abajo.
 
 ```text
 db/migrations/
-├── 013_sprint_story_results.up.sql
-└── 013_sprint_story_results.down.sql
+├── 014_sprint_story_results.up.sql
+└── 014_sprint_story_results.down.sql
 src/
 ├── sprint/                                   # archivos nuevos; no se modifica HU-04
 │   ├── close_sprint.go                       # servicio CloseSprint, errores y puerto SprintCloseStore

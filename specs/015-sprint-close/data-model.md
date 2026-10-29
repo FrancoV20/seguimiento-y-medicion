@@ -6,12 +6,12 @@ almacenamiento de Sprint es `src/sprint`.
 
 ## Migración
 
-Número: `013`. En el árbol sincronizado, `012_create_defects` ya ocupa el número 012 (HU-06); el equipo
+Número: `014`. La migración `013` ya está ocupada por FIX-HU-21; el equipo
 confirmó que esa migración pertenece a otra historia. La migración de HU-15 usa el siguiente número y no
 edita migraciones ajenas.
 
 ```sql
--- 013_sprint_story_results.up.sql
+-- 014_sprint_story_results.up.sql
 CREATE TABLE sprint_story_results (
     sprint_id    INTEGER     NOT NULL REFERENCES sprints(id) ON DELETE CASCADE,
     story_id     INTEGER     NOT NULL REFERENCES user_stories(id) ON DELETE CASCADE,
@@ -20,7 +20,7 @@ CREATE TABLE sprint_story_results (
     PRIMARY KEY (sprint_id, story_id)
 );
 
--- 013_sprint_story_results.down.sql
+-- 014_sprint_story_results.down.sql
 DROP TABLE IF EXISTS sprint_story_results;
 ```
 
@@ -104,8 +104,7 @@ puntos planificados y solo suma como completados los de historias `'Hecho'`.
 ### Verificación de base de datos (T003 y T004)
 
 `docker-compose.yml` publica PostgreSQL como `5433:5432`: el host usa el puerto `5433` y el contenedor
-escucha en `5432`. El árbol sincronizado contiene `012_create_defects` de HU-06; la migración de HU-15
-es la `013`.
+escucha en `5432`. FIX-HU-21 ocupa la migración `013`; la migración de HU-15 es la `014`.
 
 ## SprintResult (registro del Sprint)
 

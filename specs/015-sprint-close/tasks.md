@@ -21,7 +21,7 @@
 - [x] T001 Revisar en `main` HU-03, HU-04, FIX-HU-04, HU-07 y HU-14: ruta del paquete de Sprint; validación previa al cierre de HU-07 (firma, datos que devuelve, mensaje y cómo se prueba el caso inválido) y su cálculo de velocidad; qué escribe HU-04 al asignar y quitar (`sprint_story_assignments`, `active_sprint_id`, estados); si HU-03 ya rechaza horas en historias fuera del Sprint activo; cómo cuenta HU-07 las horas de una historia que estuvo en dos Sprints; `BoardCatalog` de HU-14; y el tipo de `user_stories.story_points`; hallazgos documentados en `data-model.md` y planificación ajustada en `plan.md`.
 - [x] T002 Integrar/verificar `origin/main` y HU-20a/HU-20b: `Server.Register` registra varias rutas y métodos y aplica `RequireContext` según `Section.RequiresProject`; se verificaron `ActiveContextFrom`, `SetFlash`, `MsgOperationFailed`, la redirección 303 y la protección contra envíos de otro origen. El parcial `"alert"` está definido en `layout.html` (no existe `alert.html` como archivo separado).
 - [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `quickstart.md` `DATABASE_URL`; el puerto publicado es `5433` en el host hacia `5432` en el contenedor.
-- [x] T004 [P] Confirmar el esquema de `sprints`, `sprint_story_assignments` y `user_stories` y el último número de migración integrado: `012` está ocupado por HU-06; la migración HU-15 es `013`; hallazgos documentados en `data-model.md` y `plan.md`.
+- [x] T004 [P] Confirmar el esquema de `sprints`, `sprint_story_assignments` y `user_stories` y el último número de migración integrado: `013` está ocupado por FIX-HU-21; la migración HU-15 es `014`; hallazgos documentados en `data-model.md` y `plan.md`.
 
 ---
 
@@ -29,7 +29,7 @@
 
 **Purpose**: Migración, servicio y almacenamiento del cierre, compartidos por las tres historias.
 
-- [x] T005 Escribir la migración `013_sprint_story_results.up.sql` y `.down.sql` en `db/migrations/` y probarla en ambos sentidos (`up`, `down 1`, `up`)
+- [x] T005 Escribir la migración `014_sprint_story_results.up.sql` y `.down.sql` en `db/migrations/` y probarla en ambos sentidos (`up`, `down 1`, `up`)
 - [x] T006 [P] Escribir las pruebas del servicio `CloseSprint` contra PostgreSQL real con fixtures propias (dos proyectos; Sprint con historias "Hecho", "En progreso" y "En Sprint"; Sprint sin historias; Sprint sin "Hecho"; Sprint finalizado): cierre válido, orden de validación (Sprint del proyecto, activo, validación de HU-07), `ErrSprintNotFound`, `ErrSprintAlreadyClosed`, `ErrCloseBlocked` con datos inválidos armados como en HU-07 y velocidad cero de HU-07 cuando no hay "Hecho", en `src/sprint/close_sprint_test.go`
 - [x] T007 [P] Escribir la prueba de integración de `PostgreSQLSprintCloser`: transacción completa (Sprint "Finalizado", no completadas en "Pendiente" sin asignación ni `active_sprint_id`, "Hecho" conservadas, una fila en `sprint_story_results` por historia con estado final y Story Points), el registro no cambia al reasignar una devuelta o editar sus puntos, una falla a mitad del cierre revierte todo, y dos cierres simultáneos aplican solo uno, en `src/sprint/postgres_sprint_closer_integration_test.go`
 - [x] T008 [P] Escribir la prueba del armado del resumen a partir de `BoardView` de HU-14 (completadas, a devolver, Story Points planificados y completados) en `src/web/close_form_test.go`
@@ -125,11 +125,11 @@
 - [x] T044 [P] Verificar que `T033` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura
 - [x] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [x] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
-- [ ] T047 Coordinar con quien tome HU-10 que los Story Points planificados y el porcentaje de historias completadas de un Sprint finalizado salen de `sprint_story_results`; con HU-16 que las historias no completadas salen de ahí (las devueltas ya no están asignadas); con HU-25 que el escenario "Cierre bloqueado" ya está cubierto acá y que lee la velocidad de HU-07; con HU-13 y HU-17 que las historias "Hecho" quedan en el Sprint finalizado (bloqueadas) y las devueltas son editables; y con HU-07 que una historia devuelta puede entrar a otro Sprint con horas ya registradas
+- [x] T047 Coordinar con quien tome HU-10 que los Story Points planificados y el porcentaje de historias completadas de un Sprint finalizado salen de `sprint_story_results`; con HU-16 que las historias no completadas salen de ahí (las devueltas ya no están asignadas); con HU-25 que el escenario "Cierre bloqueado" ya está cubierto acá y que lee la velocidad de HU-07; con HU-13 y HU-17 que las historias "Hecho" quedan en el Sprint finalizado (bloqueadas) y las devueltas son editables; y con HU-07 que una historia devuelta puede entrar a otro Sprint con horas ya registradas
 - [x] T048 Revisar trazabilidad de FR-001 a FR-016 y SC-001 a SC-007 en `specs/015-sprint-close/tasks.md` y la tabla de trazabilidad de `spec.md`
 - [x] T049 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Cierre de Sprint"
 - [x] T050 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
-- [ ] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [x] T051 Abrir el Pull Request desde `HU-15`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
 
