@@ -200,6 +200,141 @@ func TestCloseHandler_CierreExitosoSoloCierraElProyectoActivoYConsumeFlashUnaVez
 	}
 }
 
+func TestCloseHandler_RecargaDespuesDelCierreNoRepiteOperacionNiMensaje(t *testing.T) {
+	// Dado un Sprint que ya se cerró y cuyo mensaje de éxito se mostró una sola vez.
+	app := newCloseHandlerFixture(t)
+	projectID := newCatProject(t, app.db, "recarga después del cierre")
+	sprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+	newCloseSprintStories(t, app.db, projectID, sprintID, sprint.Done, sprint.InProgress)
+	client := app.client(false)
+	closeHandlerSelectProject(t, app, client, projectID)
+
+	firstPost, _ := closeHandlerPost(t, app, client, sprintID)
+	firstPost.Body.Close()
+	if firstPost.StatusCode != http.StatusSeeOther {
+		t.Fatalf("primer POST /cierre = %d; se esperaba 303", firstPost.StatusCode)
+	}
+	firstGet, firstBody := app.get(t, client, "/cierre")
+	defer firstGet.Body.Close()
+	successMessage := fmt.Sprintf(MsgSprintClosed, 1, 1)
+	if firstGet.StatusCode != http.StatusOK || !strings.Contains(firstBody, successMessage) {
+		t.Fatalf("el primer GET debía mostrar %q; status=%d", successMessage, firstGet.StatusCode)
+	}
+
+	// Cuando el navegador recarga y reenvía el POST ya procesado.
+	repeatedPost, repeatedBody := closeHandlerPost(t, app, client, sprintID)
+	defer repeatedPost.Body.Close()
+
+	// Entonces el segundo cierre se rechaza, no duplica el registro y no repite el mensaje de éxito.
+	if repeatedPost.StatusCode != http.StatusConflict {
+		t.Errorf("reenvío de POST /cierre = %d; se esperaba 409", repeatedPost.StatusCode)
+	}
+	if strings.Contains(repeatedBody, successMessage) {
+		t.Errorf("la respuesta del reenvío repitió el mensaje de éxito %q", successMessage)
+	}
+	if !strings.Contains(repeatedBody, MsgSprintAlreadyClosed) {
+		t.Errorf("la respuesta del reenvío debía mostrar %q", MsgSprintAlreadyClosed)
+	}
+	secondGet, secondBody := app.get(t, client, "/cierre")
+	defer secondGet.Body.Close()
+	if strings.Contains(secondBody, successMessage) {
+		t.Errorf("el GET posterior al reenvío volvió a mostrar %q", successMessage)
+	}
+
+	var status string
+	if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, sprintID).Scan(&status); err != nil {
+		t.Fatalf("no se pudo leer el estado del Sprint: %v", err)
+	}
+	if status != string(sprint.SprintFinished) {
+		t.Errorf("el Sprint quedó %q; se esperaba %q", status, sprint.SprintFinished)
+	}
+	var resultCount int
+	if err := app.db.QueryRow(
+		`SELECT count(*) FROM sprint_story_results WHERE sprint_id = $1`, sprintID,
+	).Scan(&resultCount); err != nil {
+		t.Fatalf("no se pudo contar el registro del cierre: %v", err)
+	}
+	if resultCount != 2 {
+		t.Errorf("el reenvío dejó %d resultados; se esperaban los 2 del primer cierre", resultCount)
+	}
+}
+
+func TestCloseHandler_SinContextoDeProyectoRedirigeAlSelectorSinCerrar(t *testing.T) {
+	// Dado un Sprint activo que no debe cerrarse sin un proyecto válido en el contexto de HU-20b.
+	cases := []struct {
+		name        string
+		contextType string
+	}{
+		{name: "sin selección", contextType: "none"},
+		{name: "proyecto eliminado", contextType: "deleted"},
+		{name: "cookie inválida", contextType: "invalid"},
+	}
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			app := newCloseHandlerFixture(t)
+			projectID := newCatProject(t, app.db, "contexto inválido "+tc.name)
+			sprintID, _ := newCatSprint(t, app.db, projectID, "Activo")
+			stories := newCloseSprintStories(t, app.db, projectID, sprintID, sprint.Done, sprint.InProgress)
+			client := app.client(false)
+
+			switch tc.contextType {
+			case "deleted":
+				deletedProject := newCatProject(t, app.db, "contexto eliminado "+tc.name)
+				app.setCookies(t, client, idCookie(CookieProject, deletedProject))
+				if _, err := app.db.Exec(`DELETE FROM projects WHERE id = $1`, deletedProject); err != nil {
+					t.Fatalf("no se pudo eliminar el proyecto del contexto: %v", err)
+				}
+			case "invalid":
+				app.setCookies(t, client, &http.Cookie{
+					Name: CookieProject, Value: "invalid-signature", Path: "/",
+				})
+			}
+
+			// Cuando se intenta enviar el cierre sin selección válida o con una cookie obsoleta.
+			resp, _ := closeHandlerPost(t, app, client, sprintID)
+			defer resp.Body.Close()
+
+			// Entonces HU-20b redirige al selector y la operación no modifica el Sprint ni las historias.
+			location, err := url.Parse(resp.Header.Get("Location"))
+			if resp.StatusCode != http.StatusSeeOther || err != nil ||
+				location.Path != pathSelectProject || location.Query().Get("volver_a") != closePath {
+				t.Errorf("POST /cierre = %d a %q; se esperaba 303 al selector de proyectos para %s",
+					resp.StatusCode, resp.Header.Get("Location"), closePath)
+			}
+			var status string
+			if err := app.db.QueryRow(`SELECT status FROM sprints WHERE id = $1`, sprintID).Scan(&status); err != nil {
+				t.Fatalf("no se pudo leer el estado del Sprint: %v", err)
+			}
+			if status != string(sprint.SprintActive) {
+				t.Errorf("el Sprint quedó %q; se esperaba que siguiera Activo", status)
+			}
+			var resultCount int
+			if err := app.db.QueryRow(
+				`SELECT count(*) FROM sprint_story_results WHERE sprint_id = $1`, sprintID,
+			).Scan(&resultCount); err != nil {
+				t.Fatalf("no se pudo consultar el registro del Sprint: %v", err)
+			}
+			if resultCount != 0 {
+				t.Errorf("se registraron %d resultados sin un contexto de proyecto válido", resultCount)
+			}
+			for _, story := range stories {
+				var storyStatus string
+				var activeSprint sql.NullInt64
+				if err := app.db.QueryRow(
+					`SELECT status, active_sprint_id FROM user_stories WHERE id = $1`, story.id,
+				).Scan(&storyStatus, &activeSprint); err != nil {
+					t.Fatalf("no se pudo leer la historia %d: %v", story.id, err)
+				}
+				if storyStatus != string(story.status) || !activeSprint.Valid || activeSprint.Int64 != sprintID {
+					t.Errorf("la historia %d cambió sin contexto válido: estado=%q sprint=%v",
+						story.id, storyStatus, activeSprint)
+				}
+			}
+		})
+	}
+}
+
 func TestCloseHandler_HistoriasHechoConservadasYDevueltasDisponiblesEnBacklog(t *testing.T) {
 	// Dado un Sprint activo con una historia Hecho, una En progreso y una En Sprint.
 	app := newCloseHandlerFixture(t)

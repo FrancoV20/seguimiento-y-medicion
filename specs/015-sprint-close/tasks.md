@@ -120,8 +120,8 @@
 - [x] T039 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/close_handlers.go` y `src/web/close_form.go`
 - [ ] T040 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T041 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T042 [P] Escribir la prueba de handler de recarga después de cerrar: no se cierra nada más ni se repite el mensaje, en `src/web/close_handlers_test.go`
-- [ ] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cierra nada, en `src/web/close_handlers_test.go`
+- [x] T042 [P] Escribir la prueba de handler de recarga después de cerrar: no se cierra nada más ni se repite el mensaje, en `src/web/close_handlers_test.go`
+- [x] T043 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b y no se cierra nada, en `src/web/close_handlers_test.go`
 - [ ] T044 [P] Verificar que `T033` cubre el error al leer y que el catálogo distingue "sin Sprint" de un error de lectura
 - [ ] T045 Guardar en `specs/015-sprint-close/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T046 Guardar en `specs/015-sprint-close/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/015-sprint-close/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/sprint`
