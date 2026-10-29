@@ -67,7 +67,7 @@ pantalla.
 
 ### Pruebas (RED)
 
-- [ ] T007 [P] [E1, E6, E9, E10] Escribir las pruebas unitarias:
+- [x] T007 [P] [E1, E6, E9, E10] Escribir las pruebas unitarias:
   - en `src/poker/round_test.go`, `TestCheckClose`: (Abierta, 3) → nil; (Cerrada, 3) → `ErrRoundClosed`; (Cerrada, 0)
     → `ErrRoundClosed` (cerrada antes que sin votos); (Abierta, 0) → `ErrNoVotes`;
   - en `src/poker/service_test.go`, `fakeStore` suma `closeCalls`, `gotClose [2]int64` y `closed ClosedRound`, y
@@ -75,13 +75,13 @@ pantalla.
     `TestService_CloseRound_Validaciones` (`roundID == 0` → `ErrRoundNotFound` y `memberID == 0` →
     `ErrMemberRequired` sin llamar al almacén; propaga `ErrNoVotes`, `ErrRoundClosed` y un error cualquiera de forma
     que `errors.Is` funcione).
-- [ ] T008 Crear `src/poker/reveal_fixtures_integration_test.go` con `newAlfaFixture(t)` (usa `openTestDB`): «Alfa»
+- [x] T008 Crear `src/poker/reveal_fixtures_integration_test.go` con `newAlfaFixture(t)` (usa `openTestDB`): «Alfa»
   con Ana, Beto y Caro; «Login», «Pagos», «Reportes», «Perfil» y «Ayuda» con su ronda 1 abierta por Ana y los votos del
   Issue (Login 2/13/5, Pagos 3/5/8, Reportes 3/13/3, Perfil 5/5 sin Caro, Ayuda sin votos); «Beta» con Dani, «Tablero»
   con una ronda abierta (Dani 8) y «Agenda» con una ronda cerrada sin votos. Ayudantes `vote(round, member)`,
   `status(round)`, `closedAt(round)` y `waitForWaiters(t, f, n)` (como `waitForLock`, pero espera `n` sesiones en
   `wait_event_type = 'Lock'`, plazo 5 s). Limpieza en `t.Cleanup`: historias → proyectos → integrantes.
-- [ ] T009 [E1, E5, E6, E9, E10] Escribir en `src/poker/close_integration_test.go`:
+- [x] T009 [E1, E5, E6, E9, E10] Escribir en `src/poker/close_integration_test.go`:
   - `TestPostgresCloseRound_OK`: cerrar «Login» → `ClosedRound{StoryTitle: "Login", Number: 1}`, `status =
     'Cerrada'`, `closed_at` no NULL, los tres votos sin cambios y la historia (título, estado, `story_points`) sin
     cambios;
@@ -91,7 +91,7 @@ pantalla.
     cierre;
   - `TestPostgresCloseRound_Inexistente` y `TestPostgresCloseRound_OtroProyecto`: id 2147483647, la ronda abierta de
     «Tablero» y la cerrada sin votos de «Agenda» desde «Alfa» → `ErrRoundNotFound` (404 antes que 409) y nada cambia.
-- [ ] T010 [E8, E9, E12] Escribir en `src/poker/close_integration_test.go` las pruebas de concurrencia y falla
+- [x] T010 [E8, E9, E12] Escribir en `src/poker/close_integration_test.go` las pruebas de concurrencia y falla
   (`research.md`, decisión 4):
   - `TestPostgresCloseRound_VotoEsperaAlCierre`: transacción de prueba con `LOCK TABLE poker_votes IN ACCESS EXCLUSIVE
     MODE`; `CloseRound` de «Login» en una goroutine; `waitForWaiters(1)`; `CastVote` de Caro con 8 en otra goroutine;
@@ -104,7 +104,7 @@ pantalla.
   - `TestPostgresCloseRound_FalloNoDejaCambios`: transacción de prueba que toma «Login» `FOR SHARE`; `CloseRound` con
     un contexto de 200 ms → error que no es del dominio (`errors.Is` falso para los `Err…`); después del `ROLLBACK`,
     «Login» sigue `'Abierta'` con `closed_at` NULL.
-- [ ] T011 Ejecutar T007–T010, confirmar que fallan porque `CheckClose`, `ClosedRound` y `CloseRound` no existen y
+- [x] T011 Ejecutar T007–T010, confirmar que fallan porque `CheckClose`, `ClosedRound` y `CloseRound` no existen y
   guardar la salida en `evidencia-red.txt`, sección "Cierre".
 
 ### Implementación (GREEN)

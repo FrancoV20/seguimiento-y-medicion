@@ -17,6 +17,9 @@ type fakeStore struct {
 	opened               OpenedRound
 	outcome              VoteOutcome
 	err                  error
+	closeCalls           int         // HU-05b
+	gotClose             [2]int64    // proyecto y ronda recibidos por CloseRound
+	closed               ClosedRound // lo que devuelve CloseRound
 }
 
 func (f *fakeStore) OpenRound(_ context.Context, projectID, storyID, memberID int64) (OpenedRound, error) {
@@ -108,5 +111,46 @@ func TestService_Vote_DevuelveUpdatedYPropagaErrores(t *testing.T) {
 	store = &fakeStore{err: ErrStoryAlreadyRounded}
 	if _, err := NewService(store).OpenRound(context.Background(), 1, 4, 7); !errors.Is(err, ErrStoryAlreadyRounded) {
 		t.Errorf("OpenRound debía propagar el error del almacén, se obtuvo %v", err)
+	}
+}
+
+// HU-05b, T007: Service.CloseRound con un Store de prueba.
+
+func TestService_CloseRound_OK(t *testing.T) {
+	store := &fakeStore{closed: ClosedRound{RoundID: 9, StoryID: 4, StoryTitle: "Login", Number: 1}}
+	got, err := NewService(store).CloseRound(context.Background(), 1, 9, 7)
+	if err != nil || got != store.closed {
+		t.Fatalf("se esperaba la ronda cerrada del almacén, se obtuvo %+v, %v", got, err)
+	}
+	if store.closeCalls != 1 || store.gotClose != [2]int64{1, 9} {
+		t.Errorf("el almacén recibió %v en %d llamadas, se esperaba proyecto 1 y ronda 9 una vez", store.gotClose, store.closeCalls)
+	}
+}
+
+func TestService_CloseRound_Validaciones(t *testing.T) {
+	cases := []struct {
+		name          string
+		round, member int64
+		want          error
+	}{
+		{"ronda cero", 0, 7, ErrRoundNotFound},
+		{"integrante cero", 9, 0, ErrMemberRequired},
+	}
+	for _, c := range cases {
+		store := &fakeStore{}
+		if _, err := NewService(store).CloseRound(context.Background(), 1, c.round, c.member); !errors.Is(err, c.want) {
+			t.Errorf("%s: se esperaba %v, se obtuvo %v", c.name, c.want, err)
+		}
+		if store.closeCalls != 0 {
+			t.Errorf("%s: no debía llamarse al almacén", c.name)
+		}
+	}
+
+	other := errors.New("falla del almacén")
+	for _, storeErr := range []error{ErrNoVotes, ErrRoundClosed, ErrRoundNotFound, other, fmt.Errorf("envuelto: %w", ErrNoVotes)} {
+		store := &fakeStore{err: storeErr}
+		if _, err := NewService(store).CloseRound(context.Background(), 1, 9, 7); !errors.Is(err, storeErr) {
+			t.Errorf("el error %v debía propagarse de forma que errors.Is funcione, se obtuvo %v", storeErr, err)
+		}
 	}
 }

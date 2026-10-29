@@ -12,3 +12,28 @@ src/poker/spread_test.go:50:16: undefined: Spread
 src/poker/spread_test.go:58:15: undefined: Spread
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
 FAIL
+
+== Cierre (T007-T011): sin CheckClose, ClosedRound ni CloseRound (puerto, servicio y adaptador) ==
+$ go test -count=1 -p 1 -v -gcflags=-e -run 'CheckClose|Service_CloseRound|PostgresCloseRound' ./src/poker/
+# -gcflags=-e lista todos los errores de compilación (sin el corte "too many errors").
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src/poker/service_test.go:22:23: undefined: ClosedRound
+src/poker/service_test.go:120:30: undefined: ClosedRound
+src/poker/service_test.go:121:32: NewService(store).CloseRound undefined (type *Service has no field or method CloseRound)
+src/poker/service_test.go:141:34: NewService(store).CloseRound undefined (type *Service has no field or method CloseRound)
+src/poker/service_test.go:152:34: NewService(store).CloseRound undefined (type *Service has no field or method CloseRound)
+src/poker/close_integration_test.go:42:39: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:46:10: undefined: ClosedRound
+src/poker/close_integration_test.go:70:39: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:86:40: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:102:21: store.CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:107:21: store.CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:121:40: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:136:22: store.CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:171:19: store.CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:213:23: store.CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:258:38: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/close_integration_test.go:293:36: NewPostgreSQLStore(f.db).CloseRound undefined (type *PostgreSQLStore has no field or method CloseRound)
+src/poker/round_test.go:56:10: undefined: CheckClose
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
