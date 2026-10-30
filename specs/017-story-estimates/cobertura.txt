@@ -1,10 +1,11 @@
-﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.073s	coverage: 83.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	6.007s	coverage: 88.9% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	2.990s	coverage: 7.8% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	3.349s	coverage: 89.4% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.515s	coverage: 93.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	2.708s	coverage: 84.2% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	5.460s	coverage: 87.8% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	3.392s	coverage: 84.2% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	8.736s	coverage: 80.7% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	49.223s	coverage: 89.6% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.232s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	0.563s	coverage: 88.9% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.006s	coverage: 7.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.183s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.260s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.037s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	1.148s	coverage: 89.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.539s	coverage: 86.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.009s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	9.961s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	3.276s	coverage: [no statements]
