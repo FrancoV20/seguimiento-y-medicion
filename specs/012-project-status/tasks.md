@@ -134,7 +134,7 @@ comprobar los valores de "Datos de ejemplo".
 - [x] T016 [E9, E10] Escribir las pruebas de contexto, errores y bordes en `src/web/project_status_handlers_test.go`:
   - `TestHU12_SinProyecto`: 303 a `/contexto/proyecto?volver_a=%2Festado`;
   - `TestHU12_ErrorAlConsultar`: con un catálogo que falla y con un `BoardCatalog` que falla, la página de error de
-    HU-20a con 500, sin nombre del proyecto, sin cantidades ni texto interno; con `driver.ErrBadConn`, 503; con
+    HU-20a con 500, sin los datos de la pantalla ni texto interno; con `driver.ErrBadConn`, 503; con
     `NotFound`, 404;
   - `TestHU12_PostNoPermitido`: `POST /estado` → 405;
   - `TestHU12_TextosEscapados`: un proyecto propio llamado `<b>Alfa & Co</b>`, con un Sprint activo de objetivo
@@ -170,7 +170,7 @@ comprobar los valores de "Datos de ejemplo".
     main` lista solo archivos nuevos y `main.go`.
 - [x] T024 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
   `go test ./... -p 1 -race` en verde, como en el CI. (-race no se pudo correr en Windows: sin cgo; lo verifica el CI)
-- [ ] T025 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
+- [x] T025 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/project`.
 - [ ] T026 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
 - [ ] T027 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
