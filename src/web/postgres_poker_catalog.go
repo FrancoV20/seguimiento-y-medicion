@@ -47,8 +47,36 @@ SELECT v.round_id, v.value
   JOIN poker_rounds r ON r.id = v.round_id
  WHERE r.project_id = $1 AND r.status = 'Abierta' AND v.member_id = $2`
 
-// PokerBoard lee las cuatro partes de la pantalla en una transacción de solo lectura, para que
-// sea coherente aunque alguien vote mientras se arma.
+// Rondas cerradas del proyecto, de la más recientemente cerrada a la más antigua (HU-05b).
+const pokerClosedRoundsQuery = `
+SELECT r.id, r.story_id, us.title, r.round_number
+  FROM poker_rounds r
+  JOIN user_stories us ON us.id = r.story_id
+ WHERE r.project_id = $1 AND r.status = 'Cerrada'
+ ORDER BY r.closed_at DESC, r.id DESC`
+
+// Votos revelados (HU-05b): integrantes actuales del proyecto más quien votó en la ronda.
+// poker_votes.value se lee SOLO para las rondas del CTE closed (status = 'Cerrada').
+const pokerRevealedVotesQuery = `
+WITH closed AS (
+    SELECT id, project_id FROM poker_rounds
+     WHERE project_id = $1 AND status = 'Cerrada'
+), people AS (
+    SELECT c.id AS round_id, pm.member_id
+      FROM closed c JOIN project_members pm ON pm.project_id = c.project_id
+    UNION
+    SELECT v.round_id, v.member_id
+      FROM poker_votes v JOIN closed c ON c.id = v.round_id
+)
+SELECT p.round_id, m.id, m.display_name, v.value
+  FROM people p
+  JOIN members m ON m.id = p.member_id
+  LEFT JOIN poker_votes v ON v.round_id = p.round_id AND v.member_id = p.member_id
+ ORDER BY p.round_id, m.display_name, m.id`
+
+// PokerBoard lee las partes de la pantalla (historias, rondas abiertas con sus participantes y el
+// voto propio, y las rondas cerradas con sus votos revelados) en una transacción de solo lectura,
+// para que sea coherente aunque alguien vote o cierre una ronda mientras se arma.
 func (c *PostgreSQLPokerCatalog) PokerBoard(ctx context.Context, projectID, memberID int64) (PokerBoard, error) {
 	tx, err := c.db.BeginTx(ctx, &sql.TxOptions{ReadOnly: true, Isolation: sql.LevelRepeatableRead})
 	if err != nil {
@@ -56,7 +84,7 @@ func (c *PostgreSQLPokerCatalog) PokerBoard(ctx context.Context, projectID, memb
 	}
 	defer tx.Rollback()
 
-	board := PokerBoard{Stories: []PokerStoryOption{}, Rounds: []PokerRoundView{}}
+	board := PokerBoard{Stories: []PokerStoryOption{}, Rounds: []PokerRoundView{}, ClosedRounds: []PokerClosedRoundView{}}
 	if err := pokerEach(ctx, tx, pokerStoriesQuery, []any{projectID}, func(rows *sql.Rows) error {
 		var s PokerStoryOption
 		if err := rows.Scan(&s.ID, &s.Title, &s.Status); err != nil {
@@ -105,6 +133,38 @@ func (c *PostgreSQLPokerCatalog) PokerBoard(ctx context.Context, projectID, memb
 		if i, ok := index[roundID]; ok {
 			v := value
 			board.Rounds[i].OwnVote = &v
+		}
+		return nil
+	}); err != nil {
+		return PokerBoard{}, err
+	}
+
+	closedIndex := map[int64]int{}
+	if err := pokerEach(ctx, tx, pokerClosedRoundsQuery, []any{projectID}, func(rows *sql.Rows) error {
+		r := PokerClosedRoundView{Votes: []PokerRevealedVoteView{}}
+		if err := rows.Scan(&r.ID, &r.StoryID, &r.StoryTitle, &r.Number); err != nil {
+			return err
+		}
+		closedIndex[r.ID] = len(board.ClosedRounds)
+		board.ClosedRounds = append(board.ClosedRounds, r)
+		return nil
+	}); err != nil {
+		return PokerBoard{}, err
+	}
+
+	if err := pokerEach(ctx, tx, pokerRevealedVotesQuery, []any{projectID}, func(rows *sql.Rows) error {
+		var roundID int64
+		var vote PokerRevealedVoteView
+		var value sql.NullInt64
+		if err := rows.Scan(&roundID, &vote.MemberID, &vote.Name, &value); err != nil {
+			return err
+		}
+		if value.Valid {
+			v := int(value.Int64)
+			vote.Value = &v
+		}
+		if i, ok := closedIndex[roundID]; ok {
+			board.ClosedRounds[i].Votes = append(board.ClosedRounds[i].Votes, vote)
 		}
 		return nil
 	}); err != nil {
