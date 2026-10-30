@@ -112,12 +112,12 @@ comprobar los valores de "Datos de ejemplo".
 
 ### Pruebas (RED)
 
-- [ ] T014 [P] [E1, E6, E7] Escribir `TestProjectStatusView` en `src/web/project_status_view_test.go`:
+- [x] T014 [P] [E1, E6, E7] Escribir `TestProjectStatusView` en `src/web/project_status_view_test.go`:
   `projectStatusPercentText("50.00")` → "50,00 %" y "0.00" → "0,00 %"; `projectStatusDateText` → "01/10/2026"; y
   `buildProjectStatusView` con los datos de «Alfa» (Sprint 2 encontrado) y de «Beta» (sin Sprint): estado, "4 de 8
   historias completadas (50,00 %)" y "0 de 0 historias completadas (0,00 %)", cuatro filas en orden con ceros,
   "Sprint 2 en curso", "Objetivo: Pagos online", "Del 19/10/2026 al 01/11/2026" y "No hay un Sprint en curso".
-- [ ] T015 [E1, E2, E3, E4, E5, E6, E7, E8] Escribir el servidor de prueba y las pruebas de pantalla en
+- [x] T015 [E1, E2, E3, E4, E5, E6, E7, E8] Escribir el servidor de prueba y las pruebas de pantalla en
   `src/web/project_status_handlers_test.go`, con el catálogo y el Tablero reales, el reloj fijo y los datos de T009:
   - `TestHU12_ProyectoEnCurso`: «Alfa» → "Estado: En curso", "Del 01/10/2026 al 30/11/2026", "Sprint 2 en curso",
     "Objetivo: Pagos online", "Del 19/10/2026 al 01/11/2026", Pendiente 2, En Sprint 1, En progreso 1, Hecho 4 y "4
@@ -131,7 +131,7 @@ comprobar los valores de "Datos de ejemplo".
     «Gamma».
 
   Todas sin `<script` ni formularios.
-- [ ] T016 [E9, E10] Escribir las pruebas de contexto, errores y bordes en `src/web/project_status_handlers_test.go`:
+- [x] T016 [E9, E10] Escribir las pruebas de contexto, errores y bordes en `src/web/project_status_handlers_test.go`:
   - `TestHU12_SinProyecto`: 303 a `/contexto/proyecto?volver_a=%2Festado`;
   - `TestHU12_ErrorAlConsultar`: con un catálogo que falla y con un `BoardCatalog` que falla, la página de error de
     HU-20a con 500, sin nombre del proyecto, sin cantidades ni texto interno; con `driver.ErrBadConn`, 503; con
@@ -141,9 +141,9 @@ comprobar los valores de "Datos de ejemplo".
     `<script>x</script>`, se muestra escapado (`&lt;b&gt;`, `&amp;`, `&lt;script&gt;`) y la página no tiene `<script`;
   - `TestHU12_Rendimiento`: un proyecto con 1000 historias (250 por estado) y un Sprint activo con 50 → "250 de 1000
     historias completadas (25,00 %)" en menos de 500 ms.
-- [ ] T017 [P] [E1, E2, E3, E9] Escribir los escenarios BDD en `test/web_project_status_bdd_test.go`, con datos
+- [x] T017 [P] [E1, E2, E3, E9] Escribir los escenarios BDD en `test/web_project_status_bdd_test.go`, con datos
   propios: "Proyecto en curso", "Proyecto no iniciado", "Proyecto finalizado" y "Sin proyecto seleccionado".
-- [ ] T018 Ejecutar T014–T017, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
+- [x] T018 Ejecutar T014–T017, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
   sección "Pantalla".
 
 ### Implementación (GREEN)

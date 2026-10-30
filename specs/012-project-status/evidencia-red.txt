@@ -23,3 +23,18 @@ src\web\postgres_project_status_catalog_integration_test.go:62:21: undefined: Pr
 src\web\postgres_project_status_catalog_integration_test.go:78:13: undefined: NewPostgreSQLProjectStatusCatalog
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
+
+## Pantalla (RED)
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\project_status_handlers_test.go:72:13: undefined: RegisterProjectStatus
+src\web\project_status_view_test.go:22:14: undefined: projectStatusPercentText
+src\web\project_status_view_test.go:29:13: undefined: projectStatusDateText
+src\web\project_status_view_test.go:46:11: undefined: buildProjectStatusView
+src\web\project_status_view_test.go:60:17: undefined: projectStatusRow
+src\web\project_status_view_test.go:80:11: undefined: buildProjectStatusView
+src\web\project_status_view_test.go:88:17: undefined: projectStatusRow
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_project_status_bdd_test.go:29:16: undefined: web.RegisterProjectStatus
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
