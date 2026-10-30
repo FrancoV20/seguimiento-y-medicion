@@ -60,7 +60,7 @@ func TestPostgreSQLProjectStore_Create_Integration(t *testing.T) {
 		Members:   []string{strconv.Itoa(memberID)},
 		StartDate: startDate,
 		EndDate:   startDate,
-		Status:    "Active",
+		Status:    "Activo",
 	}
 	store := NewPostgreSQLProjectStore(db)
 	if err := store.Create(&equalDateProject); err == nil {

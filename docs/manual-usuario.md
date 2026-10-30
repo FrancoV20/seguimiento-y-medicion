@@ -38,6 +38,29 @@ valores ingresados:
 Si todavía no hay integrantes cargados, la pantalla informa **No hay integrantes disponibles** y
 no permite enviar el formulario.
 
+### Modificar un proyecto
+
+En la lista de **Gestión de Proyectos**, presioná **Modificar** en la fila del proyecto. El
+formulario se abre con el nombre, las fechas y los integrantes actuales.
+
+1. Cambiá el nombre o las fechas, o marcá y desmarcá integrantes. Solo aparecen los integrantes que
+   ya existen en el sistema.
+2. Presioná **Guardar**. Para salir sin cambios, presioná **Cancelar**.
+
+Si se guarda, aparece **Proyecto modificado exitosamente** y volvés a la lista. Si el proyecto es tu
+contexto de trabajo, el nombre nuevo se ve arriba sin volver a elegirlo. Se guarda todo junto: si
+algo falla, no cambia nada.
+
+Además de los mensajes de la creación, al modificar pueden aparecer:
+
+| Mensaje | Qué hacer |
+|---|---|
+| `No se puede quitar a [nombre]: tiene horas registradas en este proyecto` | Ese integrante ya cargó horas en historias del proyecto y no se puede quitar. Volvé a marcarlo. |
+| `El Sprint N queda fuera de las nuevas fechas del proyecto` | Las fechas nuevas dejan fuera a ese Sprint. Elegí fechas que lo incluyan. |
+
+Si quitás a un integrante que estaba identificado, la próxima vez que navegue se le pide elegir
+otro integrante.
+
 ## Registro y trazabilidad de defectos
 
 Elegí primero el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/defectos`. Para
@@ -116,3 +139,20 @@ Todos los errores aparecen juntos, cada uno junto a su campo, y el formulario co
 
 Si el proyecto no tiene un Sprint activo, la pantalla muestra **No hay un Sprint activo** y no
 permite cargar horas. La pantalla no permite editar ni borrar cargas.
+
+## Cierre de Sprint
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/cierre`. La pantalla muestra
+el Sprint activo, las historias **Hecho** que permanecerán en el Sprint y las historias **En Sprint** o
+**En progreso** que volverán al Backlog en estado **Pendiente**. También muestra los Story Points
+completados sobre los planificados.
+
+Antes de confirmar, revisá el resumen: el cierre no se puede deshacer. Al presionar **Cerrar Sprint**,
+las historias incompletas pierden su asignación y quedan disponibles para un Sprint posterior; las
+historias **Hecho** conservan su estado y su asignación al Sprint finalizado. El sistema guarda además
+una foto de los estados y Story Points para las métricas históricas.
+
+Si no hay un Sprint activo, la pantalla informa **No hay un Sprint activo para cerrar**. Si HU-07 detecta
+datos inválidos en historias completadas, corregí las historias indicadas antes de reintentar. Un segundo
+envío de un Sprint ya cerrado se rechaza; si falla el guardado, no se aplican cambios parciales y se
+muestra **La operación no pudo completarse**.

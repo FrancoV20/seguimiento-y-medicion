@@ -44,6 +44,17 @@
   abierta nunca aparece.
 - [ ] Aceptada por el equipo (completar al subir el Issue).
 
+## Implementación (T029, 29/10/2026)
+
+- [x] La tabla de trazabilidad de `spec.md` usa los nombres reales de las pruebas, con su archivo.
+- [x] Cada bloque tiene su evidencia RED (`evidencia-red.txt`: Divergencia, Cierre, Pantalla) antes del código.
+- [x] Todas las pruebas en verde (`evidencia-pruebas.txt`), incluidas las de HU-05a; `go vet` y `gofmt -l` limpios;
+  `go test ./... -p 1 -race` en verde.
+- [x] Cobertura de `src/poker` de al menos 80% (89,3% en `cobertura.txt`).
+- [x] Sin migración y sin cambios en `src/cmd/server/main.go` (`git diff --stat main`); solo se editaron archivos de
+  HU-05a.
+- [x] Verificación manual de los 12 escenarios (T028) OK.
+
 ## Notas
 
 - Decisiones del equipo registradas en "Clarifications" (sesión 2026-10-28).

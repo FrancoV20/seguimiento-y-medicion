@@ -14,4 +14,5 @@ var (
 	ErrRoundAlreadyOpen    = errors.New("poker: la historia ya tiene una ronda abierta")
 	ErrStoryAlreadyRounded = errors.New("poker: la historia ya tuvo una ronda")
 	ErrMemberRequired      = errors.New("poker: falta el integrante")
+	ErrNoVotes             = errors.New("poker: la ronda no tiene votos")
 )

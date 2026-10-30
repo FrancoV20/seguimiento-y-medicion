@@ -21,18 +21,9 @@ func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Proje
 		return nil, ErrMissingMembers
 	}
 
-	memberIDs := make([]int, 0, len(req.Members))
-	seenMembers := make(map[int]struct{}, len(req.Members))
-	for _, memberIDString := range req.Members {
-		memberID, err := strconv.Atoi(memberIDString)
-		if err != nil {
-			return nil, ErrMemberNotFound
-		}
-		if _, exists := seenMembers[memberID]; exists {
-			return nil, ErrDuplicateMember
-		}
-		seenMembers[memberID] = struct{}{}
-		memberIDs = append(memberIDs, memberID)
+	memberIDs, err := parseMemberIDs(req.Members)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, memberID := range memberIDs {
@@ -60,4 +51,24 @@ func (service *ProjectService) CreateProject(req ProjectCreationRequest) (*Proje
 		Project: project,
 		Message: "Proyecto creado exitosamente",
 	}, nil
+}
+
+// parseMemberIDs convierte los identificadores de integrantes. Devuelve ErrMemberNotFound si
+// alguno no es numérico y ErrDuplicateMember si hay repetidos. La usan el alta (HU-01) y la
+// modificación (HU-11).
+func parseMemberIDs(members []string) ([]int, error) {
+	memberIDs := make([]int, 0, len(members))
+	seenMembers := make(map[int]struct{}, len(members))
+	for _, memberIDString := range members {
+		memberID, err := strconv.Atoi(memberIDString)
+		if err != nil {
+			return nil, ErrMemberNotFound
+		}
+		if _, exists := seenMembers[memberID]; exists {
+			return nil, ErrDuplicateMember
+		}
+		seenMembers[memberID] = struct{}{}
+		memberIDs = append(memberIDs, memberID)
+	}
+	return memberIDs, nil
 }

@@ -20,6 +20,6 @@ func NewProject(name string, members []string, startDate, endDate time.Time) (Pr
 		Members:   members,
 		StartDate: startDate,
 		EndDate:   endDate,
-		Status:    "Active",
+		Status:    StatusActive,
 	}, nil
 }

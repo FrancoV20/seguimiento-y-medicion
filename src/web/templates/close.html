@@ -1,0 +1,55 @@
+{{define "content"}}
+<section class="close-page" aria-labelledby="close-title">
+  <h1 id="close-title">Cierre de Sprint</h1>
+
+  {{if .Data.HasActiveSprint}}
+  <section class="close-summary" aria-labelledby="close-sprint-title">
+    <h2 id="close-sprint-title">{{.Data.Summary.Label}}</h2>
+    <p><strong>Sprint Goal:</strong> {{.Data.Summary.Goal}}</p>
+    <p><strong>Inicio:</strong> {{.Data.Summary.StartDate}}</p>
+    <p><strong>Fin:</strong> {{.Data.Summary.EndDate}}</p>
+
+    <p>
+      Historias completadas que permanecerán en el Sprint:
+      <strong>{{len .Data.Summary.Completed}}</strong>
+    </p>
+    {{if .Data.Summary.Completed}}
+    <ul class="close-story-list">
+      {{range .Data.Summary.Completed}}
+      <li>{{.Title}} — {{if .StoryPoints}}{{.StoryPoints}} Story Points{{else}}Sin estimar{{end}} ({{.Status}})</li>
+      {{end}}
+    </ul>
+    {{end}}
+
+    <p>
+      Historias incompletas que volverán al Backlog en estado Pendiente:
+      <strong>{{len .Data.Summary.ToReturn}}</strong>
+    </p>
+    {{if .Data.Summary.ToReturn}}
+    <ul class="close-story-list">
+      {{range .Data.Summary.ToReturn}}
+      <li>{{.Title}} — {{if .StoryPoints}}{{.StoryPoints}} Story Points{{else}}Sin estimar{{end}} ({{.Status}})</li>
+      {{end}}
+    </ul>
+    {{end}}
+
+    <p class="close-points">
+      Story Points completados sobre planificados:
+      <strong>{{.Data.Summary.CompletedPoints}} de {{.Data.Summary.PlannedPoints}}</strong>
+    </p>
+    <p class="close-warning" role="note">
+      Las historias incompletas volverán al Backlog. El cierre no se puede deshacer.
+    </p>
+
+    <form method="post" action="/cierre">
+      <input type="hidden" name="sprint_id" value="{{.Data.Summary.SprintID}}">
+      <button type="submit">Cerrar Sprint</button>
+      <a href="/tablero">Cancelar y volver al Tablero</a>
+    </form>
+  </section>
+  {{else}}
+  <p class="muted" role="status">{{.Data.NoActiveSprint}}</p>
+  <a href="/tablero">Volver al Tablero</a>
+  {{end}}
+</section>
+{{end}}
