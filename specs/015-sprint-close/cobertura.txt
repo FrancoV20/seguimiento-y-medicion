@@ -1,55 +1,11 @@
-﻿github.com/FrancoV20/seguimiento-y-medicion/src/sprint/close_sprint.go:34:			NewCloseSprintService		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/close_sprint.go:39:			CloseSprint			63.6%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:28:				Error				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:33:				Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:42:				Error				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:50:				Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:52:				persistenceError		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:65:				Error				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:74:				Message				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/errors.go:82:				Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:18:		NewPostgreSQLSprintCloser	100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:23:		FindSprint			90.9%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_closer.go:48:		CloseSprint			67.2%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:23:		NewPostgreSQLSprintStore	66.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:38:		Close				66.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:46:		CreateSprint			77.1%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:106:		AssignStories			75.9%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:147:		RemoveStory			73.9%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:228:		lockAssignableStories		86.4%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:272:		persistStoryAssignments		57.1%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_sprint_store.go:307:		isUniqueViolation		0.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_story_status_store.go:17:	NewPostgreSQLStoryStatusStore	100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_story_status_store.go:32:	FindStory			85.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/postgres_story_status_store.go:66:	UpdateStatus			71.4%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/sequence.go:9:				formatSprintID			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/sequence.go:19:				lockProjectWithoutActiveSprint	76.9%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/sequence.go:44:				nextSprintNumber		73.3%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/service.go:16:				NewService			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/service.go:21:				CreateSprint			86.4%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/service.go:63:				validateSprintPeriod		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/service.go:71:				CreateSprint			88.1%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/store.go:19:				validateSprint			85.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/store.go:32:				normalizeStoryIDs		85.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_assignment.go:8:			AssignStoryToSprint		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_assignment.go:34:			CanRemoveStory			85.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_assignment.go:52:			RemoveStoryFromSprint		90.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_assignment.go:68:			validateStoryForProject		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:32:			CanTransition			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:43:			NextAction			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:55:			ActionTransition		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:76:			Error				0.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:81:			Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:89:			Error				0.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:94:			Is				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:126:			NewStatusService		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/story_status.go:137:			ChangeStatus			89.5%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:22:			newMemorySprintStore		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:31:			addProject			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:37:			addStory			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:43:			story				100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:50:			CreateSprint			87.7%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:121:			AssignStories			77.5%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:178:			withSprintNumber		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/sprint/test_store.go:185:			RemoveStory			75.0%
-total:												(statements)			80.5%
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	3.424s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	2.261s	coverage: 95.9% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	3.916s	coverage: 7.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	2.598s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	3.459s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	1.981s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	4.395s	coverage: 87.8% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	6.422s	coverage: 86.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	14.244s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	59.408s	coverage: 89.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	21.283s	coverage: [no statements]
