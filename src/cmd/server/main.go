@@ -93,6 +93,13 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail(err.Error())
 	}
+	// Estimaciones: horas estimadas por historia (HU-17, T019).
+	estimateService := backlog.NewEstimateService(backlog.NewPostgreSQLEstimateStore(database))
+	if err := web.RegisterEstimates(srv, estimateService, web.NewPostgreSQLEstimateCatalog(database)); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Estimaciones")
+	}
 	// Inicialización y Registro de Proyectos (HU-21)
 	projectService := project.NewProjectService(project.NewPostgreSQLProjectStore(database))
 	projectCatalog := web.NewPostgreSQLProjectCatalog(database)

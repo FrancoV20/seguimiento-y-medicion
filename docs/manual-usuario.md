@@ -140,6 +140,37 @@ Todos los errores aparecen juntos, cada uno junto a su campo, y el formulario co
 Si el proyecto no tiene un Sprint activo, la pantalla muestra **No hay un Sprint activo** y no
 permite cargar horas. La pantalla no permite editar ni borrar cargas.
 
+## Estimaciones
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/estimaciones`. La pantalla
+lista las historias del proyecto, las más recientes primero, con el título, el estado, los Story Points,
+las **horas estimadas** y las **horas reales** registradas en el Registro de esfuerzo. Lo que todavía no
+se estimó aparece como **Sin estimar** (nunca como 0); las horas reales aparecen como 0 si nadie cargó
+horas.
+
+### Registrar o modificar las horas estimadas
+
+Escribí las horas en el campo de la fila y presioná **Guardar**. Se acepta coma o punto como separador
+decimal (`1,5` o `1.5`), con hasta dos decimales y hasta 9999,99 horas, sin separadores de miles. La
+primera vez se muestra **Horas estimadas registradas** y las siguientes **Horas estimadas actualizadas**.
+Las horas se muestran siempre con coma. Cambiar la estimación no modifica las horas reales ni ningún otro
+dato de la historia.
+
+Las historias de un Sprint finalizado (las **Hecho** al cerrar el Sprint) muestran el campo deshabilitado
+con el motivo **Sprint finalizado**: su estimación ya no se puede cambiar. Las historias que el cierre
+devolvió al Backlog se pueden volver a estimar.
+
+### Corregir errores
+
+- **El valor de horas no es válido**: el valor es 0, negativo, vacío, no numérico o tiene más de dos
+  decimales.
+- **Las horas estimadas no pueden superar 9999,99**.
+- **La historia no existe**: la historia no pertenece al proyecto elegido.
+- **La operación no pudo completarse**: no se guardó nada; volvé a intentarlo más tarde.
+
+Ante un error, lo que escribiste queda en el campo para corregirlo y el valor anterior no cambia. Si el
+proyecto no tiene historias, la pantalla muestra **Aún no hay historias**.
+
 ## Cierre de Sprint
 
 Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/cierre`. La pantalla muestra
