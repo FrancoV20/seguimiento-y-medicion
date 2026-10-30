@@ -95,11 +95,11 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T012 Crear `src/web/project_status_catalog.go` (`ProjectStatusCounts` con `Total()`, `ProjectStatusSummary`,
+- [x] T012 Crear `src/web/project_status_catalog.go` (`ProjectStatusCounts` con `Total()`, `ProjectStatusSummary`,
   `ProjectStatusCatalog`) y `src/web/postgres_project_status_catalog.go` (`PostgreSQLProjectStatusCatalog`,
   `NewPostgreSQLProjectStatusCatalog`): `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, las dos
   consultas de `data-model.md`, sin fila de proyecto → `NotFound(...)`, otros errores envueltos con `%w`.
-- [ ] T013 Ejecutar T010 en verde.
+- [x] T013 Ejecutar T010 en verde.
 
 **Punto de control**: el catálogo devuelve los datos propios de la pantalla.
 
