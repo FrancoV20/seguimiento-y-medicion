@@ -172,8 +172,8 @@ comprobar los valores de "Datos de ejemplo".
   `go test ./... -p 1 -race` en verde, como en el CI. (-race no se pudo correr en Windows: sin cgo; lo verifica el CI)
 - [x] T025 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/project`.
-- [ ] T026 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T027 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T026 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [] T027 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Estado del proyecto".
 - [ ] T028 [P] Avisar:
   - a HU-09, los nombres finales `project.StatusOn` y `project.ProgressPercentage` para su T001;
