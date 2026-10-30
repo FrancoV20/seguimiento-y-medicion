@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 )
 
 // Integración de PostgreSQLEstimateStore (HU-17, T006). Usa newEstimateFixture de
@@ -116,5 +117,65 @@ func TestPostgreSQLEstimateStore_UpdateEstimateVerificaElBloqueoAlGuardar(t *tes
 	}
 	if got := f.hoursText(t, f.enActivo); got != "4.00" {
 		t.Errorf("estimated_hours = %q; se esperaba 4.00 sin cambios", got)
+	}
+}
+
+// FR-009 (revisión de PR): si se guarda una estimación mientras HU-15 está cerrando el Sprint, el
+// guardado espera el cierre y después NO debe modificar una historia que quedó en un Sprint
+// finalizado. Se reproduce el cierre de HU-15 en una transacción que bloquea el Sprint y sus
+// historias FOR UPDATE, como PostgreSQLSprintCloser.
+func TestPostgreSQLEstimateStore_GuardarDuranteElCierreDelSprintNoModificaLaHistoria(t *testing.T) {
+	f := newEstimateFixture(t)
+	ctx := context.Background()
+	// La historia termina "Hecho": el cierre de HU-15 conserva su asignación al Sprint.
+	if _, err := f.db.Exec(`UPDATE user_stories SET status = 'Hecho' WHERE id = $1`, f.enActivo); err != nil {
+		t.Fatalf("no se pudo marcar la historia como Hecho: %v", err)
+	}
+
+	closing, err := f.db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("no se pudo iniciar el cierre: %v", err)
+	}
+	defer closing.Rollback()
+	if _, err := closing.Exec(`SELECT status FROM sprints WHERE id = $1 FOR UPDATE`, f.activeSprintID); err != nil {
+		t.Fatalf("no se pudo bloquear el Sprint: %v", err)
+	}
+	if _, err := closing.Exec(`SELECT id FROM user_stories WHERE active_sprint_id = $1 FOR UPDATE`, f.activeSprintID); err != nil {
+		t.Fatalf("no se pudieron bloquear las historias del Sprint: %v", err)
+	}
+
+	type outcome struct {
+		result EstimateResult
+		err    error
+	}
+	done := make(chan outcome, 1)
+	go func() {
+		result, err := f.service.UpdateEstimatedHours(ctx, f.projectID, f.enActivo, "9")
+		done <- outcome{result, err}
+	}()
+
+	select {
+	case got := <-done:
+		t.Fatalf("el guardado debía esperar el cierre en curso; terminó antes: %+v", got)
+	case <-time.After(300 * time.Millisecond):
+	}
+
+	if _, err := closing.Exec(`UPDATE sprints SET status = 'Finalizado' WHERE id = $1`, f.activeSprintID); err != nil {
+		t.Fatalf("no se pudo finalizar el Sprint: %v", err)
+	}
+	if err := closing.Commit(); err != nil {
+		t.Fatalf("no se pudo confirmar el cierre: %v", err)
+	}
+
+	select {
+	case got := <-done:
+		if !errors.Is(got.err, ErrStoryInFinishedSprint) {
+			t.Errorf("después del cierre se esperaba ErrStoryInFinishedSprint; se obtuvo %+v, %v", got.result, got.err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("el guardado no terminó después del cierre")
+	}
+	if got := f.hoursText(t, f.enActivo); got != "4.00" {
+		t.Errorf("la historia del Sprint ya finalizado cambió de 4.00 a %q (FR-009)", got)
 	}
 }

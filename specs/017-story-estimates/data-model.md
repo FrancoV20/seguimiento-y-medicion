@@ -99,7 +99,10 @@ SELECT us.estimated_hours,
 FROM user_stories us
 WHERE us.id = $1 AND us.project_id = $2;
 
--- UpdateEstimate (atómico y solo esa columna)
+-- UpdateEstimate (atómico y solo esa columna), en una transacción con dos sentencias:
+-- 1) bloquear la historia: espera a un cierre de Sprint en curso (HU-15 bloquea las historias FOR UPDATE)
+SELECT 1 FROM user_stories WHERE id = $1 AND project_id = $2 FOR UPDATE;
+-- 2) guardar: esta sentencia ya ve el cierre confirmado
 UPDATE user_stories us
 SET estimated_hours = $3
 WHERE us.id = $1 AND us.project_id = $2
@@ -112,6 +115,10 @@ WHERE us.id = $1 AND us.project_id = $2
 
 - Si `UpdateEstimate` afecta 0 filas, el servicio relee con `FindEstimate` para responder
   `ErrStoryNotFound` o `ErrStoryInFinishedSprint`.
+- El bloqueo previo es necesario (revisión del PR, FR-009): en una sola sentencia, si el `UPDATE` espera
+  a que HU-15 termine de cerrar el Sprint, al destrabarse vuelve a evaluar la fila de la historia pero
+  el `NOT EXISTS` sigue viendo el Sprint como estaba antes del cierre, y modificaba una historia de un
+  Sprint ya finalizado. Lo cubre `TestPostgreSQLEstimateStore_GuardarDuranteElCierreDelSprintNoModificaLaHistoria`.
 - El adaptador tiene pruebas de integración contra PostgreSQL con fixtures propias, que se eliminan al
   terminar borrando primero las historias.
 

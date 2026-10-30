@@ -130,6 +130,7 @@
 - [X] T046 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Estimaciones"
 - [X] T047 Verificar a mano con la aplicación en ejecución los 11 escenarios del Issue y la lista de `quickstart.md`
 - [X] T048 Abrir el Pull Request desde `HU-17`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
+- [x] T049 Corrección de la revisión del PR (FR-009): reproducir en `src/backlog/postgres_estimate_store_integration_test.go` la carrera entre guardar una estimación y el cierre de Sprint de HU-15, y en `src/backlog/postgres_estimate_store.go` bloquear la historia (`FOR UPDATE`) antes del `UPDATE` dentro de una transacción; evidencia Red agregada a `evidencia-red.txt`
 
 ---
 
@@ -195,7 +196,7 @@
 | FR-006 | T005, T014, T015 |
 | FR-007 | T005, T020, T025 |
 | FR-008 | T005, T021, T025 |
-| FR-009 | T005, T006, T022, T025 |
+| FR-009 | T005, T006, T022, T025, T049 |
 | FR-010 | T008, T030, T033 |
 | FR-011 | T024, T025 |
 | FR-012 | T031, T033 |
@@ -205,7 +206,7 @@
 | FR-016 | T027, T037 (y título con HTML escapado) |
 | SC-001 | T005, T014 |
 | SC-002 | T005, T020, T021, T025 |
-| SC-003 | T005, T006, T022, T025, T030 |
+| SC-003 | T005, T006, T022, T025, T030, T049 |
 | SC-004 | T005, T006, T013 |
 | SC-005 | T024, T025 |
 | SC-006 | T029, T033 |

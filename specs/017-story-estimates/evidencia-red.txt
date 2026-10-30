@@ -9477,3 +9477,15 @@ FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	2.387s
 FAIL
 
+
+================================================================================
+Revisión del PR (2026-10-30): carrera entre guardar una estimación y el cierre de Sprint de HU-15 (FR-009)
+Prueba nueva con el UpdateEstimate anterior (una sola sentencia), antes del arreglo:
+================================================================================
+=== RUN   TestPostgreSQLEstimateStore_GuardarDuranteElCierreDelSprintNoModificaLaHistoria
+    postgres_estimate_store_integration_test.go:173: después del cierre se esperaba ErrStoryInFinishedSprint; se obtuvo {Previous:0x1d0487e2c4a0 Current:9}, <nil>
+    postgres_estimate_store_integration_test.go:179: la historia del Sprint ya finalizado cambió de 4.00 a "9.00" (FR-009)
+--- FAIL: TestPostgreSQLEstimateStore_GuardarDuranteElCierreDelSprintNoModificaLaHistoria (0.33s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	0.338s
+FAIL

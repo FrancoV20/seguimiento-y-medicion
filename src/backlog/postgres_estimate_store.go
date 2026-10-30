@@ -51,11 +51,28 @@ func (s *PostgreSQLEstimateStore) FindEstimate(ctx context.Context, projectID, s
 	return state, nil
 }
 
-// UpdateEstimate guarda las horas en una única sentencia que excluye las historias de un Sprint
-// finalizado; devuelve si se cambió una fila. El valor viaja como texto con dos decimales para que
-// NUMERIC(6,2) guarde exactamente lo validado.
+// UpdateEstimate guarda las horas excluyendo las historias de un Sprint finalizado y devuelve si se
+// cambió una fila. El valor viaja como texto con dos decimales para que NUMERIC(6,2) guarde
+// exactamente lo validado.
+//
+// La comprobación es atómica con el guardado (FR-009): primero se bloquea la fila de la historia,
+// que espera a un cierre de Sprint en curso (HU-15 bloquea las historias FOR UPDATE), y recién
+// después se ejecuta el UPDATE en otra sentencia. Así el UPDATE ve el cierre ya confirmado; en una
+// sola sentencia, el NOT EXISTS evaluaría el estado del Sprint anterior al cierre.
 func (s *PostgreSQLEstimateStore) UpdateEstimate(ctx context.Context, projectID, storyID int64, hours float64) (bool, error) {
-	result, err := s.db.ExecContext(ctx, `
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return false, fmt.Errorf("guardar las horas estimadas: %w", err)
+	}
+	defer func() { _ = tx.Rollback() }() // sin efecto después del Commit
+
+	if _, err := tx.ExecContext(ctx,
+		`SELECT 1 FROM user_stories WHERE id = $1 AND project_id = $2 FOR UPDATE`,
+		storyID, projectID,
+	); err != nil {
+		return false, fmt.Errorf("bloquear la historia: %w", err)
+	}
+	result, err := tx.ExecContext(ctx, `
 		UPDATE user_stories us
 		SET estimated_hours = $3::numeric
 		WHERE us.id = $1 AND us.project_id = $2
@@ -68,6 +85,9 @@ func (s *PostgreSQLEstimateStore) UpdateEstimate(ctx context.Context, projectID,
 	affected, err := result.RowsAffected()
 	if err != nil {
 		return false, fmt.Errorf("verificar el guardado de las horas estimadas: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return false, fmt.Errorf("confirmar las horas estimadas: %w", err)
 	}
 	return affected == 1, nil
 }
