@@ -139,3 +139,20 @@ Todos los errores aparecen juntos, cada uno junto a su campo, y el formulario co
 
 Si el proyecto no tiene un Sprint activo, la pantalla muestra **No hay un Sprint activo** y no
 permite cargar horas. La pantalla no permite editar ni borrar cargas.
+
+## Cierre de Sprint
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/cierre`. La pantalla muestra
+el Sprint activo, las historias **Hecho** que permanecerán en el Sprint y las historias **En Sprint** o
+**En progreso** que volverán al Backlog en estado **Pendiente**. También muestra los Story Points
+completados sobre los planificados.
+
+Antes de confirmar, revisá el resumen: el cierre no se puede deshacer. Al presionar **Cerrar Sprint**,
+las historias incompletas pierden su asignación y quedan disponibles para un Sprint posterior; las
+historias **Hecho** conservan su estado y su asignación al Sprint finalizado. El sistema guarda además
+una foto de los estados y Story Points para las métricas históricas.
+
+Si no hay un Sprint activo, la pantalla informa **No hay un Sprint activo para cerrar**. Si HU-07 detecta
+datos inválidos en historias completadas, corregí las historias indicadas antes de reintentar. Un segundo
+envío de un Sprint ya cerrado se rechaza; si falla el guardado, no se aplican cambios parciales y se
+muestra **La operación no pudo completarse**.
