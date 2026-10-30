@@ -164,12 +164,12 @@ comprobar los valores de "Datos de ejemplo".
 
 ## Fase 5: Cierre
 
-- [ ] T023 REFACTOR:
+- [x] T023 REFACTOR:
   - revisar duplicación en la vista y el handler y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-01, HU-11, HU-14 ni HU-21 cambió y que no hay migraciones: `git diff --stat
     main` lista solo archivos nuevos y `main.go`.
-- [ ] T024 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
-  `go test ./... -p 1 -race` en verde, como en el CI.
+- [x] T024 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
+  `go test ./... -p 1 -race` en verde, como en el CI. (-race no se pudo correr en Windows: sin cgo; lo verifica el CI)
 - [ ] T025 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/project`.
 - [ ] T026 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).

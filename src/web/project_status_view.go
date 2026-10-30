@@ -64,7 +64,7 @@ func buildProjectStatusView(summary ProjectStatusSummary, board BoardView, found
 	total := counts.Total()
 	view := projectStatusView{
 		Name:  summary.Name,
-		Dates: fmt.Sprintf(msgProjectStatusDates, projectStatusDateText(summary.StartDate), projectStatusDateText(summary.EndDate)),
+		Dates: projectStatusDatesText(summary.StartDate, summary.EndDate),
 		State: fmt.Sprintf(msgProjectStatusState, project.StatusOn(summary.StartDate, summary.EndDate, today)),
 		Progress: fmt.Sprintf(msgProjectStatusProgress, counts.Done, total,
 			projectStatusPercentText(project.ProgressPercentage(counts.Done, total))),
@@ -82,6 +82,11 @@ func buildProjectStatusView(summary ProjectStatusSummary, board BoardView, found
 	view.HasSprint = true
 	view.SprintLabel = fmt.Sprintf(msgProjectStatusSprint, board.Label)
 	view.SprintGoal = fmt.Sprintf(msgProjectStatusSprintGoal, board.Goal)
-	view.SprintDates = fmt.Sprintf(msgProjectStatusDates, projectStatusDateText(board.StartDate), projectStatusDateText(board.EndDate))
+	view.SprintDates = projectStatusDatesText(board.StartDate, board.EndDate)
 	return view
+}
+
+// projectStatusDatesText arma "Del 01/10/2026 al 30/11/2026".
+func projectStatusDatesText(start, end time.Time) string {
+	return fmt.Sprintf(msgProjectStatusDates, projectStatusDateText(start), projectStatusDateText(end))
 }
