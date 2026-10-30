@@ -31,6 +31,18 @@ func CheckVote(status RoundStatus) error {
 	return nil
 }
 
+// CheckClose decide si se puede cerrar una ronda con ese estado y esa cantidad de votos (HU-05b):
+// una ronda que no está abierta se rechaza antes de mirar sus votos.
+func CheckClose(status RoundStatus, votes int) error {
+	if status != StatusOpen {
+		return ErrRoundClosed
+	}
+	if votes == 0 {
+		return ErrNoVotes
+	}
+	return nil
+}
+
 // OpenedRound es la ronda recién abierta.
 type OpenedRound struct {
 	RoundID, StoryID int64
@@ -43,4 +55,11 @@ type VoteOutcome struct {
 	RoundID int64
 	Value   int
 	Updated bool
+}
+
+// ClosedRound es la ronda recién cerrada (HU-05b).
+type ClosedRound struct {
+	RoundID, StoryID int64
+	StoryTitle       string
+	Number           int
 }

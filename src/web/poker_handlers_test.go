@@ -70,6 +70,10 @@ func (failingPokerStore) CastVote(context.Context, int64, int64, int64, int) (po
 	return poker.VoteOutcome{}, errPokerStoreInternal
 }
 
+func (failingPokerStore) CloseRound(context.Context, int64, int64) (poker.ClosedRound, error) {
+	return poker.ClosedRound{}, errPokerStoreInternal
+}
+
 // as devuelve un navegador que eligió el proyecto y, si member no es 0, se identificó (HU-20b).
 func (a *pokerApp) as(t *testing.T, project, member int64) *http.Client {
 	t.Helper()

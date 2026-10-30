@@ -2,7 +2,7 @@
 
 **Rama**: `HU-05b`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-05a, HU-20a, HU-20b
 **Habilita**: HU-18 (nueva ronda y estimación acordada), que reutiliza la regla de divergencia
@@ -395,3 +395,25 @@ Cuentas:
 | (HU-20b) Recarga sin reenviar | FR-002 | SC-002 | `TestHU05b_RecargaSinReenviar` | — |
 | Rendimiento de la pantalla | — | SC-006 | `TestHU05b_Rendimiento` | — |
 | Regla reutilizable, sin migración ni cambios en HU-05a | FR-006, FR-018 | SC-007 | Pruebas de HU-05a en cada GREEN | `TestSpread_NoModificaLosValores`, `TestPostgresCloseRound_OK` (historia sin cambios), revisión en T026 |
+
+### Ubicación y resultado de las pruebas (T029, 29/10/2026)
+
+Todos los nombres de la tabla existen tal cual en el código. Resultado: todas en verde en
+`evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`); la falla previa de cada bloque está en
+`evidencia-red.txt` (secciones Divergencia, Cierre y Pantalla); cobertura de `src/poker` 89,3% en `cobertura.txt`.
+
+| Archivo | Pruebas |
+|---|---|
+| `src/poker/spread_test.go` | `TestSpread`, `TestSpread_Errores`, `TestSpread_NoModificaLosValores` |
+| `src/poker/round_test.go` | `TestCheckClose` |
+| `src/poker/service_test.go` | `TestService_CloseRound_OK`, `TestService_CloseRound_Validaciones` |
+| `src/poker/close_integration_test.go` | `TestPostgresCloseRound_OK`, `_SinTodosLosVotos`, `_SinVotos`, `_YaCerrada`, `_Inexistente`, `_OtroProyecto`, `_VotoEsperaAlCierre`, `_Concurrente`, `_EsperaAlVotoEnCurso`, `_FalloNoDejaCambios` |
+| `src/web/postgres_poker_reveal_integration_test.go` | `TestPostgresPokerCatalog_RondasCerradas`, `_VotosRevelados`, `_IntegranteQuitado`, `_SoloRondasCerradas` |
+| `src/web/poker_reveal_view_test.go` | `TestHU05b_AlertaDeDivergencia`, `_SinDivergenciaEnElLimite`, `_VotosParaTodos`, `_VotoAbiertoNuncaSeRevela`, `_SinRondasCerradas`, `_RondaCerradaSinVotos`, `_TextosEscapados`, `_Rendimiento` |
+| `src/web/poker_close_handlers_test.go` | `TestHU05b_BotonCerrarRonda`, `_CerrarRonda`, `_CerrarSinTodosLosVotos`, `_RondaSinVotos`, `_VotarEnRondaCerrada`, `_CerrarDosVeces`, `_RondaInexistente`, `_SinIdentificarme`, `_ErrorAlCerrar`, `_RecargaSinReenviar` |
+| `test/web_poker_reveal_bdd_test.go` | `TestBDD_HU05b_RevelacionDeVotos`, `_AlertaDeDivergencia`, `_SinDivergenciaEnElLimite`, `_DivergenciaDeTresNiveles`, `_CerrarSinQueTodosVoten`, `_RondaSinVotos`, `_VotosParaTodos`, `_VotarEnRondaCerrada`, `_CerrarDosVeces`, `_RondaInexistente`, `_SinIdentificarme` |
+| `src/web/poker_view_test.go` (HU-05a, sin cambios) | `TestHU05a_ErrorAlLeer` |
+
+Verificación manual (T028, 29/10/2026): los 12 escenarios con la aplicación en ejecución y los datos de «Alfa», OK.
+El escenario 12 (falla al guardar) no se puede provocar a mano y queda cubierto por `TestHU05b_ErrorAlCerrar` y
+`TestPostgresCloseRound_FalloNoDejaCambios`.

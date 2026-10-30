@@ -38,3 +38,24 @@ func TestCheckVote_Cerrada(t *testing.T) {
 		t.Errorf("se esperaba ErrRoundClosed, se obtuvo %v", err)
 	}
 }
+
+// HU-05b, T007: regla pura de cierre. Una ronda cerrada se rechaza antes de mirar sus votos.
+func TestCheckClose(t *testing.T) {
+	cases := []struct {
+		name   string
+		status RoundStatus
+		votes  int
+		want   error
+	}{
+		{"abierta con votos", StatusOpen, 3, nil},
+		{"cerrada con votos", StatusClosed, 3, ErrRoundClosed},
+		{"cerrada sin votos: cerrada antes que sin votos", StatusClosed, 0, ErrRoundClosed},
+		{"abierta sin votos", StatusOpen, 0, ErrNoVotes},
+	}
+	for _, c := range cases {
+		err := CheckClose(c.status, c.votes)
+		if c.want == nil && err != nil || c.want != nil && !errors.Is(err, c.want) {
+			t.Errorf("%s: se esperaba %v, se obtuvo %v", c.name, c.want, err)
+		}
+	}
+}

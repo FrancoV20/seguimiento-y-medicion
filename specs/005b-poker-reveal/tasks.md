@@ -18,7 +18,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` en `src/poker`, `src/web/poker_*.go`, `src/web/postgres_poker_catalog.go`,
+- [x] T001 Confirmar con `git grep -n` en `src/poker`, `src/web/poker_*.go`, `src/web/postgres_poker_catalog.go`,
   `src/web/templates/poker.html` y `db/migrations/011_create_poker.up.sql` los nombres de `research.md` ("Datos
   verificados"): `Series`, `InSeries`, `RoundStatus`, `StatusOpen`/`StatusClosed`, `CheckVote`, `OpenedRound`, los ocho
   `Err…`, `Store`, `Service`, `PostgreSQLStore`, `fakeStore`, `waitForLock`, `PokerBoard`, `PokerCatalog`,
@@ -27,7 +27,7 @@ Formato: `[ID] [P] [E#] descripción`
   `newPokerApp`, `participantRow`, `newPokerWebFixture`, y el parcial `alert` de `templates/layout.html`. Confirmar que
   no existen `CloseRound`, `CheckClose`, `Spread`, `VoteSpread`, `ErrNoVotes`, `ClosedRounds` ni
   `/planning-poker/cerrar`. Si algo cambió, ajustar `data-model.md` y este archivo antes de seguir.
-- [ ] T002 Crear la rama `HU-05b` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-05b` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-05b`. Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y
   `go vet ./...` en verde.
 
@@ -39,22 +39,22 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T003 [P] [E2, E3, E4, E5] Escribir `src/poker/spread_test.go`:
+- [x] T003 [P] [E2, E3, E4, E5] Escribir `src/poker/spread_test.go`:
   - `TestSpread`: prueba de tabla con los once casos de `data-model.md` (2-13-5 → 2, 13, true; 3-5-8 → 3, 8, false;
     3-13-3 → 3, 13, true; 5-5 → 5, 5, false; 8 → 8, 8, false; 1-3 false; 1-5 true; 55-89 false; 1-89 true);
   - `TestSpread_Errores`: sin valores (nil y vacío) → `errors.Is(err, ErrNoVotes)`; 4 y {2, 0} →
     `ErrValueNotInSeries`;
   - `TestSpread_NoModificaLosValores`: el slice {13, 2, 5} sigue igual después de llamar a `Spread`.
-- [ ] T004 Ejecutar T003, confirmar que falla porque `Spread`, `VoteSpread` y `ErrNoVotes` no existen y guardar la
+- [x] T004 Ejecutar T003, confirmar que falla porque `Spread`, `VoteSpread` y `ErrNoVotes` no existen y guardar la
   salida en `evidencia-red.txt`, sección "Divergencia".
 
 ### Implementación (GREEN)
 
-- [ ] T005 Agregar `ErrNoVotes = errors.New("poker: la ronda no tiene votos")` en `src/poker/errors.go` y crear
+- [x] T005 Agregar `ErrNoVotes = errors.New("poker: la ronda no tiene votos")` en `src/poker/errors.go` y crear
   `src/poker/spread.go` con `VoteSpread{Low, High int; Divergent bool}`, `level(v)` (posición en `Series` + 1),
   `maxLevelGap = 2` y `Spread(values []int) (VoteSpread, error)` según `data-model.md` (sin ordenar ni modificar
   `values`).
-- [ ] T006 Ejecutar T003 en verde junto con las pruebas existentes de `./src/poker/...`.
+- [x] T006 Ejecutar T003 en verde junto con las pruebas existentes de `./src/poker/...`.
 
 **Punto de control**: HU-18 ya puede programar contra `poker.Spread`.
 
@@ -67,7 +67,7 @@ pantalla.
 
 ### Pruebas (RED)
 
-- [ ] T007 [P] [E1, E6, E9, E10] Escribir las pruebas unitarias:
+- [x] T007 [P] [E1, E6, E9, E10] Escribir las pruebas unitarias:
   - en `src/poker/round_test.go`, `TestCheckClose`: (Abierta, 3) → nil; (Cerrada, 3) → `ErrRoundClosed`; (Cerrada, 0)
     → `ErrRoundClosed` (cerrada antes que sin votos); (Abierta, 0) → `ErrNoVotes`;
   - en `src/poker/service_test.go`, `fakeStore` suma `closeCalls`, `gotClose [2]int64` y `closed ClosedRound`, y
@@ -75,13 +75,13 @@ pantalla.
     `TestService_CloseRound_Validaciones` (`roundID == 0` → `ErrRoundNotFound` y `memberID == 0` →
     `ErrMemberRequired` sin llamar al almacén; propaga `ErrNoVotes`, `ErrRoundClosed` y un error cualquiera de forma
     que `errors.Is` funcione).
-- [ ] T008 Crear `src/poker/reveal_fixtures_integration_test.go` con `newAlfaFixture(t)` (usa `openTestDB`): «Alfa»
+- [x] T008 Crear `src/poker/reveal_fixtures_integration_test.go` con `newAlfaFixture(t)` (usa `openTestDB`): «Alfa»
   con Ana, Beto y Caro; «Login», «Pagos», «Reportes», «Perfil» y «Ayuda» con su ronda 1 abierta por Ana y los votos del
   Issue (Login 2/13/5, Pagos 3/5/8, Reportes 3/13/3, Perfil 5/5 sin Caro, Ayuda sin votos); «Beta» con Dani, «Tablero»
   con una ronda abierta (Dani 8) y «Agenda» con una ronda cerrada sin votos. Ayudantes `vote(round, member)`,
   `status(round)`, `closedAt(round)` y `waitForWaiters(t, f, n)` (como `waitForLock`, pero espera `n` sesiones en
   `wait_event_type = 'Lock'`, plazo 5 s). Limpieza en `t.Cleanup`: historias → proyectos → integrantes.
-- [ ] T009 [E1, E5, E6, E9, E10] Escribir en `src/poker/close_integration_test.go`:
+- [x] T009 [E1, E5, E6, E9, E10] Escribir en `src/poker/close_integration_test.go`:
   - `TestPostgresCloseRound_OK`: cerrar «Login» → `ClosedRound{StoryTitle: "Login", Number: 1}`, `status =
     'Cerrada'`, `closed_at` no NULL, los tres votos sin cambios y la historia (título, estado, `story_points`) sin
     cambios;
@@ -91,7 +91,7 @@ pantalla.
     cierre;
   - `TestPostgresCloseRound_Inexistente` y `TestPostgresCloseRound_OtroProyecto`: id 2147483647, la ronda abierta de
     «Tablero» y la cerrada sin votos de «Agenda» desde «Alfa» → `ErrRoundNotFound` (404 antes que 409) y nada cambia.
-- [ ] T010 [E8, E9, E12] Escribir en `src/poker/close_integration_test.go` las pruebas de concurrencia y falla
+- [x] T010 [E8, E9, E12] Escribir en `src/poker/close_integration_test.go` las pruebas de concurrencia y falla
   (`research.md`, decisión 4):
   - `TestPostgresCloseRound_VotoEsperaAlCierre`: transacción de prueba con `LOCK TABLE poker_votes IN ACCESS EXCLUSIVE
     MODE`; `CloseRound` de «Login» en una goroutine; `waitForWaiters(1)`; `CastVote` de Caro con 8 en otra goroutine;
@@ -104,25 +104,25 @@ pantalla.
   - `TestPostgresCloseRound_FalloNoDejaCambios`: transacción de prueba que toma «Login» `FOR SHARE`; `CloseRound` con
     un contexto de 200 ms → error que no es del dominio (`errors.Is` falso para los `Err…`); después del `ROLLBACK`,
     «Login» sigue `'Abierta'` con `closed_at` NULL.
-- [ ] T011 Ejecutar T007–T010, confirmar que fallan porque `CheckClose`, `ClosedRound` y `CloseRound` no existen y
+- [x] T011 Ejecutar T007–T010, confirmar que fallan porque `CheckClose`, `ClosedRound` y `CloseRound` no existen y
   guardar la salida en `evidencia-red.txt`, sección "Cierre".
 
 ### Implementación (GREEN)
 
 T012 y T013 van en el mismo commit: el puerto, el adaptador y las dos pruebas falsas cambian juntos.
 
-- [ ] T012 Agregar en `src/poker/round.go` `CheckClose(status RoundStatus, votes int) error` (`status != StatusOpen` →
+- [x] T012 Agregar en `src/poker/round.go` `CheckClose(status RoundStatus, votes int) error` (`status != StatusOpen` →
   `ErrRoundClosed`; `votes == 0` → `ErrNoVotes`) y `ClosedRound{RoundID, StoryID int64; StoryTitle string; Number
   int}`; el método `CloseRound(ctx context.Context, projectID, roundID int64) (ClosedRound, error)` en `Store`
   (`src/poker/store.go`); `Service.CloseRound(ctx, projectID, roundID, memberID int64) (ClosedRound, error)` en
   `src/poker/service.go` (validaciones de `data-model.md`); `fakeStore.CloseRound` en `src/poker/service_test.go` y
   `failingPokerStore.CloseRound` (devuelve `errPokerStoreInternal`) en `src/web/poker_handlers_test.go`.
-- [ ] T013 Implementar `PostgreSQLStore.CloseRound` en `src/poker/postgres_store.go` con la transacción de
+- [x] T013 Implementar `PostgreSQLStore.CloseRound` en `src/poker/postgres_store.go` con la transacción de
   `data-model.md`: `SELECT r.status, r.story_id, r.round_number, us.title … WHERE r.id = $1 AND r.project_id = $2 FOR
   UPDATE OF r` (`sql.ErrNoRows` → `ErrRoundNotFound`), `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`,
   `CheckClose` y `UPDATE poker_rounds SET status = 'Cerrada', closed_at = now() WHERE id = $1`; errores técnicos
   envueltos con `fmt.Errorf("…: %w", err)` como en `CastVote`.
-- [ ] T014 Ejecutar T007–T010 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a sin
+- [x] T014 Ejecutar T007–T010 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a sin
   cambios).
 
 **Punto de control**: el cierre funciona en el dominio y en PostgreSQL, sin pantalla.
@@ -136,13 +136,13 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
 
 ### Pruebas (RED)
 
-- [ ] T015 Crear `src/web/poker_reveal_fixtures_test.go` con `newAlfaWebFixture(t, db)` (usa `openContextTestDB`): los
+- [x] T015 Crear `src/web/poker_reveal_fixtures_test.go` con `newAlfaWebFixture(t, db)` (usa `openContextTestDB`): los
   mismos datos de T008 y un ayudante `closeAt(round, ts)` que hace `UPDATE poker_rounds SET status = 'Cerrada',
   closed_at = $2 WHERE id = $1` (fecha explícita para el orden), `removeMember(member)` (borra su fila de
   `project_members`), y `roundRow(t, body, round, member)` / `closedRow(t, body, round, member)`, que devuelven el
   texto de la fila `data-integrante` dentro de la sección `data-ronda` / `data-ronda-cerrada` de esa ronda (el atributo
   se repite entre secciones). Limpieza en `t.Cleanup`.
-- [ ] T016 [P] [E1, E5, E7, E10] Escribir en `src/web/postgres_poker_reveal_integration_test.go`:
+- [x] T016 [P] [E1, E5, E7, E10] Escribir en `src/web/postgres_poker_reveal_integration_test.go`:
   - `TestPostgresPokerCatalog_RondasCerradas`: con «Login» cerrada a las 10:00 y «Pagos» a las 10:05, `ClosedRounds` =
     [Pagos, Login] con historia, id y número 1; con el mismo `closed_at`, la de id mayor primero;
   - `TestPostgresPokerCatalog_VotosRevelados`: «Login» → Ana 2, Beto 13, Caro 5 en ese orden; «Perfil» cerrada → Caro
@@ -151,7 +151,7 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     «Perfil» cerrada sin Caro en el proyecto → Caro no figura;
   - `TestPostgresPokerCatalog_SoloRondasCerradas`: «Pagos» abierta no está en `ClosedRounds`, ningún voto de
     `ClosedRounds` es de «Pagos», y `Rounds`/`Participants` de HU-05a no cambian; las rondas de «Beta» no aparecen.
-- [ ] T017 [P] [E2, E3, E4, E5, E7] Escribir en `src/web/poker_reveal_view_test.go` (servidor de `newPokerApp`, datos
+- [x] T017 [P] [E2, E3, E4, E5, E7] Escribir en `src/web/poker_reveal_view_test.go` (servidor de `newPokerApp`, datos
   de T015, rondas cerradas con `closeAt`):
   - `TestHU05b_AlertaDeDivergencia`: «Login» y «Reportes» → dentro de `data-ronda-cerrada` de cada una, un `div` con
     `alert alert-warning`, "Advertencia:" y "Divergencia: los votos van de 2 a 13. Debatan antes de acordar la
@@ -166,7 +166,7 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     sin votos preparada en la base: 200, todos "No votó", sin rango ni alerta), `TestHU05b_TextosEscapados` (título e
     integrante con `<script>` escapados en "Rondas cerradas" y en el mensaje de cierre) y `TestHU05b_Rendimiento` (20
     rondas abiertas, 50 cerradas y 10 integrantes → `GET /planning-poker` en menos de 500 ms).
-- [ ] T018 [P] [E1, E5, E6, E8, E9, E10, E11, E12] Escribir en `src/web/poker_close_handlers_test.go`:
+- [x] T018 [P] [E1, E5, E6, E8, E9, E10, E11, E12] Escribir en `src/web/poker_close_handlers_test.go`:
   - `TestHU05b_BotonCerrarRonda`: cada ronda abierta tiene un formulario `action="/planning-poker/cerrar"` con su
     `ronda` oculto y el botón "Cerrar ronda"; las rondas cerradas no;
   - `TestHU05b_CerrarRonda` (E1): Ana cierra «Login» → 303 a `/planning-poker`; el GET muestra una sola vez "Ronda
@@ -183,56 +183,56 @@ alerta "de 2 a 13"; entrar como Beto y ver lo mismo.
     cerrada para"; «Login» sigue abierta, "Aún no hay rondas cerradas" y `roundRow` de Beto en «Login» dice "Votó" sin "13"; el
     cuerpo no contiene "poker_", "SQL", "pgx" ni el texto del error;
   - `TestHU05b_RecargaSinReenviar`: después de cerrar, dos GET → el mensaje aparece una sola vez.
-- [ ] T019 [P] [E1–E11] Escribir `test/web_poker_reveal_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
+- [x] T019 [P] [E1–E11] Escribir `test/web_poker_reveal_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
   comentarios, igual que `test/web_poker_bdd_test.go`, con el servidor y el servicio reales):
   `TestBDD_HU05b_RevelacionDeVotos`, `_AlertaDeDivergencia`, `_SinDivergenciaEnElLimite`, `_DivergenciaDeTresNiveles`,
   `_CerrarSinQueTodosVoten`, `_RondaSinVotos`, `_VotosParaTodos`, `_VotarEnRondaCerrada`, `_CerrarDosVeces`,
   `_RondaInexistente` y `_SinIdentificarme`. Las rondas cerradas se cierran desde la pantalla (en `_VotosParaTodos`,
   Ana cierra «Login» y Beto abre "Planning Poker", como dice el escenario 7).
-- [ ] T020 Ejecutar T016–T019, confirmar que fallan (no existen `ClosedRounds`, la sección ni la ruta) y guardar la
+- [x] T020 Ejecutar T016–T019, confirmar que fallan (no existen `ClosedRounds`, la sección ni la ruta) y guardar la
   salida en `evidencia-red.txt`, sección "Pantalla".
 
 ### Implementación (GREEN)
 
-- [ ] T021 Agregar en `src/web/poker_catalog.go` `PokerRevealedVoteView{MemberID int64; Name string; Value *int}`,
+- [x] T021 Agregar en `src/web/poker_catalog.go` `PokerRevealedVoteView{MemberID int64; Name string; Value *int}`,
   `PokerClosedRoundView{ID, StoryID int64; StoryTitle string; Number int; Votes []PokerRevealedVoteView}` y
   `PokerBoard.ClosedRounds`; en `src/web/postgres_poker_catalog.go`, las consultas `pokerClosedRoundsQuery` y
   `pokerRevealedVotesQuery` de `data-model.md` dentro de la misma transacción de `PokerBoard`, con `pokerEach` y un
   índice por id (`ClosedRounds` nunca nil).
-- [ ] T022 [P] Agregar en `src/web/poker_messages.go` `MsgPokerNoVotes` "La ronda no tiene votos",
+- [x] T022 [P] Agregar en `src/web/poker_messages.go` `MsgPokerNoVotes` "La ronda no tiene votos",
   `MsgPokerNoClosedRounds` "Aún no hay rondas cerradas", `LabelPokerDidNotVote` "No votó",
   `pokerRoundClosedMessage(title)` → "Ronda cerrada para la historia «title»", `pokerDivergenceMessage(low, high)` →
   "Divergencia: los votos van de X a Y. Debatan antes de acordar la estimación" y `pokerNoDivergenceMessage(low,
   high)` → "Sin divergencia: los votos van de X a Y"; y en `src/web/poker_form.go` el caso `poker.ErrNoVotes` → 409
   `MsgPokerNoVotes` en `pokerOutcomeFor`.
-- [ ] T023 En `src/web/poker_handlers.go`: `CloseRound(ctx, projectID, roundID, memberID int64) (poker.ClosedRound,
+- [x] T023 En `src/web/poker_handlers.go`: `CloseRound(ctx, projectID, roundID, memberID int64) (poker.ClosedRound,
   error)` en `PokerActions`; `"POST " + pathPoker + "/cerrar": http.HandlerFunc(h.close)` en el mismo `Routes` de
   `RegisterPlanningPoker`; `close` (lee `ronda` con `pokerFormIDs`, llama a `CloseRound` con proyecto e integrante de
   `ActiveContextFrom`, `reject` o `done(w, r, pokerRoundClosedMessage(closed.StoryTitle))`); y en `render`,
   `pokerClosedRoundPage{PokerClosedRoundView; Alert *Flash; Range string}` armado con `poker.Spread` (`data-model.md`,
   "Modelo de vista": divergencia → `FlashWarning`; sin divergencia → `Range`; error → ninguno) y `pokerPageData` con
   `ClosedRounds`, `NoClosedRounds` y `DidNotVote`.
-- [ ] T024 Completar `src/web/templates/poker.html` según `data-model.md`, "Pantalla": formulario "Cerrar ronda" en
+- [x] T024 Completar `src/web/templates/poker.html` según `data-model.md`, "Pantalla": formulario "Cerrar ronda" en
   cada ronda abierta y, al final de la página, la sección "Rondas cerradas" (`data-ronda-cerrada`, `data-integrante`,
   valor o "No votó",
   `{{with .Alert}}{{template "alert" .}}{{end}}` o `<p class="poker-range">`, "Aún no hay rondas cerradas"). Sin
   JavaScript.
-- [ ] T025 Ejecutar T016–T019 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a.
+- [x] T025 Ejecutar T016–T019 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a.
 
 **Punto de control**: el Scrum Master cierra rondas y el equipo ve los votos y las divergencias.
 
 ## Fase 5: Cierre
 
-- [ ] T026 REFACTOR sin cambiar comportamiento: duplicación entre `open`, `vote` y `close`, y entre los ayudantes de
+- [x] T026 REFACTOR sin cambiar comportamiento: duplicación entre `open`, `vote` y `close`, y entre los ayudantes de
   fixtures; nombres y comentarios de `src/poker` y `src/web/poker_*`. Comprobar con `git diff --stat main` que no hay
   migraciones, que `src/cmd/server/main.go` no cambió y que solo se editaron archivos de HU-05a. Todas las pruebas en
   verde.
-- [ ] T027 `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y `go test ./... -p 1 -race` en
+- [x] T027 `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y `go test ./... -p 1 -race` en
   verde, como en el CI; guardar `specs/005b-poker-reveal/evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y
   `specs/005b-poker-reveal/cobertura.txt` (`go test -count=1 -p 1 -cover ./...`), verificando al menos 80% en
   `src/poker`.
-- [ ] T028 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`, "Verificación manual").
-- [ ] T029 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y marcar
+- [x] T028 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`, "Verificación manual").
+- [x] T029 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y marcar
   `checklists/requirements.md`.
 - [ ] T030 Abrir el Pull Request desde `HU-05b` citando HU-05b, con las evidencias, sin migración y con la lista de
   archivos de HU-05a editados; revisión y aprobación de otro integrante, merge con "Create a merge commit" y tarjeta a
