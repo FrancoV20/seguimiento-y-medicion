@@ -151,6 +151,15 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail(err.Error())
 	}
 
+	// Estado del proyecto: estado por fechas, avance y Sprint en curso (HU-12).
+	if err := web.RegisterProjectStatus(srv, web.NewPostgreSQLProjectStatusCatalog(database),
+		web.NewPostgreSQLBoardCatalog(database), nil); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail(err.Error())
+	}
+
 	if err := srv.Serve(ctx, ln, func() {
 		_ = sprintStore.Close()
 		_ = database.Close()

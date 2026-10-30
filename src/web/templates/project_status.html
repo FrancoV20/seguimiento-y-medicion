@@ -1,0 +1,34 @@
+{{define "content"}}
+<h1>Estado del proyecto</h1>
+{{with .Data}}
+<section class="status-summary">
+  <h2>{{.Name}}</h2>
+  <p>{{.Dates}}</p>
+  <p><strong>{{.State}}</strong></p>
+</section>
+<section class="status-progress">
+  <h2>Avance</h2>
+  <p>{{.Progress}}</p>
+  <table class="status-table">
+    <thead>
+      <tr><th scope="col">Estado</th><th scope="col">Historias</th></tr>
+    </thead>
+    <tbody>
+      {{range .Rows}}
+      <tr><th scope="row">{{.Label}}</th><td>{{.Count}}</td></tr>
+      {{end}}
+    </tbody>
+  </table>
+</section>
+<section class="status-sprint">
+  <h2>Sprint en curso</h2>
+  {{if .HasSprint}}
+  <h3>{{.SprintLabel}}</h3>
+  <p>{{.SprintGoal}}</p>
+  <p>{{.SprintDates}}</p>
+  {{else}}
+  <p class="muted">{{.NoSprint}}</p>
+  {{end}}
+</section>
+{{end}}
+{{end}}

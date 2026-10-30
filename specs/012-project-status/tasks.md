@@ -148,17 +148,17 @@ comprobar los valores de "Datos de ejemplo".
 
 ### Implementación (GREEN)
 
-- [ ] T019 Crear `src/web/project_status_view.go` con los textos de la tabla de `data-model.md`,
+- [x] T019 Crear `src/web/project_status_view.go` con los textos de la tabla de `data-model.md`,
   `projectStatusDateText`, `projectStatusPercentText`, `projectStatusRow`, `projectStatusView` y
   `buildProjectStatusView` (usa `project.StatusOn` y `project.ProgressPercentage`).
-- [ ] T020 Crear `RegisterProjectStatus(s, catalog, board, now)` en `src/web/project_status_handlers.go` (reloj `nil` =
+- [x] T020 Crear `RegisterProjectStatus(s, catalog, board, now)` en `src/web/project_status_handlers.go` (reloj `nil` =
   `time.Now`; argumentos `nil` → error sin registrar; `Section{Name: TitleProjectStatus, Path: "/estado",
   RequiresProject: true}`; `Routes{"GET /estado": …}`; los pasos 1 a 3 de `data-model.md`, sin escribir nada antes de
   tener los dos datos) y la plantilla `src/web/templates/project_status.html`, sin `<script>` ni formularios.
-- [ ] T021 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-23,
+- [x] T021 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-23,
   `RegisterSprints`) y antes de `srv.Serve`, el bloque que llama a `web.RegisterProjectStatus(srv, web.NewPostgreSQLProjectStatusCatalog(database),
   web.NewPostgreSQLBoardCatalog(database), nil)`. Si falla, cerrar `ln` y `database`, como los otros bloques.
-- [ ] T022 Ejecutar T014–T017 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T022 Ejecutar T014–T017 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master ve el estado y el avance del proyecto activo.
 

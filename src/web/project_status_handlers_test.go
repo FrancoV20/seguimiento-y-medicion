@@ -217,7 +217,7 @@ func TestHU12_SinSprintEnCurso(t *testing.T) {
 	}
 	statusWantText(t, body, "No hay un Sprint en curso", "Estado: Finalizado", "3 de 3 historias completadas (100,00 %)")
 	statusWantRow(t, body, "Hecho", 3)
-	statusWantNoText(t, body, "Objetivo:", " en curso</")
+	statusWantNoText(t, body, "Objetivo:", "Sprint 1 en curso")
 	statusWantStatic(t, body)
 }
 
