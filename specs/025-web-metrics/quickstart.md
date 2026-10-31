@@ -7,10 +7,19 @@
 - Herramienta `golang-migrate/migrate` instalada según el [README.md](../../README.md).
 - HU-07, HU-15, HU-17, HU-20a y HU-20b (completa) integradas en `main`; en tu rama, traerlas con
   `git merge origin/main`.
-- Variable `DATABASE_URL` configurada. Ajustar el puerto al que publica tu `docker-compose.yml` o
-  `docker-compose.override.yml` (por ejemplo 5432 o 5433):
-  `postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable`.
-- No subir al repositorio claves personales; usar `docker-compose.override.yml`.
+- Variable `DATABASE_URL` configurada (la leen la aplicación y las pruebas de integración; sin ella, las pruebas
+  contra PostgreSQL se omiten con `t.Skip`). Con el `docker-compose.yml` del repositorio:
+
+  ```powershell
+  $env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
+  ```
+
+- **Nota del puerto**: `docker-compose.yml` publica PostgreSQL en el puerto **5433** de tu máquina (`5433:5432`),
+  para no chocar con un PostgreSQL instalado en Windows que use el 5432. El pipeline de GitHub Actions usa el
+  **5432** porque levanta su propio servicio. Si tu `docker-compose.override.yml` cambia usuario, clave o puerto,
+  usá esos datos; el puerto real lo muestra `docker compose port postgres 5432`.
+- No subir al repositorio claves personales; usar `docker-compose.override.yml`. No compartir la salida de
+  `docker compose config`: muestra la clave.
 
 ## Run the application
 
@@ -30,7 +39,7 @@ Para probar a mano hace falta un proyecto con al menos un Sprint cerrado:
 3. Abrir `http://localhost:8080/metricas`.
 
 ```powershell
-$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5432/seguimiento_y_medicion?sslmode=disable"
+$env:DATABASE_URL = "postgres://sym_user:sym_pass@localhost:5433/seguimiento_y_medicion?sslmode=disable"
 go run ./src/cmd/server
 ```
 

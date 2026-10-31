@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-07, HU-15, HU-20a y HU-20b.
 
-- [ ] T001 Revisar HU-07 y HU-15 en `main`: ruta del paquete de HU-07 y firma de su servicio (entrada con Sprint y proyecto, resultado con velocidad, desviación o su falta, X e Y del cálculo parcial), tipo y redondeo de la desviación, textos exactos "No disponible" y "Cálculo parcial: basado en X de Y historias", si exige Sprint finalizado, qué devuelve para un Sprint sin historias completadas y cómo trata las historias devueltas por HU-15; valor exacto del estado de Sprint finalizado en `sprints.status`; identificadores ya definidos en el paquete `web` (HU-14, HU-15, HU-21 a HU-24) y cómo formatean fechas; anotar el resultado en `specs/025-web-metrics/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET`, `Section.RequiresProject`, `ActiveContextFrom`, `Renderer.Page`, `Fail`, `RenderError` y la página 405
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/025-web-metrics/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar que las migraciones de Sprints (HU-04) y de las tablas que lee HU-07 en `main` coinciden con el esquema anotado en `specs/025-web-metrics/data-model.md` y avisar al equipo si cambiaron
+- [x] T001 Revisar HU-07 y HU-15 en `main`: ruta del paquete de HU-07 y firma de su servicio (entrada con Sprint y proyecto, resultado con velocidad, desviación o su falta, X e Y del cálculo parcial), tipo y redondeo de la desviación, textos exactos "No disponible" y "Cálculo parcial: basado en X de Y historias", si exige Sprint finalizado, qué devuelve para un Sprint sin historias completadas y cómo trata las historias devueltas por HU-15; valor exacto del estado de Sprint finalizado en `sprints.status`; identificadores ya definidos en el paquete `web` (HU-14, HU-15, HU-21 a HU-24) y cómo formatean fechas; anotar el resultado en `specs/025-web-metrics/data-model.md` y ajustar `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET`, `Section.RequiresProject`, `ActiveContextFrom`, `Renderer.Page`, `Fail`, `RenderError` y la página 405
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/025-web-metrics/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar que las migraciones de Sprints (HU-04) y de las tablas que lee HU-07 en `main` coinciden con el esquema anotado en `specs/025-web-metrics/data-model.md` y avisar al equipo si cambiaron
 
 ---
 

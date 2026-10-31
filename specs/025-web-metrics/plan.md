@@ -14,17 +14,22 @@ a HU-07, mediante un adaptador fino (`MetricsSource`), las métricas del Sprint 
 fijo (desviación con dos decimales, coma y signo, "No disponible" y la alerta de cálculo parcial). No agrega
 migraciones y no modifica HU-07, HU-15, HU-17, HU-20a ni HU-20b.
 
-> **Supuestos a verificar antes de implementar (T001, T002 y T004)**:
-> 1. La ruta del paquete de HU-07 y la firma de su servicio: entrada (Sprint y proyecto), resultado (velocidad,
->    desviación o su falta, X e Y del cálculo parcial), tipo y redondeo de la desviación, los textos exactos "No
->    disponible" y "Cálculo parcial: basado en X de Y historias" y si exige que el Sprint esté finalizado.
-> 2. Cómo calcula HU-07 después de HU-15: que lee las historias "Hecho" del Sprint y no cuenta las devueltas al
->    Backlog; qué devuelve para un Sprint sin historias completadas.
-> 3. El valor exacto del estado de Sprint finalizado en `sprints.status` (se supone `'Finalizado'`).
-> 4. HU-20a y HU-20b completas en `main`: `Server.Register` con rutas `GET`, `Section.RequiresProject`,
->    `ActiveContextFrom`, `Renderer.Page`, `Fail` y la página 405.
-> 5. Los identificadores ya definidos en el paquete `web` (por HU-14, HU-15, HU-21 a HU-24) para que los nombres con
->    prefijo `Metrics` no choquen.
+> **Supuestos verificados (T001, T002 y T004, 31/10/2026)**: el detalle está en [data-model.md](data-model.md),
+> sección "Revisión de dependencias en `main`".
+> 1. HU-07 está en `src/metrics`: `metrics.NewService(store).CalculateMetrics(sprintID)` recibe solo el Sprint (sin
+>    proyecto ni `context.Context`) y exige que esté `'Finalizado'`. Devuelve `Velocity` (int), `DeviationPercentage`
+>    (texto con dos decimales y punto ya redondeado, o "No disponible"), `CalculationUsedCount` y
+>    `CalculationTotalCount` (X e Y), `IsPartial` y `Warning` ("Cálculo parcial: basado en X de Y historias").
+> 2. HU-15 quita la asignación de las historias devueltas al Backlog, así que HU-07 solo cuenta las "Hecho" del
+>    Sprint. Un Sprint sin historias "Hecho" da velocidad 0 y "No disponible", sin error.
+> 3. El estado de Sprint finalizado es `'Finalizado'` (`sprint.SprintFinished`).
+> 4. HU-20a y HU-20b están completas en `main`: `Server.Register`, `Section.RequiresProject`, `ActiveContextFrom`,
+>    `Renderer.Page`, `Fail`, `RenderError` y la página 405.
+> 5. No hay identificadores con prefijo `Metrics` ni la ruta `/metricas` en el paquete `web`.
+>
+> **Ajuste del diseño**: `CalculateMetrics` guarda una copia en `sprint_metrics` (`SaveMetrics`). Para que la
+> pantalla no modifique datos, el adaptador `MetricsSource` usa el servicio real de HU-07 con un store de solo
+> lectura (lee con `PostgreSQLMetricsStore`, no guarda). No se modifica ningún archivo de HU-07.
 
 ## Technical Context
 
@@ -131,13 +136,14 @@ requiere integrante. El proyecto sale del servidor.
 | Desviación con datos | dos decimales, coma y signo: `+20,00 %`, `-8,50 %`, `0,00 %` |
 | Desviación sin horas estimadas | "No disponible" |
 | Cálculo parcial | "Cálculo parcial: basado en X de Y historias" |
-| Fechas | las del formato de fecha del resto de las pantallas |
+| Fechas | `dd/mm/aaaa`, como HU-12 y HU-15 |
 
 ### Contratos que consume
 
 - De HU-20a: `Server.Register(section, routes)`, `Renderer.Page`, `Fail` y `RenderError` (y la página 405).
 - De HU-20b: `ActiveContextFrom` y la exigencia de proyecto por sección.
-- De HU-07: el servicio que calcula velocidad y desviación y sus textos.
+- De HU-07: `metrics.NewService`, `CalculateMetrics`, `metrics.NewPostgreSQLMetricsStore` (solo su lectura) y
+  sus textos ("No disponible" en `DeviationPercentage` y "Cálculo parcial..." en `Warning`).
 - De HU-15: Sprint "Finalizado" con las historias "Hecho" asignadas.
 
 ## Complexity Tracking
