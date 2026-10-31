@@ -96,7 +96,7 @@ test/web_project_status_bdd_test.go
 ```
 
 Archivo existente que se edita: `src/cmd/server/main.go`, para sumar un bloque de registro después del último (hoy el
-de HU-24).
+de HU-23, `RegisterSprints`) y antes de `srv.Serve`.
 
 No se tocan `src/project/{errors,model,postgres_store,project,service,store,test_store}.go` (HU-01), los archivos de
 HU-14 (`src/web/board*.go`, `postgres_board_catalog.go`), los de HU-21/HU-11 (`src/web/projects*.go`,

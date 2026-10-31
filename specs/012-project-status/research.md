@@ -1,6 +1,6 @@
 # Research: HU-12 – Consulta del Estado de un Proyecto
 
-## Datos verificados en el código (main `b7419c2`, 2026-10-28)
+## Datos verificados en el código (main `da70129`, 2026-10-29)
 
 Verificado con `git grep -n`:
 
@@ -35,8 +35,8 @@ Verificado con `git grep -n`:
   - `returnDestination` vuelve a la misma dirección (`/estado`) después de elegir proyecto;
   - `Server.route` responde 405 con la página de HU-20a; las plantillas están embebidas (`templates/*.html`);
   - `RegisterEffort(..., now func() time.Time)` ya usa un reloj inyectable (nil = `time.Now`).
-- **`main.go`** registra cada sección con un bloque; hoy el último es el de HU-24 (`RegisterEffort`), después del de
-  HU-05a (`RegisterPlanningPoker`). En la copia de trabajo de Windows los archivos tienen fin de línea CRLF: no se
+- **`main.go`** registra cada sección con un bloque; hoy el último es el de HU-23 (`RegisterSprints`), después de los de
+  HU-05a (`RegisterPlanningPoker`), HU-24 (`RegisterEffort`) y Defectos, y antes de `srv.Serve`. En la copia de trabajo de Windows los archivos tienen fin de línea CRLF: no se
   corre `gofmt -w` sobre archivos existentes (nota de HU-11).
 - No existe ninguna sección con la dirección `/estado` ni el texto "Estado del proyecto", ni nombres
   `ProjectStatus*`/`projectStatus*` en `src/web`.
@@ -152,7 +152,7 @@ Verificado con `git grep -n`:
 
 ### 9. Registro en `main.go`
 
-- **Decision**: un bloque nuevo después del último registro (hoy el de HU-24), que llama a
+- **Decision**: un bloque nuevo después del último registro (hoy el de HU-23, `RegisterSprints`, antes de `srv.Serve`), que llama a
   `web.RegisterProjectStatus(srv, web.NewPostgreSQLProjectStatusCatalog(database),
   web.NewPostgreSQLBoardCatalog(database), nil)`, con el mismo manejo de error que los demás. Se respeta el fin de
   línea del archivo y no se corre `gofmt -w` sobre él.
