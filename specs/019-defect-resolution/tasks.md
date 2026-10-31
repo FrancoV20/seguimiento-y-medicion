@@ -81,10 +81,10 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T038 [P] [E3] `TestHU19_Reabrir`: 303, "Abierto" y "—" en Sprint de resolución, también sin Sprint activo, en `src/web/defects_resolution_handlers_test.go`
-- [ ] T039 [P] [E8] `TestHU19_YaAbierto`: 409 y mensaje; el defecto no cambia
-- [ ] T040 [P] [E3] Escenario BDD de reabrir en `test/web_defect_resolution_bdd_test.go`
-- [ ] T041 Ejecutar T038–T040, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Reabrir")
+- [x] T038 [P] [E3] `TestHU19_Reabrir`: 303, "Abierto" y "—" en Sprint de resolución, también sin Sprint activo, en `src/web/defects_resolution_handlers_test.go`
+- [x] T039 [P] [E8] `TestHU19_YaAbierto`: 409 y mensaje; el defecto no cambia
+- [x] T040 [P] [E3] Escenario BDD de reabrir en `test/web_defect_resolution_bdd_test.go`
+- [x] T041 Ejecutar T038–T040, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Reabrir")
 
 ### Implementación (GREEN)
 

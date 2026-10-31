@@ -227,3 +227,79 @@ func TestHU19_YaResuelto(t *testing.T) {
 	}
 	f.assertState(t, defectID, "Resuelto", sprint2)
 }
+
+func (f *defectResolutionFixture) reopen(t *testing.T, client *http.Client, defectID string) (*http.Response, string) {
+	t.Helper()
+	return f.app.post(t, client, "/defectos/reabrir", url.Values{"defecto": {defectID}})
+}
+
+// T038 [E3]: reabrir un defecto resuelto lo vuelve a "Abierto" y borra su Sprint de resolución,
+// también cuando el proyecto no tiene Sprint activo.
+func TestHU19_Reabrir(t *testing.T) {
+	t.Run("con Sprint activo", func(t *testing.T) {
+		f := newDefectResolutionFixture(t)
+		sprint2 := f.sprint(t, f.app.fx.projectA, 2, "Finalizado")
+		f.sprint(t, f.app.fx.projectA, 3, "Activo")
+		defectID := f.resolvedDefect(t, f.app.fx.projectA, f.storyA, sprint2, sprint2)
+		client := f.clientA(t)
+
+		resp, _ := f.reopen(t, client, id64(defectID))
+
+		if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/defectos" {
+			t.Fatalf("POST /defectos/reabrir = %d a %q; se esperaba 303 a /defectos",
+				resp.StatusCode, resp.Header.Get("Location"))
+		}
+		f.assertState(t, defectID, "Abierto", 0)
+
+		resp, body := f.app.get(t, client, "/defectos")
+		if resp.StatusCode != http.StatusOK {
+			t.Errorf("GET /defectos = %d; se esperaba 200", resp.StatusCode)
+		}
+		if strings.Count(body, "Defecto reabierto") != 1 {
+			t.Errorf("la pantalla debía mostrar una vez \"Defecto reabierto\"")
+		}
+		if !strings.Contains(body, "<td>Abierto</td>") || !strings.Contains(body, "<td>—</td>") {
+			t.Errorf("la lista debía mostrar el defecto Abierto sin Sprint de resolución")
+		}
+		if _, body := f.app.get(t, client, "/defectos"); strings.Contains(body, "Defecto reabierto") {
+			t.Errorf("el mensaje de éxito no debe repetirse al recargar")
+		}
+	})
+
+	t.Run("sin Sprint activo", func(t *testing.T) {
+		f := newDefectResolutionFixture(t)
+		sprint2 := f.sprint(t, f.app.fx.projectA, 2, "Finalizado")
+		defectID := f.resolvedDefect(t, f.app.fx.projectA, f.storyA, sprint2, sprint2)
+		client := f.clientA(t)
+
+		resp, _ := f.reopen(t, client, id64(defectID))
+
+		if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/defectos" {
+			t.Fatalf("POST /defectos/reabrir sin Sprint activo = %d a %q; se esperaba 303 a /defectos",
+				resp.StatusCode, resp.Header.Get("Location"))
+		}
+		f.assertState(t, defectID, "Abierto", 0)
+		// Sin Sprint activo, HU-06 muestra la lista con 409 y sin el formulario de registro.
+		if _, body := f.app.get(t, client, "/defectos"); !strings.Contains(body, "<td>Abierto</td>") {
+			t.Errorf("la lista debía mostrar el defecto reabierto como Abierto")
+		}
+	})
+}
+
+// T039 [E8]: reabrir un defecto que ya está abierto se rechaza y no lo modifica.
+func TestHU19_YaAbierto(t *testing.T) {
+	f := newDefectResolutionFixture(t)
+	active := f.sprint(t, f.app.fx.projectA, 1, "Activo")
+	defectID := f.openDefect(t, f.app.fx.projectA, f.storyA, active)
+	client := f.clientA(t)
+
+	resp, body := f.reopen(t, client, id64(defectID))
+
+	if resp.StatusCode != http.StatusConflict {
+		t.Errorf("POST /defectos/reabrir de un defecto abierto = %d; se esperaba 409", resp.StatusCode)
+	}
+	if !strings.Contains(body, "El defecto ya está abierto") {
+		t.Errorf("la respuesta debía informar que el defecto ya está abierto")
+	}
+	f.assertState(t, defectID, "Abierto", 0)
+}

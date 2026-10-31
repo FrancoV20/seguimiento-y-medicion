@@ -164,3 +164,37 @@ func TestEscenarioHU19_ResolverSinSprintActivo(t *testing.T) {
 		t.Errorf("el defecto quedó %q con Sprint de resolución %v; se esperaba Abierto sin Sprint", status, resolution)
 	}
 }
+
+func (a *resolucionBDDApp) defectoResuelto(t *testing.T, sprintID int64) int64 {
+	t.Helper()
+	return a.insertar(t, `
+		INSERT INTO defects (project_id, story_id, description, severity, status, detection_sprint_id, resolution_sprint_id)
+		VALUES ($1, $2, 'Defecto resuelto del escenario BDD', 'Media', 'Resuelto', $3, $3)
+		RETURNING id`, a.proyectoA, a.historia, sprintID)
+}
+
+// Escenario 3: Reabrir un defecto
+//
+//	Dado un defecto "Resuelto" con un Sprint de resolución
+//	Cuando reabro el defecto
+//	Entonces el defecto vuelve a "Abierto"
+//	Y su Sprint de resolución se borra
+func TestEscenarioHU19_ReabrirUnDefecto(t *testing.T) {
+	app := nuevaResolucionBDDApp(t)
+	sprint2 := app.sprint(t, 2, "Finalizado")
+	app.sprint(t, 3, "Activo")
+	defecto := app.defectoResuelto(t, sprint2)
+	client := app.elegirProyecto(t)
+
+	response, _ := app.enviar(t, client, "/defectos/reabrir", defecto)
+
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("reabrir: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
+	if status, resolution := app.estado(t, defecto); status != "Abierto" || resolution != nil {
+		t.Errorf("el defecto quedó %q con Sprint de resolución %v; se esperaba Abierto sin Sprint", status, resolution)
+	}
+	if _, body := app.obtener(t, client, "/defectos"); !strings.Contains(body, "Defecto reabierto") {
+		t.Errorf("la pantalla debía mostrar el mensaje de éxito al reabrir")
+	}
+}
