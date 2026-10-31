@@ -59,10 +59,29 @@ Los valores esperados están en "Datos de ejemplo" de [spec.md](spec.md) y en la
 
 ```powershell
 chcp 65001
-go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 -Append specs/012-project-status/evidencia-red.txt
-go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/012-project-status/evidencia-pruebas.txt
-go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/012-project-status/cobertura.txt
+cmd /c "go test -count=1 -p 1 -v ./... 2>&1" | Out-File -Encoding utf8 specs/012-project-status/evidencia-pruebas.txt
+cmd /c "go test -count=1 -p 1 -cover ./... 2>&1" | Out-File -Encoding utf8 specs/012-project-status/cobertura.txt
 ```
 
 `evidencia-red.txt` se completa por secciones (Reglas, Catálogo, Pantalla), y cada sección se guarda antes de escribir
 el código de su bloque.
+
+## Resultado de la verificación manual
+
+Realizada el 30/10/2026 con la aplicación en ejecución (`go run ./src/cmd/server`) y PostgreSQL local. Los datos se
+cargaron con un script SQL (proyectos «HU12 manual Alfa», «Beta», «Gamma», «Delta» y «Epsilon», con las fechas de
+"Datos de ejemplo"; «Delta» empieza y «Epsilon» termina el 30/10/2026, la fecha de hoy) y se borraron al terminar.
+
+| Escenario | Proyecto | Resultado observado | Estado |
+|---|---|---|---|
+| 1 Proyecto en curso | Alfa | "Estado: En curso", "Del 01/10/2026 al 30/11/2026", "4 de 8 historias completadas (50,00 %)", Pendiente 2, En Sprint 1, En progreso 1, Hecho 4, "Sprint 2 en curso", "Objetivo: Pagos online", "Del 19/10/2026 al 01/11/2026" | OK |
+| 2 No iniciado | Beta | "Estado: No iniciado" | OK |
+| 3 Finalizado | Gamma | "Estado: Finalizado", "3 de 3 historias completadas (100,00 %)" | OK |
+| 4 Empieza hoy | Delta | "Estado: En curso" | OK |
+| 5 Termina hoy | Epsilon | "Estado: En curso" | OK |
+| 6 Sin historias | Beta | cuatro cantidades en 0 y "0 de 0 historias completadas (0,00 %)", sin error | OK |
+| 7 Sin Sprint en curso | Gamma | "No hay un Sprint en curso" y el resto igual | OK |
+| 8 Otro proyecto | Alfa | 8 historias y 4 "Hecho"; no aparecen las 3 de «Gamma» (nada de "7 de 11") | OK |
+| 9 Sin proyecto | — | en ventana privada, `/estado` pide elegir proyecto y, al elegirlo, vuelve a "Estado del proyecto" | OK |
+| 10 Error al consultar | cualquiera | con la base detenida, página de error sin datos del proyecto ni texto técnico; al volver la base, la pantalla funciona sin reiniciar la aplicación | OK |
+| Solo lectura | Alfa | el código de la página no tiene `<script` ni `<form` | OK |
