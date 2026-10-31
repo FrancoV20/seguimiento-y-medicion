@@ -39,11 +39,15 @@ type PokerRevealedVoteView struct {
 }
 
 // PokerClosedRoundView es una ronda cerrada del proyecto con sus votos revelados (HU-05b).
+// Latest indica que es la última ronda de su historia e InFinishedSprint que la historia está en
+// un Sprint finalizado (HU-18).
 type PokerClosedRoundView struct {
-	ID, StoryID int64
-	StoryTitle  string
-	Number      int
-	Votes       []PokerRevealedVoteView
+	ID, StoryID      int64
+	StoryTitle       string
+	Number           int
+	Votes            []PokerRevealedVoteView
+	Latest           bool
+	InFinishedSprint bool
 }
 
 // PokerBoard es todo lo que muestra la pantalla.

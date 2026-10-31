@@ -20,6 +20,13 @@ type fakeStore struct {
 	closeCalls           int         // HU-05b
 	gotClose             [2]int64    // proyecto y ronda recibidos por CloseRound
 	closed               ClosedRound // lo que devuelve CloseRound
+	nextCalls            int         // HU-18
+	gotNext              [3]int64    // proyecto, ronda e integrante recibidos por OpenNextRound
+	next                 OpenedRound // lo que devuelve OpenNextRound
+	agreeCalls           int
+	gotAgree             [2]int64       // proyecto y ronda recibidos por AgreeEstimate
+	gotAgreeValue        int            // valor ya convertido recibido por AgreeEstimate
+	agreed               AgreedEstimate // lo que devuelve AgreeEstimate
 }
 
 func (f *fakeStore) OpenRound(_ context.Context, projectID, storyID, memberID int64) (OpenedRound, error) {
@@ -39,6 +46,19 @@ func (f *fakeStore) CloseRound(_ context.Context, projectID, roundID int64) (Clo
 	f.closeCalls++
 	f.gotClose = [2]int64{projectID, roundID}
 	return f.closed, f.err
+}
+
+func (f *fakeStore) OpenNextRound(_ context.Context, projectID, roundID, memberID int64) (OpenedRound, error) {
+	f.nextCalls++
+	f.gotNext = [3]int64{projectID, roundID, memberID}
+	return f.next, f.err
+}
+
+func (f *fakeStore) AgreeEstimate(_ context.Context, projectID, roundID int64, value int) (AgreedEstimate, error) {
+	f.agreeCalls++
+	f.gotAgree = [2]int64{projectID, roundID}
+	f.gotAgreeValue = value
+	return f.agreed, f.err
 }
 
 func TestService_OpenRound_OK(t *testing.T) {
@@ -157,6 +177,88 @@ func TestService_CloseRound_Validaciones(t *testing.T) {
 		store := &fakeStore{err: storeErr}
 		if _, err := NewService(store).CloseRound(context.Background(), 1, 9, 7); !errors.Is(err, storeErr) {
 			t.Errorf("el error %v debía propagarse de forma que errors.Is funcione, se obtuvo %v", storeErr, err)
+		}
+	}
+}
+
+// HU-18, T008: "Nueva ronda" en el servicio.
+
+func TestService_OpenNextRound_OK(t *testing.T) {
+	store := &fakeStore{next: OpenedRound{RoundID: 12, StoryID: 4, StoryTitle: "Login", Number: 2}}
+	got, err := NewService(store).OpenNextRound(context.Background(), 1, 9, 7)
+	if err != nil || got != store.next {
+		t.Fatalf("se esperaba la ronda del almacén, se obtuvo %+v, %v", got, err)
+	}
+	if store.gotNext != [3]int64{1, 9, 7} {
+		t.Errorf("el almacén recibió %v, se esperaba proyecto 1, ronda 9, integrante 7", store.gotNext)
+	}
+}
+
+func TestService_OpenNextRound_Validaciones(t *testing.T) {
+	cases := []struct {
+		name          string
+		round, member int64
+		want          error
+	}{
+		{"ronda cero", 0, 7, ErrRoundNotFound},
+		{"integrante cero", 9, 0, ErrMemberRequired},
+	}
+	for _, c := range cases {
+		store := &fakeStore{}
+		if _, err := NewService(store).OpenNextRound(context.Background(), 1, c.round, c.member); !errors.Is(err, c.want) {
+			t.Errorf("%s: se esperaba %v, se obtuvo %v", c.name, c.want, err)
+		}
+		if store.nextCalls != 0 {
+			t.Errorf("%s: no debía llamarse al almacén", c.name)
+		}
+	}
+	for _, domain := range []error{ErrRoundAlreadyOpen, ErrNotLatestRound, ErrStoryInFinishedSprint, ErrRoundNotFound} {
+		store := &fakeStore{err: domain}
+		if _, err := NewService(store).OpenNextRound(context.Background(), 1, 9, 7); !errors.Is(err, domain) {
+			t.Errorf("se esperaba %v propagado, se obtuvo %v", domain, err)
+		}
+	}
+}
+
+// HU-18, T012: estimación acordada en el servicio.
+
+func TestService_AgreeEstimate_OK(t *testing.T) {
+	store := &fakeStore{agreed: AgreedEstimate{StoryID: 4, StoryTitle: "Login", StoryPoints: 8}}
+	got, err := NewService(store).AgreeEstimate(context.Background(), 1, 9, 7, "8")
+	if err != nil || got != store.agreed {
+		t.Fatalf("se esperaba la estimación del almacén, se obtuvo %+v, %v", got, err)
+	}
+	if store.gotAgree != [2]int64{1, 9} || store.gotAgreeValue != 8 {
+		t.Errorf("el almacén recibió %v con el valor %d, se esperaba proyecto 1, ronda 9 y 8", store.gotAgree, store.gotAgreeValue)
+	}
+}
+
+func TestService_AgreeEstimate_Validaciones(t *testing.T) {
+	cases := []struct {
+		name          string
+		round, member int64
+		value         string
+		want          error
+	}{
+		{"valor vacío antes que la ronda", 0, 7, "", ErrValueRequired},
+		{"valor fuera de la serie antes que la ronda", 0, 7, "4", ErrValueNotInSeries},
+		{"valor no canónico", 9, 7, "05", ErrValueNotInSeries},
+		{"ronda cero", 0, 7, "5", ErrRoundNotFound},
+		{"integrante cero", 9, 0, "5", ErrMemberRequired},
+	}
+	for _, c := range cases {
+		store := &fakeStore{}
+		if _, err := NewService(store).AgreeEstimate(context.Background(), 1, c.round, c.member, c.value); !errors.Is(err, c.want) {
+			t.Errorf("%s: se esperaba %v, se obtuvo %v", c.name, c.want, err)
+		}
+		if store.agreeCalls != 0 {
+			t.Errorf("%s: no debía llamarse al almacén", c.name)
+		}
+	}
+	for _, domain := range []error{ErrRoundStillOpen, ErrNotLatestRound, ErrStoryInFinishedSprint, ErrRoundNotFound} {
+		store := &fakeStore{err: domain}
+		if _, err := NewService(store).AgreeEstimate(context.Background(), 1, 9, 7, "5"); !errors.Is(err, domain) {
+			t.Errorf("se esperaba %v propagado, se obtuvo %v", domain, err)
 		}
 	}
 }

@@ -1,0 +1,112 @@
+﻿== Reglas (T003-T004): falla porque no existen StoryRound, CheckNextRound, CheckAgree ni los errores nuevos ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/poker 
+[github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "CheckNextRound|CheckAgree" ./src/poker ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...src/poker.test]: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\poker\consensus_rules_test.go:11:35: undefined: StoryRound
+src\poker\consensus_rules_test.go:12:20: undefined: StoryRound
+src\poker\consensus_rules_test.go:14:28: undefined: StoryRound
+src\poker\consensus_rules_test.go:18:16: undefined: StoryRound
+src\poker\consensus_rules_test.go:22:14: undefined: StoryRound
+src\poker\consensus_rules_test.go:29:72: undefined: ErrNotLatestRound
+src\poker\consensus_rules_test.go:33:70: undefined: ErrStoryInFinishedSprint
+src\poker\consensus_rules_test.go:34:93: undefined: ErrNotLatestRound
+src\poker\consensus_rules_test.go:35:32: undefined: StoryRound
+src\poker\consensus_rules_test.go:38:16: undefined: CheckNextRound
+src\poker\consensus_rules_test.go:38:16: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
+
+== Nueva ronda (T007-T009): falla porque OpenNextRound no existe en el Service ni en PostgreSQLStore ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src\poker\next_round_integration_test.go:17:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:41:22: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:50:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:56:21: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:68:22: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:79:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:89:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:96:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:117:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:145:37: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:145:37: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
+
+== Estimacion (T012-T014): falla porque AgreeEstimate no existe en el Service ni en PostgreSQLStore ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src\poker\agree_estimate_integration_test.go:18:23: store.AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:29:22: store.AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:43:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:53:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:63:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:73:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:84:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:94:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:101:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:124:36: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:124:36: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
+
+== Pantalla (T017-T021): src/web no compila (faltan Latest, InFinishedSprint y los textos); los BDD fallan porque /planning-poker/nueva-ronda y /planning-poker/estimacion no existen (404) ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\poker_consensus_handlers_test.go:139:99: undefined: MsgPokerDivergenceReminder
+src\web\poker_consensus_handlers_test.go:143:61: undefined: MsgPokerDivergenceReminder
+src\web\poker_consensus_handlers_test.go:182:29: undefined: MsgPokerRoundStillOpen
+src\web\poker_consensus_handlers_test.go:183:30: undefined: MsgPokerRoundStillOpen
+src\web\poker_consensus_handlers_test.go:208:29: undefined: MsgPokerNotLatestRound
+src\web\poker_consensus_handlers_test.go:209:30: undefined: MsgPokerNotLatestRound
+src\web\poker_consensus_handlers_test.go:225:3: undefined: LabelPokerFinishedSprint
+src\web\poker_consensus_handlers_test.go:237:30: undefined: MsgPokerStoryInFinishedSprint
+src\web\poker_consensus_handlers_test.go:238:41: undefined: MsgPokerStoryInFinishedSprint
+src\web\postgres_poker_consensus_integration_test.go:28:50: r.Latest undefined (type PokerClosedRoundView has no field or method Latest)
+src\web\postgres_poker_consensus_integration_test.go:28:50: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+=== RUN   TestBDD_HU18_NuevaRondaTrasDivergencia
+    web_poker_consensus_bdd_test.go:273: la pantalla deb├¡a mostrar "Ronda 2 abierta para la historia ┬½Login┬╗"
+    web_poker_consensus_bdd_test.go:274: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_NuevaRondaTrasDivergencia (0.08s)
+=== RUN   TestBDD_HU18_VotosOcultosEnLaNuevaRonda
+    web_poker_consensus_bdd_test.go:294: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_VotosOcultosEnLaNuevaRonda (0.07s)
+=== RUN   TestBDD_HU18_RegistrarEstimacionAcordada
+    web_poker_consensus_bdd_test.go:314: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_RegistrarEstimacionAcordada (0.07s)
+=== RUN   TestBDD_HU18_ConsensoDirecto
+    web_poker_consensus_bdd_test.go:342: la pantalla deb├¡a mostrar "Estimaci├│n registrada: ┬½Pagos┬╗ queda con 5 Story Points"
+    web_poker_consensus_bdd_test.go:344: ┬½Pagos┬╗ deb├¡a quedar con 5 Story Points y una sola ronda: 0 SP, 1 rondas
+--- FAIL: TestBDD_HU18_ConsensoDirecto (0.07s)
+=== RUN   TestBDD_HU18_RegistrarDespuesDeDebatir
+    web_poker_consensus_bdd_test.go:359: ┬½Login┬╗ deb├¡a mostrar "La ├║ltima ronda tuvo divergencia: registr├í el valor que acordaron despu├®s de debatir"
+    web_poker_consensus_bdd_test.go:363: ┬½Login┬╗ deb├¡a quedar con 5 Story Points, tiene 0
+--- FAIL: TestBDD_HU18_RegistrarDespuesDeDebatir (0.08s)
+=== RUN   TestBDD_HU18_ValorFueraDeLaSerie
+    web_poker_consensus_bdd_test.go:377: se esperaba 422, se obtuvo 404 (http://127.0.0.1:22629/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_ValorFueraDeLaSerie (0.07s)
+=== RUN   TestBDD_HU18_RondaSinCerrar
+    web_poker_consensus_bdd_test.go:395: se esperaba 409, se obtuvo 404 (http://127.0.0.1:22632/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaSinCerrar (0.07s)
+=== RUN   TestBDD_HU18_NuevaRondaConRondaAbierta
+    web_poker_consensus_bdd_test.go:412: se esperaba 409, se obtuvo 404 (http://127.0.0.1:22635/planning-poker/nueva-ronda)
+--- FAIL: TestBDD_HU18_NuevaRondaConRondaAbierta (0.07s)
+=== RUN   TestBDD_HU18_RondaQueYaNoEsLaUltima
+    web_poker_consensus_bdd_test.go:429: se esperaba 409, se obtuvo 404 (http://127.0.0.1:22638/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaQueYaNoEsLaUltima (0.06s)
+=== RUN   TestBDD_HU18_HistoriaDeUnSprintFinalizado
+    web_poker_consensus_bdd_test.go:447: se esperaba 409, se obtuvo 404 (http://127.0.0.1:22641/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_HistoriaDeUnSprintFinalizado (0.07s)
+=== RUN   TestBDD_HU18_RondaInexistente
+    web_poker_consensus_bdd_test.go:471: nueva ronda desde 999999999: deb├¡a mostrar ┬½La ronda no existe┬╗
+    web_poker_consensus_bdd_test.go:471: estimaci├│n desde 999999999: deb├¡a mostrar ┬½La ronda no existe┬╗
+    web_poker_consensus_bdd_test.go:471: nueva ronda desde 1874: deb├¡a mostrar ┬½La ronda no existe┬╗
+    web_poker_consensus_bdd_test.go:471: estimaci├│n desde 1874: deb├¡a mostrar ┬½La ronda no existe┬╗
+--- FAIL: TestBDD_HU18_RondaInexistente (0.07s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.844s
+FAIL

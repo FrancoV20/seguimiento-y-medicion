@@ -74,6 +74,14 @@ func (failingPokerStore) CloseRound(context.Context, int64, int64) (poker.Closed
 	return poker.ClosedRound{}, errPokerStoreInternal
 }
 
+func (failingPokerStore) OpenNextRound(context.Context, int64, int64, int64) (poker.OpenedRound, error) { // HU-18
+	return poker.OpenedRound{}, errPokerStoreInternal
+}
+
+func (failingPokerStore) AgreeEstimate(context.Context, int64, int64, int) (poker.AgreedEstimate, error) { // HU-18
+	return poker.AgreedEstimate{}, errPokerStoreInternal
+}
+
 // as devuelve un navegador que eligió el proyecto y, si member no es 0, se identificó (HU-20b).
 func (a *pokerApp) as(t *testing.T, project, member int64) *http.Client {
 	t.Helper()

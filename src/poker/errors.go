@@ -15,4 +15,9 @@ var (
 	ErrStoryAlreadyRounded = errors.New("poker: la historia ya tuvo una ronda")
 	ErrMemberRequired      = errors.New("poker: falta el integrante")
 	ErrNoVotes             = errors.New("poker: la ronda no tiene votos")
+
+	// HU-18: nueva ronda y estimación acordada.
+	ErrNotLatestRound        = errors.New("poker: hay una ronda más reciente de la historia")
+	ErrRoundStillOpen        = errors.New("poker: la ronda sigue abierta")
+	ErrStoryInFinishedSprint = errors.New("poker: la historia pertenece a un Sprint finalizado")
 )
