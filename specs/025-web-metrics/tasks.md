@@ -57,9 +57,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implementar el handler `GET /metricas` en `src/web/metrics_handlers.go`: lee los Sprints finalizados del proyecto del contexto, elige el Sprint, pide las métricas a HU-07, arma la vista y usa `Fail` si falla la lectura o el cálculo
-- [ ] T018 [US1] Crear `metrics.html` con la velocidad, la desviación con su fórmula, la alerta de cálculo parcial y el Sprint elegido, escapando los textos, en `src/web/templates/metrics.html`
-- [ ] T019 [US1] Construir el catálogo y el adaptador de HU-07 y registrar la sección "Métricas del Sprint" (`/metricas`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T017 [US1] Implementar el handler `GET /metricas` en `src/web/metrics_handlers.go`: lee los Sprints finalizados del proyecto del contexto, elige el Sprint, pide las métricas a HU-07, arma la vista y usa `Fail` si falla la lectura o el cálculo
+- [x] T018 [US1] Crear `metrics.html` con la velocidad, la desviación con su fórmula, la alerta de cálculo parcial y el Sprint elegido, escapando los textos, en `src/web/templates/metrics.html`
+- [x] T019 [US1] Construir el catálogo y el adaptador de HU-07 y registrar la sección "Métricas del Sprint" (`/metricas`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 muestra las métricas de HU-07 desde la web; el MVP cierra el ciclo de punta a punta.
 

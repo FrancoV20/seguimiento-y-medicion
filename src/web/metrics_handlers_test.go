@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"strings"
 	"testing"
@@ -48,8 +49,9 @@ func (a *metricsHandlerApp) open(t *testing.T, projectID int64, path string) (*h
 	return resp, body, time.Since(started)
 }
 
-// metricsSection devuelve el bloque de métricas del Sprint elegido: el contenido de
-// <section id="metricas-sprint"> de metrics.html.
+// metricsSection devuelve el texto visible del bloque de métricas del Sprint elegido: el contenido
+// de <section id="metricas-sprint"> de metrics.html, con las entidades HTML resueltas (html/template
+// escribe el "+" como &#43;; el navegador muestra "+20,00 %").
 func metricsSection(t *testing.T, body string) string {
 	t.Helper()
 	start := strings.Index(body, `<section id="metricas-sprint"`)
@@ -60,7 +62,7 @@ func metricsSection(t *testing.T, body string) string {
 	if end < 0 {
 		t.Fatalf("el bloque de métricas del Sprint elegido no está cerrado")
 	}
-	return body[start : start+end]
+	return html.UnescapeString(body[start : start+end])
 }
 
 // assertMetricsPageOK verifica que la pantalla respondió 200 sin la página de error ni valores

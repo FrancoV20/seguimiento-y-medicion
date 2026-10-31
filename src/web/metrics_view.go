@@ -18,6 +18,8 @@ const (
 	MsgMetricsActiveHint = "El Sprint %d sigue en curso; sus métricas se calculan al cerrarlo"
 	// MsgMetricsDeviationFormula acompaña a la desviación.
 	MsgMetricsDeviationFormula = "(horas reales − horas estimadas) ÷ horas estimadas"
+	// MsgMetricsDeviationNote explica el signo de la desviación.
+	MsgMetricsDeviationNote = "Positiva: se trabajó más de lo estimado; negativa: menos."
 
 	msgMetricsSprintLabel = "Sprint %d"
 	msgMetricsDates       = "Del %s al %s"
@@ -48,6 +50,7 @@ type MetricsView struct {
 	VelocityText     string // "8 Story Points"
 	DeviationText    string // "+20,00 %" o "No disponible"
 	DeviationFormula string
+	DeviationNote    string
 	PartialAlert     string // Warning de HU-07 o vacío
 
 	ActiveHint string // MsgMetricsActiveHint con el número del Sprint activo, o vacío
@@ -133,6 +136,7 @@ func buildMetricsView(in metricsViewInput) MetricsView {
 	view.VelocityText = metricsVelocityText(in.Metrics.Velocity)
 	view.DeviationText = metricsDeviationText(in.Metrics.Deviation)
 	view.DeviationFormula = MsgMetricsDeviationFormula
+	view.DeviationNote = MsgMetricsDeviationNote
 	if in.Metrics.Partial {
 		view.PartialAlert = in.Metrics.PartialAlert
 	}

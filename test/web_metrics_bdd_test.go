@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"html"
 	"math/big"
 	"net/http"
 	"net/http/httptest"
@@ -145,7 +146,8 @@ func (a *metricasBDDApp) abrir(t *testing.T, ruta string) (*http.Response, strin
 	return respuesta, formCuerpo(t, respuesta)
 }
 
-// bloqueMetricas devuelve el bloque de métricas del Sprint elegido (<section id="metricas-sprint">).
+// bloqueMetricas devuelve el texto visible del bloque de métricas del Sprint elegido
+// (<section id="metricas-sprint">), con las entidades HTML resueltas como las muestra el navegador.
 func bloqueMetricas(t *testing.T, cuerpo string) string {
 	t.Helper()
 	inicio := strings.Index(cuerpo, `<section id="metricas-sprint"`)
@@ -156,7 +158,7 @@ func bloqueMetricas(t *testing.T, cuerpo string) string {
 	if fin < 0 {
 		t.Fatalf("el bloque de métricas del Sprint elegido no está cerrado")
 	}
-	return cuerpo[inicio : inicio+fin]
+	return html.UnescapeString(cuerpo[inicio : inicio+fin])
 }
 
 func debeContener(t *testing.T, donde, texto string, esperados ...string) {

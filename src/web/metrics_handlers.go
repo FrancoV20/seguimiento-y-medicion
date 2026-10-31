@@ -5,9 +5,6 @@ import (
 	"net/http"
 )
 
-// errMetricsNotImplemented marca el esqueleto del handler de HU-25 antes del corte GREEN.
-var errMetricsNotImplemented = errors.New("métricas del Sprint: no implementado")
-
 // pathMetrics es la dirección de la sección "Métricas del Sprint" (HU-25).
 const pathMetrics = "/metricas"
 
@@ -30,7 +27,24 @@ func RegisterMetrics(s *Server, catalog MetricsCatalog, source MetricsSource) er
 	)
 }
 
-// show atiende GET /metricas.
+// show atiende GET /metricas: lee los Sprints finalizados del proyecto del contexto, pide a HU-07
+// las métricas del más reciente y arma la vista. Lee todo antes de escribir: ante cualquier falla
+// muestra la página de error de HU-20a, nunca métricas incompletas.
 func (h *metricsHandlers) show(w http.ResponseWriter, r *http.Request) {
-	h.rd.Fail(w, r, errMetricsNotImplemented)
+	projectID := projectIDFrom(r)
+	sprints, err := h.catalog.FinishedSprints(r.Context(), projectID)
+	if err != nil {
+		h.rd.Fail(w, r, err)
+		return
+	}
+	in := metricsViewInput{Sprints: sprints}
+	if len(sprints) > 0 {
+		in.Selected, in.HasSelected = sprints[0], true
+		in.Metrics, err = h.source.Metrics(r.Context(), projectID, in.Selected.ID)
+		if err != nil {
+			h.rd.Fail(w, r, err)
+			return
+		}
+	}
+	h.rd.Page(w, r, "metrics.html", PageData{Title: TitleMetrics, Data: buildMetricsView(in)})
 }
