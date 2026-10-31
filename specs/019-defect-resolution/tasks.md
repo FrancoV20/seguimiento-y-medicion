@@ -120,7 +120,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [x] T056 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde
 - [x] T057 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/defect`
 - [ ] T058 Verificar a mano los 9 escenarios con la aplicación en ejecución (`quickstart.md`)
-- [ ] T059 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de usuario con las acciones de la pantalla "Defectos"
+- [x] T059 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de usuario con las acciones de la pantalla "Defectos"
 - [ ] T060 Abrir el Pull Request desde `HU-19` citando HU-19, con evidencias y la lista de archivos editados de HU-06
 - [ ] T061 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
 - [ ] T062 Avisar a quien tenga HU-10 que HU-19 está en `main`
