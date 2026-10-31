@@ -47,6 +47,7 @@
         <th scope="col">Historia relacionada</th>
         <th scope="col">Sprint de detección</th>
         <th scope="col">Sprint de resolución</th>
+        {{if $.Data.CanResolve}}<th scope="col">Acción</th>{{end}}
       </tr>
     </thead>
     <tbody>
@@ -59,6 +60,21 @@
         <td>{{.StoryTitle}}</td>
         <td>Sprint {{.DetectionSprint}}</td>
         <td>{{if .ResolutionSprint}}Sprint {{.ResolutionSprint}}{{else}}—{{end}}</td>
+        {{if $.Data.CanResolve}}
+        <td>
+          {{if eq .Status "Abierto"}}
+          <form method="post" action="/defectos/resolver">
+            <input type="hidden" name="defecto" value="{{.ID}}">
+            <button type="submit">Resolver</button>
+          </form>
+          {{else if eq .Status "Resuelto"}}
+          <form method="post" action="/defectos/reabrir">
+            <input type="hidden" name="defecto" value="{{.ID}}">
+            <button type="submit">Reabrir</button>
+          </form>
+          {{end}}
+        </td>
+        {{end}}
       </tr>
     {{end}}
     </tbody>
