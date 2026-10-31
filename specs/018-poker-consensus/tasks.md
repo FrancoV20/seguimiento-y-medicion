@@ -60,12 +60,12 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T005 Agregar en `src/poker/errors.go` `ErrNotLatestRound`, `ErrRoundStillOpen` y `ErrStoryInFinishedSprint` (textos
+- [x] T005 Agregar en `src/poker/errors.go` `ErrNotLatestRound`, `ErrRoundStillOpen` y `ErrStoryInFinishedSprint` (textos
   de `data-model.md`), y en `src/poker/round.go`, junto a `CheckOpen`, `StoryRound{Number int; Status RoundStatus}`,
   `CheckNextRound(from int, rounds []StoryRound, inFinishedSprint bool) (next int, err error)`, `CheckAgree(status
   RoundStatus, number, latest int, inFinishedSprint bool) error` y `AgreedEstimate{StoryID int64; StoryTitle string;
   StoryPoints int}`, con el orden de rechazos de `data-model.md`.
-- [ ] T006 Ejecutar T003 en verde junto con `go test -count=1 -p 1 ./src/poker/...`.
+- [x] T006 Ejecutar T003 en verde junto con `go test -count=1 -p 1 ./src/poker/...`.
 
 ## Fase 3: Bloque Nueva ronda (dominio y almacenamiento)
 
