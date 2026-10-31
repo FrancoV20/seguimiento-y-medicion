@@ -289,6 +289,59 @@ func (s *PostgreSQLStore) openNextRound(ctx context.Context, projectID, roundID,
 	return round, nil
 }
 
+// AgreeEstimate fija los Story Points de la historia de una ronda del proyecto (HU-18).
+func (s *PostgreSQLStore) AgreeEstimate(ctx context.Context, projectID, roundID int64, value int) (AgreedEstimate, error) {
+	return retryOnAssignmentChange(func() (AgreedEstimate, error) {
+		return s.agreeEstimate(ctx, projectID, roundID, value)
+	})
+}
+
+func (s *PostgreSQLStore) agreeEstimate(ctx context.Context, projectID, roundID int64, value int) (AgreedEstimate, error) {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return AgreedEstimate{}, fmt.Errorf("begin agree estimate: %w", err)
+	}
+	defer tx.Rollback() // sin efecto después del Commit
+
+	// Ronda con bloqueo exclusivo: se serializa con "Nueva ronda" (FOR SHARE), los votos y el cierre.
+	agreed := AgreedEstimate{StoryPoints: value}
+	var number int
+	var status string
+	err = tx.QueryRowContext(ctx,
+		`SELECT story_id, round_number, status FROM poker_rounds WHERE id = $1 AND project_id = $2 FOR UPDATE`,
+		roundID, projectID).Scan(&agreed.StoryID, &number, &status)
+	if errors.Is(err, sql.ErrNoRows) {
+		return AgreedEstimate{}, ErrRoundNotFound
+	}
+	if err != nil {
+		return AgreedEstimate{}, fmt.Errorf("lock round: %w", err)
+	}
+
+	var latest int
+	if err := tx.QueryRowContext(ctx,
+		`SELECT max(round_number) FROM poker_rounds WHERE story_id = $1`, agreed.StoryID).Scan(&latest); err != nil {
+		return AgreedEstimate{}, fmt.Errorf("read latest round: %w", err)
+	}
+
+	_, inFinishedSprint, err := lockStoryAndSprint(ctx, tx, agreed.StoryID)
+	if err != nil {
+		return AgreedEstimate{}, err
+	}
+	if err := CheckAgree(RoundStatus(status), number, latest, inFinishedSprint); err != nil {
+		return AgreedEstimate{}, err
+	}
+
+	if err := tx.QueryRowContext(ctx,
+		`UPDATE user_stories SET story_points = $2 WHERE id = $1 RETURNING title`,
+		agreed.StoryID, value).Scan(&agreed.StoryTitle); err != nil {
+		return AgreedEstimate{}, fmt.Errorf("update story points: %w", err)
+	}
+	if err := tx.Commit(); err != nil {
+		return AgreedEstimate{}, fmt.Errorf("commit agree estimate: %w", err)
+	}
+	return agreed, nil
+}
+
 // storyRounds lee el número y el estado de las rondas de la historia.
 func storyRounds(ctx context.Context, tx *sql.Tx, storyID int64) ([]StoryRound, error) {
 	rows, err := tx.QueryContext(ctx, `SELECT round_number, status FROM poker_rounds WHERE story_id = $1`, storyID)

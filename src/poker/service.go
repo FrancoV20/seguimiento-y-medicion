@@ -62,3 +62,19 @@ func (s *Service) OpenNextRound(ctx context.Context, projectID, roundID, memberI
 	}
 	return s.store.OpenNextRound(ctx, projectID, roundID, memberID)
 }
+
+// AgreeEstimate registra la estimación acordada desde una ronda (HU-18). El valor se valida
+// primero (422 antes que 404/409), como el voto; el integrante es obligatorio aunque no se guarda.
+func (s *Service) AgreeEstimate(ctx context.Context, projectID, roundID, memberID int64, rawValue string) (AgreedEstimate, error) {
+	value, err := ParseValue(rawValue)
+	if err != nil {
+		return AgreedEstimate{}, err
+	}
+	if roundID == 0 {
+		return AgreedEstimate{}, ErrRoundNotFound
+	}
+	if memberID == 0 {
+		return AgreedEstimate{}, ErrMemberRequired
+	}
+	return s.store.AgreeEstimate(ctx, projectID, roundID, value)
+}

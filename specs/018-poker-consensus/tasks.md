@@ -143,7 +143,7 @@ mutuos con el cierre de Sprint.
 
 ### Implementación (GREEN)
 
-- [ ] T015 En un solo commit: `AgreeEstimate(ctx, projectID, roundID int64, value int) (AgreedEstimate, error)` en
+- [x] T015 En un solo commit: `AgreeEstimate(ctx, projectID, roundID int64, value int) (AgreedEstimate, error)` en
   `Store`; `Service.AgreeEstimate(ctx, projectID, roundID, memberID int64, rawValue string)` con `ParseValue` primero;
   `PostgreSQLStore.AgreeEstimate` con la transacción de `data-model.md` (ronda `FOR UPDATE`; `SELECT max(round_number)
   FROM poker_rounds WHERE story_id = $1`; `storySprint`/`lockStory` de T010 con la relectura; `CheckAgree`; `UPDATE
