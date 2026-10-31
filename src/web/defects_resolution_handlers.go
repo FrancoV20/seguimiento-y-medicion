@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -11,30 +12,36 @@ import (
 // resolve atiende POST /defectos/resolver: resuelve el defecto del campo "defecto" en el Sprint
 // activo del proyecto activo. El proyecto sale siempre del contexto, nunca del formulario.
 func (h *defectsHandlers) resolve(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		h.server.renderer.Fail(w, r, fmt.Errorf("leer formulario de resolución: %w", err))
-		return
-	}
-	ac := ActiveContextFrom(r.Context())
-	if ac == nil || ac.ProjectID <= 0 {
-		h.server.renderer.Fail(w, r, errors.New("falta el contexto del proyecto activo"))
-		return
-	}
-	defectID := parseID(r.PostForm.Get(DefectIDField))
-	resolved, err := h.resolution.Resolve(r.Context(), ac.ProjectID, defectID)
-	if err != nil {
-		h.renderResolutionError(w, r, ac.ProjectID, err)
-		return
-	}
-	SetFlash(w, r, FlashSuccess, fmt.Sprintf(MsgDefectResolved, resolved.SprintNumber))
-	RedirectSeeOther(w, r, "/defectos")
+	h.handleResolutionAction(w, r, func(ctx context.Context, projectID, defectID int64) (string, error) {
+		resolved, err := h.resolution.Resolve(ctx, projectID, defectID)
+		if err != nil {
+			return "", err
+		}
+		return fmt.Sprintf(MsgDefectResolved, resolved.SprintNumber), nil
+	})
 }
 
 // reopen atiende POST /defectos/reabrir: vuelve a abrir el defecto del campo "defecto" del
 // proyecto activo. No necesita Sprint activo.
 func (h *defectsHandlers) reopen(w http.ResponseWriter, r *http.Request) {
+	h.handleResolutionAction(w, r, func(ctx context.Context, projectID, defectID int64) (string, error) {
+		if err := h.resolution.Reopen(ctx, projectID, defectID); err != nil {
+			return "", err
+		}
+		return MsgDefectReopened, nil
+	})
+}
+
+// resolutionAction ejecuta una acción de HU-19 y devuelve el mensaje de éxito.
+type resolutionAction func(ctx context.Context, projectID, defectID int64) (string, error)
+
+// handleResolutionAction tiene el recorrido común de resolver y reabrir: lee el formulario, toma
+// el proyecto del contexto activo y el defecto del campo "defecto", ejecuta la acción y, si sale
+// bien, deja el mensaje de una sola vista y redirige con 303 a /defectos; si falla, vuelve a
+// mostrar la pantalla con el error.
+func (h *defectsHandlers) handleResolutionAction(w http.ResponseWriter, r *http.Request, action resolutionAction) {
 	if err := r.ParseForm(); err != nil {
-		h.server.renderer.Fail(w, r, fmt.Errorf("leer formulario de reapertura: %w", err))
+		h.server.renderer.Fail(w, r, fmt.Errorf("leer formulario de %s: %w", r.URL.Path, err))
 		return
 	}
 	ac := ActiveContextFrom(r.Context())
@@ -43,11 +50,12 @@ func (h *defectsHandlers) reopen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defectID := parseID(r.PostForm.Get(DefectIDField))
-	if err := h.resolution.Reopen(r.Context(), ac.ProjectID, defectID); err != nil {
+	message, err := action(r.Context(), ac.ProjectID, defectID)
+	if err != nil {
 		h.renderResolutionError(w, r, ac.ProjectID, err)
 		return
 	}
-	SetFlash(w, r, FlashSuccess, MsgDefectReopened)
+	SetFlash(w, r, FlashSuccess, message)
 	RedirectSeeOther(w, r, "/defectos")
 }
 
