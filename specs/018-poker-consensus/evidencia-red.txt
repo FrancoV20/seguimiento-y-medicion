@@ -1,0 +1,23 @@
+﻿== Reglas (T003-T004): falla porque no existen StoryRound, CheckNextRound, CheckAgree ni los errores nuevos ==
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/poker 
+[github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v -run "CheckNextRound|CheckAgree" ./src/poker ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...src/poker.test]: 
+   String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\poker\consensus_rules_test.go:11:35: undefined: StoryRound
+src\poker\consensus_rules_test.go:12:20: undefined: StoryRound
+src\poker\consensus_rules_test.go:14:28: undefined: StoryRound
+src\poker\consensus_rules_test.go:18:16: undefined: StoryRound
+src\poker\consensus_rules_test.go:22:14: undefined: StoryRound
+src\poker\consensus_rules_test.go:29:72: undefined: ErrNotLatestRound
+src\poker\consensus_rules_test.go:33:70: undefined: ErrStoryInFinishedSprint
+src\poker\consensus_rules_test.go:34:93: undefined: ErrNotLatestRound
+src\poker\consensus_rules_test.go:35:32: undefined: StoryRound
+src\poker\consensus_rules_test.go:38:16: undefined: CheckNextRound
+src\poker\consensus_rules_test.go:38:16: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL

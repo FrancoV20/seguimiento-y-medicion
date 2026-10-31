@@ -39,7 +39,7 @@ Formato: `[ID] [P] [E#] descripción`
 
   **Si `CloseRound` o `Spread` no están en `src/poker` de `main`, detener HU-18 y avisar al equipo.** Si algún nombre
   de HU-05b cambió, ajustar `data-model.md`, `plan.md` y este archivo antes de seguir.
-- [ ] T002 Crear la rama `HU-18` desde `main` actualizado, solo si no hay cambios sin commitear (`git switch -c HU-18`).
+- [x] T002 Crear la rama `HU-18` desde `main` actualizado, solo si no hay cambios sin commitear (`git switch -c HU-18`).
   Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde.
 
 ## Fase 2: Bloque Reglas
@@ -50,12 +50,12 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T003 [E1, E7, E8, E9, E10] Escribir `src/poker/consensus_rules_test.go` con las dos pruebas de tabla de
+- [x] T003 [E1, E7, E8, E9, E10] Escribir `src/poker/consensus_rules_test.go` con las dos pruebas de tabla de
   `data-model.md`: `TestCheckNextRound` («Login» 1 → 2 y 2 → 3; desde la 1 con la 2 cerrada → `ErrNotLatestRound`;
   «Reportes» desde la 1 y desde la 2 → `ErrRoundAlreadyOpen`; «Alta» → `ErrStoryInFinishedSprint`) y `TestCheckAgree`
   («Pagos» → nil; «Reportes» 2 → `ErrRoundStillOpen`; «Reportes» 1 → `ErrNotLatestRound`; «Alta» →
   `ErrStoryInFinishedSprint`; abierta, no última y con Sprint finalizado → `ErrRoundStillOpen`), con `errors.Is`.
-- [ ] T004 Ejecutar T003, confirmar que falla porque los tipos, las reglas y los errores no existen y guardar la salida
+- [x] T004 Ejecutar T003, confirmar que falla porque los tipos, las reglas y los errores no existen y guardar la salida
   en `evidencia-red.txt`, sección "Reglas".
 
 ### Implementación (GREEN)
