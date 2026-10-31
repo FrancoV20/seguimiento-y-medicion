@@ -163,18 +163,18 @@ y comprobar los números; también con un proyecto sin finalizados.
 
 ### Pruebas (RED)
 
-- [ ] T020 [P] [E10a, E10c] Escribir `TestPostgresQualityCatalog` en
+- [x] T020 [P] [E10a, E10c] Escribir `TestPostgresQualityCatalog` en
   `src/web/postgres_quality_catalog_integration_test.go`. Casos:
   - solo los Sprints "Finalizado", del de mayor número al de menor;
   - `ActiveNumber` con el Sprint activo, o 0 si no hay;
   - nada de otro proyecto;
   - proyecto sin Sprints.
-- [ ] T021 [P] [E1, E5] Escribir `TestQualityView` en `src/web/quality_view_test.go`:
+- [x] T021 [P] [E1, E5] Escribir `TestQualityView` en `src/web/quality_view_test.go`:
   - `qualityPercentText`: "75.00" → "75,00 %" y "No disponible" sin cambios;
   - la advertencia en singular, en plural y vacía con 0;
   - `selectQualitySprint` con "", "abc", "0", "-1", "007", el identificador del activo, uno de otro proyecto y uno
     válido.
-- [ ] T022 [E1, E4, E5, E6, E9, E10a, E10b, E10c, E11] Escribir el servidor de prueba y las pruebas de pantalla en
+- [x] T022 [E1, E4, E5, E6, E9, E10a, E10b, E10c, E11] Escribir el servidor de prueba y las pruebas de pantalla en
   `src/web/quality_handlers_test.go`:
   - `TestHU10_ListaYSprintPorDefecto`;
   - `TestHU10_ElegirOtroSprint`;
@@ -189,15 +189,15 @@ y comprobar los números; también con un proyecto sin finalizados.
   - `TestHU10_OtroProyecto`.
 
   Las pruebas usan el servicio y el catálogo reales con datos propios.
-- [ ] T023 [P] [E12] Escribir las pruebas de errores y bordes en `src/web/quality_handlers_test.go`:
+- [x] T023 [P] [E12] Escribir las pruebas de errores y bordes en `src/web/quality_handlers_test.go`:
   - `TestHU10_ErrorAlLeer`: con un catálogo que falla y con un `QualityReader` que falla, se ve la página de error
     de HU-20a, sin números ni texto interno;
   - `TestHU10_SinProyecto`: 303 a `/contexto/proyecto?volver_a=%2Fcalidad`;
   - `TestHU10_PostNoPermitido`: 405;
   - `TestHU10_Rendimiento`: 20 Sprints, 50 historias por Sprint y 100 defectos, en menos de 500 ms.
-- [ ] T024 [P] [E1, E6, E10a, E11] Escribir los escenarios BDD en `test/web_quality_bdd_test.go`: "Porcentaje de
+- [x] T024 [P] [E1, E6, E10a, E11] Escribir los escenarios BDD en `test/web_quality_bdd_test.go`: "Porcentaje de
   avance", "Defectos detectados y resueltos", "Lista de Sprints y Sprint por defecto" y "Sin Sprints finalizados".
-- [ ] T025 Ejecutar T020–T024, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
+- [x] T025 Ejecutar T020–T024, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt`, sección "Pantalla".
 
 ### Implementación (GREEN)
