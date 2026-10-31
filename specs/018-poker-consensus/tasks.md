@@ -163,16 +163,16 @@ registrar 8; ver 8 en el Backlog.
 
 ### Pruebas (RED)
 
-- [ ] T017 Crear `src/web/poker_consensus_fixtures_test.go` con `newConsensusWebFixture(t, db)` (usa
+- [x] T017 Crear `src/web/poker_consensus_fixtures_test.go` con `newConsensusWebFixture(t, db)` (usa
   `openContextTestDB`; los datos de T007) y `newConsensusApp(t, opts...)`: el servidor de `newPokerApp` más
   `RegisterBacklog(srv, backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(db)), NewPostgreSQLStoryCatalog(db))`,
   con la opción de `failingPokerStore`. Limpieza en `t.Cleanup`.
-- [ ] T018 [P] [E1, E10] Escribir en `src/web/postgres_poker_consensus_integration_test.go`:
+- [x] T018 [P] [E1, E10] Escribir en `src/web/postgres_poker_consensus_integration_test.go`:
   `TestPostgresPokerCatalog_UltimaRonda` (ronda 1 de «Login», «Pagos» y «Alta» con `Latest`; ronda 1 de «Reportes» sin
   `Latest` porque la 2 está abierta; abierta la ronda 2 de «Login», su ronda 1 pierde `Latest`) y
   `TestPostgresPokerCatalog_SprintFinalizado` («Alta» con `InFinishedSprint`; «Login» sin Sprint y «Pagos» en un Sprint
   "Activo", sin; el caso de una historia devuelta al Backlog lo cubre T013).
-- [ ] T019 [P] [E1–E12] Escribir en `src/web/poker_consensus_handlers_test.go` (con `newConsensusApp`, `roundRow` y
+- [x] T019 [P] [E1–E12] Escribir en `src/web/poker_consensus_handlers_test.go` (con `newConsensusApp`, `roundRow` y
   `closedRow` de HU-05b, T001: HU-05b):
   - `TestHU18_AccionesSoloEnLaUltimaRonda`: dentro de `data-ronda-cerrada` de «Login», «Pagos» y «Alta», los formularios
     `action="/planning-poker/nueva-ronda"` y `action="/planning-poker/estimacion"` con `ronda` oculto, diez radios
@@ -199,13 +199,13 @@ registrar 8; ver 8 en el Backlog.
     `TestHU18_RecargaSinReenviar`, `TestHU18_TituloEscapado` (título con `<script>` escapado en los dos mensajes de
     éxito) y `TestHU18_Rendimiento` (20 rondas abiertas, 50 cerradas, 10 integrantes → `GET /planning-poker` en menos de
     500 ms).
-- [ ] T020 [P] [E1–E11] Escribir `test/web_poker_consensus_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
+- [x] T020 [P] [E1–E11] Escribir `test/web_poker_consensus_bdd_test.go` con su propio «Alfa» (Dado/Cuando/Entonces como
   comentarios, servidor y servicio reales, Backlog registrado): `TestBDD_HU18_NuevaRondaTrasDivergencia`,
   `_VotosOcultosEnLaNuevaRonda`, `_RegistrarEstimacionAcordada`, `_ConsensoDirecto`, `_RegistrarDespuesDeDebatir`,
   `_ValorFueraDeLaSerie`, `_RondaSinCerrar`, `_NuevaRondaConRondaAbierta`, `_RondaQueYaNoEsLaUltima`,
   `_HistoriaDeUnSprintFinalizado` y `_RondaInexistente`. En el escenario 3, la ronda 2 se abre, se vota y se cierra
   desde la pantalla.
-- [ ] T021 Ejecutar T018–T020, confirmar que fallan (no existen `Latest`, las acciones ni las rutas) y guardar la
+- [x] T021 Ejecutar T018–T020, confirmar que fallan (no existen `Latest`, las acciones ni las rutas) y guardar la
   salida en `evidencia-red.txt`, sección "Pantalla".
 
 ### Implementación (GREEN)
