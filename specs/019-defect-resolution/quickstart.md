@@ -4,7 +4,7 @@
 
 - HU-06 mergeada en `main`.
 - PostgreSQL de pruebas disponible (el mismo que usan las demás historias).
-- Rama: `git checkout -b feature/hu-19-resolucion-defectos`
+- Rama: `git checkout HU-19` (creada desde `main` actualizado)
 
 ## Pruebas
 

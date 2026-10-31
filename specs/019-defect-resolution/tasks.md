@@ -12,8 +12,8 @@ Formato: `[ID] [P] [E#] descripción`
 ## Fase 1: Preparación
 
 - [ ] T001 Con HU-06 ya mergeada: leer `src/defect` y `src/web` y anotar en `research.md` los nombres reales (manejador y función que arma la vista de `/defectos`, función de registro, valores de `Status`, puerto `Store`, fixtures de integración, archivo de textos); comprobar con `git grep -n` que no existen `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`, `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` ni `ResolutionService`; ajustar `plan.md` si algún nombre cambió
-- [ ] T002 Crear la rama `feature/hu-19-resolucion-defectos` desde `main` actualizado
-- [ ] T003 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base)
+- [x] T002 Crear la rama `HU-19` desde `main` actualizado
+- [x] T003 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base)
 - [ ] T004 Coordinar con quien hizo HU-06 los archivos que HU-19 edita (`defects_handlers.go`, `defects.html`, `main.go`) y con quien tenga HU-10
 
 ## Fase 2: Fundamentos (dominio y almacenamiento; bloquea todo lo demás)
@@ -121,7 +121,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [ ] T057 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/defect`
 - [ ] T058 Verificar a mano los 9 escenarios con la aplicación en ejecución (`quickstart.md`)
 - [ ] T059 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de usuario con las acciones de la pantalla "Defectos"
-- [ ] T060 Abrir el Pull Request desde `feature/hu-19-resolucion-defectos` citando HU-19, con evidencias y la lista de archivos editados de HU-06
+- [ ] T060 Abrir el Pull Request desde `HU-19` citando HU-19, con evidencias y la lista de archivos editados de HU-06
 - [ ] T061 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
 - [ ] T062 Avisar a quien tenga HU-10 que HU-19 está en `main`
 

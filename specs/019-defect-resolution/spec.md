@@ -1,6 +1,6 @@
 # Especificación: HU-19 – Resolver y reabrir defectos
 
-**Rama**: feature/hu-19-resolucion-defectos
+**Rama**: HU-19
 **Estado**: Aprobada por el equipo (sin Sprint activo se bloquea – 22/10/2026)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-04 / FIX-HU-04, HU-20a, HU-20b

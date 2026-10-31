@@ -1,6 +1,6 @@
 # Plan de implementación: HU-19 – Resolver y reabrir defectos
 
-**Rama**: feature/hu-19-resolucion-defectos | **Spec**: specs/019-defect-resolution/spec.md
+**Rama**: HU-19 | **Spec**: specs/019-defect-resolution/spec.md
 **Constitución**: v1.1.0
 
 ## Resumen
