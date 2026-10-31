@@ -198,3 +198,34 @@ func TestEscenarioHU19_ReabrirUnDefecto(t *testing.T) {
 		t.Errorf("la pantalla debía mostrar el mensaje de éxito al reabrir")
 	}
 }
+
+// Escenario 5: Defecto inexistente
+//
+//	Dado un identificador de defecto que no existe en el proyecto
+//	Cuando intento resolverlo o reabrirlo
+//	Entonces el sistema informa que el defecto no existe
+//	Y no se modifica ningún defecto
+func TestEscenarioHU19_DefectoInexistente(t *testing.T) {
+	app := nuevaResolucionBDDApp(t)
+	activo := app.sprint(t, 1, "Activo")
+	abierto := app.defectoAbierto(t, activo)
+	resuelto := app.defectoResuelto(t, activo)
+	client := app.elegirProyecto(t)
+	const inexistente = int64(9_000_000_000)
+
+	for _, path := range []string{"/defectos/resolver", "/defectos/reabrir"} {
+		response, body := app.enviar(t, client, path, inexistente)
+		if response.StatusCode != http.StatusNotFound {
+			t.Errorf("%s con un defecto inexistente: se esperaba 404, se obtuvo %d", path, response.StatusCode)
+		}
+		if !strings.Contains(body, "El defecto no existe") {
+			t.Errorf("%s debía informar que el defecto no existe", path)
+		}
+	}
+	if status, resolution := app.estado(t, abierto); status != "Abierto" || resolution != nil {
+		t.Errorf("el defecto abierto cambió: %q con Sprint %v", status, resolution)
+	}
+	if status, resolution := app.estado(t, resuelto); status != "Resuelto" || resolution == nil || *resolution != activo {
+		t.Errorf("el defecto resuelto cambió: %q con Sprint %v", status, resolution)
+	}
+}

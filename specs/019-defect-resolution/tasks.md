@@ -101,11 +101,11 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T046 [P] [E5] `TestHU19_DefectoInexistente`: identificador inexistente, vacío, no numérico y de otro proyecto dan 404 sin modificar nada, en `src/web/defects_resolution_handlers_test.go`
-- [ ] T047 [P] [E6] `TestHU19_ErrorAlGuardar`: con un almacén que falla, 500 y `MsgOperationFailed`; la lista no cambia y la respuesta no contiene texto de consultas ni rutas internas
-- [ ] T048 [P] [E9] `TestHU19_ListaMuestraAccionYSprint`: botón según estado y Sprint de resolución, un defecto de cada estado
-- [ ] T049 [P] [E5] Escenario BDD de defecto inexistente en `test/web_defect_resolution_bdd_test.go`
-- [ ] T050 Ejecutar T046–T049, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores y lista")
+- [x] T046 [P] [E5] `TestHU19_DefectoInexistente`: identificador inexistente, vacío, no numérico y de otro proyecto dan 404 sin modificar nada, en `src/web/defects_resolution_handlers_test.go`
+- [x] T047 [P] [E6] `TestHU19_ErrorAlGuardar`: con un almacén que falla, 500 y `MsgOperationFailed`; la lista no cambia y la respuesta no contiene texto de consultas ni rutas internas
+- [x] T048 [P] [E9] `TestHU19_ListaMuestraAccionYSprint`: botón según estado y Sprint de resolución, un defecto de cada estado
+- [x] T049 [P] [E5] Escenario BDD de defecto inexistente en `test/web_defect_resolution_bdd_test.go`
+- [x] T050 Ejecutar T046–T049, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Errores y lista")
 
 ### Implementación (GREEN)
 

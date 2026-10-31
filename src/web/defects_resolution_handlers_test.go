@@ -3,6 +3,7 @@ package web
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -25,12 +26,23 @@ type defectResolutionFixture struct {
 
 func newDefectResolutionFixture(t *testing.T) *defectResolutionFixture {
 	t.Helper()
+	return newDefectResolutionFixtureWithStore(t, nil)
+}
+
+// newDefectResolutionFixtureWithStore permite reemplazar el almacenamiento de resolución (por
+// ejemplo, por uno que falla al guardar). Con nil usa el de PostgreSQL.
+func newDefectResolutionFixtureWithStore(t *testing.T, newStore func(*sql.DB) defect.ResolutionStore) *defectResolutionFixture {
+	t.Helper()
 	app := newCtxApp(t, nil, func(server *Server) {
 		db := openContextTestDB(t)
+		var store defect.ResolutionStore = defect.NewPostgreSQLResolutionStore(db)
+		if newStore != nil {
+			store = newStore(db)
+		}
 		if err := RegisterDefectsWithResolution(
 			server,
 			defect.NewService(defect.NewPostgreSQLStore(db)),
-			defect.NewResolutionService(defect.NewPostgreSQLResolutionStore(db)),
+			defect.NewResolutionService(store),
 			NewPostgreSQLDefectCatalog(db),
 		); err != nil {
 			t.Fatalf("no se pudo registrar la sección Defectos con resolución: %v", err)
@@ -302,4 +314,149 @@ func TestHU19_YaAbierto(t *testing.T) {
 		t.Errorf("la respuesta debía informar que el defecto ya está abierto")
 	}
 	f.assertState(t, defectID, "Abierto", 0)
+}
+
+// T046 [E5]: un identificador inexistente, vacío, no numérico o de otro proyecto da 404 con
+// "El defecto no existe" al resolver y al reabrir, sin modificar ningún defecto.
+func TestHU19_DefectoInexistente(t *testing.T) {
+	f := newDefectResolutionFixture(t)
+	activeA := f.sprint(t, f.app.fx.projectA, 1, "Activo")
+	activeB := f.sprint(t, f.app.fx.projectB, 1, "Activo")
+	openA := f.openDefect(t, f.app.fx.projectA, f.storyA, activeA)
+	openB := f.openDefect(t, f.app.fx.projectB, f.storyB, activeB)
+	resolvedB := f.resolvedDefect(t, f.app.fx.projectB, f.storyB, activeB, activeB)
+	client := f.clientA(t)
+
+	cases := []struct {
+		name, path, defectID string
+	}{
+		{name: "resolver inexistente", path: "/defectos/resolver", defectID: "9000000000"},
+		{name: "resolver vacío", path: "/defectos/resolver", defectID: ""},
+		{name: "resolver no numérico", path: "/defectos/resolver", defectID: "abc"},
+		{name: "resolver de otro proyecto", path: "/defectos/resolver", defectID: id64(openB)},
+		{name: "reabrir inexistente", path: "/defectos/reabrir", defectID: "9000000000"},
+		{name: "reabrir vacío", path: "/defectos/reabrir", defectID: ""},
+		{name: "reabrir negativo", path: "/defectos/reabrir", defectID: "-3"},
+		{name: "reabrir de otro proyecto", path: "/defectos/reabrir", defectID: id64(resolvedB)},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			resp, body := f.app.post(t, client, tc.path, url.Values{"defecto": {tc.defectID}})
+
+			if resp.StatusCode != http.StatusNotFound {
+				t.Errorf("POST %s con defecto %q = %d; se esperaba 404", tc.path, tc.defectID, resp.StatusCode)
+			}
+			if !strings.Contains(body, "El defecto no existe") {
+				t.Errorf("la respuesta debía informar que el defecto no existe")
+			}
+		})
+	}
+	f.assertState(t, openA, "Abierto", 0)
+	f.assertState(t, openB, "Abierto", 0)
+	f.assertState(t, resolvedB, "Resuelto", activeB)
+}
+
+// failingResolutionStore simula una falla al guardar con un detalle técnico que no debe mostrarse.
+type failingResolutionStore struct{}
+
+var errResolutionStoreFailure = errors.New(`pq: UPDATE defects failed at C:\internal\postgres_resolution_store.go:42`)
+
+func (failingResolutionStore) Resolve(context.Context, int64, int64) (defect.Resolved, error) {
+	return defect.Resolved{}, errResolutionStoreFailure
+}
+
+func (failingResolutionStore) Reopen(context.Context, int64, int64) error {
+	return errResolutionStoreFailure
+}
+
+// T047 [E6]: si falla el guardado, responde 500 con el mensaje genérico, la lista sigue visible y
+// sin cambios, y no se muestran consultas ni rutas internas.
+func TestHU19_ErrorAlGuardar(t *testing.T) {
+	f := newDefectResolutionFixtureWithStore(t, func(*sql.DB) defect.ResolutionStore {
+		return failingResolutionStore{}
+	})
+	active := f.sprint(t, f.app.fx.projectA, 1, "Activo")
+	openID := f.openDefect(t, f.app.fx.projectA, f.storyA, active)
+	resolvedID := f.resolvedDefect(t, f.app.fx.projectA, f.storyA, active, active)
+	client := f.clientA(t)
+
+	for _, tc := range []struct {
+		path     string
+		defectID int64
+	}{
+		{path: "/defectos/resolver", defectID: openID},
+		{path: "/defectos/reabrir", defectID: resolvedID},
+	} {
+		t.Run(tc.path, func(t *testing.T) {
+			resp, body := f.app.post(t, client, tc.path, url.Values{"defecto": {id64(tc.defectID)}})
+
+			if resp.StatusCode != http.StatusInternalServerError {
+				t.Errorf("POST %s con falla al guardar = %d; se esperaba 500", tc.path, resp.StatusCode)
+			}
+			if !strings.Contains(body, MsgOperationFailed) {
+				t.Errorf("la respuesta debía mostrar %q", MsgOperationFailed)
+			}
+			if !strings.Contains(body, "Defecto abierto de HU-19") || !strings.Contains(body, "Defecto resuelto de HU-19") {
+				t.Errorf("la respuesta debía seguir mostrando la lista de defectos")
+			}
+			for _, internal := range []string{"pq:", "UPDATE defects", "postgres_resolution_store.go", `C:\internal`} {
+				if strings.Contains(body, internal) {
+					t.Errorf("la respuesta expuso un detalle interno: %q", internal)
+				}
+			}
+			if strings.Contains(body, "Defecto resuelto en el Sprint") || strings.Contains(body, MsgDefectReopened) {
+				t.Errorf("la respuesta no debe indicar éxito ante una falla al guardar")
+			}
+		})
+	}
+	f.assertState(t, openID, "Abierto", 0)
+	f.assertState(t, resolvedID, "Resuelto", active)
+}
+
+// defectRow devuelve el HTML de la fila de la lista que contiene el formulario del defecto.
+func defectRow(t *testing.T, body string, defectID int64) string {
+	t.Helper()
+	marker := `value="` + id64(defectID) + `"`
+	for _, row := range strings.Split(body, "<tr>") {
+		if strings.Contains(row, marker) {
+			if end := strings.Index(row, "</tr>"); end >= 0 {
+				return row[:end]
+			}
+			return row
+		}
+	}
+	t.Fatalf("la lista no tiene una fila con la acción del defecto %d", defectID)
+	return ""
+}
+
+// T048 [E9]: el defecto "Abierto" ofrece "Resolver" y no muestra Sprint de resolución; el
+// "Resuelto" en el Sprint 2 ofrece "Reabrir" y muestra "Sprint 2". Cada fila tiene una sola acción.
+func TestHU19_ListaMuestraAccionYSprint(t *testing.T) {
+	f := newDefectResolutionFixture(t)
+	sprint2 := f.sprint(t, f.app.fx.projectA, 2, "Finalizado")
+	active := f.sprint(t, f.app.fx.projectA, 3, "Activo")
+	openID := f.openDefect(t, f.app.fx.projectA, f.storyA, active)
+	resolvedID := f.resolvedDefect(t, f.app.fx.projectA, f.storyA, sprint2, sprint2)
+	client := f.clientA(t)
+
+	resp, body := f.app.get(t, client, "/defectos")
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /defectos = %d; se esperaba 200", resp.StatusCode)
+	}
+
+	openRow := defectRow(t, body, openID)
+	if !strings.Contains(openRow, `action="/defectos/resolver"`) || !strings.Contains(openRow, ">Resolver</button>") {
+		t.Errorf("el defecto Abierto debía ofrecer la acción Resolver")
+	}
+	if strings.Contains(openRow, "Reabrir") || !strings.Contains(openRow, "<td>—</td>") {
+		t.Errorf("el defecto Abierto no debía ofrecer Reabrir ni mostrar Sprint de resolución")
+	}
+
+	resolvedRow := defectRow(t, body, resolvedID)
+	if !strings.Contains(resolvedRow, `action="/defectos/reabrir"`) || !strings.Contains(resolvedRow, ">Reabrir</button>") {
+		t.Errorf("el defecto Resuelto debía ofrecer la acción Reabrir")
+	}
+	if strings.Contains(resolvedRow, ">Resolver</button>") || !strings.Contains(resolvedRow, "<td>Sprint 2</td>") {
+		t.Errorf("el defecto Resuelto no debía ofrecer Resolver y debía mostrar Sprint 2 de resolución")
+	}
 }
