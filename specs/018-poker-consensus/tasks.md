@@ -20,7 +20,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar que HU-05b está en `main` y sus nombres. `git switch main; git pull`; `git grep -n` en `src/poker`,
+- [x] T001 Confirmar que HU-05b está en `main` y sus nombres. `git switch main; git pull`; `git grep -n` en `src/poker`,
   `src/web/poker_*.go`, `src/web/postgres_poker_catalog.go` y `src/web/templates/poker.html`:
   - de HU-05b: `Spread`, `VoteSpread`, `ErrNoVotes`, `CheckClose`, `ClosedRound`, `Store.CloseRound`,
     `Service.CloseRound`, `PokerClosedRoundView`, `PokerRevealedVoteView`, `PokerBoard.ClosedRounds`,
