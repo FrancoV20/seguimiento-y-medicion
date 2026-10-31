@@ -76,13 +76,13 @@ concurrencia.
 
 ### Pruebas (RED)
 
-- [ ] T007 Crear `src/poker/consensus_fixtures_integration_test.go` con `newConsensusFixture(t)` (usa `openTestDB`): los
+- [x] T007 Crear `src/poker/consensus_fixtures_integration_test.go` con `newConsensusFixture(t)` (usa `openTestDB`): los
   datos de `data-model.md` («Alfa» con Ana, Beto y Caro; «Login», «Pagos», «Reportes» y «Alta» con sus rondas cerradas
   cargadas en la base con `closed_at` explícito y sus votos; la ronda 2 abierta de «Reportes» con el 5 de Ana; Sprint 1
   "Finalizado" con «Alta» asignada y en "Hecho"; «Beta» con Dani y «Tablero» con su ronda 1 cerrada), ayudantes
   `rounds(story)`, `storyPoints(story)`, `assignToActiveSprint(story, status)` (Sprint 2 "Activo", solo para las pruebas
   de concurrencia) y `closeSprintLikeHU15(t, tx, sprintID)` (`research.md`, decisión 7). Limpieza en `t.Cleanup`.
-- [ ] T008 [E1, E8, E10, E11, E12] Escribir las pruebas de "Nueva ronda":
+- [x] T008 [E1, E8, E10, E11, E12] Escribir las pruebas de "Nueva ronda":
   - en `src/poker/service_test.go`, `fakeStore` suma `OpenNextRound` (registra proyecto, ronda e integrante) y
     `TestService_OpenNextRound_OK` / `TestService_OpenNextRound_Validaciones` (`roundID == 0` → `ErrRoundNotFound` y
     `memberID == 0` → `ErrMemberRequired` sin llamar al almacén; errores propagados para `errors.Is`);
@@ -94,7 +94,7 @@ concurrencia.
     (id 2147483647 y la ronda de «Tablero» → `ErrRoundNotFound`), `_Concurrente` (dos a la vez desde la 1 de «Login»
     con una barrera → una ronda 2 y un `ErrRoundAlreadyOpen`), `_FalloNoDejaCambios` (integrante 2147483647 → error que
     no es del dominio y ninguna ronda nueva).
-- [ ] T009 Ejecutar T008, confirmar que falla porque `OpenNextRound` no existe y guardar la salida en
+- [x] T009 Ejecutar T008, confirmar que falla porque `OpenNextRound` no existe y guardar la salida en
   `evidencia-red.txt`, sección "Nueva ronda".
 
 ### Implementación (GREEN)

@@ -21,3 +21,19 @@ src\poker\consensus_rules_test.go:38:16: undefined: CheckNextRound
 src\poker\consensus_rules_test.go:38:16: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
 FAIL
+
+== Nueva ronda (T007-T009): falla porque OpenNextRound no existe en el Service ni en PostgreSQLStore ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src\poker\next_round_integration_test.go:17:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:41:22: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:50:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:56:21: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:68:22: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:79:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:89:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:96:40: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:117:23: store.OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:145:37: NewPostgreSQLStore(f.db).OpenNextRound undefined (type *PostgreSQLStore has no field or method OpenNextRound)
+src\poker\next_round_integration_test.go:145:37: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
