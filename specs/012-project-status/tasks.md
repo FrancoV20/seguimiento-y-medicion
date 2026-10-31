@@ -34,7 +34,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [x] T002 Crear la rama `HU-12` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-12`.
 - [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar con quien tenga HU-08, HU-09, HU-10, HU-11 y HU-25 el bloque de registro que se suma al final de
+- [x] T004 Coordinar con quien tenga HU-08, HU-09, HU-10, HU-11 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`, y con HU-09 el contrato `StatusOn` / `ProgressPercentage` de `data-model.md`.
 
 ## Fase 2: Bloque Reglas (estado y avance)
@@ -175,7 +175,7 @@ comprobar los valores de "Datos de ejemplo".
 - [x] T026 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
 - [x] T027 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Estado del proyecto".
-- [ ] T028 [P] Avisar:
+- [x] T028 [P] Avisar:
   - a HU-09, los nombres finales `project.StatusOn` y `project.ProgressPercentage` para su T001;
   - a HU-08, que puede reutilizar `ProjectStatusCatalog` para las historias por estado;
   - a HU-11, HU-14 y HU-21, que no se tocaron sus archivos;
