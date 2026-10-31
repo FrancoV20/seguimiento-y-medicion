@@ -119,7 +119,7 @@ mutuos con el cierre de Sprint.
 
 ### Pruebas (RED)
 
-- [ ] T012 [E3, E4, E5, E6, E7, E9, E10, E11, E12] Escribir las pruebas de la estimación:
+- [x] T012 [E3, E4, E5, E6, E7, E9, E10, E11, E12] Escribir las pruebas de la estimación:
   - en `src/poker/service_test.go`, `fakeStore` suma `AgreeEstimate` y `TestService_AgreeEstimate_OK` /
     `TestService_AgreeEstimate_Validaciones` (valor "" → `ErrValueRequired` y "4" → `ErrValueNotInSeries` antes que
     `roundID == 0`, sin llamar al almacén; `roundID == 0` → `ErrRoundNotFound`; `memberID == 0` →
@@ -131,14 +131,14 @@ mutuos con el cierre de Sprint.
     sigue 3), `_SprintActivo` («Pagos» en el Sprint 2 "Activo" → 5), `_Inexistente` y `_OtroProyecto`
     (`ErrRoundNotFound`), `_FalloNoDejaCambios` (una transacción de prueba toma «Pagos» `FOR SHARE` y la estimación con
     un contexto de 200 ms falla con un error que no es del dominio; «Pagos» sigue sin Story Points).
-- [ ] T013 [E9, E10] Escribir en `src/poker/agree_estimate_integration_test.go` las pruebas de concurrencia de
+- [x] T013 [E9, E10] Escribir en `src/poker/agree_estimate_integration_test.go` las pruebas de concurrencia de
   `research.md`, decisión 7: `TestPostgresAgreeEstimate_CierreDeSprintPrimero` (casos «Pagos» "Hecho" →
   `ErrStoryInFinishedSprint` y «Pagos» "En progreso" → vuelve al Backlog, la estimación repite y queda 5),
   `TestPostgresAgreeEstimate_EstimacionPrimero` (estimación y cierre terminan bien, sin `40P01`, «Pagos» 5 y el Sprint
   finalizado) y `TestPostgresNextRoundYEstimacion_Serializadas` (con `LOCK TABLE poker_rounds IN SHARE ROW EXCLUSIVE
   MODE`: la ronda 2 de «Pagos» se abre y la estimación desde la 1 recibe `ErrNotLatestRound`). Sincronización solo con
   `waitForWaiters` (T001: HU-05b), plazo de 5 s.
-- [ ] T014 Ejecutar T012–T013, confirmar que fallan porque `AgreeEstimate` no existe y guardar la salida en
+- [x] T014 Ejecutar T012–T013, confirmar que fallan porque `AgreeEstimate` no existe y guardar la salida en
   `evidencia-red.txt`, sección "Estimación".
 
 ### Implementación (GREEN)

@@ -37,3 +37,19 @@ src\poker\next_round_integration_test.go:145:37: NewPostgreSQLStore(f.db).OpenNe
 src\poker\next_round_integration_test.go:145:37: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
 FAIL
+
+== Estimacion (T012-T014): falla porque AgreeEstimate no existe en el Service ni en PostgreSQLStore ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/poker [github.com/FrancoV20/seguimiento-y-medicion/src/poker.test]
+src\poker\agree_estimate_integration_test.go:18:23: store.AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:29:22: store.AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:43:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:53:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:63:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:73:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:84:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:94:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:101:40: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:124:36: NewPostgreSQLStore(f.db).AgreeEstimate undefined (type *PostgreSQLStore has no field or method AgreeEstimate)
+src\poker\agree_estimate_integration_test.go:124:36: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/poker [build failed]
+FAIL
