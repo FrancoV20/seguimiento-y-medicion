@@ -2,7 +2,7 @@
 
 **Rama**: `HU-12`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-01, HU-14, HU-20a, HU-20b (verificación manual: HU-23 para tener un Sprint en curso)
 **Habilita**: HU-09 (reporte del proyecto en PDF), que reutiliza la regla de estado y la de avance
@@ -302,15 +302,15 @@ Cuentas:
 
 | Escenario | Requisitos | Éxito | Prueba de pantalla / BDD | Prueba de dominio / integración |
 |---|---|---|---|---|
-| 1 Proyecto en curso | FR-002, FR-003, FR-005, FR-007, FR-008 | SC-001 | `TestHU12_ProyectoEnCurso`, `TestProjectStatusView`, BDD "Proyecto en curso" | `TestStatusOn`, `TestProgressPercentage`, `TestPostgresProjectStatusCatalog` |
-| 2 No iniciado | FR-003, FR-004 | SC-001 | `TestHU12_EstadoPorFechas`, BDD "Proyecto no iniciado" | `TestStatusOn` |
-| 3 Finalizado | FR-003, FR-005 | SC-001 | `TestHU12_EstadoPorFechas`, BDD "Proyecto finalizado" | `TestStatusOn`, `TestProgressPercentage` |
+| 1 Proyecto en curso | FR-002, FR-003, FR-005, FR-007, FR-008 | SC-001 | `TestHU12_ProyectoEnCurso`, `TestProjectStatusView`, TestEscenarioEstado_ProyectoEnCurso | `TestStatusOn`, `TestProgressPercentage`, `TestPostgresProjectStatusCatalog` |
+| 2 No iniciado | FR-003, FR-004 | SC-001 | `TestHU12_EstadoPorFechas`, TestEscenarioEstado_ProyectoNoIniciado | `TestStatusOn` |
+| 3 Finalizado | FR-003, FR-005 | SC-001 | `TestHU12_EstadoPorFechas`, TestEscenarioEstado_ProyectoFinalizado | `TestStatusOn`, `TestProgressPercentage` |
 | 4 Empieza hoy | FR-003, FR-004 | SC-001 | `TestHU12_EstadoPorFechas` | `TestStatusOn` |
 | 5 Termina hoy | FR-003, FR-004 | SC-001 | `TestHU12_EstadoPorFechas` | `TestStatusOn` |
 | 6 Sin historias | FR-005, FR-006, FR-007 | SC-001 | `TestHU12_SinHistorias`, `TestProjectStatusView` | `TestProgressPercentage`, `TestPostgresProjectStatusCatalog` |
 | 7 Sin Sprint en curso | FR-009 | — | `TestHU12_SinSprintEnCurso` | — (HU-14 ya probado) |
 | 8 Otro proyecto | FR-010 | SC-002 | `TestHU12_OtroProyecto` | `TestPostgresProjectStatusCatalog` |
-| 9 Sin proyecto | FR-013 | — | `TestHU12_SinProyecto`, BDD "Sin proyecto seleccionado" | — |
+| 9 Sin proyecto | FR-013 | — | `TestHU12_SinProyecto`, TestEscenarioEstado_SinProyectoSeleccionado | — |
 | 10 Error al consultar | FR-011, FR-012, FR-015 | SC-003 | `TestHU12_ErrorAlConsultar` | `TestPostgresProjectStatusCatalog` |
 | (HU-20a) Solo lectura | FR-001 | — | `TestHU12_PostNoPermitido` | — |
 | Rendimiento | — | SC-004 | `TestHU12_Rendimiento` | — |

@@ -140,6 +140,43 @@ Todos los errores aparecen juntos, cada uno junto a su campo, y el formulario co
 Si el proyecto no tiene un Sprint activo, la pantalla muestra **No hay un Sprint activo** y no
 permite cargar horas. La pantalla no permite editar ni borrar cargas.
 
+## Estado del proyecto
+
+Elegí primero el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/estado`, o la sección
+**Estado del proyecto** del menú. La pantalla es de solo lectura: calcula todo al abrirla, con los datos y la fecha de
+ese momento, y no guarda nada. Muestra cuatro cosas del proyecto activo:
+
+1. **Nombre y fechas**: el proyecto y sus fechas de inicio y fin, en formato dd/mm/aaaa.
+2. **Estado**: **No iniciado**, **En curso** o **Finalizado**, según la fecha de hoy.
+3. **Avance**: **X de Y historias completadas (P %)**, donde X son las historias en Hecho, Y el total de historias del
+   proyecto y P el porcentaje con dos decimales y coma (por ejemplo, 4 de 8 es 50,00 %).
+4. **Historias por estado**: una tabla con la cantidad de historias en Pendiente, En Sprint, En progreso y Hecho. Un
+   estado sin historias muestra 0.
+5. **Sprint en curso**: el número del Sprint activo, su objetivo y sus fechas.
+
+### Cómo se calcula el estado
+
+| Estado | Cuándo se muestra |
+|---|---|
+| No iniciado | Hoy es anterior a la fecha de inicio. |
+| En curso | Hoy está entre la fecha de inicio y la de fin; los dos días cuentan. |
+| Finalizado | Hoy es posterior a la fecha de fin. |
+
+Se comparan los días, no las horas: el mismo día de inicio o de fin el proyecto ya figura **En curso**. Recargar la
+pantalla vuelve a calcular, así que un proyecto puede pasar de En curso a Finalizado al cambiar el día. El estado no
+depende de las historias ni de los Sprints.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `0 de 0 historias completadas (0,00 %)` | El proyecto todavía no tiene historias. |
+| `No hay un Sprint en curso` | El proyecto no tiene un Sprint activo; el resto de la información se muestra igual. |
+| `Sin proyecto seleccionado` | Primero elegí un proyecto: la aplicación te lo pide y, al elegirlo, vuelve a esta pantalla. |
+| `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
+| `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer los datos; no se muestra información parcial. |
+| `La dirección que buscás no existe o ya no está disponible.` | El proyecto elegido ya no existe. Elegí otro. |
+
 ## Estimaciones
 
 Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/estimaciones`. La pantalla
