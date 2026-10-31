@@ -2,7 +2,7 @@
 
 **Rama**: `HU-12`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-01, HU-14, HU-20a, HU-20b (verificación manual: HU-23 para tener un Sprint en curso)
 **Habilita**: HU-09 (reporte del proyecto en PDF), que reutiliza la regla de estado y la de avance
