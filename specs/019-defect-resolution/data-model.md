@@ -60,7 +60,7 @@ Cualquier error revierte la transacción: no queda nada guardado.
 
 ## Tipos de dominio
 
-- `Resolved{DefectID int64, SprintNumber int}`: resultado de resolver.
+- `Resolved{DefectID int64, SprintNumber int64}`: resultado de resolver.
 - Errores nuevos: `ErrDefectNotFound`, `ErrResolutionBeforeDetection`,
   `ErrAlreadyResolved`, `ErrAlreadyOpen`. Se reutiliza `ErrNoActiveSprint` de HU-06.
 - Puerto `ResolutionStore`: `Resolve(ctx, projectID, defectID)` y `Reopen(ctx, projectID, defectID)`.

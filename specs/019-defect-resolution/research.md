@@ -51,18 +51,59 @@
 12. **Mensajes.** Texto propuesto por el equipo, en un único archivo; el de falla de
     guardado reutiliza `MsgOperationFailed` de HU-20b.
 
-## Datos a verificar en T001 (tras el merge de HU-06)
+## Verificación de T001 (31/10, con HU-06 y HU-15 en `main`)
 
-- Nombres reales de: el tipo y el constructor del manejador de `/defectos`, la
-  función que arma la vista, la función que registra la sección, los valores de
-  `Status`, el puerto `Store`, los fixtures de las pruebas de integración y la
-  ruta del archivo de textos.
-- Que no existan ya `ErrDefectNotFound`, `ErrResolutionBeforeDetection`,
-  `ErrAlreadyResolved`, `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` ni
-  `ResolutionService` (`git grep -n`).
-- Que la migración de HU-06 sea la que figura en `data-model.md` (columnas
-  `status`, `resolution_sprint_id`, `detection_sprint_id` y el CHECK).
-- Cómo cierra HU-15 el Sprint (bloqueo de la fila) si ya está mergeada.
+### `src/defect` (HU-06)
+
+| Supuesto | Nombre real |
+|---|---|
+| Valores de `Status` | `StatusOpen = "Abierto"`, `StatusResolved = "Resuelto"` (`model.go`) |
+| Error sin Sprint activo | `ErrNoActiveSprint` (`errors.go`); se reutiliza |
+| Puerto de registro | `Store` con `Create(ctx, RegisterInput) (Registered, error)` (`store.go`); no se toca |
+| Servicio y adaptador | `Service` / `NewService(store)`; `PostgreSQLStore` / `NewPostgreSQLStore(db)` |
+| Resultado de registrar | `Registered{ID int64, SprintNumber int64}` |
+| Fixtures de integración | `openDefectTestDB(t)` y `newDefectStoreFixture(t, db)` en `postgres_store_integration_test.go` |
+
+- `Registered.SprintNumber` es `int64`: `Resolved.SprintNumber` también será `int64` (en
+  `data-model.md` figuraba `int`).
+- `newDefectStoreFixture` crea el Sprint 1 activo y el Sprint 2 finalizado; el escenario 4 necesita
+  el Sprint 3 finalizado (detección) y el Sprint 2 activo, así que HU-19 arma su propio fixture
+  reutilizando `openDefectTestDB` y la misma limpieza (historias, Sprints y proyecto, en ese orden).
+
+### `src/web` (HU-06 y HU-20)
+
+| Supuesto | Nombre real |
+|---|---|
+| Manejador de `/defectos` | `defectsHandlers{server, service *defect.Service, catalog DefectCatalog}` (`defects_handlers.go`) |
+| Registro de la sección | `RegisterDefects(s, service, catalog)`: `GET /defectos` y `POST /defectos` |
+| Función que arma la vista | `pageData(r, projectID)`; se muestra con `renderPage(w, r, status, data, form, flash)` |
+| Fila de la lista | `DefectRow{…, Status defect.Status, DetectionSprint int64, ResolutionSprint *int64}` (número de Sprint, `nil` = "—") |
+| Archivo de textos de HU-06 | `defects_form.go` (`MsgDefect…`); `MsgOperationFailed` está en `forms.go` |
+| Lectura de identificadores | `parseID(s) int64` en `context.go` (0 si no es válido) |
+| Fixtures de pruebas web | `newDefectsHandlerFixture`, `selectProjectA` (`defects_handlers_test.go`); BDD: `givenDefectBDDScenario` (`test/web_defects_bdd_test.go`) |
+
+Hallazgos que cambian el plan:
+
+1. **`RegisterDefects` se usa en `main.go` y en 5 pruebas de HU-06.** Para no editar esas pruebas,
+   se mantiene su firma y se agrega `RegisterDefectsWithResolution(s, service, resolution, catalog)`:
+   `RegisterDefects` lo llama con `resolution = nil` y las rutas `POST /defectos/resolver` y
+   `POST /defectos/reabrir` solo se registran cuando hay servicio de resolución. `main.go` usa la
+   función nueva (T034 y T036).
+2. **`renderFormStatus` de HU-06 siempre muestra `MsgDefectNoSprint` en un 409.** HU-19 no lo
+   reutiliza: arma la pantalla con `pageData` + `renderPage` y su propio `Flash`.
+3. **`GET /defectos` sin Sprint activo responde 409** (HU-06), con la lista y sin el formulario de
+   registro. Después de reabrir sin Sprint activo, la redirección 303 lleva a esa pantalla: las
+   pruebas de T038 lo esperan así.
+
+### Verificaciones
+
+- `git grep -n` de `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`,
+  `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` y `ResolutionService`: no existen. El único
+  parecido es `web.ResolvedContext` (otro paquete y otro significado, sin choque).
+- Migración `012_create_defects` coincide con `data-model.md`: `status` ('Abierto' | 'Resuelto'),
+  `detection_sprint_id`, `resolution_sprint_id` y el CHECK de coherencia. No hace falta migración.
+- HU-15 (en `main`) bloquea el Sprint con `SELECT … FROM sprints WHERE id = $1 FOR UPDATE` al
+  cerrar: el `FOR SHARE` del Sprint activo en HU-19 se serializa con el cierre, como se planeó.
 
 ## Preguntas abiertas
 

@@ -11,7 +11,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Con HU-06 ya mergeada: leer `src/defect` y `src/web` y anotar en `research.md` los nombres reales (manejador y función que arma la vista de `/defectos`, función de registro, valores de `Status`, puerto `Store`, fixtures de integración, archivo de textos); comprobar con `git grep -n` que no existen `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`, `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` ni `ResolutionService`; ajustar `plan.md` si algún nombre cambió
+- [x] T001 Con HU-06 ya mergeada: leer `src/defect` y `src/web` y anotar en `research.md` los nombres reales (manejador y función que arma la vista de `/defectos`, función de registro, valores de `Status`, puerto `Store`, fixtures de integración, archivo de textos); comprobar con `git grep -n` que no existen `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`, `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` ni `ResolutionService`; ajustar `plan.md` si algún nombre cambió
 - [x] T002 Crear la rama `HU-19` desde `main` actualizado
 - [x] T003 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base)
 - [ ] T004 Coordinar con quien hizo HU-06 los archivos que HU-19 edita (`defects_handlers.go`, `defects.html`, `main.go`) y con quien tenga HU-10
@@ -66,9 +66,9 @@ Formato: `[ID] [P] [E#] descripción`
 
 - [ ] T032 Crear los textos de mensajes en `src/web/defects_resolution_messages.go`
 - [ ] T033 Implementar el método `resolve` en `src/web/defects_resolution_handlers.go`: lee `defecto` con `parseID`, usa el proyecto de `ActiveContextFrom`, llama al servicio; éxito con `SetFlash` y `RedirectSeeOther` a `/defectos`; los errores 409 (`ErrNoActiveSprint`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`) vuelven a mostrar la pantalla con `PageStatus` y `Flash`
-- [ ] T034 Editar `src/web/defects_handlers.go`: agregar el servicio de resolución al manejador y la ruta `POST /defectos/resolver`
+- [ ] T034 Editar `src/web/defects_handlers.go`: agregar el servicio de resolución al manejador, `RegisterDefectsWithResolution` (`RegisterDefects` conserva su firma) y la ruta `POST /defectos/resolver`
 - [ ] T035 Editar `src/web/templates/defects.html`: formulario con botón "Resolver" y campo oculto `defecto` en cada defecto "Abierto"
-- [ ] T036 Editar `src/cmd/server/main.go` para construir `ResolutionService` y pasarlo al registro
+- [ ] T036 Editar `src/cmd/server/main.go` para construir `ResolutionService` y registrar con `RegisterDefectsWithResolution`
 - [ ] T037 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo
 
 **Punto de control**: resolver funciona de punta a punta; HU-10 ya puede contar defectos resueltos.
