@@ -15,21 +15,35 @@ type defectsPageData struct {
 	ActiveSprint     int64
 	HasActiveSprint  bool
 	NoDefectsMessage string
+	// CanResolve habilita las acciones de HU-19 en la lista.
+	CanResolve bool
 }
 
 type defectsHandlers struct {
-	server  *Server
-	service *defect.Service
-	catalog DefectCatalog
+	server     *Server
+	service    *defect.Service
+	resolution *defect.ResolutionService
+	catalog    DefectCatalog
 }
 
-// RegisterDefects registra la pantalla de defectos.
+// RegisterDefects registra la pantalla de defectos sin las acciones de resolución (HU-06).
 func RegisterDefects(s *Server, service *defect.Service, catalog DefectCatalog) error {
-	h := &defectsHandlers{server: s, service: service, catalog: catalog}
-	return s.Register(Section{Name: "Defectos", Path: "/defectos", RequiresProject: true}, Routes{
+	return RegisterDefectsWithResolution(s, service, nil, catalog)
+}
+
+// RegisterDefectsWithResolution registra la pantalla de defectos una sola vez, con todas sus rutas:
+// las de HU-06 y, si hay servicio de resolución, las de HU-19.
+func RegisterDefectsWithResolution(s *Server, service *defect.Service, resolution *defect.ResolutionService, catalog DefectCatalog) error {
+	h := &defectsHandlers{server: s, service: service, resolution: resolution, catalog: catalog}
+	routes := Routes{
 		"GET /defectos":  http.HandlerFunc(h.list),
 		"POST /defectos": http.HandlerFunc(h.register),
-	})
+	}
+	if resolution != nil {
+		routes["POST /defectos/resolver"] = http.HandlerFunc(h.resolve)
+		routes["POST /defectos/reabrir"] = http.HandlerFunc(h.reopen)
+	}
+	return s.Register(Section{Name: "Defectos", Path: "/defectos", RequiresProject: true}, routes)
 }
 
 func (h *defectsHandlers) pageData(r *http.Request, projectID int64) (defectsPageData, error) {
@@ -52,6 +66,7 @@ func (h *defectsHandlers) pageData(r *http.Request, projectID int64) (defectsPag
 		ActiveSprint:     sprintNumber,
 		HasActiveSprint:  hasActiveSprint,
 		NoDefectsMessage: MsgDefectNone,
+		CanResolve:       h.resolution != nil,
 	}, nil
 }
 
@@ -67,10 +82,13 @@ func (h *defectsHandlers) list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !data.HasActiveSprint {
-		h.renderPage(w, r, http.StatusConflict, data, NewFormView(), &Flash{
-			Kind: FlashError,
-			Text: MsgDefectNoSprint,
-		})
+		// Si hay un mensaje pendiente (por ejemplo, "Defecto reabierto" de HU-19), se muestra ese y
+		// el aviso de falta de Sprint activo vuelve al recargar (T063).
+		var noSprint *Flash
+		if _, err := r.Cookie(CookieFlash); err != nil {
+			noSprint = &Flash{Kind: FlashError, Text: MsgDefectNoSprint}
+		}
+		h.renderPage(w, r, http.StatusConflict, data, NewFormView(), noSprint)
 		return
 	}
 	h.renderPage(w, r, http.StatusOK, data, NewFormView(), nil)
