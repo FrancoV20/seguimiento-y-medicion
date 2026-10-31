@@ -33,8 +33,8 @@ Formato: `[ID] [P] [E#] descripción`
   Si HU-06 o HU-15 no están en `main`, no seguir y avisar al equipo.
 - [X] T002 Crear la rama `HU-10` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-10`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar dos cosas:
+- [X] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [X] T004 Coordinar dos cosas:
   - con quien tenga HU-08, HU-09 y HU-25, el bloque de registro que se suma en `src/cmd/server/main.go`;
   - con HU-08 y HU-09, el contrato `metrics.NewQualityService` / `SprintQuality` de `data-model.md`.
 
