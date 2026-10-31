@@ -92,8 +92,8 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T027 [P] Documentar en `specs/025-web-metrics/quickstart.md` los pasos para probar a mano con un Sprint cerrado y la nota de puerto
-- [ ] T028 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/metrics_handlers.go` y `src/web/metrics_view.go`
+- [x] T027 [P] Documentar en `specs/025-web-metrics/quickstart.md` los pasos para probar a mano con un Sprint cerrado y la nota de puerto
+- [x] T028 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/metrics_handlers.go` y `src/web/metrics_view.go`
 - [ ] T029 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T030 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
 - [x] T031 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/metrics_handlers_test.go`
@@ -154,6 +154,8 @@
 - Las pruebas crean sus propios proyectos, historias, Sprints, horas y cierres (con el servicio de HU-15); no dependen de otras pantallas.
 - `user_stories.project_id` no tiene borrado en cascada: las fixtures borran primero las historias (los Sprints, sus asignaciones y los registros caen en cascada) y después el proyecto.
 - Los textos "No disponible" y "Cálculo parcial..." se toman de HU-07 en las pruebas, no se reescriben.
+- Refactor opcional (corte 10, sin tarea asociada): **omitido** por decisión del Product Builder el 31/10/2026; el
+  código de `metrics_view.go`, `metrics_handlers.go` y `metrics.html` quedó como en los cortes GREEN.
 
 ## Trazabilidad
 
