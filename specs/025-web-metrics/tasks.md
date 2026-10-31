@@ -73,11 +73,11 @@
 
 ### Tests for User Story 2
 
-- [ ] T020 [P] [US2] Escribir la prueba de handler de la lista: Sprints finalizados del más reciente al más antiguo con número, Sprint Goal y fechas, y métricas del más reciente; con `?sprint=ID` las del Sprint elegido, en `src/web/metrics_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler de un `sprint` no numérico, inexistente, activo o de otro proyecto en la dirección: se ignora y se muestra el más reciente sin error, en `src/web/metrics_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler sin Sprints finalizados: "Aún no hay Sprints finalizados", con y sin Sprint activo, y sin pedir nada a HU-07, en `src/web/metrics_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con un Sprint activo y Sprints finalizados: el activo no figura en la lista y se informa que sus métricas se calculan al cerrarlo, en `src/web/metrics_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir los escenarios BDD de elegir otro Sprint, sin Sprints finalizados y Sprint en curso en `test/web_metrics_bdd_test.go`
+- [x] T020 [P] [US2] Escribir la prueba de handler de la lista: Sprints finalizados del más reciente al más antiguo con número, Sprint Goal y fechas, y métricas del más reciente; con `?sprint=ID` las del Sprint elegido, en `src/web/metrics_handlers_test.go`
+- [x] T021 [P] [US2] Escribir la prueba de handler de un `sprint` no numérico, inexistente, activo o de otro proyecto en la dirección: se ignora y se muestra el más reciente sin error, en `src/web/metrics_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler sin Sprints finalizados: "Aún no hay Sprints finalizados", con y sin Sprint activo, y sin pedir nada a HU-07, en `src/web/metrics_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con un Sprint activo y Sprints finalizados: el activo no figura en la lista y se informa que sus métricas se calculan al cerrarlo, en `src/web/metrics_handlers_test.go`
+- [x] T024 [P] [US2] Escribir los escenarios BDD de elegir otro Sprint, sin Sprints finalizados y Sprint en curso en `test/web_metrics_bdd_test.go`
 
 ### Implementation for User Story 2
 

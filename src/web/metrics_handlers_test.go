@@ -1,10 +1,14 @@
 package web
 
 import (
+	"context"
 	"fmt"
 	"html"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strings"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -25,9 +29,28 @@ type metricsHandlerApp struct {
 
 func newMetricsHandlerApp(t *testing.T) *metricsHandlerApp {
 	t.Helper()
+	return newMetricsHandlerAppWith(t, nil, nil)
+}
+
+// newMetricsHandlerAppWith permite envolver el catálogo o la fuente reales (por ejemplo, para
+// contar llamadas o simular una falla); nil deja el real.
+func newMetricsHandlerAppWith(
+	t *testing.T,
+	wrapCatalog func(MetricsCatalog) MetricsCatalog,
+	wrapSource func(MetricsSource) MetricsSource,
+) *metricsHandlerApp {
+	t.Helper()
 	app := newCtxApp(t, nil, func(server *Server) {
 		db := openContextTestDB(t)
-		if err := RegisterMetrics(server, NewPostgreSQLMetricsCatalog(db), NewHU07MetricsSource(db)); err != nil {
+		var catalog MetricsCatalog = NewPostgreSQLMetricsCatalog(db)
+		source := NewHU07MetricsSource(db)
+		if wrapCatalog != nil {
+			catalog = wrapCatalog(catalog)
+		}
+		if wrapSource != nil {
+			source = wrapSource(source)
+		}
+		if err := RegisterMetrics(server, catalog, source); err != nil {
 			t.Fatalf("no se pudo registrar la sección Métricas del Sprint: %v", err)
 		}
 	})
@@ -239,4 +262,215 @@ func TestMetricsHandler_SinHistoriasHechoMuestraVelocidadCeroYNoDisponible(t *te
 	assertContainsAll(t, "el bloque de métricas", metricsSection(t, body),
 		"Sprint 1", "0 Story Points", hu07NoData(t))
 	assertContainsNone(t, "el bloque de métricas", metricsSection(t, body), "5 Story Points", "3 Story Points")
+}
+
+// metricsList devuelve el HTML de la lista de Sprints finalizados (<ul id="sprints-finalizados">),
+// o vacío si la página no la tiene.
+func metricsList(body string) string {
+	start := strings.Index(body, `<ul id="sprints-finalizados"`)
+	if start < 0 {
+		return ""
+	}
+	end := strings.Index(body[start:], "</ul>")
+	if end < 0 {
+		return body[start:]
+	}
+	return body[start : start+end]
+}
+
+var metricsSelectedLinkPattern = regexp.MustCompile(`href="\?sprint=(\d+)" aria-current="true"`)
+
+// metricsSelectedID devuelve el identificador del Sprint marcado como elegido en la lista.
+func metricsSelectedID(t *testing.T, body string) string {
+	t.Helper()
+	list := metricsList(body)
+	if list == "" {
+		t.Fatalf("la página no muestra la lista de Sprints finalizados")
+	}
+	matches := metricsSelectedLinkPattern.FindAllStringSubmatch(list, -1)
+	if len(matches) != 1 {
+		t.Fatalf("la lista debía marcar exactamente un Sprint elegido; marca %d", len(matches))
+	}
+	return matches[0][1]
+}
+
+// countingMetricsSource cuenta los pedidos de métricas a HU-07.
+type countingMetricsSource struct {
+	MetricsSource
+	calls atomic.Int32
+}
+
+func (s *countingMetricsSource) Metrics(ctx context.Context, projectID, sprintID int64) (SprintMetrics, error) {
+	s.calls.Add(1)
+	return s.MetricsSource.Metrics(ctx, projectID, sprintID)
+}
+
+// metricsThreeSprints arma el proyecto de US2: Sprints 1, 2 y 3 finalizados con 3, 5 y 8 Story
+// Points y, si withActive, el Sprint 4 activo. Devuelve los identificadores en orden de número.
+func metricsThreeSprints(t *testing.T, f *metricsFixture, withActive bool) (s1, s2, s3, active int64) {
+	t.Helper()
+	data := []struct {
+		number     int
+		goal       string
+		start, end string
+		points     int
+	}{
+		{1, "Alta de usuarios", "2026-09-01", "2026-09-14", 3},
+		{2, "Pagos online", "2026-09-15", "2026-09-28", 5},
+		{3, "Reportes", "2026-09-29", "2026-10-12", 8},
+	}
+	ids := make([]int64, 0, 3)
+	for _, d := range data {
+		id := f.activeSprint(d.number, d.goal, d.start, d.end)
+		h := f.story(id, fmt.Sprintf("Historia del Sprint %d", d.number), d.points, sprint.Done, "4")
+		f.effort(h, "4")
+		f.close(id)
+		ids = append(ids, id)
+	}
+	if withActive {
+		active = f.activeSprint(4, "Sprint en curso", "2026-10-13", "2026-10-26")
+		f.story(active, "Historia en curso", 13, sprint.Done, "2")
+	}
+	return ids[0], ids[1], ids[2], active
+}
+
+// T020 (US2, escenario 1; FR-002, FR-003).
+func TestMetricsHandler_ListaDeSprintsFinalizadosYEleccionPorDireccion(t *testing.T) {
+	app := newMetricsHandlerApp(t)
+	f := newMetricsProject(t, app.db, "lista")
+	s1, _, s3, _ := metricsThreeSprints(t, f, false)
+
+	t.Run("lista del más reciente al más antiguo con las métricas del más reciente", func(t *testing.T) {
+		resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+		assertMetricsPageOK(t, resp, body)
+		list := html.UnescapeString(metricsList(body))
+		if list == "" {
+			t.Fatalf("la página no muestra la lista de Sprints finalizados")
+		}
+		order := []string{"Sprint 3", "Sprint 2", "Sprint 1"}
+		last := -1
+		for _, label := range order {
+			i := strings.Index(list, label)
+			if i < 0 || i < last {
+				t.Fatalf("la lista debía mostrar %v en ese orden; no se encontró %q en su lugar", order, label)
+			}
+			last = i
+		}
+		assertContainsAll(t, "la lista", list,
+			"Reportes", "Del 29/09/2026 al 12/10/2026",
+			"Pagos online", "Del 15/09/2026 al 28/09/2026",
+			"Alta de usuarios", "Del 01/09/2026 al 14/09/2026")
+		if got := metricsSelectedID(t, body); got != id64(s3) {
+			t.Errorf("Sprint elegido = %s; se esperaba el más reciente (%d)", got, s3)
+		}
+		assertContainsAll(t, "el bloque de métricas", metricsSection(t, body), "Sprint 3", "8 Story Points")
+	})
+
+	t.Run("con ?sprint=ID se ven las métricas del Sprint elegido", func(t *testing.T) {
+		resp, body, _ := app.open(t, f.ProjectID, pathMetrics+"?sprint="+id64(s1))
+		assertMetricsPageOK(t, resp, body)
+		section := metricsSection(t, body)
+		assertContainsAll(t, "el bloque de métricas", section, "Sprint 1", "Alta de usuarios", "3 Story Points")
+		assertContainsNone(t, "el bloque de métricas", section, "8 Story Points")
+		if got := metricsSelectedID(t, body); got != id64(s1) {
+			t.Errorf("Sprint elegido = %s; se esperaba %d", got, s1)
+		}
+	})
+}
+
+// T021 (US2; FR-010, SC-002).
+func TestMetricsHandler_SprintInvalidoActivoOAjenoSeIgnora(t *testing.T) {
+	app := newMetricsHandlerApp(t)
+	f := newMetricsProject(t, app.db, "parámetro")
+	_, _, s3, active := metricsThreeSprints(t, f, true)
+	other := newMetricsProject(t, app.db, "parámetro otro")
+	ajeno := other.activeSprint(1, "Sprint privado del otro proyecto", "2026-09-01", "2026-09-14")
+	h := other.story(ajeno, "Historia privada", 21, sprint.Done, "2")
+	other.effort(h, "9")
+	other.close(ajeno)
+
+	casos := map[string]string{
+		"no numérico":      "abc",
+		"vacío":            "",
+		"negativo":         "-1",
+		"inexistente":      id64(MaxID),
+		"activo":           id64(active),
+		"de otro proyecto": id64(ajeno),
+		"con texto pegado": id64(s3) + "x",
+		"demasiado grande": "99999999999999999999",
+	}
+	for name, raw := range casos {
+		t.Run(name, func(t *testing.T) {
+			resp, body, _ := app.open(t, f.ProjectID, pathMetrics+"?sprint="+url.QueryEscape(raw))
+
+			// Entonces se ignora sin error y se muestra el Sprint finalizado más reciente del proyecto.
+			assertMetricsPageOK(t, resp, body)
+			assertContainsNone(t, "la pantalla", body, MsgNotFound, "Sprint privado del otro proyecto", "21 Story Points")
+			assertContainsAll(t, "el bloque de métricas", metricsSection(t, body), "Sprint 3", "8 Story Points")
+			assertContainsNone(t, "el bloque de métricas", metricsSection(t, body), "Sprint 4", "13 Story Points")
+			if got := metricsSelectedID(t, body); got != id64(s3) {
+				t.Errorf("Sprint elegido = %s; se esperaba el más reciente (%d)", got, s3)
+			}
+		})
+	}
+}
+
+// T022 (US2, escenario 2; FR-009).
+func TestMetricsHandler_SinSprintsFinalizados(t *testing.T) {
+	var counter *countingMetricsSource
+	app := newMetricsHandlerAppWith(t, nil, func(real MetricsSource) MetricsSource {
+		counter = &countingMetricsSource{MetricsSource: real}
+		return counter
+	})
+
+	t.Run("sin Sprint activo", func(t *testing.T) {
+		f := newMetricsProject(t, app.db, "sin Sprints")
+		resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+		assertMetricsPageOK(t, resp, body)
+		assertContainsAll(t, "la pantalla", body, MsgMetricsNoSprints)
+		assertContainsNone(t, "la pantalla", body, `id="metricas-sprint"`, "sigue en curso")
+	})
+
+	t.Run("con Sprint activo", func(t *testing.T) {
+		f := newMetricsProject(t, app.db, "solo activo")
+		active := f.activeSprint(1, "Primer Sprint en curso", "2026-10-01", "2026-10-14")
+		f.story(active, "Historia en curso", 5, sprint.Done, "3")
+		resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+		assertMetricsPageOK(t, resp, body)
+		assertContainsAll(t, "la pantalla", html.UnescapeString(body),
+			MsgMetricsNoSprints, fmt.Sprintf(MsgMetricsActiveHint, 1))
+		assertContainsNone(t, "la pantalla", body, `id="metricas-sprint"`, "Primer Sprint en curso")
+	})
+
+	// Y en ningún caso se le pidió nada a HU-07.
+	if n := counter.calls.Load(); n != 0 {
+		t.Errorf("se pidieron %d cálculos a HU-07; sin Sprints finalizados no se debía pedir ninguno", n)
+	}
+}
+
+// T023 (US2, escenario 3; FR-008, SC-002).
+func TestMetricsHandler_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo(t *testing.T) {
+	var counter *countingMetricsSource
+	app := newMetricsHandlerAppWith(t, nil, func(real MetricsSource) MetricsSource {
+		counter = &countingMetricsSource{MetricsSource: real}
+		return counter
+	})
+	f := newMetricsProject(t, app.db, "con activo")
+	_, _, s3, active := metricsThreeSprints(t, f, true)
+
+	resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+
+	assertMetricsPageOK(t, resp, body)
+	list := html.UnescapeString(metricsList(body))
+	if list == "" {
+		t.Fatalf("la página no muestra la lista de Sprints finalizados")
+	}
+	assertContainsNone(t, "la lista", list, "Sprint 4", "Sprint en curso", "?sprint="+id64(active)+`"`)
+	assertContainsAll(t, "la pantalla", html.UnescapeString(body), fmt.Sprintf(MsgMetricsActiveHint, 4))
+	if got := metricsSelectedID(t, body); got != id64(s3) {
+		t.Errorf("Sprint elegido = %s; se esperaba %d", got, s3)
+	}
+	if n := counter.calls.Load(); n != 1 {
+		t.Errorf("se pidieron %d cálculos a HU-07; se esperaba solo el del Sprint elegido", n)
+	}
 }

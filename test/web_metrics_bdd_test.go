@@ -124,6 +124,20 @@ func (a *metricasBDDApp) sprintCerrado(t *testing.T, numero int, objetivo string
 	return sprintID
 }
 
+// sprintActivo crea un Sprint activo (en curso) con una historia.
+func (a *metricasBDDApp) sprintActivo(t *testing.T, numero int, objetivo string) int64 {
+	t.Helper()
+	var sprintID int64
+	inicio := time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC).AddDate(0, 0, (numero-1)*14)
+	if err := a.db.QueryRow(`
+		INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+		VALUES ($1, $2, $3, $4, $5, 'Activo') RETURNING id`,
+		a.proyecto, numero, objetivo, inicio, inicio.AddDate(0, 0, 13)).Scan(&sprintID); err != nil {
+		t.Fatalf("no se pudo crear el Sprint activo %d del escenario: %v", numero, err)
+	}
+	return sprintID
+}
+
 // abrir elige el proyecto con HU-20b y abre la ruta de la pantalla.
 func (a *metricasBDDApp) abrir(t *testing.T, ruta string) (*http.Response, string) {
 	t.Helper()
@@ -286,4 +300,92 @@ func TestMetricsBDD_VelocidadCero(t *testing.T) {
 		}
 		debeContener(t, "el bloque de métricas", bloqueMetricas(t, cuerpo), "0 Story Points", noDisponibleHU07(t))
 	})
+}
+
+func TestMetricsBDD_ElegirOtroSprint(t *testing.T) {
+	t.Run("Escenario 5: elegir otro Sprint finalizado", func(t *testing.T) {
+		// Given un proyecto con varios Sprints finalizados.
+		app := nuevaMetricasBDDApp(t)
+		primero := app.sprintCerrado(t, 1, "Primer objetivo",
+			metricasBDDHistoria{"Historia del primero", 3, sprint.Done, "4", "4"})
+		app.sprintCerrado(t, 2, "Segundo objetivo",
+			metricasBDDHistoria{"Historia del segundo", 5, sprint.Done, "4", "4"})
+		app.sprintCerrado(t, 3, "Tercer objetivo",
+			metricasBDDHistoria{"Historia del tercero", 8, sprint.Done, "4", "4"})
+
+		// When abro "Métricas del Sprint".
+		_, cuerpo := app.abrir(t, "/metricas")
+
+		// Then veo la lista del más reciente al más antiguo, con las métricas del más reciente.
+		lista := html.UnescapeString(listaSprints(t, cuerpo))
+		tercero, segundo, primeroEn := strings.Index(lista, "Tercer objetivo"),
+			strings.Index(lista, "Segundo objetivo"), strings.Index(lista, "Primer objetivo")
+		if tercero < 0 || segundo < 0 || primeroEn < 0 || !(tercero < segundo && segundo < primeroEn) {
+			t.Errorf("la lista debía mostrar los Sprints 3, 2 y 1 en ese orden")
+		}
+		debeContener(t, "el bloque de métricas", bloqueMetricas(t, cuerpo), "Sprint 3", "8 Story Points")
+
+		// And al elegir otro veo las suyas.
+		respuesta, cuerpo := app.abrir(t, "/metricas?sprint="+idTexto(primero))
+		if respuesta.StatusCode != http.StatusOK {
+			t.Fatalf("GET /metricas?sprint= = %d; se esperaba 200", respuesta.StatusCode)
+		}
+		debeContener(t, "el bloque de métricas", bloqueMetricas(t, cuerpo), "Sprint 1", "Primer objetivo", "3 Story Points")
+	})
+}
+
+func TestMetricsBDD_SinSprintsFinalizados(t *testing.T) {
+	t.Run("Escenario 6: proyecto sin Sprints finalizados", func(t *testing.T) {
+		// Given un proyecto sin Sprints finalizados.
+		app := nuevaMetricasBDDApp(t)
+
+		// When abro "Métricas del Sprint".
+		respuesta, cuerpo := app.abrir(t, "/metricas")
+
+		// Then veo "Aún no hay Sprints finalizados".
+		if respuesta.StatusCode != http.StatusOK {
+			t.Fatalf("GET /metricas = %d; se esperaba 200", respuesta.StatusCode)
+		}
+		debeContener(t, "la pantalla", cuerpo, web.MsgMetricsNoSprints)
+		if strings.Contains(cuerpo, `id="metricas-sprint"`) {
+			t.Errorf("sin Sprints finalizados no se debían mostrar métricas")
+		}
+	})
+}
+
+func TestMetricsBDD_SprintEnCurso(t *testing.T) {
+	t.Run("Escenario 7: Sprint en curso", func(t *testing.T) {
+		// Given un proyecto con un Sprint activo y Sprints finalizados.
+		app := nuevaMetricasBDDApp(t)
+		app.sprintCerrado(t, 1, "Objetivo cerrado",
+			metricasBDDHistoria{"Historia cerrada", 5, sprint.Done, "4", "4"})
+		app.sprintActivo(t, 2, "Objetivo en curso")
+
+		// When abro "Métricas del Sprint".
+		respuesta, cuerpo := app.abrir(t, "/metricas")
+
+		// Then el Sprint activo no figura en la lista y veo que sus métricas se calculan al cerrarlo.
+		if respuesta.StatusCode != http.StatusOK {
+			t.Fatalf("GET /metricas = %d; se esperaba 200", respuesta.StatusCode)
+		}
+		lista := html.UnescapeString(listaSprints(t, cuerpo))
+		if strings.Contains(lista, "Objetivo en curso") || strings.Contains(lista, "Sprint 2") {
+			t.Errorf("el Sprint activo no debía figurar en la lista")
+		}
+		debeContener(t, "la pantalla", html.UnescapeString(cuerpo), fmt.Sprintf(web.MsgMetricsActiveHint, 2))
+	})
+}
+
+// listaSprints devuelve el HTML de la lista de Sprints finalizados (<ul id="sprints-finalizados">).
+func listaSprints(t *testing.T, cuerpo string) string {
+	t.Helper()
+	inicio := strings.Index(cuerpo, `<ul id="sprints-finalizados"`)
+	if inicio < 0 {
+		t.Fatalf("la pantalla no muestra la lista de Sprints finalizados")
+	}
+	fin := strings.Index(cuerpo[inicio:], "</ul>")
+	if fin < 0 {
+		t.Fatalf("la lista de Sprints finalizados no está cerrada")
+	}
+	return cuerpo[inicio : inicio+fin]
 }
