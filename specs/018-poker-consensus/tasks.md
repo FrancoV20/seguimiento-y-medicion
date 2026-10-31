@@ -149,7 +149,7 @@ mutuos con el cierre de Sprint.
   FROM poker_rounds WHERE story_id = $1`; `storySprint`/`lockStory` de T010 con la relectura; `CheckAgree`; `UPDATE
   user_stories SET story_points = $2 WHERE id = $1 RETURNING title`); `fakeStore` y `failingPokerStore` con el método
   nuevo.
-- [ ] T016 Ejecutar T012–T013 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo.
+- [x] T016 Ejecutar T012–T013 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo.
 
 **Punto de control**: las dos acciones funcionan en el dominio y en PostgreSQL, sin pantalla.
 
