@@ -97,6 +97,29 @@ Si se detectan varios problemas, se muestran juntos y no se guarda el defecto.
 | `No hay un Sprint activo; no se puede registrar un defecto` | Iniciá un Sprint para el proyecto antes de registrar. |
 | `La operación no pudo completarse` | Hubo un problema al guardar. Intentá nuevamente más tarde. |
 
+### Resolver y reabrir defectos
+
+En la columna **Acción** de la lista, cada defecto ofrece una sola acción según su estado:
+
+- **Resolver**, en un defecto **Abierto**: el defecto pasa a **Resuelto** y el Sprint activo queda
+  registrado como Sprint de resolución. La confirmación indica el Sprint, por ejemplo
+  `Defecto resuelto en el Sprint 2`. El Sprint de resolución no se elige: siempre es el Sprint activo.
+- **Reabrir**, en un defecto **Resuelto**: el defecto vuelve a **Abierto** y su Sprint de resolución
+  se borra (la lista muestra `—`). La confirmación es `Defecto reabierto`. Reabrir no necesita un
+  Sprint activo.
+
+Reabrir un defecto resuelto en un Sprint ya finalizado cambia el conteo de defectos resueltos de ese
+Sprint en las métricas.
+
+| Mensaje | Qué hacer |
+|---|---|
+| `No hay un Sprint activo para registrar la resolución del defecto` | Iniciá un Sprint para el proyecto y volvé a resolver. |
+| `El Sprint de resolución no puede ser anterior al Sprint en que se detectó el defecto` | El Sprint activo es anterior al de detección: revisá los Sprints del proyecto. |
+| `El defecto ya está resuelto` | No hace falta resolverlo de nuevo; conserva su Sprint de resolución. |
+| `El defecto ya está abierto` | El defecto no está resuelto; no hay nada que reabrir. |
+| `El defecto no existe` | El defecto no pertenece al proyecto activo o fue eliminado. Volvé a la lista. |
+| `La operación no pudo completarse` | Hubo un problema al guardar y el defecto no cambió. Intentá nuevamente más tarde. |
+
 ## Registro de esfuerzo
 
 Abrí `http://localhost:8080/esfuerzo` para cargar las horas que trabajaste en una historia del

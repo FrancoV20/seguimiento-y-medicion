@@ -1,7 +1,7 @@
 # Especificación: HU-19 – Resolver y reabrir defectos
 
-**Rama**: feature/hu-19-resolucion-defectos
-**Estado**: Aprobada por el equipo (sin Sprint activo se bloquea – 22/10/2026)
+**Rama**: HU-19
+**Estado**: Implementada (pendiente de revisión en el Pull Request). Aprobada por el equipo el 22/10/2026 (sin Sprint activo se bloquea)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-04 / FIX-HU-04, HU-20a, HU-20b
 **Habilita**: HU-10, HU-08, HU-09
@@ -131,7 +131,9 @@ Los 9 escenarios del Issue HU-19 (texto idéntico):
   exitosa y otra con 409.
 - **SC-008**: Cada escenario tiene una prueba que falló antes del código (evidencia
   RED) y pasa después (evidencia GREEN), y la cobertura de `src/defect` queda en
-  `cobertura.txt` (al menos 80%, igual que HU-06).
+  `cobertura.txt` (al menos 80%, igual que HU-06). Excepción documentada: la parte de acciones de
+  la lista del escenario 9 se implementó en T035 y T044, antes de escribir T048, que por eso es una
+  prueba de caracterización (pasa en la evidencia RED del Bloque C).
 
 ## Supuestos y decisiones
 
@@ -146,13 +148,13 @@ Los 9 escenarios del Issue HU-19 (texto idéntico):
 
 | Historia | Escenario | Requisitos | Éxito | Prueba BDD / de handler | Prueba de dominio / integración |
 |---|---|---|---|---|---|
-| HU-19 | 1 Resolución exitosa | FR-003, FR-011, FR-013, FR-014, FR-015 | SC-001 | `TestHU19_ResolucionExitosa` | `TestCheckResolve_OK`, `TestPostgresResolve_OK` |
-| HU-19 | 2 Sin Sprint activo | FR-004 | SC-003 | `TestHU19_ResolverSinSprintActivo` | `TestCheckResolve_SinSprint`, `TestPostgresResolve_SinSprintActivo` |
-| HU-19 | 3 Reabrir | FR-007, FR-011, FR-015 | SC-002 | `TestHU19_Reabrir` | `TestCheckReopen_OK`, `TestPostgresReopen_OK` |
+| HU-19 | 1 Resolución exitosa | FR-003, FR-011, FR-013, FR-014, FR-015 | SC-001 | `TestHU19_ResolucionExitosa`, `TestEscenarioHU19_ResolucionExitosa` | `TestCheckResolve_OK`, `TestResolutionService_ResolveDevuelveElSprint`, `TestPostgresResolve_OK` |
+| HU-19 | 2 Sin Sprint activo | FR-004 | SC-003 | `TestHU19_ResolverSinSprintActivo`, `TestEscenarioHU19_ResolverSinSprintActivo` | `TestCheckResolve_SinSprint`, `TestPostgresResolve_SinSprintActivo`, `TestPostgresResolve_SprintActivoDeOtroProyecto` |
+| HU-19 | 3 Reabrir | FR-007, FR-011, FR-015 | SC-002 | `TestHU19_Reabrir`, `TestEscenarioHU19_ReabrirUnDefecto` | `TestCheckReopen_OK`, `TestResolutionService_ReopenDelegaEnElAlmacen`, `TestPostgresReopen_OK` |
 | HU-19 | 4 Sprint anterior | FR-005 | SC-004 | `TestHU19_SprintAnteriorAlDeDeteccion` | `TestCheckResolve_Anterior`, `TestPostgresResolve_Anterior` |
-| HU-19 | 5 Inexistente | FR-009, FR-014 | SC-005 | `TestHU19_DefectoInexistente` | `TestPostgresResolve_Inexistente`, `TestPostgresResolve_OtroProyecto` |
-| HU-19 | 6 Error al guardar | FR-010, FR-016 | SC-006 | `TestHU19_ErrorAlGuardar` | `TestPostgresResolve_FalloNoDejaCambios` |
-| HU-19 | 7 Ya resuelto | FR-006 | SC-001 | `TestHU19_YaResuelto` | `TestCheckResolve_YaResuelto` |
-| HU-19 | 8 Ya abierto | FR-008 | SC-002 | `TestHU19_YaAbierto` | `TestCheckReopen_YaAbierto` |
-| HU-19 | 9 Lista con acción | FR-001, FR-002 | SC-001, SC-002 | `TestHU19_ListaMuestraAccionYSprint` | — |
+| HU-19 | 5 Inexistente | FR-009, FR-014 | SC-005 | `TestHU19_DefectoInexistente`, `TestEscenarioHU19_DefectoInexistente` | `TestResolutionService_IdentificadoresInvalidos`, `TestPostgresResolve_Inexistente`, `TestPostgresResolve_OtroProyecto` |
+| HU-19 | 6 Error al guardar | FR-010, FR-016 | SC-006 | `TestHU19_ErrorAlGuardar` | `TestResolutionService_PropagaLosErrores`, `TestPostgresResolve_FalloNoDejaCambios` |
+| HU-19 | 7 Ya resuelto | FR-006 | SC-001 | `TestHU19_YaResuelto` | `TestCheckResolve_YaResuelto`, `TestPostgresResolve_YaResuelto` |
+| HU-19 | 8 Ya abierto | FR-008 | SC-002 | `TestHU19_YaAbierto` | `TestCheckReopen_YaAbierto`, `TestPostgresReopen_YaAbierto` |
+| HU-19 | 9 Lista con acción | FR-001, FR-002 | SC-001, SC-002 | `TestHU19_ListaMuestraAccionYSprint` (caracterización: pasa desde el rojo porque T035 y T044 ya agregaron las acciones) | — |
 | HU-19 | Concurrencia | FR-012 | SC-007 | — | `TestPostgresResolve_Concurrente` |
