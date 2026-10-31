@@ -70,7 +70,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear `src/metrics/quality.go` con:
+- [x] T008 Crear `src/metrics/quality.go` con:
   - `ErrSprintNotFound = errors.New("sprint not found")`;
   - `QualityStoryResult`, `QualityData` y `SprintQuality` (campos de `data-model.md`);
   - `calculateSprintQuality`.
@@ -80,9 +80,9 @@ Formato: `[ID] [P] [E#] descripción`
   - el porcentaje es `roundToTwoDecimals(big.NewRat(completadas*100, planificadas)).FloatString(2)`;
   - se suman solo los Story Points no nulos;
   - `StoriesWithoutPoints` cuenta los nulos.
-- [ ] T009 Crear el puerto `QualityStore` en `src/metrics/quality_store.go`, y en `src/metrics/quality_service.go`
+- [x] T009 Crear el puerto `QualityStore` en `src/metrics/quality_store.go`, y en `src/metrics/quality_service.go`
   crear `QualityService`, `NewQualityService` y `SprintQuality` con los pasos 1 a 5 de `data-model.md`.
-- [ ] T010 Ejecutar T005 y T006 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 no
+- [x] T010 Ejecutar T005 y T006 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 no
   cambian.
 
 **Punto de control**: el cálculo y el servicio funcionan solos; HU-08 y HU-09 ya pueden programar contra
