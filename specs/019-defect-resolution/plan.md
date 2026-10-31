@@ -1,6 +1,6 @@
 # Plan de implementación: HU-19 – Resolver y reabrir defectos
 
-**Rama**: feature/hu-19-resolucion-defectos | **Spec**: specs/019-defect-resolution/spec.md
+**Rama**: HU-19 | **Spec**: specs/019-defect-resolution/spec.md
 **Constitución**: v1.1.0
 
 ## Resumen
@@ -12,10 +12,12 @@ HU-06, los textos de mensajes en un archivo propio y las acciones en
 `templates/defects.html`. La lista no cambia: HU-06 ya entrega estado y Sprint de
 resolución en `DefectRow`. No hay migración nueva.
 
-## Supuestos tomados de `specs/006-defects` (verificar en T001)
+## Supuestos tomados de `specs/006-defects` (verificados en T001, ver `research.md`)
 
-HU-06 todavía no está en `main`. Estos nombres salen de su plan y se confirman con
-el código real:
+HU-06 ya está en `main` y los nombres coinciden con su código. Cambios que surgieron de T001:
+`RegisterDefects` conserva su firma y se agrega `RegisterDefectsWithResolution`; HU-19 no usa
+`renderFormStatus` de HU-06; `Resolved.SprintNumber` es `int64`.
+
 
 - `src/defect`: tipos `Severity`, `Status`; errores `ErrNoActiveSprint`,
   `ErrStoryNotFound`; puerto `Store`; servicio y `PostgreSQLStore`.
@@ -64,8 +66,9 @@ Nuevos:
 
 Editados (coordinados con HU-06, nombres definitivos en T001):
 
-- `src/web/defects_handlers.go` – agregar el servicio de resolución al manejador y
-  las rutas `POST /defectos/resolver` y `POST /defectos/reabrir` al registrarlas.
+- `src/web/defects_handlers.go` – agregar el servicio de resolución al manejador,
+  `RegisterDefectsWithResolution` y las rutas `POST /defectos/resolver` y
+  `POST /defectos/reabrir` (solo si hay servicio de resolución).
 - `src/web/templates/defects.html` – acciones por fila.
 - `src/cmd/server/main.go` – construir `ResolutionService` y pasarlo al registro.
 

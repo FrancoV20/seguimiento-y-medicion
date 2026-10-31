@@ -135,8 +135,9 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 	}
 
 	defectService := defect.NewService(defect.NewPostgreSQLStore(database))
+	defectResolution := defect.NewResolutionService(defect.NewPostgreSQLResolutionStore(database))
 	defectCatalog := web.NewPostgreSQLDefectCatalog(database)
-	if err := web.RegisterDefects(srv, defectService, defectCatalog); err != nil {
+	if err := web.RegisterDefectsWithResolution(srv, defectService, defectResolution, defectCatalog); err != nil {
 		_ = ln.Close()
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Defectos")
