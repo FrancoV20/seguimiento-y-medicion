@@ -19,3 +19,14 @@ src/metrics/quality_test.go:10:47: undefined: QualityStoryResult
 src/metrics/quality_service_test.go:51:13: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/metrics [build failed]
 FAIL
+
+================================================================================
+Sección Almacenamiento (T011 a T016) — 2026-10-31 20:21 (UTC-3) — rama HU-10 en 4c5e101
+Comando: go test -count=1 -p 1 -v -run 'TestPostgresQuality|TestQuality_' ./src/metrics/
+Falla esperada: el adaptador PostgreSQLQualityStore (postgres_quality_store.go, T018) no existe.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/metrics [github.com/FrancoV20/seguimiento-y-medicion/src/metrics.test]
+src/metrics/postgres_quality_store_integration_test.go:28:9: undefined: PostgreSQLQualityStore
+src/metrics/postgres_quality_store_integration_test.go:68:38: undefined: NewPostgreSQLQualityStore
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/metrics [build failed]
+FAIL

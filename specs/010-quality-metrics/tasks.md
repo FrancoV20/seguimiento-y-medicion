@@ -96,7 +96,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 Crear las fixtures en `src/metrics/postgres_quality_store_integration_test.go`:
+- [x] T011 Crear las fixtures en `src/metrics/postgres_quality_store_integration_test.go`:
   - proyectos «Alfa» y «Beta»;
   - en «Alfa», Sprints 1 y 2 "Finalizado" y Sprint 3 "Activo";
   - historias del Sprint 1: de 3, 5, 8 y 2 Story Points, con "Hecho" las de 3 y 5 (2 de 4, 18 planificados y 8
@@ -116,29 +116,29 @@ Formato: `[ID] [P] [E#] descripción`
 
   Limpieza, en este orden: defectos, registro de cierre, asignaciones, `sprint_metrics`, historias, Sprints y
   proyectos.
-- [ ] T012 [P] [E1, E2, E3, E4, E5] Escribir `TestPostgresQuality_Historias` con un subtest por caso:
+- [x] T012 [P] [E1, E2, E3, E4, E5] Escribir `TestPostgresQuality_Historias` con un subtest por caso:
   - Sprint 2: 3 de 4 → "75.00";
   - Sprint sin "Hecho" → "0.00";
   - Sprint finalizado sin registro → "No disponible";
   - Sprint 1: 3, 5, 8 y 2 → 18 y 8;
   - Sprint 2: una sin Story Points → advertencia de 1 y 3 planificados.
-- [ ] T013 [P] [E6, E7, E8] Escribir `TestPostgresQuality_Defectos`:
+- [x] T013 [P] [E6, E7, E8] Escribir `TestPostgresQuality_Defectos`:
   - Sprint 2 → 3 detectados y 2 resueltos;
   - Sprint sin defectos → 0 y 0;
   - el reabierto cuenta como detectado en su Sprint y no como resuelto.
-- [ ] T014 [P] [E9] Escribir `TestPostgresQuality_OtroProyecto`:
+- [x] T014 [P] [E9] Escribir `TestPostgresQuality_OtroProyecto`:
   - un Sprint de «Alfa» pedido con el proyecto «Beta» → `ErrSprintNotFound`;
   - un defecto de «Beta» que apunta a un Sprint de «Alfa» no cuenta.
-- [ ] T015 [P] Escribir `TestPostgresQuality_SprintActivoEInexistente`:
+- [x] T015 [P] Escribir `TestPostgresQuality_SprintActivoEInexistente`:
   - el Sprint 3 activo devuelve solo su estado, y el servicio responde `ErrSprintNotFinished`;
   - el identificador 2147483647 → `ErrSprintNotFound`.
-- [ ] T016 [P] [E4] Escribir `TestQuality_CoherenciaConVelocidadHU07`: en el mismo Sprint, `PointsCompleted` es igual
+- [x] T016 [P] [E4] Escribir `TestQuality_CoherenciaConVelocidadHU07`: en el mismo Sprint, `PointsCompleted` es igual
   a `NewService(NewPostgreSQLMetricsStore(db)).CalculateMetrics(id).Velocity`. La prueba borra la fila que HU-07
   guarda en `sprint_metrics`.
 
   El Sprint es el de 3, 5, 8 y 2 Story Points, y sus historias "Hecho" tienen Story Points y horas no negativas.
   Así pasa `ValidateSprintClosure` de HU-07, que rechaza historias "Hecho" sin Story Points.
-- [ ] T017 Ejecutar T012–T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
+- [x] T017 Ejecutar T012–T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
   "Almacenamiento".
 
 ### Implementación (GREEN)
