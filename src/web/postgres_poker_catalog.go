@@ -48,8 +48,15 @@ SELECT v.round_id, v.value
  WHERE r.project_id = $1 AND r.status = 'Abierta' AND v.member_id = $2`
 
 // Rondas cerradas del proyecto, de la más recientemente cerrada a la más antigua (HU-05b).
+// HU-18 suma latest (no hay una ronda de la historia con número mayor, abierta o cerrada) e
+// in_finished_sprint (la historia está asignada a un Sprint 'Finalizado').
 const pokerClosedRoundsQuery = `
-SELECT r.id, r.story_id, us.title, r.round_number
+SELECT r.id, r.story_id, us.title, r.round_number,
+       NOT EXISTS (SELECT 1 FROM poker_rounds n
+                    WHERE n.story_id = r.story_id AND n.round_number > r.round_number) AS latest,
+       EXISTS (SELECT 1 FROM sprint_story_assignments a
+                 JOIN sprints s ON s.id = a.sprint_id
+                WHERE a.story_id = r.story_id AND s.status = 'Finalizado') AS in_finished_sprint
   FROM poker_rounds r
   JOIN user_stories us ON us.id = r.story_id
  WHERE r.project_id = $1 AND r.status = 'Cerrada'
@@ -142,7 +149,7 @@ func (c *PostgreSQLPokerCatalog) PokerBoard(ctx context.Context, projectID, memb
 	closedIndex := map[int64]int{}
 	if err := pokerEach(ctx, tx, pokerClosedRoundsQuery, []any{projectID}, func(rows *sql.Rows) error {
 		r := PokerClosedRoundView{Votes: []PokerRevealedVoteView{}}
-		if err := rows.Scan(&r.ID, &r.StoryID, &r.StoryTitle, &r.Number); err != nil {
+		if err := rows.Scan(&r.ID, &r.StoryID, &r.StoryTitle, &r.Number, &r.Latest, &r.InFinishedSprint); err != nil {
 			return err
 		}
 		closedIndex[r.ID] = len(board.ClosedRounds)

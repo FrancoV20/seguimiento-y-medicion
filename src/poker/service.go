@@ -50,3 +50,31 @@ func (s *Service) CloseRound(ctx context.Context, projectID, roundID, memberID i
 	}
 	return s.store.CloseRound(ctx, projectID, roundID)
 }
+
+// OpenNextRound abre la ronda siguiente de una historia desde una de sus rondas (HU-18), a nombre
+// del integrante. Un identificador 0 no llega al almacenamiento.
+func (s *Service) OpenNextRound(ctx context.Context, projectID, roundID, memberID int64) (OpenedRound, error) {
+	if roundID == 0 {
+		return OpenedRound{}, ErrRoundNotFound
+	}
+	if memberID == 0 {
+		return OpenedRound{}, ErrMemberRequired
+	}
+	return s.store.OpenNextRound(ctx, projectID, roundID, memberID)
+}
+
+// AgreeEstimate registra la estimación acordada desde una ronda (HU-18). El valor se valida
+// primero (422 antes que 404/409), como el voto; el integrante es obligatorio aunque no se guarda.
+func (s *Service) AgreeEstimate(ctx context.Context, projectID, roundID, memberID int64, rawValue string) (AgreedEstimate, error) {
+	value, err := ParseValue(rawValue)
+	if err != nil {
+		return AgreedEstimate{}, err
+	}
+	if roundID == 0 {
+		return AgreedEstimate{}, ErrRoundNotFound
+	}
+	if memberID == 0 {
+		return AgreedEstimate{}, ErrMemberRequired
+	}
+	return s.store.AgreeEstimate(ctx, projectID, roundID, value)
+}

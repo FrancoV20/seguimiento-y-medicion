@@ -203,3 +203,26 @@ Cada uno se confirma en T001; si HU-05b no está en `main`, HU-18 no empieza.
 ## Preguntas abiertas
 
 Ninguna. La única duda (historias de un Sprint finalizado) se respondió el 28/10 (ver "Clarifications" en `spec.md`).
+
+## Resultado de T001 (30/10/2026, sobre `main` en `b21a09d`)
+
+- **HU-05b está en `main`** (PR #55) con todos los nombres que usa HU-18: `Spread`, `VoteSpread`, `ErrNoVotes`,
+  `CheckClose`, `ClosedRound`, `Store.CloseRound`, `Service.CloseRound`, `PokerClosedRoundView`, `PokerRevealedVoteView`,
+  `PokerBoard.ClosedRounds`, `pokerClosedRoundsQuery`, `pokerClosedRoundPage` (con `Alert` y `Range`),
+  `PokerActions.CloseRound`, la ruta `/planning-poker/cerrar`, la sección "Rondas cerradas" con `data-ronda-cerrada`, y
+  en las pruebas `newAlfaFixture`, `waitForWaiters`, `newAlfaWebFixture`, `closeAt`, `roundRow`, `closedRow` y
+  `failingPokerStore`. Ningún nombre cambió.
+- **Pruebas de HU-05b que cuentan elementos**: ninguna se rompe con las acciones nuevas. `checkedValue` (HU-05a) solo
+  cuenta radios con `checked` (los de la estimación salen sin marcar); `TestHU05b_BotonCerrarRonda` cuenta formularios
+  `/planning-poker/cerrar`, no los nuevos; las que exigen que «Pagos» no tenga `alert-warning` siguen bien porque
+  «Pagos» no tiene divergencia y no muestra el recordatorio.
+- **No existen** `OpenNextRound`, `AgreeEstimate`, `CheckNextRound`, `CheckAgree`, `StoryRound`, `AgreedEstimate`,
+  `ErrNotLatestRound`, `ErrRoundStillOpen`, `/planning-poker/nueva-ronda` ni `/planning-poker/estimacion`. Hay un
+  `ErrStoryInFinishedSprint` de HU-17 en `src/backlog`: es de otro paquete y no choca con el de `src/poker`.
+- **HU-15 ya está integrada** (PR #59, migración `014_sprint_story_results`). Su cierre (`PostgreSQLSprintCloser`)
+  bloquea el Sprint `FOR UPDATE` y después las historias `FOR UPDATE`, deja las "Hecho" con su asignación y su
+  `active_sprint_id` en el Sprint finalizado, y a las demás les borra la asignación y las devuelve a "Pendiente". HU-17
+  (PR #56) aplica la misma regla de "Sprint finalizado" (asignación a un Sprint `'Finalizado'`). HU-18 reutiliza ese
+  criterio y el orden Sprint → historia. Como `sprint_story_results` ya existe, el ayudante de prueba
+  `closeSprintLikeHU15` también la escribe, igual que HU-15.
+- Las migraciones de `main` llegan hasta la 014; HU-18 sigue sin migración.

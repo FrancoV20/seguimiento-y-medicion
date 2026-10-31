@@ -41,6 +41,12 @@ func pokerOutcomeFor(err error) (status int, text string) {
 		return http.StatusConflict, MsgPokerStoryAlreadyRounded
 	case errors.Is(err, poker.ErrNoVotes):
 		return http.StatusConflict, MsgPokerNoVotes
+	case errors.Is(err, poker.ErrNotLatestRound): // HU-18
+		return http.StatusConflict, MsgPokerNotLatestRound
+	case errors.Is(err, poker.ErrRoundStillOpen): // HU-18
+		return http.StatusConflict, MsgPokerRoundStillOpen
+	case errors.Is(err, poker.ErrStoryInFinishedSprint): // HU-18
+		return http.StatusConflict, MsgPokerStoryInFinishedSprint
 	default:
 		return http.StatusInternalServerError, MsgOperationFailed
 	}

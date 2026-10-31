@@ -54,6 +54,25 @@
       {{end}}
     </ul>
     {{with .Alert}}{{template "alert" .}}{{else}}{{with .Range}}<p class="poker-range">{{.}}</p>{{end}}{{end}}
+    {{if .Actions}}
+    <div class="poker-actions">
+      <form method="post" action="/planning-poker/nueva-ronda">
+        <input type="hidden" name="ronda" value="{{.ID}}">
+        <button type="submit"{{if .Locked}} disabled{{end}}>Nueva ronda</button>
+      </form>
+      <form method="post" action="/planning-poker/estimacion">
+        <input type="hidden" name="ronda" value="{{.ID}}">
+        {{with .Reminder}}{{template "alert" .}}{{end}}
+        <fieldset class="poker-estimate"{{if .Locked}} disabled{{end}}>
+          <legend>Estimación acordada</legend>
+          {{range $.Data.Series}}<label><input type="radio" name="valor" value="{{.}}"> {{.}}</label>
+          {{end}}
+        </fieldset>
+        <button type="submit"{{if .Locked}} disabled{{end}}>Registrar estimación</button>
+      </form>
+      {{if .Locked}}<p class="poker-locked">{{$.Data.FinishedSprint}}</p>{{end}}
+    </div>
+    {{end}}
   </section>
   {{end}}
 </section>

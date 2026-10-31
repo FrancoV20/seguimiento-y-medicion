@@ -14,6 +14,8 @@ type PokerActions interface {
 	OpenRound(ctx context.Context, projectID, storyID, memberID int64) (poker.OpenedRound, error)
 	Vote(ctx context.Context, projectID, roundID, memberID int64, rawValue string) (poker.VoteOutcome, error)
 	CloseRound(ctx context.Context, projectID, roundID, memberID int64) (poker.ClosedRound, error)
+	OpenNextRound(ctx context.Context, projectID, roundID, memberID int64) (poker.OpenedRound, error)                     // HU-18
+	AgreeEstimate(ctx context.Context, projectID, roundID, memberID int64, rawValue string) (poker.AgreedEstimate, error) // HU-18
 }
 
 var _ PokerActions = (*poker.Service)(nil)
@@ -32,11 +34,16 @@ type pokerRoundPage struct {
 }
 
 // pokerClosedRoundPage es una ronda cerrada lista para la plantilla (HU-05b): con divergencia,
-// Alert; sin divergencia, Range; sin votos, ninguno de los dos.
+// Alert; sin divergencia, Range; sin votos, ninguno de los dos. HU-18: Actions si es la última
+// ronda de su historia, Locked si la historia está en un Sprint finalizado y Reminder si además
+// tuvo divergencia.
 type pokerClosedRoundPage struct {
 	PokerClosedRoundView
-	Alert *Flash
-	Range string
+	Alert    *Flash
+	Range    string
+	Actions  bool
+	Locked   bool
+	Reminder *Flash
 }
 
 // pokerPageData son los datos de poker.html.
@@ -51,6 +58,7 @@ type pokerPageData struct {
 	Voted          string
 	NotVoted       string
 	DidNotVote     string
+	FinishedSprint string // HU-18
 }
 
 // RegisterPlanningPoker registra la sección "Planning Poker" (HU-05a). Exige proyecto activo e
@@ -64,6 +72,9 @@ func RegisterPlanningPoker(s *Server, actions PokerActions, catalog PokerCatalog
 			"POST " + pathPoker + "/abrir":  http.HandlerFunc(h.open),
 			"POST " + pathPoker + "/votar":  http.HandlerFunc(h.vote),
 			"POST " + pathPoker + "/cerrar": http.HandlerFunc(h.close),
+			// HU-18
+			"POST " + pathPoker + "/nueva-ronda": http.HandlerFunc(h.nextRound),
+			"POST " + pathPoker + "/estimacion":  http.HandlerFunc(h.agree),
 		},
 	)
 }
@@ -116,6 +127,31 @@ func (h *pokerHandlers) close(w http.ResponseWriter, r *http.Request) {
 	h.done(w, r, pokerRoundClosedMessage(closed.StoryTitle))
 }
 
+// nextRound abre la ronda siguiente de la historia de una ronda cerrada (HU-18), a nombre del
+// integrante identificado; un campo "integrante" enviado se ignora.
+func (h *pokerHandlers) nextRound(w http.ResponseWriter, r *http.Request) {
+	ac := ActiveContextFrom(r.Context())
+	_, round, _ := pokerFormIDs(r)
+	opened, err := h.actions.OpenNextRound(r.Context(), ac.ProjectID, round, ac.MemberID)
+	if err != nil {
+		h.reject(w, r, err)
+		return
+	}
+	h.done(w, r, pokerNextRoundOpenedMessage(opened.Number, opened.StoryTitle))
+}
+
+// agree registra la estimación acordada desde la última ronda cerrada de una historia (HU-18).
+func (h *pokerHandlers) agree(w http.ResponseWriter, r *http.Request) {
+	ac := ActiveContextFrom(r.Context())
+	_, round, value := pokerFormIDs(r)
+	agreed, err := h.actions.AgreeEstimate(r.Context(), ac.ProjectID, round, ac.MemberID, value)
+	if err != nil {
+		h.reject(w, r, err)
+		return
+	}
+	h.done(w, r, pokerEstimateRegisteredMessage(agreed.StoryTitle, agreed.StoryPoints))
+}
+
 // done deja el mensaje de éxito y vuelve a la pantalla con 303, así recargar no reenvía el
 // formulario (E2).
 func (h *pokerHandlers) done(w http.ResponseWriter, r *http.Request, message string) {
@@ -160,6 +196,7 @@ func (h *pokerHandlers) render(w http.ResponseWriter, r *http.Request, status in
 			Board: board, Rounds: rounds, ClosedRounds: closed, Series: poker.Series,
 			NoStories: MsgPokerNoStories, NoOpenRounds: MsgPokerNoOpenRounds, NoClosedRounds: MsgPokerNoClosedRounds,
 			Voted: LabelPokerVoted, NotVoted: LabelPokerNotVoted, DidNotVote: LabelPokerDidNotVote,
+			FinishedSprint: LabelPokerFinishedSprint,
 		},
 	})
 }
@@ -168,7 +205,7 @@ func (h *pokerHandlers) render(w http.ResponseWriter, r *http.Request, status in
 // Spread falla (una ronda cerrada sin votos, solo posible con datos externos), no hay rango ni
 // alerta y la pantalla se muestra igual.
 func pokerClosedPage(round PokerClosedRoundView) pokerClosedRoundPage {
-	page := pokerClosedRoundPage{PokerClosedRoundView: round}
+	page := pokerClosedRoundPage{PokerClosedRoundView: round, Actions: round.Latest, Locked: round.InFinishedSprint}
 	values := make([]int, 0, len(round.Votes))
 	for _, v := range round.Votes {
 		if v.Value != nil {
@@ -181,6 +218,9 @@ func pokerClosedPage(round PokerClosedRoundView) pokerClosedRoundPage {
 		// sin votos emitidos: ni rango ni alerta
 	case spread.Divergent:
 		page.Alert = &Flash{Kind: FlashWarning, Text: pokerDivergenceMessage(spread.Low, spread.High)}
+		if round.Latest {
+			page.Reminder = &Flash{Kind: FlashWarning, Text: MsgPokerDivergenceReminder}
+		}
 	default:
 		page.Range = pokerNoDivergenceMessage(spread.Low, spread.High)
 	}
