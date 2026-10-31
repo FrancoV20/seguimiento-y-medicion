@@ -119,7 +119,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [x] T055 [P] No usar `gofmt -w` sobre archivos existentes (CRLF); archivos nuevos formateados; `go vet ./...` limpio; pipeline de GitHub Actions en verde (vet y gofmt verificados localmente; el pipeline se confirma al abrir el PR)
 - [x] T056 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde
 - [x] T057 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` verificando al menos 80% en `src/defect`
-- [ ] T058 Verificar a mano los 9 escenarios con la aplicación en ejecución (`quickstart.md`)
+- [x] T058 Verificar a mano los 9 escenarios con la aplicación en ejecución (`quickstart.md`)
 - [x] T059 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de usuario con las acciones de la pantalla "Defectos"
 - [ ] T060 Abrir el Pull Request desde `HU-19` citando HU-19, con evidencias y la lista de archivos editados de HU-06
 - [ ] T061 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
