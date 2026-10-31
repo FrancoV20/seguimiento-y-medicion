@@ -64,12 +64,12 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T032 Crear los textos de mensajes en `src/web/defects_resolution_messages.go`
-- [ ] T033 Implementar el método `resolve` en `src/web/defects_resolution_handlers.go`: lee `defecto` con `parseID`, usa el proyecto de `ActiveContextFrom`, llama al servicio; éxito con `SetFlash` y `RedirectSeeOther` a `/defectos`; los errores 409 (`ErrNoActiveSprint`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`) vuelven a mostrar la pantalla con `PageStatus` y `Flash`
-- [ ] T034 Editar `src/web/defects_handlers.go`: agregar el servicio de resolución al manejador, `RegisterDefectsWithResolution` (`RegisterDefects` conserva su firma) y la ruta `POST /defectos/resolver`
-- [ ] T035 Editar `src/web/templates/defects.html`: formulario con botón "Resolver" y campo oculto `defecto` en cada defecto "Abierto"
-- [ ] T036 Editar `src/cmd/server/main.go` para construir `ResolutionService` y registrar con `RegisterDefectsWithResolution`
-- [ ] T037 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo
+- [x] T032 Crear los textos de mensajes en `src/web/defects_resolution_messages.go`
+- [x] T033 Implementar el método `resolve` en `src/web/defects_resolution_handlers.go`: lee `defecto` con `parseID`, usa el proyecto de `ActiveContextFrom`, llama al servicio; éxito con `SetFlash` y `RedirectSeeOther` a `/defectos`; los errores 409 (`ErrNoActiveSprint`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`) vuelven a mostrar la pantalla con `PageStatus` y `Flash`
+- [x] T034 Editar `src/web/defects_handlers.go`: agregar el servicio de resolución al manejador, `RegisterDefectsWithResolution` (`RegisterDefects` conserva su firma) y la ruta `POST /defectos/resolver`
+- [x] T035 Editar `src/web/templates/defects.html`: formulario con botón "Resolver" y campo oculto `defecto` en cada defecto "Abierto"
+- [x] T036 Editar `src/cmd/server/main.go` para construir `ResolutionService` y registrar con `RegisterDefectsWithResolution`
+- [x] T037 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo
 
 **Punto de control**: resolver funciona de punta a punta; HU-10 ya puede contar defectos resueltos.
 
