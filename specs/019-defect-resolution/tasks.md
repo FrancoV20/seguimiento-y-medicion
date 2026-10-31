@@ -124,7 +124,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [ ] T060 Abrir el Pull Request desde `HU-19` citando HU-19, con evidencias y la lista de archivos editados de HU-06
 - [ ] T061 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho"
 - [ ] T062 Avisar a quien tenga HU-10 que HU-19 está en `main`
-- [ ] T063 Corregir el hallazgo de la verificación manual (T058): al reabrir sin Sprint activo, el aviso de HU-06 "No hay un Sprint activo; no se puede registrar un defecto" tapa el mensaje "Defecto reabierto" (FR-011). RED: ampliar `TestHU19_Reabrir/sin_Sprint_activo` para exigir el mensaje una sola vez; GREEN: en `list()` de `defects_handlers.go`, si hay un mensaje pendiente se muestra ese en lugar del aviso (que vuelve al recargar), conservando el 409
+- [x] T063 Corregir el hallazgo de la verificación manual (T058): al reabrir sin Sprint activo, el aviso de HU-06 "No hay un Sprint activo; no se puede registrar un defecto" tapa el mensaje "Defecto reabierto" (FR-011). RED: ampliar `TestHU19_Reabrir/sin_Sprint_activo` para exigir el mensaje una sola vez; GREEN: en `list()` de `defects_handlers.go`, si hay un mensaje pendiente se muestra ese en lugar del aviso (que vuelve al recargar), conservando el 409
 
 ## Dependencias y orden de ejecución
 

@@ -82,10 +82,13 @@ func (h *defectsHandlers) list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !data.HasActiveSprint {
-		h.renderPage(w, r, http.StatusConflict, data, NewFormView(), &Flash{
-			Kind: FlashError,
-			Text: MsgDefectNoSprint,
-		})
+		// Si hay un mensaje pendiente (por ejemplo, "Defecto reabierto" de HU-19), se muestra ese y
+		// el aviso de falta de Sprint activo vuelve al recargar (T063).
+		var noSprint *Flash
+		if _, err := r.Cookie(CookieFlash); err != nil {
+			noSprint = &Flash{Kind: FlashError, Text: MsgDefectNoSprint}
+		}
+		h.renderPage(w, r, http.StatusConflict, data, NewFormView(), noSprint)
 		return
 	}
 	h.renderPage(w, r, http.StatusOK, data, NewFormView(), nil)
