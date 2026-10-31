@@ -41,6 +41,7 @@ func RegisterDefectsWithResolution(s *Server, service *defect.Service, resolutio
 	}
 	if resolution != nil {
 		routes["POST /defectos/resolver"] = http.HandlerFunc(h.resolve)
+		routes["POST /defectos/reabrir"] = http.HandlerFunc(h.reopen)
 	}
 	return s.Register(Section{Name: "Defectos", Path: "/defectos", RequiresProject: true}, routes)
 }

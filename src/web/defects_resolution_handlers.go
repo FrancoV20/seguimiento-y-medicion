@@ -30,6 +30,27 @@ func (h *defectsHandlers) resolve(w http.ResponseWriter, r *http.Request) {
 	RedirectSeeOther(w, r, "/defectos")
 }
 
+// reopen atiende POST /defectos/reabrir: vuelve a abrir el defecto del campo "defecto" del
+// proyecto activo. No necesita Sprint activo.
+func (h *defectsHandlers) reopen(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		h.server.renderer.Fail(w, r, fmt.Errorf("leer formulario de reapertura: %w", err))
+		return
+	}
+	ac := ActiveContextFrom(r.Context())
+	if ac == nil || ac.ProjectID <= 0 {
+		h.server.renderer.Fail(w, r, errors.New("falta el contexto del proyecto activo"))
+		return
+	}
+	defectID := parseID(r.PostForm.Get(DefectIDField))
+	if err := h.resolution.Reopen(r.Context(), ac.ProjectID, defectID); err != nil {
+		h.renderResolutionError(w, r, ac.ProjectID, err)
+		return
+	}
+	SetFlash(w, r, FlashSuccess, MsgDefectReopened)
+	RedirectSeeOther(w, r, "/defectos")
+}
+
 // resolutionErrorResponse traduce un error de dominio de HU-19 a su respuesta y mensaje.
 func resolutionErrorResponse(err error) (int, string, bool) {
 	switch {
@@ -39,6 +60,8 @@ func resolutionErrorResponse(err error) (int, string, bool) {
 		return http.StatusConflict, MsgDefectResolutionBeforeDetection, true
 	case errors.Is(err, defect.ErrAlreadyResolved):
 		return http.StatusConflict, MsgDefectAlreadyResolved, true
+	case errors.Is(err, defect.ErrAlreadyOpen):
+		return http.StatusConflict, MsgDefectAlreadyOpen, true
 	default:
 		return 0, "", false
 	}

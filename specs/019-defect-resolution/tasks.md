@@ -88,10 +88,10 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T042 Implementar el método `reopen` en `src/web/defects_resolution_handlers.go` (éxito y 409 `ErrAlreadyOpen`)
-- [ ] T043 Editar `src/web/defects_handlers.go`: agregar la ruta `POST /defectos/reabrir`
-- [ ] T044 Editar `src/web/templates/defects.html`: botón "Reabrir" en cada defecto "Resuelto" (nunca junto a "Resolver")
-- [ ] T045 Ejecutar T038–T040 en verde
+- [x] T042 Implementar el método `reopen` en `src/web/defects_resolution_handlers.go` (éxito y 409 `ErrAlreadyOpen`)
+- [x] T043 Editar `src/web/defects_handlers.go`: agregar la ruta `POST /defectos/reabrir`
+- [x] T044 Editar `src/web/templates/defects.html`: botón "Reabrir" en cada defecto "Resuelto" (nunca junto a "Resolver")
+- [x] T045 Ejecutar T038–T040 en verde
 
 ## Fase 5: Bloque C – Errores y lista (escenarios 5, 6 y 9)
 

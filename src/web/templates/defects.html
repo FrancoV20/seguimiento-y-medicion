@@ -67,6 +67,11 @@
             <input type="hidden" name="defecto" value="{{.ID}}">
             <button type="submit">Resolver</button>
           </form>
+          {{else if eq .Status "Resuelto"}}
+          <form method="post" action="/defectos/reabrir">
+            <input type="hidden" name="defecto" value="{{.ID}}">
+            <button type="submit">Reabrir</button>
+          </form>
           {{end}}
         </td>
         {{end}}
