@@ -27,9 +27,10 @@ func RegisterMetrics(s *Server, catalog MetricsCatalog, source MetricsSource) er
 	)
 }
 
-// show atiende GET /metricas: lee los Sprints finalizados del proyecto del contexto, pide a HU-07
-// las métricas del más reciente y arma la vista. Lee todo antes de escribir: ante cualquier falla
-// muestra la página de error de HU-20a, nunca métricas incompletas.
+// show atiende GET /metricas[?sprint=ID]: lee los Sprints finalizados y el Sprint activo del
+// proyecto del contexto, elige el Sprint (un sprint inválido, activo o ajeno se ignora), pide a HU-07
+// sus métricas y arma la vista. Sin Sprints finalizados no le pide nada a HU-07. Lee todo antes de
+// escribir: ante cualquier falla muestra la página de error de HU-20a, nunca métricas incompletas.
 func (h *metricsHandlers) show(w http.ResponseWriter, r *http.Request) {
 	projectID := projectIDFrom(r)
 	sprints, err := h.catalog.FinishedSprints(r.Context(), projectID)
@@ -37,9 +38,14 @@ func (h *metricsHandlers) show(w http.ResponseWriter, r *http.Request) {
 		h.rd.Fail(w, r, err)
 		return
 	}
-	in := metricsViewInput{Sprints: sprints}
-	if len(sprints) > 0 {
-		in.Selected, in.HasSelected = sprints[0], true
+	activeNumber, hasActive, err := h.catalog.ActiveSprintNumber(r.Context(), projectID)
+	if err != nil {
+		h.rd.Fail(w, r, err)
+		return
+	}
+	in := metricsViewInput{Sprints: sprints, ActiveNumber: activeNumber, HasActive: hasActive}
+	in.Selected, in.HasSelected = selectMetricsSprint(sprints, r.URL.Query().Get("sprint"))
+	if in.HasSelected {
 		in.Metrics, err = h.source.Metrics(r.Context(), projectID, in.Selected.ID)
 		if err != nil {
 			h.rd.Fail(w, r, err)

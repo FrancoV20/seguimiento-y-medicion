@@ -1,6 +1,18 @@
 {{define "content"}}
 <h1>Métricas del Sprint</h1>
 {{with .Data}}
+{{if .ActiveHint}}<p class="muted" role="status">{{.ActiveHint}}</p>{{end}}
+{{if .EmptyMessage}}
+<p class="muted">{{.EmptyMessage}}</p>
+{{else}}
+<nav class="metrics-sprints" aria-label="Sprints finalizados">
+  <h2>Sprints finalizados</h2>
+  <ul id="sprints-finalizados">
+    {{- range .Sprints}}
+    <li><a href="?sprint={{.ID}}"{{if .Selected}} aria-current="true"{{end}}>{{.Label}}</a> · {{.Goal}} · <span class="muted">{{.Dates}}</span></li>
+    {{- end}}
+  </ul>
+</nav>
 {{if .HasSelected}}
 <section id="metricas-sprint" class="metrics-sprint" aria-labelledby="metricas-sprint-titulo">
   <h2 id="metricas-sprint-titulo">{{.SelectedLabel}}</h2>
@@ -15,6 +27,7 @@
   </dl>
   <p class="muted">Fórmula: {{.DeviationFormula}}. {{.DeviationNote}}</p>
 </section>
+{{end}}
 {{end}}
 {{end}}
 {{end}}

@@ -81,8 +81,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Completar `metrics.html` con la lista de Sprints (enlace `?sprint=ID` y el elegido marcado), el mensaje de sin Sprints y el aviso del Sprint en curso en `src/web/templates/metrics.html`
-- [ ] T026 [US2] Completar el armado de la vista y el handler en `src/web/metrics_view.go` y `src/web/metrics_handlers.go` para la selección, el mensaje vacío y el aviso del Sprint activo
+- [x] T025 [US2] Completar `metrics.html` con la lista de Sprints (enlace `?sprint=ID` y el elegido marcado), el mensaje de sin Sprints y el aviso del Sprint en curso en `src/web/templates/metrics.html`
+- [x] T026 [US2] Completar el armado de la vista y el handler en `src/web/metrics_view.go` y `src/web/metrics_handlers.go` para la selección, el mensaje vacío y el aviso del Sprint activo
 
 **Checkpoint**: US2 permite recorrer los Sprints finalizados y explica los casos vacíos.
 
