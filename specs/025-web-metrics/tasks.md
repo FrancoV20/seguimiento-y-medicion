@@ -29,7 +29,7 @@
 
 **Purpose**: Catálogo de solo lectura, adaptador de HU-07 y formato de la vista, compartidos por las historias.
 
-- [ ] T005 [P] Definir `FinishedSprint` y la interfaz `MetricsCatalog` con `FinishedSprints` y `ActiveSprintNumber` en `src/web/metrics_catalog.go`
+- [x] T005 [P] Definir `FinishedSprint` y la interfaz `MetricsCatalog` con `FinishedSprints` y `ActiveSprintNumber` en `src/web/metrics_catalog.go`
 - [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLMetricsCatalog` con fixtures propias (dos proyectos; Sprints finalizados 1, 2 y 3 y uno activo en el primero; un Sprint finalizado en el segundo): solo Sprints finalizados del proyecto, más reciente primero, el activo no figura y su número se informa, otro proyecto no se mezcla y proyecto sin Sprints, en `src/web/postgres_metrics_catalog_integration_test.go`
 - [ ] T007 Implementar `PostgreSQLMetricsCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_metrics_catalog.go`
 - [ ] T008 [P] Escribir la prueba del adaptador sobre el servicio real de HU-07 y PostgreSQL real, con Sprints cerrados por el servicio de HU-15: velocidad de las historias "Hecho"; desviación con valores conocidos (10 horas estimadas y 12 reales dan 20 %); sin horas estimadas; cálculo parcial con X de Y; Sprint sin historias completadas con velocidad cero; las historias devueltas no cuentan, en `src/web/metrics_source_test.go`
