@@ -109,9 +109,9 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T051 Completar en `defects_resolution_handlers.go` el mapeo de `ErrDefectNotFound` a 404 y de cualquier otro error a 500 con `MsgOperationFailed`, con la pantalla y el `Flash` de error
-- [ ] T052 Ajustar `defects.html` si hace falta para que cada defecto muestre una sola acción según `DefectRow.Status`
-- [ ] T053 Ejecutar T046–T049 en verde
+- [x] T051 Completar en `defects_resolution_handlers.go` el mapeo de `ErrDefectNotFound` a 404 y de cualquier otro error a 500 con `MsgOperationFailed`, con la pantalla y el `Flash` de error
+- [x] T052 Ajustar `defects.html` si hace falta para que cada defecto muestre una sola acción según `DefectRow.Status` (no hizo falta: T035 y T044 ya muestran una sola acción; T048 lo confirma)
+- [x] T053 Ejecutar T046–T049 en verde
 
 ## Fase 6: Cierre
 

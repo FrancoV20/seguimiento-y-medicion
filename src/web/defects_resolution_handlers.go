@@ -51,28 +51,33 @@ func (h *defectsHandlers) reopen(w http.ResponseWriter, r *http.Request) {
 	RedirectSeeOther(w, r, "/defectos")
 }
 
-// resolutionErrorResponse traduce un error de dominio de HU-19 a su respuesta y mensaje.
-func resolutionErrorResponse(err error) (int, string, bool) {
+// resolutionErrorResponse traduce un error de HU-19 a su respuesta y mensaje: 409 para las reglas y
+// los estados ya alcanzados, 404 para un defecto inexistente (o de otro proyecto) y 500 con el
+// mensaje genérico para cualquier otro error.
+func resolutionErrorResponse(err error) (int, string) {
 	switch {
 	case errors.Is(err, defect.ErrNoActiveSprint):
-		return http.StatusConflict, MsgDefectResolveNoSprint, true
+		return http.StatusConflict, MsgDefectResolveNoSprint
 	case errors.Is(err, defect.ErrResolutionBeforeDetection):
-		return http.StatusConflict, MsgDefectResolutionBeforeDetection, true
+		return http.StatusConflict, MsgDefectResolutionBeforeDetection
 	case errors.Is(err, defect.ErrAlreadyResolved):
-		return http.StatusConflict, MsgDefectAlreadyResolved, true
+		return http.StatusConflict, MsgDefectAlreadyResolved
 	case errors.Is(err, defect.ErrAlreadyOpen):
-		return http.StatusConflict, MsgDefectAlreadyOpen, true
+		return http.StatusConflict, MsgDefectAlreadyOpen
+	case errors.Is(err, defect.ErrDefectNotFound):
+		return http.StatusNotFound, MsgDefectNotFound
 	default:
-		return 0, "", false
+		return http.StatusInternalServerError, MsgOperationFailed
 	}
 }
 
-// renderResolutionError vuelve a mostrar la pantalla de defectos con el mensaje del error.
+// renderResolutionError vuelve a mostrar la pantalla de defectos con el mensaje del error. El
+// detalle técnico de una falla de guardado solo va al registro del servidor.
 func (h *defectsHandlers) renderResolutionError(w http.ResponseWriter, r *http.Request, projectID int64, err error) {
-	status, message, ok := resolutionErrorResponse(err)
-	if !ok {
-		h.server.renderer.Fail(w, r, err)
-		return
+	status, message := resolutionErrorResponse(err)
+	if status == http.StatusInternalServerError {
+		h.server.renderer.logger.Error("no se pudo resolver o reabrir el defecto",
+			"metodo", r.Method, "ruta", r.URL.Path, "detalle", err.Error())
 	}
 	data, pageErr := h.pageData(r, projectID)
 	if pageErr != nil {
