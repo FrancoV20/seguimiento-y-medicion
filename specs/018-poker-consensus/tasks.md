@@ -99,7 +99,7 @@ concurrencia.
 
 ### Implementación (GREEN)
 
-- [ ] T010 En un solo commit: `OpenNextRound(ctx, projectID, roundID, memberID int64) (OpenedRound, error)` en `Store`
+- [x] T010 En un solo commit: `OpenNextRound(ctx, projectID, roundID, memberID int64) (OpenedRound, error)` en `Store`
   (`src/poker/store.go`); `Service.OpenNextRound` en `src/poker/service.go` (validaciones de `data-model.md`);
   `PostgreSQLStore.OpenNextRound` en `src/poker/postgres_store.go` con la transacción de `data-model.md` (ronda base
   `FOR SHARE`; asignación; Sprint `FOR SHARE` si hay; historia `FOR NO KEY UPDATE OF us` con relectura de la asignación
@@ -107,7 +107,7 @@ concurrencia.
   `23505` de `uq_poker_rounds_one_open_per_story` → `ErrRoundAlreadyOpen` y de `uq_poker_rounds_story_number` →
   `ErrNotLatestRound`), con ayudantes `storySprint` y `lockStory` que reutiliza T015; `fakeStore` y `failingPokerStore`
   (`src/web/poker_handlers_test.go`, falla con `errPokerStoreInternal`) con el método nuevo.
-- [ ] T011 Ejecutar T008 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a y HU-05b
+- [x] T011 Ejecutar T008 en verde y `go test -count=1 -p 1 ./src/poker/... ./src/web/...` completo (HU-05a y HU-05b
   sin cambios).
 
 ## Fase 4: Bloque Estimación acordada (dominio y almacenamiento)

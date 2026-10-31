@@ -50,3 +50,15 @@ func (s *Service) CloseRound(ctx context.Context, projectID, roundID, memberID i
 	}
 	return s.store.CloseRound(ctx, projectID, roundID)
 }
+
+// OpenNextRound abre la ronda siguiente de una historia desde una de sus rondas (HU-18), a nombre
+// del integrante. Un identificador 0 no llega al almacenamiento.
+func (s *Service) OpenNextRound(ctx context.Context, projectID, roundID, memberID int64) (OpenedRound, error) {
+	if roundID == 0 {
+		return OpenedRound{}, ErrRoundNotFound
+	}
+	if memberID == 0 {
+		return OpenedRound{}, ErrMemberRequired
+	}
+	return s.store.OpenNextRound(ctx, projectID, roundID, memberID)
+}
