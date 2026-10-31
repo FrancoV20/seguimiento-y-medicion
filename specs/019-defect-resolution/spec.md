@@ -1,7 +1,7 @@
 # Especificación: HU-19 – Resolver y reabrir defectos
 
 **Rama**: HU-19
-**Estado**: Aprobada por el equipo (sin Sprint activo se bloquea – 22/10/2026)
+**Estado**: Implementada (pendiente de revisión en el Pull Request). Aprobada por el equipo el 22/10/2026 (sin Sprint activo se bloquea)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-04 / FIX-HU-04, HU-20a, HU-20b
 **Habilita**: HU-10, HU-08, HU-09
@@ -131,7 +131,9 @@ Los 9 escenarios del Issue HU-19 (texto idéntico):
   exitosa y otra con 409.
 - **SC-008**: Cada escenario tiene una prueba que falló antes del código (evidencia
   RED) y pasa después (evidencia GREEN), y la cobertura de `src/defect` queda en
-  `cobertura.txt` (al menos 80%, igual que HU-06).
+  `cobertura.txt` (al menos 80%, igual que HU-06). Excepción documentada: la parte de acciones de
+  la lista del escenario 9 se implementó en T035 y T044, antes de escribir T048, que por eso es una
+  prueba de caracterización (pasa en la evidencia RED del Bloque C).
 
 ## Supuestos y decisiones
 

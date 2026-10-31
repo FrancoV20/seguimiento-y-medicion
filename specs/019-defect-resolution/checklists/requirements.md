@@ -17,4 +17,4 @@
 - [x] Los nombres tomados de `specs/006-defects` están marcados para verificar en T001.
 - [x] Las consecuencias de reabrir sobre HU-10 están documentadas.
 - [x] Estimación sugerida registrada: 3 SP (a confirmar en Planning Poker).
-- [ ] Aceptada por el equipo (completar al subir el Issue).
+- [x] Aceptada por el equipo (22/10/2026, decisión sobre el escenario 2).
