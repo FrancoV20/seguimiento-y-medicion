@@ -2,6 +2,8 @@ package web
 
 import (
 	"context"
+	"database/sql/driver"
+	"errors"
 	"fmt"
 	"html"
 	"net/http"
@@ -473,4 +475,223 @@ func TestMetricsHandler_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo(t *te
 	if n := counter.calls.Load(); n != 1 {
 		t.Errorf("se pidieron %d cálculos a HU-07; se esperaba solo el del Sprint elegido", n)
 	}
+}
+
+// metricsInternalDetail simula el detalle técnico de una falla: no debe llegar al navegador (FR-012).
+const metricsInternalDetail = "SELECT id FROM sprints WHERE project_id = $1: clave=sym_pass ruta=D:\\secreto"
+
+// failingMetricsCatalog falla en la lectura indicada y delega el resto en el catálogo real.
+type failingMetricsCatalog struct {
+	MetricsCatalog
+	failFinished, failActive bool
+	err                      error
+}
+
+func (c failingMetricsCatalog) FinishedSprints(ctx context.Context, projectID int64) ([]FinishedSprint, error) {
+	if c.failFinished {
+		return nil, c.err
+	}
+	return c.MetricsCatalog.FinishedSprints(ctx, projectID)
+}
+
+func (c failingMetricsCatalog) ActiveSprintNumber(ctx context.Context, projectID int64) (int64, bool, error) {
+	if c.failActive {
+		return 0, false, c.err
+	}
+	return c.MetricsCatalog.ActiveSprintNumber(ctx, projectID)
+}
+
+// failingMetricsSource simula una falla de cálculo de HU-07.
+type failingMetricsSource struct{ err error }
+
+func (s failingMetricsSource) Metrics(context.Context, int64, int64) (SprintMetrics, error) {
+	return SprintMetrics{}, s.err
+}
+
+// assertMetricsErrorPage verifica la página de error de HU-20a: el código, el título y el mensaje
+// esperados, sin métricas ni lista a medias y sin detalles internos.
+func assertMetricsErrorPage(t *testing.T, resp *http.Response, body string, status int, title, message string) {
+	t.Helper()
+	if resp.StatusCode != status {
+		t.Fatalf("GET /metricas = %d; se esperaba %d", resp.StatusCode, status)
+	}
+	assertContainsAll(t, "la página de error", body, title, message, LinkBackHome)
+	assertContainsNone(t, "la página de error", body,
+		`id="metricas-sprint"`, `id="sprints-finalizados"`, "Story Points", MsgMetricsNoSprints,
+		"SELECT", "sprints WHERE", "sym_pass", "secreto", "no implementado")
+}
+
+// T031 (FR-011, FR-012): una falla de lectura del catálogo muestra la página de error de HU-20a.
+func TestMetricsHandler_FallaDeLecturaDelCatalogoMuestraLaPaginaDeError(t *testing.T) {
+	casos := []struct {
+		name                     string
+		failFinished, failActive bool
+		err                      error
+		status                   int
+		title, message           string
+	}{
+		{"lista de Sprints finalizados", true, false, errors.New(metricsInternalDetail),
+			http.StatusInternalServerError, TitleInternal, MsgInternal},
+		{"número del Sprint activo", false, true, errors.New(metricsInternalDetail),
+			http.StatusInternalServerError, TitleInternal, MsgInternal},
+		{"base no disponible", true, false, fmt.Errorf("%s: %w", metricsInternalDetail, driver.ErrBadConn),
+			http.StatusServiceUnavailable, TitleUnavailable, MsgUnavailable},
+	}
+	for _, c := range casos {
+		t.Run(c.name, func(t *testing.T) {
+			app := newMetricsHandlerAppWith(t, func(real MetricsCatalog) MetricsCatalog {
+				return failingMetricsCatalog{MetricsCatalog: real, failFinished: c.failFinished, failActive: c.failActive, err: c.err}
+			}, nil)
+			// Dado un proyecto con un Sprint finalizado con métricas.
+			f := newMetricsProject(t, app.db, "falla de catálogo")
+			metricsThreeSprints(t, f, true)
+
+			// Cuando la lectura falla al abrir la pantalla.
+			resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+
+			// Entonces se ve la página de error y no una pantalla incompleta.
+			assertMetricsErrorPage(t, resp, body, c.status, c.title, c.message)
+		})
+	}
+}
+
+// T032 (FR-011, FR-012): una falla de cálculo de HU-07 muestra la página de error de HU-20a.
+func TestMetricsHandler_FallaDeCalculoMuestraLaPaginaDeErrorSinMetricasIncompletas(t *testing.T) {
+	casos := []struct {
+		name           string
+		err            error
+		status         int
+		title, message string
+	}{
+		{"error de cálculo", fmt.Errorf("calcular: %s", metricsInternalDetail),
+			http.StatusInternalServerError, TitleInternal, MsgInternal},
+		{"base no disponible al calcular", fmt.Errorf("%s: %w", metricsInternalDetail, driver.ErrBadConn),
+			http.StatusServiceUnavailable, TitleUnavailable, MsgUnavailable},
+	}
+	for _, c := range casos {
+		t.Run(c.name, func(t *testing.T) {
+			app := newMetricsHandlerAppWith(t, nil, func(MetricsSource) MetricsSource {
+				return failingMetricsSource{err: c.err}
+			})
+			// Dado un proyecto con Sprints finalizados (el catálogo real los lee bien).
+			f := newMetricsProject(t, app.db, "falla de cálculo")
+			metricsThreeSprints(t, f, false)
+
+			// Cuando HU-07 falla al calcular las métricas del Sprint elegido.
+			resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+
+			// Entonces se ve la página de error, sin la lista ni métricas incompletas ni detalles internos.
+			assertMetricsErrorPage(t, resp, body, c.status, c.title, c.message)
+			assertContainsNone(t, "la página de error", body, "Reportes", "Pagos online")
+		})
+	}
+}
+
+// T033 (FR-001, FR-014): sin proyecto activo válido, HU-20b redirige a elegir el proyecto.
+func TestMetricsHandler_SinProyectoActivoValidoRedirige(t *testing.T) {
+	app := newMetricsHandlerApp(t)
+	want := pathSelectProject + "?" + volverAQuery(pathMetrics)
+
+	assertRedirect := func(t *testing.T, client *http.Client, message string) {
+		t.Helper()
+		resp, body := app.get(t, client, pathMetrics)
+		if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != want {
+			t.Fatalf("GET /metricas = %d a %q; se esperaba 303 a %q", resp.StatusCode, resp.Header.Get("Location"), want)
+		}
+		assertContainsNone(t, "la redirección", body, "Story Points", MsgMetricsNoSprints)
+		_, page := app.get(t, client, resp.Header.Get("Location"))
+		assertContainsAll(t, "la pantalla de elegir proyecto", page, message)
+	}
+
+	t.Run("sin selección", func(t *testing.T) {
+		assertRedirect(t, app.client(false), MsgProjectRequired)
+	})
+
+	t.Run("proyecto eliminado", func(t *testing.T) {
+		client := app.client(false)
+		f := newMetricsProject(t, app.db, "eliminado")
+		resp, _ := app.selectProject(t, client, id64(f.ProjectID), pathMetrics)
+		if resp.StatusCode != http.StatusSeeOther {
+			t.Fatalf("elegir el proyecto: %d; se esperaba 303", resp.StatusCode)
+		}
+		if _, err := app.db.Exec(`DELETE FROM projects WHERE id = $1`, f.ProjectID); err != nil {
+			t.Fatalf("no se pudo eliminar el proyecto de prueba: %v", err)
+		}
+		assertRedirect(t, client, MsgProjectGone)
+	})
+
+	t.Run("cookie inválida", func(t *testing.T) {
+		client := app.client(false)
+		f := newMetricsProject(t, app.db, "cookie manipulada")
+		app.setCookies(t, client, &http.Cookie{Name: CookieProject, Value: id64(f.ProjectID), Path: "/"}) // sin firma
+		assertRedirect(t, client, MsgProjectRequired)
+	})
+}
+
+// T034 (FR-013): un Sprint Goal con HTML o scripts se muestra como texto.
+func TestMetricsHandler_SprintGoalConScriptSeMuestraComoTexto(t *testing.T) {
+	app := newMetricsHandlerApp(t)
+	const goal = `<script>alert("hu25")</script><b>Objetivo</b>`
+	f := newMetricsProject(t, app.db, "escape")
+	s := f.activeSprint(1, goal, "2026-10-01", "2026-10-14")
+	h := f.story(s, "Historia", 5, sprint.Done, "4")
+	f.effort(h, "4")
+	f.close(s)
+
+	resp, body, _ := app.open(t, f.ProjectID, pathMetrics)
+
+	assertMetricsPageOK(t, resp, body)
+	assertContainsNone(t, "el HTML de la pantalla", body, "<script", "<b>Objetivo</b>")
+	escaped := `&lt;script&gt;alert(&#34;hu25&#34;)&lt;/script&gt;&lt;b&gt;Objetivo&lt;/b&gt;`
+	if n := strings.Count(body, escaped); n < 2 {
+		t.Errorf("el Sprint Goal debía verse escapado en la lista y en el bloque; aparece %d veces", n)
+	}
+	assertContainsAll(t, "el bloque de métricas", metricsSection(t, body), goal)
+}
+
+// T035 (FR-014, SC-006): un POST a /metricas recibe la página 405 de HU-20a y no modifica nada.
+func TestMetricsHandler_PostRecibe405YNoModificaNada(t *testing.T) {
+	app := newMetricsHandlerApp(t)
+	f := newMetricsProject(t, app.db, "post")
+	s1, s2, s3, active := metricsThreeSprints(t, f, true)
+	client := app.client(false)
+	resp, _ := app.selectProject(t, client, id64(f.ProjectID), pathMetrics)
+	if resp.StatusCode != http.StatusSeeOther {
+		t.Fatalf("elegir el proyecto: %d; se esperaba 303", resp.StatusCode)
+	}
+	before := metricsProjectState(t, app, f.ProjectID)
+
+	for _, form := range []url.Values{nil, {"sprint": {id64(active)}}, {"sprint": {id64(s1)}, "estado": {"Activo"}}} {
+		resp, body := app.post(t, client, pathMetrics, form)
+		if resp.StatusCode != http.StatusMethodNotAllowed {
+			t.Errorf("POST /metricas = %d; se esperaba 405", resp.StatusCode)
+		}
+		if allow := resp.Header.Get("Allow"); !strings.Contains(allow, http.MethodGet) {
+			t.Errorf("Allow = %q; debía incluir GET", allow)
+		}
+		assertContainsAll(t, "la página 405", body, TitleMethodNotAllowed, MsgMethodNotAllowed)
+		assertContainsNone(t, "la página 405", body, `id="metricas-sprint"`, "Story Points")
+	}
+
+	if after := metricsProjectState(t, app, f.ProjectID); after != before {
+		t.Errorf("el POST modificó datos:\nantes:   %s\ndespués: %s", before, after)
+	}
+	for _, id := range []int64{s1, s2, s3, active} {
+		assertNoMetricsSnapshot(t, app.db, id)
+	}
+}
+
+// metricsProjectState resume los Sprints y las historias del proyecto para comparar antes y después.
+func metricsProjectState(t *testing.T, app *metricsHandlerApp, projectID int64) string {
+	t.Helper()
+	var state string
+	err := app.db.QueryRow(`
+		SELECT coalesce((SELECT string_agg(id || ':' || number || ':' || status || ':' || goal, ',' ORDER BY id)
+		                 FROM sprints WHERE project_id = $1), '') || ' | ' ||
+		       coalesce((SELECT string_agg(id || ':' || status || ':' || coalesce(active_sprint_id::text, '-'), ',' ORDER BY id)
+		                 FROM user_stories WHERE project_id = $1), '')`, projectID).Scan(&state)
+	if err != nil {
+		t.Fatalf("no se pudo leer el estado del proyecto: %v", err)
+	}
+	return state
 }

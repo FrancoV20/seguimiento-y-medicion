@@ -96,11 +96,11 @@
 - [ ] T028 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/metrics_handlers.go` y `src/web/metrics_view.go`
 - [ ] T029 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
 - [ ] T030 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T031 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/metrics_handlers_test.go`
-- [ ] T032 [P] Escribir la prueba de handler con una fuente de métricas que falla al calcular: página de error de HU-20a y no métricas incompletas ni detalles internos, en `src/web/metrics_handlers_test.go`
-- [ ] T033 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b, en `src/web/metrics_handlers_test.go`
-- [ ] T034 [P] Escribir la prueba de handler de un Sprint Goal con `<script>`: se muestra como texto, en `src/web/metrics_handlers_test.go`
-- [ ] T035 [P] Escribir la prueba de que un `POST` a `/metricas` recibe la página 405 de HU-20a y no modifica nada, en `src/web/metrics_handlers_test.go`
+- [x] T031 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/metrics_handlers_test.go`
+- [x] T032 [P] Escribir la prueba de handler con una fuente de métricas que falla al calcular: página de error de HU-20a y no métricas incompletas ni detalles internos, en `src/web/metrics_handlers_test.go`
+- [x] T033 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b, en `src/web/metrics_handlers_test.go`
+- [x] T034 [P] Escribir la prueba de handler de un Sprint Goal con `<script>`: se muestra como texto, en `src/web/metrics_handlers_test.go`
+- [x] T035 [P] Escribir la prueba de que un `POST` a `/metricas` recibe la página 405 de HU-20a y no modifica nada, en `src/web/metrics_handlers_test.go`
 - [x] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T037 Guardar en `specs/025-web-metrics/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/025-web-metrics/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
 - [ ] T038 Coordinar con HU-16 que puede reutilizar `MetricsSource` para mostrar la velocidad en el detalle de un Sprint; con HU-10 que los Story Points planificados y el porcentaje completado se muestran en su propia historia; con HU-08 y HU-09 que consumen los mismos cálculos de HU-07; y con HU-15 que el escenario "Cierre bloqueado" quedó solo en su pantalla
