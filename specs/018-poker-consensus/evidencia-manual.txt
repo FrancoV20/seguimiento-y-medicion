@@ -60,3 +60,10 @@ Escenarios
 Al terminar se detuvo el servidor y se descartó la base de prueba.
 
 Resultado: 12 de 12 escenarios PASÓ.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-18 en el commit ________.
+1. Nueva ronda tras divergencia en una historia con la ronda 1 cerrada: ______
+2. Votar en la ronda nueva, cerrarla y registrar la estimación acordada; el Backlog muestra los Story Points: ______
+3. Historia de un Sprint finalizado: acciones deshabilitadas con "Sprint finalizado": ______

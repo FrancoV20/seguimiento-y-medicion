@@ -245,6 +245,9 @@ registrar 8; ver 8 en el Backlog.
   archivos de HU-05a/HU-05b editados; revisión y aprobación de otro integrante, merge con "Create a merge commit" y
   tarjeta a "Hecho". Avisar a HU-13, HU-15 y HU-17 que HU-18 aplica "Sprint finalizado" con la asignación y el orden
   ronda → Sprint → historia, y a HU-28 que las acciones no tienen roles.
+- [x] T031 Manual de usuario (DoD, revisión del PR): sección "Planning Poker" en `docs/manual-usuario.md` con abrir,
+  votar y cerrar una ronda (HU-05a, HU-05b), nueva ronda y estimación acordada, el bloqueo por Sprint finalizado y
+  los mensajes de error.
 
 ## Dependencias y orden de ejecución
 

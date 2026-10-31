@@ -1,11 +1,11 @@
-﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.338s	coverage: 83.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.285s	coverage: 90.1% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.089s	coverage: 7.1% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.316s	coverage: 89.4% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.440s	coverage: 92.5% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.135s	coverage: 84.2% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	3.327s	coverage: 88.5% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.861s	coverage: 86.7% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.927s	coverage: 83.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	17.641s	coverage: 89.5% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/test	6.390s	coverage: [no statements]
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.380s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.386s	coverage: 90.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.090s	coverage: 6.9% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.367s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.475s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.184s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	3.580s	coverage: 88.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.848s	coverage: 87.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.088s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	20.155s	coverage: 89.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	6.689s	coverage: [no statements]
