@@ -14,7 +14,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [x] T001 Con HU-06 ya mergeada: leer `src/defect` y `src/web` y anotar en `research.md` los nombres reales (manejador y función que arma la vista de `/defectos`, función de registro, valores de `Status`, puerto `Store`, fixtures de integración, archivo de textos); comprobar con `git grep -n` que no existen `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved`, `ErrAlreadyOpen`, `Resolved`, `ResolutionStore` ni `ResolutionService`; ajustar `plan.md` si algún nombre cambió
 - [x] T002 Crear la rama `HU-19` desde `main` actualizado
 - [x] T003 `go test -count=1 -p 1 ./...` en verde antes de empezar (línea base)
-- [ ] T004 Coordinar con quien hizo HU-06 los archivos que HU-19 edita (`defects_handlers.go`, `defects.html`, `main.go`) y con quien tenga HU-10
+- [x] T004 Coordinar con quien hizo HU-06 los archivos que HU-19 edita (`defects_handlers.go`, `defects.html`, `main.go`) y con quien tenga HU-10
 
 ## Fase 2: Fundamentos (dominio y almacenamiento; bloquea todo lo demás)
 
