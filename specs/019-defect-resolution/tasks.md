@@ -38,9 +38,9 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T020 Crear `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved` y `ErrAlreadyOpen` en `src/defect/resolution_errors.go`
-- [ ] T021 Implementar `CheckResolve`, `CheckReopen` y `Resolved` en `src/defect/resolution.go`
-- [ ] T022 Definir el puerto `ResolutionStore` y el `ResolutionService` en `src/defect/resolution_store.go` y `src/defect/resolution_service.go`
+- [x] T020 Crear `ErrDefectNotFound`, `ErrResolutionBeforeDetection`, `ErrAlreadyResolved` y `ErrAlreadyOpen` en `src/defect/resolution_errors.go`
+- [x] T021 Implementar `CheckResolve`, `CheckReopen` y `Resolved` en `src/defect/resolution.go`
+- [x] T022 Definir el puerto `ResolutionStore` y el `ResolutionService` en `src/defect/resolution_store.go` y `src/defect/resolution_service.go`
 - [ ] T023 Implementar el adaptador PostgreSQL con las transacciones y bloqueos de `data-model.md` (defecto `FOR UPDATE`, Sprint activo `FOR SHARE`) llamando a las reglas de T021, en `src/defect/postgres_resolution_store.go`
 - [ ] T024 Ejecutar T005–T018 en verde
 
