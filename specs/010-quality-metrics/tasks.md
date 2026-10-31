@@ -46,7 +46,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E1, E2, E3, E4, E5, E6, E7] Escribir `TestCalculateSprintQuality` como prueba de tabla en
+- [x] T005 [P] [E1, E2, E3, E4, E5, E6, E7] Escribir `TestCalculateSprintQuality` como prueba de tabla en
   `src/metrics/quality_test.go`. Casos:
   - 3 de 4 → "75.00";
   - 0 de 3 → "0.00";
@@ -57,7 +57,7 @@ Formato: `[ID] [P] [E#] descripción`
   - una "Hecho" sin Story Points → cuenta como completada y en `StoriesWithoutPoints`;
   - todas sin Story Points → 0 y 0;
   - los conteos de defectos se copian sin cambios.
-- [ ] T006 [P] [E3] Escribir `TestQualityService_SprintQuality` con un almacén de prueba local en
+- [x] T006 [P] [E3] Escribir `TestQualityService_SprintQuality` con un almacén de prueba local en
   `src/metrics/quality_service_test.go`. Casos:
   - `projectID` o `sprintID` en 0 → `ErrSprintNotFound`, sin llamar al almacén;
   - `ErrSprintNotFound` del almacén se devuelve sin cambios;
@@ -65,7 +65,7 @@ Formato: `[ID] [P] [E#] descripción`
   - otra falla se envuelve: `errors.Is` con la causa original;
   - almacén `nil` → error;
   - con un Sprint "Finalizado", el resultado es el de `calculateSprintQuality`.
-- [ ] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
+- [x] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt`, sección "Dominio".
 
 ### Implementación (GREEN)

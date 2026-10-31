@@ -1,0 +1,21 @@
+Evidencia del ciclo Red de HU-10: secciones Dominio (T007), Almacenamiento (T017) y Pantalla (T025)
+
+================================================================================
+Sección Dominio (T005 y T006) — 2026-10-31 20:02 (UTC-3) — rama HU-10 en 9c8c820
+Comando: go test -count=1 -p 1 -v ./src/metrics/
+Falla esperada: el código del dominio (quality.go, quality_store.go, quality_service.go) no existe.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/metrics [github.com/FrancoV20/seguimiento-y-medicion/src/metrics.test]
+src/metrics/quality_service_test.go:14:8: undefined: QualityData
+src/metrics/quality_service_test.go:21:93: undefined: QualityData
+src/metrics/quality_service_test.go:25:10: undefined: QualityData
+src/metrics/quality_service_test.go:30:7: undefined: QualityStore
+src/metrics/quality_service_test.go:38:14: undefined: NewQualityService
+src/metrics/quality_service_test.go:39:23: undefined: ErrSprintNotFound
+src/metrics/quality_service_test.go:49:35: undefined: ErrSprintNotFound
+src/metrics/quality_service_test.go:50:13: undefined: NewQualityService
+src/metrics/quality_service_test.go:51:13: undefined: ErrSprintNotFound
+src/metrics/quality_test.go:10:47: undefined: QualityStoryResult
+src/metrics/quality_service_test.go:51:13: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/metrics [build failed]
+FAIL
