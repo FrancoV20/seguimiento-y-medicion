@@ -233,13 +233,13 @@ registrar 8; ver 8 en el Backlog.
 
 ## Fase 6: Cierre
 
-- [ ] T027 REFACTOR sin cambiar comportamiento (duplicación entre `OpenNextRound` y `AgreeEstimate`, y entre los
+- [x] T027 REFACTOR sin cambiar comportamiento (duplicación entre `OpenNextRound` y `AgreeEstimate`, y entre los
   handlers). Comprobar con `git diff --stat main` que no hay migraciones, que `src/cmd/server/main.go` no cambió y que
   solo se editaron archivos de HU-05a/HU-05b. `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` y
   `go test ./... -p 1 -race` en verde.
-- [ ] T028 Guardar `specs/018-poker-consensus/evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y
+- [x] T028 Guardar `specs/018-poker-consensus/evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y
   `specs/018-poker-consensus/cobertura.txt` (`go test -count=1 -p 1 -cover ./...`), con al menos 80% en `src/poker`.
-- [ ] T029 [P] Verificar a mano los 12 escenarios (`quickstart.md`, "Verificación manual"); actualizar la trazabilidad
+- [x] T029 [P] Verificar a mano los 12 escenarios (`quickstart.md`, "Verificación manual"); actualizar la trazabilidad
   de `spec.md` con los nombres reales de las pruebas y marcar `checklists/requirements.md`.
 - [ ] T030 Abrir el Pull Request desde `HU-18` citando HU-18, con las evidencias, sin migración y con la lista de
   archivos de HU-05a/HU-05b editados; revisión y aprobación de otro integrante, merge con "Create a merge commit" y

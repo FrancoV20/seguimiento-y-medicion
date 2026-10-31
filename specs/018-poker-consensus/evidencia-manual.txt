@@ -1,0 +1,62 @@
+HU-18 — Evidencia de verificación manual (T029)
+Fecha: 2026-10-31
+Realizó: Claude (asistente de IA), a pedido de Alejandro Raúl Ruiz Andreola, que revisó el resultado.
+
+Entorno
+- Código de la rama HU-18 en el commit 347c32b (GREEN Pantalla). Se comprobó que src/, test/ y db/ son idénticos
+  (sin contar finales de línea) a los de la PC de Alejandro.
+- Servidor compilado con `go build ./src/cmd/server` y ejecutado en un entorno Linux aislado (no en la PC de
+  Alejandro), con PostgreSQL 16 y una base nueva con las migraciones 001 a 014 (schema_migrations = 14).
+
+Método
+- Recorrido con Chromium real (Playwright): se completaron y enviaron los formularios de la aplicación como lo haría
+  una persona; Ana, Beto y Caro usaron cada uno su propia sesión de navegador. Se registró el código HTTP de cada envío.
+- Datos cargados desde la aplicación: el proyecto «Alfa» con Ana, Beto y Caro en /proyectos; «Login», «Pagos»,
+  «Reportes» (3 SP) y «Alta» (3 SP) en /backlog; el Sprint 1 con «Alta» en /sprints; la ronda 1 de cada historia
+  abierta, votada por los tres (Login 2/13/5, Pagos 3/5/8, Reportes 3/13/3, Alta 5/5/5) y cerrada en /planning-poker;
+  la ronda 2 de «Reportes» abierta con "Nueva ronda" y votada por Ana (5).
+- Por SQL (quickstart.md, paso 2): «Alta» pasó a "Hecho" y el Sprint 1 a "Finalizado", conservando la asignación.
+  Para el escenario 11 se cargó el proyecto «Beta» con «Tablero» y su ronda cerrada.
+- Envíos que la pantalla no ofrece: el valor 4 (escenario 6) se puso en un radio y el `disabled` de «Alta»
+  (escenario 10) se quitó con las herramientas del navegador; la estimación desde una ronda abierta (7) y las rondas
+  inexistentes o ajenas (10 y 11) se enviaron con `fetch` desde la misma página, con la sesión del integrante.
+- Escenarios 8 y 9: se usaron dos pestañas de Ana abiertas antes de abrir la ronda 2 de «Reportes».
+- Escenario 12: un trigger temporal hizo fallar solo el guardado del valor centinela 89; se quitó enseguida.
+- El escenario 5 se recorrió antes que el 1, porque necesita «Login» sin ronda 2; registró 5 y el escenario 3 lo
+  reemplazó por 8 desde la ronda 2.
+
+Escenarios
+1. Nueva ronda tras divergencia: PASÓ. POST 303; «Ronda 2 abierta para la historia «Login»»; la ronda 2 aparece
+   abierta con Ana, Beto y Caro «Sin votar»; la ronda 1 sigue en «Rondas cerradas» con Ana 2, Beto 13 y Caro 5.
+   La ronda 1 de «Reportes» (con la 2 abierta) no ofrece acciones.
+2. Votos ocultos en la nueva ronda: PASÓ. Ana votó 8 en la ronda 2; en la pantalla de Beto la fila de Ana dice
+   «Ana: Votó», sin el valor.
+3. Registrar la estimación acordada: PASÓ. Ronda 2 cerrada con Ana 8, Beto 8 y Caro 5; registrar 8 → POST 303 y
+   «Estimación registrada: «Login» queda con 8 Story Points»; en /backlog la fila de «Login» es «1 Login Media 8
+   Sin estimar Pendiente».
+4. Consenso directo: PASÓ. POST 303; «Estimación registrada: «Pagos» queda con 5 Story Points», sin otra ronda
+   (1 ronda).
+5. Registrar después de debatir una divergencia: PASÓ. «Login» muestra «Advertencia: La última ronda tuvo
+   divergencia: registrá el valor que acordaron después de debatir» en el formulario («Pagos» y «Alta» no);
+   registrar 5 → POST 303 y «Login» queda con 5 SP.
+6. Valor fuera de la serie: PASÓ. Valor 4 enviado a mano → 422 con «El valor no pertenece a la serie de
+   Fibonacci»; «Pagos» sigue con 5 SP.
+7. Ronda sin cerrar: PASÓ. Estimación desde la ronda 2 abierta de «Reportes» → 409 con «La ronda sigue abierta:
+   cerrala antes de registrar la estimación»; «Reportes» sigue con 3 SP.
+8. Nueva ronda con una ronda abierta: PASÓ. Desde una pestaña abierta antes de la ronda 2, «Nueva ronda» en la
+   ronda 1 de «Reportes» → 409 con «Ya hay una ronda abierta para esta historia»; sigue con 2 rondas.
+9. Ronda que ya no es la última: PASÓ. Desde otra pestaña vieja, la estimación 5 en la ronda 1 de «Reportes» →
+   409 con «Hay una ronda más reciente de esta historia»; «Reportes» sigue con 3 SP.
+10. Historia de un Sprint finalizado: PASÓ. «Alta» muestra «Nueva ronda», los valores y «Registrar estimación»
+    deshabilitados con «Sprint finalizado»; quitando disabled, registrar 5 → 409 con el mensaje del Sprint
+    finalizado y «Nueva ronda» → 409; «Alta» sigue con 3 SP y 1 ronda.
+11. Ronda inexistente o de otro proyecto: PASÓ. nueva-ronda desde la ronda 999999 → 404; estimacion desde la
+    ronda 999999 → 404; nueva-ronda desde la ronda de «Tablero» (proyecto «Beta») → 404; estimacion desde la
+    ronda de «Tablero» (proyecto «Beta») → 404, siempre con «La ronda no existe»; «Tablero» sin cambios.
+12. Error al guardar: PASÓ. Con un trigger temporal que hace fallar el guardado del valor 89: POST 500 con «La
+    operación no pudo completarse», sin detalles internos ni mensaje de éxito; «Pagos» sigue con 5 SP. El
+    trigger se quitó después.
+
+Al terminar se detuvo el servidor y se descartó la base de prueba.
+
+Resultado: 12 de 12 escenarios PASÓ.
