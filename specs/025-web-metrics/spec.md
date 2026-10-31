@@ -199,14 +199,17 @@ Los textos propios de HU-25 son una propuesta del equipo y se definen en un solo
 
 | Escenario del Issue | Requisitos | Tests | BDD | Código |
 |---|---|---|---|---|
-| 1. Métricas de un Sprint finalizado | FR-003, FR-004 | T008, T010, T012 | T016 | `metrics_handlers.go`, `metrics.html` |
-| 2. Sin esfuerzo estimado | FR-005 | T008, T013 | T016 | `metrics_view.go` |
-| 3. Cálculo parcial | FR-006 | T008, T014 | T016 | `metrics_view.go` |
+| 1. Métricas de un Sprint finalizado | FR-003, FR-004 | T008, T010, T012 | T016 | `metrics_handlers.go`, `metrics_source.go`, `metrics_view.go`, `metrics.html` |
+| 2. Sin esfuerzo estimado | FR-005 | T008, T010, T013 | T016 | `metrics_source.go`, `metrics_view.go` |
+| 3. Cálculo parcial | FR-006 | T008, T010, T014 | T016 | `metrics_source.go`, `metrics_view.go`, `metrics.html` |
 | 4. Velocidad cero | FR-007 | T008, T015 | T016 | `metrics_source.go` |
-| 5. Elegir otro Sprint | FR-001, FR-002, FR-010 | T006, T020, T021 | T024 | `postgres_metrics_catalog.go`, `metrics_handlers.go` |
-| 6. Sin Sprints finalizados | FR-009 | T022 | T024 | `metrics.html` |
-| 7. Sprint en curso | FR-008 | T006, T023 | T024 | `postgres_metrics_catalog.go`, `metrics.html` |
-| (HU-20b) Sin proyecto activo | FR-014 | T033 | | `metrics_handlers.go` |
+| 5. Elegir otro Sprint | FR-001, FR-002, FR-010 | T006, T010, T020, T021 | T024 | `postgres_metrics_catalog.go`, `metrics_view.go`, `metrics_handlers.go`, `metrics.html` |
+| 6. Sin Sprints finalizados | FR-009 | T010, T022 | T024 | `metrics_view.go`, `metrics_handlers.go`, `metrics.html` |
+| 7. Sprint en curso | FR-008 | T006, T010, T023 | T024 | `postgres_metrics_catalog.go`, `metrics_view.go`, `metrics.html` |
+| (HU-20b) Sin proyecto activo | FR-001, FR-014 | T033 | | `metrics_handlers.go` (`RequiresProject`) |
 | (HU-20b) HTML como texto | FR-013 | T034 | | `metrics.html` |
-| (HU-20a) Error al leer o calcular | FR-011 | T031, T032 | | `metrics_handlers.go` |
-| (HU-20a) POST no soportado | FR-014 | T035 | | `src/cmd/server/main.go` |
+| (HU-20a) Error al leer o calcular | FR-011, FR-012 | T031, T032 | | `metrics_handlers.go` (`Fail`) |
+| (HU-20a) POST no soportado | FR-014, SC-006 | T035 | | `metrics_handlers.go` (solo `GET`), registrada en `src/cmd/server/main.go` |
+
+Trazabilidad revisada en T039 (31/10/2026); el detalle por requisito y criterio, con los nombres de las pruebas, está en
+`tasks.md`.

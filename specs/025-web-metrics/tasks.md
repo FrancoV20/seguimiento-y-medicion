@@ -104,9 +104,9 @@
 - [x] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [x] T037 Guardar en `specs/025-web-metrics/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/025-web-metrics/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
 - [ ] T038 Coordinar con HU-16 que puede reutilizar `MetricsSource` para mostrar la velocidad en el detalle de un Sprint; con HU-10 que los Story Points planificados y el porcentaje completado se muestran en su propia historia; con HU-08 y HU-09 que consumen los mismos cálculos de HU-07; y con HU-15 que el escenario "Cierre bloqueado" quedó solo en su pantalla
-- [ ] T039 Revisar trazabilidad de FR-001 a FR-014 y SC-001 a SC-006 en `specs/025-web-metrics/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T040 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Métricas del Sprint"
-- [ ] T041 Verificar a mano con la aplicación en ejecución los 7 escenarios del Issue y la lista de `quickstart.md`
+- [x] T039 Revisar trazabilidad de FR-001 a FR-014 y SC-001 a SC-006 en `specs/025-web-metrics/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T040 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Métricas del Sprint"
+- [x] T041 Verificar a mano con la aplicación en ejecución los 7 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T042 Abrir el Pull Request desde `HU-25`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
@@ -159,25 +159,38 @@
 
 ## Trazabilidad
 
-| Requisito | Pruebas |
-|---|---|
-| FR-001 | T019, T033 |
-| FR-002 | T006, T020 |
-| FR-003 | T008, T010, T012 |
-| FR-004 | T010, T012 |
-| FR-005 | T008, T010, T013 |
-| FR-006 | T008, T010, T014 |
-| FR-007 | T008, T015 |
-| FR-008 | T006, T023 |
-| FR-009 | T022 |
-| FR-010 | T010, T021 |
-| FR-011 | T031, T032 |
-| FR-012 | T028, T032 |
-| FR-013 | T034 |
-| FR-014 | T006, T033, T035 |
-| SC-001 | T008, T012 |
-| SC-002 | T006, T021, T023 |
-| SC-003 | T008, T013, T015 |
-| SC-004 | T008, T014 |
-| SC-005 | Verificación de tiempo en T012 |
-| SC-006 | T035 |
+Revisada en T039 (31/10/2026) contra la tabla de `spec.md` y las pruebas del repositorio. Todas las pruebas listadas
+pasan en `evidencia-pruebas.txt`. Prefijos: `H_` = `TestMetricsHandler_` (`src/web/metrics_handlers_test.go`),
+`S_` = `TestHU07MetricsSource_` (`src/web/metrics_source_test.go`), `C_` = `TestPostgreSQLMetricsCatalog_`
+(`src/web/postgres_metrics_catalog_integration_test.go`), `V_` = pruebas de `src/web/metrics_view_test.go` y
+`B_` = `TestMetricsBDD_` (`test/web_metrics_bdd_test.go`).
+
+| Requisito | Tareas | Pruebas automatizadas | Estado |
+|---|---|---|---|
+| FR-001 | T019, T033 | `H_SinProyectoActivoValidoRedirige` | Cubierto. La entrada del menú y el registro en `main.go` se verificaron a mano (T030); ver observación 1 |
+| FR-002 | T006, T020 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `C_ProyectoSinSprints`, `H_ListaDeSprintsFinalizadosYEleccionPorDireccion`, `B_ElegirOtroSprint` | Cubierto |
+| FR-003 | T008, T010, T012 | `S_VelocidadYDesviacionConValoresConocidos`, `V_BuildMetricsView_ConSprintElegido`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente`, `B_MetricasDeUnSprintFinalizado` | Cubierto |
+| FR-004 | T010, T012 | `V_MetricsDeviationText_DosDecimalesComaYSigno`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| FR-005 | T008, T010, T013 | `S_SinHorasEstimadas`, `V_MetricsDeviationText_NoDisponibleSeMuestraComoLoDaHU07`, `H_SinHorasEstimadasMuestraNoDisponibleYLaVelocidad`, `B_SprintSinEsfuerzoEstimado` | Cubierto |
+| FR-006 | T008, T010, T014 | `S_CalculoParcialConXdeY`, `V_BuildMetricsView_CalculoParcialMuestraElAvisoDeHU07`, `H_DatosIncompletosMuestranLaAlertaDeCalculoParcial`, `B_CalculoParcial` | Cubierto |
+| FR-007 | T008, T015 | `S_SinHistoriasCompletadasVelocidadCero`, `V_BuildMetricsView_SinHorasEstimadasYVelocidadCero`, `H_SinHistoriasHechoMuestraVelocidadCeroYNoDisponible`, `B_VelocidadCero` | Cubierto |
+| FR-008 | T006, T023 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `V_BuildMetricsView_AvisoDelSprintEnCurso`, `H_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo`, `B_SprintEnCurso` | Cubierto |
+| FR-009 | T022 | `V_BuildMetricsView_SinSprintsFinalizados`, `H_SinSprintsFinalizados`, `B_SinSprintsFinalizados` | Cubierto |
+| FR-010 | T010, T021 | `V_SelectMetricsSprint`, `H_SprintInvalidoActivoOAjenoSeIgnora` | Cubierto |
+| FR-011 | T031, T032 | `H_FallaDeLecturaDelCatalogoMuestraLaPaginaDeError`, `H_FallaDeCalculoMuestraLaPaginaDeErrorSinMetricasIncompletas` | Cubierto |
+| FR-012 | T028, T031, T032 | Las mismas de FR-011 (exigen que no aparezcan consulta, clave ni ruta) y la revisión de `quickstart.md` | Cubierto |
+| FR-013 | T034 | `H_SprintGoalConScriptSeMuestraComoTexto` | Cubierto |
+| FR-014 | T006, T012, T021, T033, T035 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente`, `H_SprintInvalidoActivoOAjenoSeIgnora`, `H_SinProyectoActivoValidoRedirige`, `H_PostRecibe405YNoModificaNada` | Cubierto |
+| SC-001 | T008, T012 | `S_*` (valores de HU-07 con datos reales), `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| SC-002 | T006, T021, T023 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `H_SprintInvalidoActivoOAjenoSeIgnora`, `H_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo` | Cubierto |
+| SC-003 | T008, T013, T015 | `S_SinHorasEstimadas`, `S_SinHistoriasCompletadasVelocidadCero`, `H_SinHorasEstimadasMuestraNoDisponibleYLaVelocidad`, `H_SinHistoriasHechoMuestraVelocidadCeroYNoDisponible` | Cubierto |
+| SC-004 | T008, T014 | `S_CalculoParcialConXdeY`, `H_DatosIncompletosMuestranLaAlertaDeCalculoParcial` | Cubierto |
+| SC-005 | T012 | `H_RespondeEnMenosDe500msCon20SprintsY49Historias` y la medición de `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| SC-006 | T008, T012, T035 | `H_PostRecibe405YNoModificaNada` y `assertNoMetricsSnapshot` en `S_*` y en `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` (no se escribe `sprint_metrics`) | Cubierto |
+
+Observaciones:
+
+1. FR-001 pide la sección "Métricas del Sprint" en el menú. Las pruebas verifican que la sección exige proyecto, pero
+   ninguna afirma que el menú muestre la entrada ni que `main.go` la registre; se comprobó a mano en T030 y se repite
+   en T041.
+2. Los 7 escenarios del Issue tienen escenario BDD: 1 a 4 en T016 y 5 a 7 en T024.

@@ -224,3 +224,41 @@ Si no hay un Sprint activo, la pantalla informa **No hay un Sprint activo para c
 datos inválidos en historias completadas, corregí las historias indicadas antes de reintentar. Un segundo
 envío de un Sprint ya cerrado se rechaza; si falla el guardado, no se aplican cambios parciales y se
 muestra **La operación no pudo completarse**.
+
+## Métricas del Sprint
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/metricas`, o la sección **Métricas del
+Sprint** del menú. La pantalla es de solo lectura: muestra la velocidad y la desviación de esfuerzo que calcula HU-07
+para los Sprints **finalizados** del proyecto activo. Las métricas se calculan al abrir la pantalla y no se guardan.
+
+### Elegir el Sprint
+
+La pantalla muestra la lista de **Sprints finalizados**, del más reciente al más antiguo, con número, Sprint Goal y
+fechas (dd/mm/aaaa). Al abrir la pantalla se muestran las métricas del más reciente; hacé clic en otro Sprint de la
+lista para ver las suyas (la dirección pasa a ser `/metricas?sprint=ID`). El Sprint elegido queda marcado en la lista.
+
+Un Sprint que todavía está en curso no figura en la lista: arriba se avisa que sus métricas se calculan al cerrarlo
+desde **Cierre de Sprint**. Si la dirección trae un Sprint inexistente, en curso o de otro proyecto, se ignora y se
+muestra el finalizado más reciente.
+
+### Qué muestra
+
+1. **Velocidad**: los Story Points de las historias **Hecho** del Sprint, por ejemplo `8 Story Points`. Las historias
+   que el cierre devolvió al Backlog no cuentan. Un Sprint sin historias Hecho muestra `0 Story Points`.
+2. **Desviación de esfuerzo**: (horas reales − horas estimadas) ÷ horas estimadas, con dos decimales, coma y signo.
+   Positiva (`+20,00 %`) significa que se trabajó más de lo estimado; negativa (`-8,50 %`), menos; `0,00 %`, lo
+   estimado. Las horas estimadas salen de **Estimaciones** y las reales del **Registro de esfuerzo**.
+3. **Cálculo parcial**: si alguna historia Hecho no tiene horas estimadas o reales, la desviación se calcula con las
+   que sí tienen y aparece la alerta **Cálculo parcial: basado en X de Y historias**.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `No disponible` | Ninguna historia Hecho del Sprint tiene horas estimadas: no se puede calcular la desviación. La velocidad se muestra igual. |
+| `Cálculo parcial: basado en X de Y historias` | La desviación usa X de las Y historias Hecho; cargá las horas que faltan antes de cerrar el próximo Sprint. |
+| `Aún no hay Sprints finalizados` | El proyecto todavía no cerró ningún Sprint. |
+| `El Sprint N sigue en curso; sus métricas se calculan al cerrarlo` | El Sprint activo se mide recién cuando se cierra en **Cierre de Sprint**. |
+| `Para entrar a esta sección primero elegí un proyecto.` | La aplicación te lleva a elegir el proyecto y después vuelve a esta pantalla. |
+| `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
+| `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer o calcular; no se muestran métricas parciales. |
