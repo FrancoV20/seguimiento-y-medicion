@@ -20,21 +20,21 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E1] `TestCheckResolve_OK`: defecto "Abierto", Sprint activo 3, detección 3 → sin error, en `src/defect/resolution_test.go`
-- [ ] T006 [P] [E2] `TestCheckResolve_SinSprint`: sin Sprint activo → `ErrNoActiveSprint`, en `src/defect/resolution_test.go`
-- [ ] T007 [P] [E4] `TestCheckResolve_Anterior`: detección 3, activo 2 → `ErrResolutionBeforeDetection`, en `src/defect/resolution_test.go`
-- [ ] T008 [P] [E7] `TestCheckResolve_YaResuelto` → `ErrAlreadyResolved`, en `src/defect/resolution_test.go`
-- [ ] T009 [P] [E3, E8] `TestCheckReopen_OK` y `TestCheckReopen_YaAbierto` → `ErrAlreadyOpen`, en `src/defect/resolution_test.go`
-- [ ] T010 [P] [E1, E6] Prueba del servicio con un almacén de prueba: `Resolve` devuelve el número de Sprint y propaga los errores, en `src/defect/resolution_test.go`
-- [ ] T011 Fixtures de integración: dos proyectos, Sprints, historia y defectos; limpieza borrando primero las historias y después el proyecto (reutilizar los de HU-06 si existen), en `src/defect/postgres_resolution_store_integration_test.go`
-- [ ] T012 [P] [E1] `TestPostgresResolve_OK`: estado "Resuelto" y `resolution_sprint_id` = Sprint activo; descripción, severidad, historia y Sprint de detección sin cambios
-- [ ] T013 [P] [E2] `TestPostgresResolve_SinSprintActivo`: sin cambios
-- [ ] T014 [P] [E4] `TestPostgresResolve_Anterior`: Sprint 3 finalizado y Sprint 2 activo creados en la base; sin cambios
-- [ ] T015 [P] [E5] `TestPostgresResolve_Inexistente` y `TestPostgresResolve_OtroProyecto`
-- [ ] T016 [P] [E6] `TestPostgresResolve_FalloNoDejaCambios`: forzar un error en el UPDATE y comprobar que nada cambia
-- [ ] T017 [P] [E3] `TestPostgresReopen_OK`: vuelve a "Abierto" y a NULL
-- [ ] T018 [P] `TestPostgresResolve_Concurrente`: dos resoluciones simultáneas del mismo defecto; una OK y otra `ErrAlreadyResolved`
-- [ ] T019 Ejecutar T005–T018, confirmar que fallan porque el código no existe y guardar la salida en `evidencia-red.txt` (sección "Fundamentos")
+- [x] T005 [P] [E1] `TestCheckResolve_OK`: defecto "Abierto", Sprint activo 3, detección 3 → sin error, en `src/defect/resolution_test.go`
+- [x] T006 [P] [E2] `TestCheckResolve_SinSprint`: sin Sprint activo → `ErrNoActiveSprint`, en `src/defect/resolution_test.go`
+- [x] T007 [P] [E4] `TestCheckResolve_Anterior`: detección 3, activo 2 → `ErrResolutionBeforeDetection`, en `src/defect/resolution_test.go`
+- [x] T008 [P] [E7] `TestCheckResolve_YaResuelto` → `ErrAlreadyResolved`, en `src/defect/resolution_test.go`
+- [x] T009 [P] [E3, E8] `TestCheckReopen_OK` y `TestCheckReopen_YaAbierto` → `ErrAlreadyOpen`, en `src/defect/resolution_test.go`
+- [x] T010 [P] [E1, E6] Prueba del servicio con un almacén de prueba: `Resolve` devuelve el número de Sprint y propaga los errores, en `src/defect/resolution_test.go`
+- [x] T011 Fixtures de integración: dos proyectos, Sprints, historia y defectos; limpieza borrando primero las historias y después el proyecto (reutilizar los de HU-06 si existen), en `src/defect/postgres_resolution_store_integration_test.go`
+- [x] T012 [P] [E1] `TestPostgresResolve_OK`: estado "Resuelto" y `resolution_sprint_id` = Sprint activo; descripción, severidad, historia y Sprint de detección sin cambios
+- [x] T013 [P] [E2] `TestPostgresResolve_SinSprintActivo`: sin cambios
+- [x] T014 [P] [E4] `TestPostgresResolve_Anterior`: Sprint 3 finalizado y Sprint 2 activo creados en la base; sin cambios
+- [x] T015 [P] [E5] `TestPostgresResolve_Inexistente` y `TestPostgresResolve_OtroProyecto`
+- [x] T016 [P] [E6] `TestPostgresResolve_FalloNoDejaCambios`: forzar un error en el UPDATE y comprobar que nada cambia
+- [x] T017 [P] [E3] `TestPostgresReopen_OK`: vuelve a "Abierto" y a NULL
+- [x] T018 [P] `TestPostgresResolve_Concurrente`: dos resoluciones simultáneas del mismo defecto; una OK y otra `ErrAlreadyResolved`
+- [x] T019 Ejecutar T005–T018, confirmar que fallan porque el código no existe y guardar la salida en `evidencia-red.txt` (sección "Fundamentos")
 
 ### Implementación (GREEN)
 
