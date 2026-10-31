@@ -292,8 +292,19 @@ func TestHU19_Reabrir(t *testing.T) {
 		}
 		f.assertState(t, defectID, "Abierto", 0)
 		// Sin Sprint activo, HU-06 muestra la lista con 409 y sin el formulario de registro.
-		if _, body := f.app.get(t, client, "/defectos"); !strings.Contains(body, "<td>Abierto</td>") {
+		_, body := f.app.get(t, client, "/defectos")
+		if !strings.Contains(body, "<td>Abierto</td>") {
 			t.Errorf("la lista debía mostrar el defecto reabierto como Abierto")
+		}
+		// T063 (hallazgo de T058, FR-011): el aviso de HU-06 sin Sprint activo no debe tapar el
+		// mensaje de éxito de la reapertura, que se muestra una sola vez.
+		if strings.Count(body, "Defecto reabierto") != 1 {
+			t.Errorf("después de reabrir sin Sprint activo la pantalla debía mostrar una vez \"Defecto reabierto\"")
+		}
+		// Al recargar vuelve el aviso de HU-06 y el éxito no se repite.
+		_, body = f.app.get(t, client, "/defectos")
+		if strings.Contains(body, "Defecto reabierto") || !strings.Contains(body, "No hay un Sprint activo; no se puede registrar un defecto") {
+			t.Errorf("al recargar debía verse el aviso de HU-06 sin Sprint activo y no repetirse el éxito")
 		}
 	})
 }
