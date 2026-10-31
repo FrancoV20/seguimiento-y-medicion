@@ -89,6 +89,10 @@ Hallazgos que cambian el plan:
    `RegisterDefects` lo llama con `resolution = nil` y las rutas `POST /defectos/resolver` y
    `POST /defectos/reabrir` solo se registran cuando hay servicio de resolución. `main.go` usa la
    función nueva (T034 y T036).
+   Indicación del Scrum Master (31/10): `Server.Register` falla si la sección `/defectos` se registra dos
+   veces, así que `RegisterDefectsWithResolution` registra todas las rutas (las dos de HU-06 y las dos
+   nuevas) en un solo `Routes`, y en `main.go` se **reemplaza** la llamada a `RegisterDefects`, sin
+   agregar una segunda.
 2. **`renderFormStatus` de HU-06 siempre muestra `MsgDefectNoSprint` en un 409.** HU-19 no lo
    reutiliza: arma la pantalla con `pageData` + `renderPage` y su propio `Flash`.
 3. **`GET /defectos` sin Sprint activo responde 409** (HU-06), con la lista y sin el formulario de
