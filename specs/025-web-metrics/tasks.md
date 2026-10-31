@@ -49,11 +49,11 @@
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Escribir la prueba de handler con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: Sprint finalizado con 10 horas estimadas, 12 reales y 8 Story Points completados muestra `8 Story Points` y `+20,00 %`, es el más reciente por defecto, solo del proyecto activo y con verificación de tiempo de respuesta, en `src/web/metrics_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler de un Sprint sin horas estimadas: "No disponible" en la desviación, la velocidad visible y sin error ni valor inválido, en `src/web/metrics_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de handler de un Sprint con datos incompletos: la alerta "Cálculo parcial: basado en X de Y historias" con los valores de HU-07, en `src/web/metrics_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de handler de un Sprint cerrado por HU-15 sin historias en "Hecho": `0 Story Points` y desviación "No disponible", sin error, en `src/web/metrics_handlers_test.go`
-- [ ] T016 [P] [US1] Escribir los escenarios BDD de métricas de un Sprint finalizado, sin esfuerzo estimado, cálculo parcial y velocidad cero en `test/web_metrics_bdd_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: Sprint finalizado con 10 horas estimadas, 12 reales y 8 Story Points completados muestra `8 Story Points` y `+20,00 %`, es el más reciente por defecto, solo del proyecto activo y con verificación de tiempo de respuesta, en `src/web/metrics_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler de un Sprint sin horas estimadas: "No disponible" en la desviación, la velocidad visible y sin error ni valor inválido, en `src/web/metrics_handlers_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de handler de un Sprint con datos incompletos: la alerta "Cálculo parcial: basado en X de Y historias" con los valores de HU-07, en `src/web/metrics_handlers_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de handler de un Sprint cerrado por HU-15 sin historias en "Hecho": `0 Story Points` y desviación "No disponible", sin error, en `src/web/metrics_handlers_test.go`
+- [x] T016 [P] [US1] Escribir los escenarios BDD de métricas de un Sprint finalizado, sin esfuerzo estimado, cálculo parcial y velocidad cero en `test/web_metrics_bdd_test.go`
 
 ### Implementation for User Story 1
 
