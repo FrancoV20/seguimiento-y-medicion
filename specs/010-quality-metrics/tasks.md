@@ -143,14 +143,14 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T018 Implementar `PostgreSQLQualityStore` y `NewPostgreSQLQualityStore` en
+- [x] T018 Implementar `PostgreSQLQualityStore` y `NewPostgreSQLQualityStore` en
   `src/metrics/postgres_quality_store.go`:
   - `BeginTx` con `ReadOnly: true` y `Isolation: sql.LevelRepeatableRead`;
   - las tres consultas de `data-model.md`: el Sprint del proyecto (sin fila → `ErrSprintNotFound`), el registro de
     cierre ordenado por `story_id`, y los dos `COUNT(*) FILTER` con `WHERE project_id = $2`;
   - si el Sprint no está "Finalizado", no leer el registro ni los defectos;
   - errores envueltos con `%w`.
-- [ ] T019 Ejecutar T012–T016 en verde.
+- [x] T019 Ejecutar T012–T016 en verde.
 
 **Punto de control**: `SprintQuality` devuelve los números reales de un Sprint cerrado.
 
