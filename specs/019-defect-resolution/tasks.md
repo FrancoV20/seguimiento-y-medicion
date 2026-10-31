@@ -54,13 +54,13 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T025 Preparar el servidor de prueba con `cookiejar`, proyecto elegido por el flujo de HU-20b, Sprint y defectos, en `src/web/defects_resolution_handlers_test.go`
-- [ ] T026 [P] [E1] `TestHU19_ResolucionExitosa`: 303 a `/defectos`, mensaje de una sola vista, la lista muestra "Resuelto" y "Sprint N"
-- [ ] T027 [P] [E2] `TestHU19_ResolverSinSprintActivo`: 409 y mensaje, defecto "Abierto"
-- [ ] T028 [P] [E4] `TestHU19_SprintAnteriorAlDeDeteccion`: 409 y mensaje, defecto "Abierto"
-- [ ] T029 [P] [E7] `TestHU19_YaResuelto`: 409 y mensaje; el Sprint de resolución original no cambia
-- [ ] T030 [P] [E1, E2] Escenarios BDD de resolución exitosa y sin Sprint activo en `test/web_defect_resolution_bdd_test.go`
-- [ ] T031 Ejecutar T026–T030, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt` (sección "Resolver")
+- [x] T025 Preparar el servidor de prueba con `cookiejar`, proyecto elegido por el flujo de HU-20b, Sprint y defectos, en `src/web/defects_resolution_handlers_test.go`
+- [x] T026 [P] [E1] `TestHU19_ResolucionExitosa`: 303 a `/defectos`, mensaje de una sola vista, la lista muestra "Resuelto" y "Sprint N"
+- [x] T027 [P] [E2] `TestHU19_ResolverSinSprintActivo`: 409 y mensaje, defecto "Abierto"
+- [x] T028 [P] [E4] `TestHU19_SprintAnteriorAlDeDeteccion`: 409 y mensaje, defecto "Abierto"
+- [x] T029 [P] [E7] `TestHU19_YaResuelto`: 409 y mensaje; el Sprint de resolución original no cambia
+- [x] T030 [P] [E1, E2] Escenarios BDD de resolución exitosa y sin Sprint activo en `test/web_defect_resolution_bdd_test.go`
+- [x] T031 Ejecutar T026–T030, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt` (sección "Resolver")
 
 ### Implementación (GREEN)
 
