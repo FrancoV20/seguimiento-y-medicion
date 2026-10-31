@@ -6,6 +6,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 )
 
@@ -136,15 +137,21 @@ func TestHU07MetricsSource_SprintInexistenteOActivoDevuelveError(t *testing.T) {
 	activo := f.activeSprint(1, "Sprint en curso", "2026-10-01", "2026-10-14")
 	f.story(activo, "Hecha del Sprint activo", 5, sprint.Done, "4")
 
-	// Un Sprint activo o inexistente no tiene métricas: HU-07 lo rechaza y el adaptador lo informa.
-	for name, sprintID := range map[string]int64{"activo": activo, "inexistente": MaxID} {
-		t.Run(name, func(t *testing.T) {
-			got, err := NewHU07MetricsSource(db).Metrics(context.Background(), f.ProjectID, sprintID)
-			if err == nil {
-				t.Fatalf("Metrics(%s) = %+v sin error; se esperaba un error", name, got)
-			}
-			if errors.Is(err, errMetricsNotImplemented) {
-				t.Fatalf("Metrics(%s) todavía no está implementado", name)
+	// Un Sprint activo o inexistente no tiene métricas: HU-07 lo rechaza y el adaptador conserva
+	// su error (Sprint no finalizado o no se pudo leer).
+	casos := []struct {
+		name     string
+		sprintID int64
+		want     error
+	}{
+		{"activo", activo, metrics.ErrSprintNotFinished},
+		{"inexistente", MaxID, metrics.ErrSprintLoad},
+	}
+	for _, c := range casos {
+		t.Run(c.name, func(t *testing.T) {
+			got, err := NewHU07MetricsSource(db).Metrics(context.Background(), f.ProjectID, c.sprintID)
+			if !errors.Is(err, c.want) {
+				t.Fatalf("Metrics(%s) = %+v, %v; se esperaba el error de HU-07 %q", c.name, got, err, c.want)
 			}
 		})
 	}

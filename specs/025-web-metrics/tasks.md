@@ -31,11 +31,11 @@
 
 - [x] T005 [P] Definir `FinishedSprint` y la interfaz `MetricsCatalog` con `FinishedSprints` y `ActiveSprintNumber` en `src/web/metrics_catalog.go`
 - [x] T006 [P] Escribir la prueba de integración de `PostgreSQLMetricsCatalog` con fixtures propias (dos proyectos; Sprints finalizados 1, 2 y 3 y uno activo en el primero; un Sprint finalizado en el segundo): solo Sprints finalizados del proyecto, más reciente primero, el activo no figura y su número se informa, otro proyecto no se mezcla y proyecto sin Sprints, en `src/web/postgres_metrics_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLMetricsCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_metrics_catalog.go`
+- [x] T007 Implementar `PostgreSQLMetricsCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_metrics_catalog.go`
 - [x] T008 [P] Escribir la prueba del adaptador sobre el servicio real de HU-07 y PostgreSQL real, con Sprints cerrados por el servicio de HU-15: velocidad de las historias "Hecho"; desviación con valores conocidos (10 horas estimadas y 12 reales dan 20 %); sin horas estimadas; cálculo parcial con X de Y; Sprint sin historias completadas con velocidad cero; las historias devueltas no cuentan, en `src/web/metrics_source_test.go`
-- [ ] T009 Definir en `src/web/metrics_source.go` la interfaz `MetricsSource`, el tipo `SprintMetrics` y el adaptador sobre el servicio de HU-07, que traduce tipos sin calcular ni redondear
+- [x] T009 Definir en `src/web/metrics_source.go` la interfaz `MetricsSource`, el tipo `SprintMetrics` y el adaptador sobre el servicio de HU-07, que traduce tipos sin calcular ni redondear
 - [x] T010 [P] Escribir las pruebas unitarias del formato y la selección: desviación positiva, negativa y cero con dos decimales, coma y signo; "No disponible"; `0 Story Points`; alerta de cálculo parcial con X de Y; elección del Sprint (válido, no numérico, inexistente, activo, de otro proyecto y sin lista); aviso del Sprint en curso, en `src/web/metrics_view_test.go`
-- [ ] T011 Implementar en `src/web/metrics_view.go` los textos en un solo lugar (`MsgMetricsNoSprints`, `MsgMetricsActiveHint`), el formato de la desviación y la velocidad, la selección del Sprint y el armado de `MetricsView`
+- [x] T011 Implementar en `src/web/metrics_view.go` los textos en un solo lugar (`MsgMetricsNoSprints`, `MsgMetricsActiveHint`), el formato de la desviación y la velocidad, la selección del Sprint y el armado de `MetricsView`
 
 **Checkpoint**: El catálogo PostgreSQL, el adaptador de HU-07 y el formato están listos y probados con datos reales.
 
@@ -101,7 +101,7 @@
 - [ ] T033 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b, en `src/web/metrics_handlers_test.go`
 - [ ] T034 [P] Escribir la prueba de handler de un Sprint Goal con `<script>`: se muestra como texto, en `src/web/metrics_handlers_test.go`
 - [ ] T035 [P] Escribir la prueba de que un `POST` a `/metricas` recibe la página 405 de HU-20a y no modifica nada, en `src/web/metrics_handlers_test.go`
-- [ ] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
 - [ ] T037 Guardar en `specs/025-web-metrics/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/025-web-metrics/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
 - [ ] T038 Coordinar con HU-16 que puede reutilizar `MetricsSource` para mostrar la velocidad en el detalle de un Sprint; con HU-10 que los Story Points planificados y el porcentaje completado se muestran en su propia historia; con HU-08 y HU-09 que consumen los mismos cálculos de HU-07; y con HU-15 que el escenario "Cierre bloqueado" quedó solo en su pantalla
 - [ ] T039 Revisar trazabilidad de FR-001 a FR-014 y SC-001 a SC-006 en `specs/025-web-metrics/tasks.md` y la tabla de trazabilidad de `spec.md`
