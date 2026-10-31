@@ -1,0 +1,36 @@
+# HU-05b - cobertura
+# Fecha: 2026-10-29 03:16 (UTC-03:00)
+# Entorno: Go go1.27.1 linux/amd64, PostgreSQL 16, migraciones 001-012 (sin migración nueva de HU-05b)
+$ go test -count=1 -p 1 -cover ./...
+
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.119s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	0.046s	coverage: 95.9% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.004s	coverage: 8.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.154s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.074s	coverage: 93.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.022s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	0.712s	coverage: 89.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.039s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	0.482s	coverage: 80.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	4.668s	coverage: 89.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	1.497s	coverage: [no statements]
+
+$ go test -count=1 -p 1 -coverprofile=poker.out ./src/poker/ && go tool cover -func=poker.out
+
+src/poker/postgres_store.go:21:	NewPostgreSQLStore	100.0%
+src/poker/postgres_store.go:26:	OpenRound		76.7%
+src/poker/postgres_store.go:74:	roundStatuses		81.8%
+src/poker/postgres_store.go:93:	CastVote		87.0%
+src/poker/postgres_store.go:139:	CloseRound		84.6%
+src/poker/round.go:14:		CheckOpen		100.0%
+src/poker/round.go:27:		CheckVote		100.0%
+src/poker/round.go:36:		CheckClose		100.0%
+src/poker/series.go:9:		InSeries		100.0%
+src/poker/series.go:20:		ParseValue		100.0%
+src/poker/service.go:11:		NewService		100.0%
+src/poker/service.go:16:		OpenRound		100.0%
+src/poker/service.go:28:		Vote			100.0%
+src/poker/service.go:44:		CloseRound		100.0%
+src/poker/spread.go:16:		Spread			100.0%
+src/poker/spread.go:41:		level			100.0%
+total:										(statements)		89.3%

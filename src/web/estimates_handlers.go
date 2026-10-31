@@ -1,0 +1,171 @@
+package web
+
+import (
+	"context"
+	"errors"
+	"net/http"
+	"strconv"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+)
+
+// EstimateActions es la operación de HU-17 que usa la pantalla; la satisface *backlog.EstimateService.
+type EstimateActions interface {
+	UpdateEstimatedHours(ctx context.Context, projectID, storyID int64, input string) (backlog.EstimateResult, error)
+}
+
+var _ EstimateActions = (*backlog.EstimateService)(nil)
+
+// RegisterEstimates registra la sección "Estimaciones" (HU-17) con GET y POST /estimaciones. La
+// sección exige proyecto activo: HU-20b redirige a la selección si falta.
+func RegisterEstimates(s *Server, actions EstimateActions, catalog EstimateCatalog) error {
+	if s == nil {
+		return errors.New("web server is required")
+	}
+	if actions == nil {
+		return errors.New("estimate service is required")
+	}
+	if catalog == nil {
+		return errors.New("estimate catalog is required")
+	}
+	h := &estimatesHandlers{server: s, actions: actions, catalog: catalog}
+	return s.Register(Section{Name: TitleEstimates, Path: pathEstimates, RequiresProject: true}, Routes{
+		"GET " + pathEstimates:  http.HandlerFunc(h.get),
+		"POST " + pathEstimates: http.HandlerFunc(h.post),
+	})
+}
+
+type estimatesHandlers struct {
+	server  *Server
+	actions EstimateActions
+	catalog EstimateCatalog
+}
+
+type estimatesPageData struct {
+	Rows         []estimateRowView
+	EmptyMessage string
+}
+
+// estimateRowView es una fila ya formateada para la plantilla.
+type estimateRowView struct {
+	ID             int64
+	Title          string
+	Status         backlog.StoryStatus
+	StoryPoints    string
+	EstimatedHours string
+	ActualHours    string
+	InputValue     string // valor del campo de horas: la estimación actual o lo escrito
+	Locked         bool
+	LockedReason   string
+	Error          string // mensaje junto al campo cuando se rechazó el envío de esta fila
+}
+
+func (h *estimatesHandlers) get(w http.ResponseWriter, r *http.Request) {
+	active := ActiveContextFrom(r.Context())
+	if active == nil || active.ProjectID == 0 {
+		h.server.renderer.Fail(w, r, errors.New("active project context is required"))
+		return
+	}
+	h.render(w, r, http.StatusOK, active.ProjectID, nil)
+}
+
+func (h *estimatesHandlers) post(w http.ResponseWriter, r *http.Request) {
+	active := ActiveContextFrom(r.Context())
+	if active == nil || active.ProjectID == 0 {
+		h.server.renderer.Fail(w, r, errors.New("active project context is required"))
+		return
+	}
+	submission := parseEstimateSubmission(r)
+	if !submission.ValidStoryID {
+		h.reject(w, r, active.ProjectID, submission, mapEstimateError(backlog.ErrStoryNotFound))
+		return
+	}
+	result, err := h.actions.UpdateEstimatedHours(r.Context(), active.ProjectID, submission.StoryID, submission.Hours)
+	if err != nil {
+		failure := mapEstimateError(err)
+		if failure.Status == http.StatusInternalServerError {
+			// El detalle queda solo en el registro del servidor; la respuesta muestra MsgOperationFailed (T037).
+			h.server.logger.Error("no se pudo guardar la estimación", "metodo", r.Method, "ruta", r.URL.Path, "detalle", err.Error())
+		}
+		h.reject(w, r, active.ProjectID, submission, failure)
+		return
+	}
+	SetFlash(w, r, FlashSuccess, estimateSuccessMessage(result))
+	RedirectSeeOther(w, r, pathEstimates)
+}
+
+// reject vuelve a mostrar la lista con el estado del rechazo: el mensaje junto al campo de la fila
+// o como mensaje general, y lo escrito conservado en el campo cuando corresponde.
+func (h *estimatesHandlers) reject(w http.ResponseWriter, r *http.Request, projectID int64, submission estimateSubmission, failure estimateFailure) {
+	row := &estimateRowState{StoryID: submission.StoryID}
+	if failure.Keep {
+		row.Written, row.KeepWritten = submission.Hours, true
+	}
+	var flash *Flash
+	if failure.InRow {
+		row.Error = failure.Message
+	} else {
+		flash = &Flash{Kind: FlashError, Text: failure.Message}
+	}
+	h.renderWith(w, r, failure.Status, projectID, flash, row)
+}
+
+// estimateRowState es el estado de la fila que se acaba de enviar.
+type estimateRowState struct {
+	StoryID     int64
+	Written     string
+	KeepWritten bool
+	Error       string
+}
+
+// render muestra la lista del proyecto con el estado HTTP y el mensaje indicados.
+func (h *estimatesHandlers) render(w http.ResponseWriter, r *http.Request, status int, projectID int64, flash *Flash) {
+	h.renderWith(w, r, status, projectID, flash, nil)
+}
+
+func (h *estimatesHandlers) renderWith(w http.ResponseWriter, r *http.Request, status int, projectID int64, flash *Flash, submitted *estimateRowState) {
+	rows, err := h.catalog.ListEstimates(r.Context(), projectID)
+	if err != nil {
+		// T035: página de error de HU-20a, nunca una lista incompleta (se descarta lo leído).
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	data := estimatesPageData{Rows: make([]estimateRowView, 0, len(rows)), EmptyMessage: MsgEstimatesNoStories}
+	for _, row := range rows {
+		view := newEstimateRowView(row)
+		if submitted != nil && submitted.StoryID == row.ID {
+			if submitted.KeepWritten {
+				view.InputValue = submitted.Written
+			}
+			view.Error = submitted.Error
+		}
+		data.Rows = append(data.Rows, view)
+	}
+	page := PageData{Title: TitleEstimates, Data: data, Flash: flash}
+	if status == http.StatusOK {
+		h.server.renderer.Page(w, r, "estimates.html", page)
+		return
+	}
+	h.server.renderer.PageStatus(w, r, status, "estimates.html", page)
+}
+
+func newEstimateRowView(row EstimateRow) estimateRowView {
+	view := estimateRowView{
+		ID:             row.ID,
+		Title:          row.Title,
+		Status:         row.Status,
+		StoryPoints:    MsgNotEstimated,
+		EstimatedHours: MsgNotEstimated, // nunca 0: la ausencia de estimación se muestra con texto
+		ActualHours:    formatEstimateHours(row.ActualHours),
+		Locked:         row.Locked,
+		LockedReason:   row.LockedReason,
+	}
+	if row.StoryPoints != nil {
+		view.StoryPoints = strconv.Itoa(*row.StoryPoints)
+	}
+	if row.EstimatedHours != nil {
+		view.EstimatedHours = formatEstimateHours(*row.EstimatedHours)
+		view.InputValue = view.EstimatedHours
+	}
+	return view
+}

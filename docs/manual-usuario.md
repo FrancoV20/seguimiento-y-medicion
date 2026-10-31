@@ -176,3 +176,51 @@ depende de las historias ni de los Sprints.
 | `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
 | `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer los datos; no se muestra información parcial. |
 | `La dirección que buscás no existe o ya no está disponible.` | El proyecto elegido ya no existe. Elegí otro. |
+
+## Estimaciones
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/estimaciones`. La pantalla
+lista las historias del proyecto, las más recientes primero, con el título, el estado, los Story Points,
+las **horas estimadas** y las **horas reales** registradas en el Registro de esfuerzo. Lo que todavía no
+se estimó aparece como **Sin estimar** (nunca como 0); las horas reales aparecen como 0 si nadie cargó
+horas.
+
+### Registrar o modificar las horas estimadas
+
+Escribí las horas en el campo de la fila y presioná **Guardar**. Se acepta coma o punto como separador
+decimal (`1,5` o `1.5`), con hasta dos decimales y hasta 9999,99 horas, sin separadores de miles. La
+primera vez se muestra **Horas estimadas registradas** y las siguientes **Horas estimadas actualizadas**.
+Las horas se muestran siempre con coma. Cambiar la estimación no modifica las horas reales ni ningún otro
+dato de la historia.
+
+Las historias de un Sprint finalizado (las **Hecho** al cerrar el Sprint) muestran el campo deshabilitado
+con el motivo **Sprint finalizado**: su estimación ya no se puede cambiar. Las historias que el cierre
+devolvió al Backlog se pueden volver a estimar.
+
+### Corregir errores
+
+- **El valor de horas no es válido**: el valor es 0, negativo, vacío, no numérico o tiene más de dos
+  decimales.
+- **Las horas estimadas no pueden superar 9999,99**.
+- **La historia no existe**: la historia no pertenece al proyecto elegido.
+- **La operación no pudo completarse**: no se guardó nada; volvé a intentarlo más tarde.
+
+Ante un error, lo que escribiste queda en el campo para corregirlo y el valor anterior no cambia. Si el
+proyecto no tiene historias, la pantalla muestra **Aún no hay historias**.
+
+## Cierre de Sprint
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/cierre`. La pantalla muestra
+el Sprint activo, las historias **Hecho** que permanecerán en el Sprint y las historias **En Sprint** o
+**En progreso** que volverán al Backlog en estado **Pendiente**. También muestra los Story Points
+completados sobre los planificados.
+
+Antes de confirmar, revisá el resumen: el cierre no se puede deshacer. Al presionar **Cerrar Sprint**,
+las historias incompletas pierden su asignación y quedan disponibles para un Sprint posterior; las
+historias **Hecho** conservan su estado y su asignación al Sprint finalizado. El sistema guarda además
+una foto de los estados y Story Points para las métricas históricas.
+
+Si no hay un Sprint activo, la pantalla informa **No hay un Sprint activo para cerrar**. Si HU-07 detecta
+datos inválidos en historias completadas, corregí las historias indicadas antes de reintentar. Un segundo
+envío de un Sprint ya cerrado se rechaza; si falla el guardado, no se aplican cambios parciales y se
+muestra **La operación no pudo completarse**.

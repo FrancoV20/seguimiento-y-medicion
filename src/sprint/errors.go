@@ -14,6 +14,9 @@ var (
 	ErrInvalidSprintNumber  = errors.New("el número de Sprint debe ser positivo")
 	ErrPersistence          = errors.New("no se pudo completar la operación de persistencia")
 	ErrActiveSprintExists   = errors.New("ya hay un Sprint activo en el proyecto")
+	ErrSprintNotFound       = errors.New("el Sprint no existe en el proyecto")
+	ErrSprintAlreadyClosed  = errors.New("el Sprint ya está cerrado")
+	ErrCloseBlocked         = errors.New("el Sprint no se puede cerrar")
 )
 
 // ActiveSprintExistsError indica que el proyecto ya tiene un Sprint activo e informa

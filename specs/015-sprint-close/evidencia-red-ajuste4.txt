@@ -1,0 +1,13 @@
+﻿=== RUN   TestSprintStoryResultsSchema_ClavesSonBigint
+    sprint_story_results_schema_integration_test.go:30: sprint_story_results.sprint_id es "integer", se esperaba "bigint" como la columna que referencia
+    sprint_story_results_schema_integration_test.go:30: sprint_story_results.story_id es "integer", se esperaba "bigint" como la columna que referencia
+--- FAIL: TestSprintStoryResultsSchema_ClavesSonBigint (0.18s)
+=== RUN   TestSprintStoryResultsSchema_FinalStatusSoloAceptaLosCuatroEstados
+    sprint_story_results_schema_integration_test.go:67: final_status "Cualquiera" debe rechazarse por un CHECK (código 23514), se obtuvo: <nil>
+    sprint_story_results_schema_integration_test.go:67: final_status "hecho" debe rechazarse por un CHECK (código 23514), se obtuvo: <nil>
+    sprint_story_results_schema_integration_test.go:67: final_status "" debe rechazarse por un CHECK (código 23514), se obtuvo: <nil>
+    sprint_story_results_schema_integration_test.go:67: final_status "Finalizado" debe rechazarse por un CHECK (código 23514), se obtuvo: <nil>
+--- FAIL: TestSprintStoryResultsSchema_FinalStatusSoloAceptaLosCuatroEstados (0.17s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	0.884s
+FAIL
