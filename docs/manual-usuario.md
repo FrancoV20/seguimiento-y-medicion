@@ -262,3 +262,50 @@ muestra el finalizado más reciente.
 | `Para entrar a esta sección primero elegí un proyecto.` | La aplicación te lleva a elegir el proyecto y después vuelve a esta pantalla. |
 | `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
 | `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer o calcular; no se muestran métricas parciales. |
+## Planning Poker
+
+Elegí el proyecto desde **Cambiar proyecto**, identificate como integrante y abrí
+`http://localhost:8080/planning-poker`. Ahí se estiman las historias del proyecto en **Story Points** con la serie
+1, 2, 3, 5, 8, 13, 21, 34, 55 y 89.
+
+### Abrir una ronda, votar y cerrarla
+
+1. En **Abrir ronda**, elegí la historia y presioná **Abrir ronda**. Aparece en las rondas abiertas con todos los
+   integrantes en **Sin votar**.
+2. Cada integrante elige un valor y presiona **Votar**. Los demás solo ven que votó (**Votó**), nunca el valor; tu
+   propio voto aparece como **Tu voto**. Podés cambiarlo mientras la ronda siga abierta.
+3. Cuando votaron todos, presioná **Cerrar ronda**. La ronda pasa a **Rondas cerradas** con los votos revelados y
+   un aviso: **Divergencia** si los votos están muy separados (más de dos valores de la serie de distancia), o el
+   rango de votos si no la hay.
+
+### Nueva ronda y estimación acordada
+
+En la última ronda cerrada de cada historia aparecen dos acciones:
+
+- **Nueva ronda**: abre la ronda siguiente (ronda 2, 3, …) de la misma historia, sin votos. Usala cuando hubo
+  divergencia y el equipo quiere volver a votar después de debatir. La ronda anterior queda en **Rondas cerradas**.
+- **Estimación acordada**: elegí el valor y presioná **Registrar estimación**. La historia queda con esos Story
+  Points, que se ven en el **Backlog**. Si la ronda tuvo divergencia, el formulario recuerda registrar el valor que
+  acordaron después de debatir. Podés registrar directamente si no hubo divergencia, sin abrir otra ronda.
+
+Las rondas cerradas que no son la última de su historia no tienen acciones. Si la historia pertenece a un **Sprint
+finalizado**, las dos acciones aparecen deshabilitadas con el motivo **Sprint finalizado**: sus Story Points ya no
+se pueden cambiar.
+
+### Mensajes
+
+| Mensaje | Qué hacer |
+|---|---|
+| `Seleccioná un valor de la serie` | Elegí un valor antes de votar o de registrar la estimación. |
+| `El valor no pertenece a la serie de Fibonacci` | Elegí uno de los valores de la serie. |
+| `Ya hay una ronda abierta para esta historia` | Votá y cerrá la ronda abierta antes de abrir otra. |
+| `La historia ya tuvo una ronda de votación` | Usá **Nueva ronda** desde su última ronda cerrada. |
+| `La ronda ya está cerrada` | La ronda se cerró mientras votabas; recargá la pantalla. |
+| `La ronda no tiene votos` | Para cerrar una ronda, al menos un integrante tiene que haber votado. |
+| `La ronda sigue abierta: cerrala antes de registrar la estimación` | Cerrá la ronda y registrá la estimación desde la ronda cerrada. |
+| `Hay una ronda más reciente de esta historia` | La pantalla estaba desactualizada; recargá y usá la última ronda. |
+| `La historia pertenece a un Sprint finalizado; sus Story Points no se pueden modificar` | No se puede estimar ni abrir rondas nuevas de esa historia. |
+| `La ronda no existe` | La ronda no pertenece al proyecto elegido; recargá la pantalla. |
+| `La operación no pudo completarse` | No se guardó nada; volvé a intentarlo más tarde. |
+
+Si no te identificaste, la aplicación te pide elegir un integrante y después vuelve a Planning Poker.

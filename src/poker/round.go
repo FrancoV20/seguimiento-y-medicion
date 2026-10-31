@@ -23,6 +23,50 @@ func CheckOpen(existing []RoundStatus) error {
 	return ErrStoryAlreadyRounded
 }
 
+// StoryRound es una ronda de la historia, para decidir la ronda siguiente (HU-18).
+type StoryRound struct {
+	Number int
+	Status RoundStatus
+}
+
+// CheckNextRound decide si se abre una ronda nueva desde la ronda número from (HU-18).
+// Orden: alguna abierta -> ErrRoundAlreadyOpen; from no es el mayor -> ErrNotLatestRound;
+// Sprint finalizado -> ErrStoryInFinishedSprint. Si no, next = mayor + 1.
+func CheckNextRound(from int, rounds []StoryRound, inFinishedSprint bool) (next int, err error) {
+	latest := 0
+	for _, r := range rounds {
+		if r.Status == StatusOpen {
+			return 0, ErrRoundAlreadyOpen
+		}
+		if r.Number > latest {
+			latest = r.Number
+		}
+	}
+	if from != latest {
+		return 0, ErrNotLatestRound
+	}
+	if inFinishedSprint {
+		return 0, ErrStoryInFinishedSprint
+	}
+	return latest + 1, nil
+}
+
+// CheckAgree decide si se registra la estimación desde una ronda (HU-18).
+// Orden: abierta -> ErrRoundStillOpen; number != latest -> ErrNotLatestRound;
+// Sprint finalizado -> ErrStoryInFinishedSprint.
+func CheckAgree(status RoundStatus, number, latest int, inFinishedSprint bool) error {
+	if status == StatusOpen {
+		return ErrRoundStillOpen
+	}
+	if number != latest {
+		return ErrNotLatestRound
+	}
+	if inFinishedSprint {
+		return ErrStoryInFinishedSprint
+	}
+	return nil
+}
+
 // CheckVote decide si se puede votar en una ronda con ese estado.
 func CheckVote(status RoundStatus) error {
 	if status != StatusOpen {
@@ -62,4 +106,11 @@ type ClosedRound struct {
 	RoundID, StoryID int64
 	StoryTitle       string
 	Number           int
+}
+
+// AgreedEstimate es la estimación registrada (HU-18).
+type AgreedEstimate struct {
+	StoryID     int64
+	StoryTitle  string
+	StoryPoints int
 }

@@ -2,7 +2,7 @@
 
 **Rama**: `HU-18`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-05b (y por lo tanto HU-05a), HU-02, HU-20a, HU-20b (verificación manual del escenario 10: HU-15 o un
 Sprint finalizado cargado a mano)
