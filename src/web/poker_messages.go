@@ -21,7 +21,24 @@ const (
 	MsgPokerNoVotes             = "La ronda no tiene votos"    // HU-05b
 	MsgPokerNoClosedRounds      = "Aún no hay rondas cerradas" // HU-05b
 	LabelPokerDidNotVote        = "No votó"                    // HU-05b
+
+	// HU-18: nueva ronda y estimación acordada.
+	MsgPokerNotLatestRound        = "Hay una ronda más reciente de esta historia"
+	MsgPokerRoundStillOpen        = "La ronda sigue abierta: cerrala antes de registrar la estimación"
+	MsgPokerStoryInFinishedSprint = "La historia pertenece a un Sprint finalizado; sus Story Points no se pueden modificar"
+	MsgPokerDivergenceReminder    = "La última ronda tuvo divergencia: registrá el valor que acordaron después de debatir"
+	LabelPokerFinishedSprint      = "Sprint finalizado"
 )
+
+// pokerNextRoundOpenedMessage es el mensaje de éxito al abrir una ronda siguiente (HU-18).
+func pokerNextRoundOpenedMessage(number int, title string) string {
+	return fmt.Sprintf("Ronda %d abierta para la historia «%s»", number, title)
+}
+
+// pokerEstimateRegisteredMessage es el mensaje de éxito al registrar la estimación (HU-18).
+func pokerEstimateRegisteredMessage(title string, points int) string {
+	return fmt.Sprintf("Estimación registrada: «%s» queda con %d Story Points", title, points)
+}
 
 // pokerRoundOpenedMessage es el mensaje de éxito al abrir una ronda.
 func pokerRoundOpenedMessage(title string) string {

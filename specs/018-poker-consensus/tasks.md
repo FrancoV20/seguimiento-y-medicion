@@ -210,23 +210,23 @@ registrar 8; ver 8 en el Backlog.
 
 ### Implementación (GREEN)
 
-- [ ] T022 Agregar `Latest bool` e `InFinishedSprint bool` a `PokerClosedRoundView` en `src/web/poker_catalog.go` y las
+- [x] T022 Agregar `Latest bool` e `InFinishedSprint bool` a `PokerClosedRoundView` en `src/web/poker_catalog.go` y las
   columnas `latest` e `in_finished_sprint` a `pokerClosedRoundsQuery` en `src/web/postgres_poker_catalog.go`, con el
   SQL de `data-model.md` (T001: HU-05b).
-- [ ] T023 [P] Agregar en `src/web/poker_messages.go` los textos de la tabla de `data-model.md`
+- [x] T023 [P] Agregar en `src/web/poker_messages.go` los textos de la tabla de `data-model.md`
   (`MsgPokerNotLatestRound`, `MsgPokerRoundStillOpen`, `MsgPokerStoryInFinishedSprint`, `MsgPokerDivergenceReminder`,
   `LabelPokerFinishedSprint`, `pokerNextRoundOpenedMessage(number, title)`, `pokerEstimateRegisteredMessage(title,
   points)`), y en `src/web/poker_form.go` los casos `ErrNotLatestRound`, `ErrRoundStillOpen` y
   `ErrStoryInFinishedSprint` → 409 en `pokerOutcomeFor`.
-- [ ] T024 En `src/web/poker_handlers.go`: `OpenNextRound` y `AgreeEstimate` en `PokerActions`; `"POST " + pathPoker +
+- [x] T024 En `src/web/poker_handlers.go`: `OpenNextRound` y `AgreeEstimate` en `PokerActions`; `"POST " + pathPoker +
   "/nueva-ronda"` y `"POST " + pathPoker + "/estimacion"` en el mismo `Routes` de `RegisterPlanningPoker`; handlers
   `nextRound` y `agree` (flujo de `plan.md`); y en `render`, `pokerClosedRoundPage` suma `Actions`, `Locked` y
   `Reminder` (`FlashWarning` con `MsgPokerDivergenceReminder` si es la última y `poker.Spread` dice `Divergent`), y
   `pokerPageData` suma `FinishedSprint` (T001: HU-05b).
-- [ ] T025 Completar `src/web/templates/poker.html` con el bloque `poker-actions` de `data-model.md` dentro de cada
+- [x] T025 Completar `src/web/templates/poker.html` con el bloque `poker-actions` de `data-model.md` dentro de cada
   `data-ronda-cerrada` con `.Actions` (radios sin `checked`, `disabled` y "Sprint finalizado" si `.Locked`). Sin
   JavaScript.
-- [ ] T026 Ejecutar T018–T020 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a y
+- [x] T026 Ejecutar T018–T020 en verde y `go test -count=1 -p 1 ./...` completo, incluidas las pruebas de HU-05a y
   HU-05b sin cambiar sus expectativas.
 
 **Punto de control**: el Scrum Master vuelve a votar o fija los Story Points desde Planning Poker.
