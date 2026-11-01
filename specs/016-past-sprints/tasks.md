@@ -91,7 +91,7 @@ consistente.
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear los dos archivos del catálogo:
+- [x] T008 Crear los dos archivos del catálogo:
   - `src/web/past_sprint_catalog.go`, con `PastSprintSummary`, `PastSprintStory`, `PastSprintDetail`,
     `PastSprintCatalog` y `PastSprintMetrics` (`CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error)`);
   - `src/web/postgres_past_sprint_catalog.go` (`PostgreSQLPastSprintCatalog`, `NewPostgreSQLPastSprintCatalog`).
@@ -99,7 +99,7 @@ consistente.
     sql.LevelRepeatableRead`) y las dos consultas de `data-model.md`: el Sprint filtrado por `id`, `project_id` y
     `status = 'Finalizado'` (sin fila → `NotFound(...)`) y el registro con `ORDER BY r.story_id`. Los otros errores
     se envuelven con `%w`.
-- [ ] T009 Ejecutar T006 en verde.
+- [x] T009 Ejecutar T006 en verde.
 
 **Punto de control**: el catálogo devuelve los datos propios de las dos pantallas.
 
