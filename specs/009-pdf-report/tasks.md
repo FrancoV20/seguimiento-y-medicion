@@ -198,7 +198,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T024 Implementar `PostgreSQLStore`, `NewPostgreSQLStore(db *sql.DB)` y `LoadSprintReport` en
+- [x] T024 Implementar `PostgreSQLStore`, `NewPostgreSQLStore(db *sql.DB)` y `LoadSprintReport` en
   `src/report/postgres_store.go`:
   - `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, y `defer tx.Rollback()`;
   - las consultas de `data-model.md`: encabezado (sin fila → `ErrSprintNotFound`), historias del registro de cierre
@@ -206,7 +206,7 @@ Formato: `[ID] [P] [E#] descripción`
     `ORDER BY m.display_name, m.id`, y defectos con `WHERE d.project_id = $2 AND d.detection_sprint_id = $1`;
   - horas como `ROUND(x * 100)::bigint` en `effort.Hours`;
   - errores envueltos con `%w`.
-- [ ] T025 Ejecutar T021 y T022 en verde.
+- [x] T025 Ejecutar T021 y T022 en verde.
 
 **Punto de control**: `report.Service.SprintPDF` genera el PDF real de un Sprint desde PostgreSQL.
 
@@ -215,7 +215,7 @@ Formato: `[ID] [P] [E#] descripción`
 **Objetivo**: la sección `GET /reportes` y la descarga `GET /reportes/sprints/{id}/pdf`.
 
 **Prueba independiente**: abrir "Reportes" de «Alfa», descargar los PDF de los Sprints 1, 2 y 3 y comprobar los
-valores de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, ajenos y con una falla.
+valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, ajenos y con una falla.
 
 ### Pruebas (RED)
 
