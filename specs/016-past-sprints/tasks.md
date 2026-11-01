@@ -56,7 +56,7 @@ consistente.
 
 ### Pruebas (RED)
 
-- [ ] T005 Crear los datos de prueba en `src/web/past_sprint_fixtures_test.go`; los usan T006, T011, T018 y T019. Son
+- [x] T005 Crear los datos de prueba en `src/web/past_sprint_fixtures_test.go`; los usan T006, T011, T018 y T019. Son
   los de la tabla "Datos de prueba" de `data-model.md`, insertados directamente como los deja HU-15:
   - «Alfa» (18/08/2026 al 30/11/2026), con las historias en este orden: «Alta» 3, «Login» 5, «Tablero» 3, «Perfil» 2,
     «Reportes» 8, «Exportar» 5 y «Ayuda» sin estimar.
@@ -75,7 +75,7 @@ consistente.
       'Hecho' 2 asignada.
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T006 [E1, E2, E3, E4, E5, E6, E8] Escribir `TestPostgresPastSprintCatalog` en
+- [x] T006 [E1, E2, E3, E4, E5, E6, E8] Escribir `TestPostgresPastSprintCatalog` en
   `src/web/postgres_past_sprint_catalog_integration_test.go`:
   - `FinishedSprints` de «Alfa» → números [2, 1] con objetivo y fechas; el 3 no está;
   - `FinishedSprints` de «Beta» → vacío, sin error; los de «Gamma» no aparecen con «Alfa»;
@@ -86,7 +86,7 @@ consistente.
   - del Sprint 2 de «Gamma» → `Stories` vacío, sin error;
   - el Sprint 3 (en curso), el Sprint 1 de «Gamma» pedido con «Alfa» y el identificador 2147483647 →
     `KindOf(err) == KindNotFound`.
-- [ ] T007 Ejecutar T006, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
+- [x] T007 Ejecutar T006, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
   sección "Catálogo".
 
 ### Implementación (GREEN)
