@@ -154,13 +154,13 @@ velocidad.
 
 ### Pruebas (RED)
 
-- [ ] T017 [P] [E3, E4, E5] Escribir la parte de detalle de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
+- [x] T017 [P] [E3, E4, E5] Escribir la parte de detalle de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
   - `pastSprintPointsText(nil)` → "Sin estimar";
   - `buildPastSprintDetailView` con los cuatro casos de la tabla de `data-model.md` (Sprint 2, Sprint 1, «Gamma» 1 y
     «Gamma» 2 sin registro): filas en orden, "volvió al Backlog" solo en las no completadas, "Velocidad: 10 Story
     Points", "Todas las historias se completaron", "Ninguna historia se completó", y "No hay registro de las
     historias de este Sprint" sin tablas ni los otros dos mensajes.
-- [ ] T018 [E3, E4, E5, E8] Escribir las pruebas del detalle en `src/web/past_sprint_handlers_test.go`, con el
+- [x] T018 [E3, E4, E5, E8] Escribir las pruebas del detalle en `src/web/past_sprint_handlers_test.go`, con el
   catálogo y HU-07 reales:
   - `TestHU16_Detalle`: Sprint 2 → "Sprint 2", "Objetivo: Gestionar perfiles y reportes", "Del 01/09/2026 al
     14/09/2026", "Velocidad: 10 Story Points"; Completadas «Login» 5, «Tablero» 3 y «Perfil» 2; No completadas
@@ -178,7 +178,7 @@ velocidad.
     «Gamma», 2147483647, "abc", "0", "-1" y "01". Con un `PastSprintMetrics` que cuenta llamadas, cero llamadas en
     todos. Con un `PastSprintCatalog` que envuelve al real y cuenta llamadas, cero llamadas a `SprintDetail` para
     "abc", "0", "-1" y "01" (FR-010: sin consultar la base).
-- [ ] T019 [E7, E9] Escribir las pruebas de solo lectura, errores y bordes en `src/web/past_sprint_handlers_test.go`:
+- [x] T019 [E7, E9] Escribir las pruebas de solo lectura, errores y bordes en `src/web/past_sprint_handlers_test.go`:
   - `TestHU16_SoloLectura`: el detalle del Sprint 2 no tiene `<form`, `<button` ni `<script`. `POST`, `PUT` y
     `DELETE` a `/sprints-anteriores/{id}` y `POST` a `/sprints-anteriores` (del mismo origen) → 405 con la página de
     HU-20a. El registro y las historias no cambian;
@@ -193,9 +193,9 @@ velocidad.
   - `TestHU16_Rendimiento`: un proyecto con 50 Sprints finalizados y, en uno, 200 filas en el registro (150 "Hecho"
     de 1 Story Point asignadas y 50 devueltas) → la lista y el detalle ("Velocidad: 150 Story Points") en menos de
     500 ms cada uno.
-- [ ] T020 [P] [E3, E7] Escribir los escenarios BDD "Detalle de un Sprint" y "Solo lectura" en
+- [x] T020 [P] [E3, E7] Escribir los escenarios BDD "Detalle de un Sprint" y "Solo lectura" en
   `test/web_past_sprints_bdd_test.go`.
-- [ ] T021 Ejecutar T017–T020, confirmar que fallan (la ruta del detalle no existe) y guardar la salida en
+- [x] T021 Ejecutar T017–T020, confirmar que fallan (la ruta del detalle no existe) y guardar la salida en
   `evidencia-red.txt`, sección "Detalle".
 
 ### Implementación (GREEN)

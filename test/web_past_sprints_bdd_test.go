@@ -191,3 +191,60 @@ func TestBDD_HU16_SinSprintsFinalizados(t *testing.T) {
 	// Entonces veo "Aún no hay Sprints anteriores"
 	debeVerse(t, cuerpo, "Aún no hay Sprints anteriores")
 }
+
+// Escenario 3: detalle de un Sprint.
+func TestBDD_HU16_DetalleDeUnSprint(t *testing.T) {
+	// Dado el Sprint 2 finalizado de «Alfa»
+	m := dadoElProyectoAlfaConSprintsCerrados(t)
+	app := m.laAplicacion(t)
+	c := app.navegador(t, m.alfa)
+	_, lista := app.abrir(t, c, "/sprints-anteriores")
+	enlace := "/sprints-anteriores/" + strconv.FormatInt(m.sprints[2], 10)
+	debeVerse(t, lista, `href="`+enlace+`"`)
+
+	// Cuando lo selecciono
+	resp, cuerpo := app.abrir(t, c, enlace)
+
+	// Entonces veo su objetivo, sus fechas, la velocidad en 10 Story Points, las historias
+	// completadas («Login» 5, «Tablero» 3 y «Perfil» 2) y las no completadas («Reportes» 8, "En
+	// progreso" al cerrar, volvió al Backlog)
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("se esperaba 200, se obtuvo %d", resp.StatusCode)
+	}
+	debeVerse(t, cuerpo, "Objetivo: Gestionar perfiles y reportes", "Del 01/09/2026 al 14/09/2026",
+		"Velocidad: 10 Story Points", "Login", "Tablero", "Perfil", "Reportes", "En progreso", "volvió al Backlog")
+	completadas := cuerpo[strings.Index(cuerpo, "Completadas"):strings.Index(cuerpo, "No completadas")]
+	for _, h := range []string{"Login", "Tablero", "Perfil"} {
+		if !strings.Contains(completadas, h) {
+			t.Errorf("«%s» debía estar entre las completadas", h)
+		}
+	}
+	if strings.Contains(completadas, "Reportes") {
+		t.Error("«Reportes» no debía estar entre las completadas")
+	}
+}
+
+// Escenario 7: solo lectura.
+func TestBDD_HU16_SoloLectura(t *testing.T) {
+	// Dado el detalle del Sprint 2 finalizado
+	m := dadoElProyectoAlfaConSprintsCerrados(t)
+	app := m.laAplicacion(t)
+	c := app.navegador(t, m.alfa)
+	enlace := "/sprints-anteriores/" + strconv.FormatInt(m.sprints[2], 10)
+
+	// Cuando lo veo o se envía una modificación a su dirección
+	_, cuerpo := app.abrir(t, c, enlace)
+	resp, err := c.PostForm(app.servidor.URL+enlace, url.Values{"goal": {"cambiado"}})
+	if err != nil {
+		t.Fatalf("POST %s: %v", enlace, err)
+	}
+	formCuerpo(t, resp)
+
+	// Entonces no hay ningún formulario ni acción para modificarlo y el envío se rechaza con 405
+	if strings.Contains(cuerpo, "<form") || strings.Contains(cuerpo, "<button") {
+		t.Error("el detalle no debía tener formularios ni botones")
+	}
+	if resp.StatusCode != http.StatusMethodNotAllowed {
+		t.Errorf("se esperaba 405, se obtuvo %d", resp.StatusCode)
+	}
+}
