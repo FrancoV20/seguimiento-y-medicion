@@ -378,3 +378,95 @@ func TestHU13_RecargaSinReenviar(t *testing.T) {
 		t.Errorf("historias del proyecto = %d; se esperaban 4", n)
 	}
 }
+
+// ---- Bloque C: validaciones (T062–T065)
+
+// T062
+func TestHU13_TituloODescripcionVacios(t *testing.T) {
+	cases := []struct {
+		field, value, message string
+	}{
+		{BacklogFieldTitle, "", backlog.ErrTitleRequired.Error()},
+		{BacklogFieldDescription, "   ", backlog.ErrDescriptionRequired.Error()},
+	}
+	for _, tc := range cases {
+		t.Run(tc.field, func(t *testing.T) {
+			app := newHU13EditApp(t)
+			before := app.stored(t, "Login")
+			values := editValues("Título escrito")
+			values.Set(tc.field, tc.value)
+			resp, body := app.post(t, app.client, app.editPath("Login"), values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST = %d; se esperaba 422", resp.StatusCode)
+			}
+			if !strings.Contains(body, `id="`+tc.field+`-error"`) || !strings.Contains(body, tc.message) {
+				t.Errorf("no aparece %q junto a %s", tc.message, tc.field)
+			}
+			if !strings.Contains(body, `value="Acepta email"`) || !strings.Contains(body, `name="estado" value="Pendiente"`) {
+				t.Error("no se conservaron los datos enviados o el filtro oculto")
+			}
+			if tc.field == BacklogFieldDescription && !strings.Contains(body, `value="Título escrito"`) {
+				t.Error("no se conservó el título escrito")
+			}
+			app.assertUnchanged(t, "Login", before)
+		})
+	}
+}
+
+// T063
+func TestHU13_SinCriterios(t *testing.T) {
+	app := newHU13EditApp(t)
+	before := app.stored(t, "Login")
+	values := editValues("Login")
+	values[BacklogFieldCriterion] = []string{"", "   "}
+	resp, body := app.post(t, app.client, app.editPath("Login"), values)
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Fatalf("POST = %d; se esperaba 422", resp.StatusCode)
+	}
+	if !strings.Contains(body, `id="criterio-error"`) || !strings.Contains(body, backlog.ErrAcceptanceCriteriaRequired.Error()) {
+		t.Error("no aparece el mensaje de criterios junto a los criterios")
+	}
+	app.assertUnchanged(t, "Login", before)
+}
+
+// T064
+func TestHU13_PrioridadInvalida(t *testing.T) {
+	app := newHU13EditApp(t)
+	before := app.stored(t, "Login")
+	values := editValues("Login")
+	values.Set(BacklogFieldPriority, "Urgente")
+	resp, body := app.post(t, app.client, app.editPath("Login"), values)
+	if resp.StatusCode != http.StatusUnprocessableEntity {
+		t.Fatalf("POST = %d; se esperaba 422", resp.StatusCode)
+	}
+	if !strings.Contains(body, `id="prioridad-error"`) || !strings.Contains(body, backlog.ErrInvalidPriority.Error()) {
+		t.Error("no aparece el mensaje de prioridad junto a la prioridad")
+	}
+	if !strings.Contains(body, `<option value="Urgente" selected>`) {
+		t.Error("la prioridad enviada no quedó seleccionada")
+	}
+	app.assertUnchanged(t, "Login", before)
+}
+
+// T065
+func TestHU13_StoryPointsInvalidos(t *testing.T) {
+	for _, points := range []string{"4", "abc"} {
+		t.Run(points, func(t *testing.T) {
+			app := newHU13EditApp(t)
+			before := app.stored(t, "Login")
+			values := editValues("Login")
+			values.Set(BacklogFieldStoryPoints, points)
+			resp, body := app.post(t, app.client, app.editPath("Login"), values)
+			if resp.StatusCode != http.StatusUnprocessableEntity {
+				t.Fatalf("POST = %d; se esperaba 422", resp.StatusCode)
+			}
+			if !strings.Contains(body, `id="story_points-error"`) || !strings.Contains(body, MsgInvalidStoryPoints) {
+				t.Errorf("no aparece %q junto a los Story Points", MsgInvalidStoryPoints)
+			}
+			if !strings.Contains(body, `<option value="`+points+`" selected>`) {
+				t.Error("el valor enviado no quedó seleccionado")
+			}
+			app.assertUnchanged(t, "Login", before)
+		})
+	}
+}

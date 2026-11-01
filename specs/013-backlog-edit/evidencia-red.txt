@@ -55,3 +55,27 @@ FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	14.210s
 FAIL
+
+== Validaciones (T062-T066): compila, pero los envíos inválidos responden 500 en vez de 422 (el handler todavía no mapea los errores de formato ni los de HU-02) y con Story Points 'abc' la historia se guarda sin estimar ==
+--- FAIL: TestHU13_TituloODescripcionVacios (0.23s)
+    --- FAIL: TestHU13_TituloODescripcionVacios/titulo (0.12s)
+        backlog_edit_handlers_test.go:400: POST = 500; se esperaba 422
+    --- FAIL: TestHU13_TituloODescripcionVacios/descripcion (0.10s)
+        backlog_edit_handlers_test.go:400: POST = 500; se esperaba 422
+--- FAIL: TestHU13_SinCriterios (0.11s)
+    backlog_edit_handlers_test.go:424: POST = 500; se esperaba 422
+--- FAIL: TestHU13_PrioridadInvalida (0.15s)
+    backlog_edit_handlers_test.go:440: POST = 500; se esperaba 422
+--- FAIL: TestHU13_StoryPointsInvalidos (0.28s)
+    --- FAIL: TestHU13_StoryPointsInvalidos/4 (0.13s)
+        backlog_edit_handlers_test.go:461: POST = 500; se esperaba 422
+    --- FAIL: TestHU13_StoryPointsInvalidos/abc (0.14s)
+        backlog_edit_handlers_test.go:461: POST = 303; se esperaba 422
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	1.073s
+--- FAIL: TestWebBacklogEditBDD_EdicionInvalida (0.07s)
+    --- FAIL: TestWebBacklogEditBDD_EdicionInvalida/Given_la_historia_Login,_When_borro_el_t├¡tulo_y_guardo,_Then_veo_el_mensaje_de_HU-02_y_la_historia_no_cambia (0.07s)
+        web_backlog_edit_bdd_test.go:170: POST = 500; se esperaba 422
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.329s
+FAIL

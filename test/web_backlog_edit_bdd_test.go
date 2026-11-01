@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
@@ -153,6 +154,26 @@ func TestWebBacklogEditBDD_QuitarStoryPoints(t *testing.T) {
 		_, list := app.request(t, http.MethodGet, "/backlog", nil)
 		if !strings.Contains(list, web.MsgStoryUpdatedMissingPoints) {
 			t.Errorf("no aparece %q", web.MsgStoryUpdatedMissingPoints)
+		}
+	})
+}
+
+// ---- Bloque C
+
+func TestWebBacklogEditBDD_EdicionInvalida(t *testing.T) {
+	t.Run("Given la historia Login, When borro el título y guardo, Then veo el mensaje de HU-02 y la historia no cambia", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+		ids := hu13BDDStories(t, app)
+
+		resp, body := app.request(t, http.MethodPost, fmt.Sprintf("/backlog/%d/editar", ids["Login"]), hu13BDDEditValues(""))
+		if resp.StatusCode != http.StatusUnprocessableEntity {
+			t.Fatalf("POST = %d; se esperaba 422", resp.StatusCode)
+		}
+		if !strings.Contains(body, backlog.ErrTitleRequired.Error()) || !strings.Contains(body, "Descripción de Login") {
+			t.Error("no aparece el mensaje del título o se perdieron los datos escritos")
+		}
+		if got := hu13BDDTitle(t, app, ids["Login"]); got != "Login" {
+			t.Errorf("la historia cambió: título %q", got)
 		}
 	})
 }

@@ -297,19 +297,19 @@ y la base sin cambios.
 
 ### Pruebas (RED)
 
-- [ ] T062 [P] [E10a, E10b] `TestHU13_TituloODescripcionVacios`. El título vacío y la descripción con solo espacios
+- [x] T062 [P] [E10a, E10b] `TestHU13_TituloODescripcionVacios`. El título vacío y la descripción con solo espacios
   responden 422 con:
   - "el título es obligatorio" junto a `titulo`, o "la descripción es obligatoria" junto a `descripcion`;
   - los datos conservados, incluido el campo oculto `estado`;
   - la base sin cambios.
-- [ ] T063 [P] [E10c] `TestHU13_SinCriterios`: con todos los criterios vacíos, la respuesta es 422 con "agregá al
+- [x] T063 [P] [E10c] `TestHU13_SinCriterios`: con todos los criterios vacíos, la respuesta es 422 con "agregá al
   menos un criterio de aceptación" junto a los criterios, y la historia conserva los suyos.
-- [ ] T064 [P] [E11a] `TestHU13_PrioridadInvalida`: `prioridad=Urgente` responde 422 con "la prioridad debe ser
+- [x] T064 [P] [E11a] `TestHU13_PrioridadInvalida`: `prioridad=Urgente` responde 422 con "la prioridad debe ser
   Alta, Media o Baja", y la opción enviada queda seleccionada, como en HU-22.
-- [ ] T065 [P] [E11b] `TestHU13_StoryPointsInvalidos`: `story_points=4` y `story_points=abc` responden 422 con "Los
+- [x] T065 [P] [E11b] `TestHU13_StoryPointsInvalidos`: `story_points=4` y `story_points=abc` responden 422 con "Los
   Story Points no son un valor válido", y el valor enviado queda seleccionado.
-- [ ] T066 [P] [E10a] Escribir el escenario BDD "Edición inválida" en `test/web_backlog_edit_bdd_test.go`.
-- [ ] T067 Ejecutar T062–T066, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
+- [x] T066 [P] [E10a] Escribir el escenario BDD "Edición inválida" en `test/web_backlog_edit_bdd_test.go`.
+- [x] T067 Ejecutar T062–T066, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección
   "Validaciones").
 
 ### Implementación (GREEN)
