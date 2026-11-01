@@ -239,11 +239,11 @@ y comprobar los números; también con un proyecto sin finalizados.
     `main.go`.
 - [x] T033 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
   `go vet ./...` limpio y `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T034 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
-- [ ] T035 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
+- [x] T034 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
+- [x] T035 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/metrics`.
-- [ ] T036 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T037 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T036 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T037 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Calidad y avance".
 - [ ] T038 [P] Avisar:
   - a HU-08 y HU-09, que el contrato `SprintQuality` está en `main`;

@@ -3,12 +3,12 @@
 <p>Avance, Story Points y defectos de cada Sprint finalizado del proyecto.</p>
 
 {{with .Data}}
-{{if .ActiveHint}}<p class="hint">{{.ActiveHint}}</p>{{end}}
+{{if .ActiveHint}}<p class="muted" role="status">{{.ActiveHint}}</p>{{end}}
 
 {{if .NoSprints}}
-<p>{{.NoSprints}}</p>
+<p class="muted" role="status">{{.NoSprints}}</p>
 {{else}}
-<nav aria-labelledby="quality-sprints-heading">
+<nav class="app-nav" aria-labelledby="quality-sprints-heading">
   <h2 id="quality-sprints-heading">Sprints finalizados</h2>
   <ul>
     {{range .Sprints}}
@@ -36,7 +36,7 @@
     <dt>Story Points completados</dt>
     <dd>{{.PointsCompleted}}</dd>
   </dl>
-  {{if .PointsWarning}}<p class="hint">{{.PointsWarning}}</p>{{end}}
+  {{if .PointsWarning}}<div class="alert alert-warning" role="note"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">{{.PointsWarning}}</span></div>{{end}}
 
   <h3>Defectos</h3>
   <dl>

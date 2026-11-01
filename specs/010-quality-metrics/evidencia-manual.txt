@@ -1,0 +1,52 @@
+HU-10 — Verificación manual de "Calidad y avance" (T036)
+Fecha: 2026-10-31
+
+Entorno
+- Aplicación compilada desde la rama HU-10 (164852c) más el ajuste visual de quality.html de T036, ejecutada en
+  http://127.0.0.1:8080 contra PostgreSQL 16 con las migraciones hasta la 014.
+- Entorno de Claude: Go 1.24 (no se pudo descargar 1.27.1), con un reemplazo local de CrossOriginGuard solo para
+  compilar; el código de HU-10 y el resto de las pantallas son los de la rama.
+- Recorrido con un navegador Chromium headless (Playwright) usando las pantallas reales: Proyectos, Backlog,
+  Sprints, Tablero, Cierre de Sprint, Defectos y Calidad y avance. Los datos se cargaron desde la interfaz, no con
+  SQL. La única consulta directa fue leer el id del Sprint del proyecto Beta para el paso 8.
+
+Datos armados desde la interfaz
+- Proyecto "HU10 Manual Alfa" con un integrante.
+- Sprint 1: historias de 3, 5, 8 y 2 Story Points. En el Tablero, las de 3 y 5 pasaron a Hecho y la de 8 a En
+  progreso; la de 2 quedó En Sprint. Cierre de Sprint: "Sprint 1 cerrado correctamente. Historias devueltas al
+  Backlog: 2".
+- Sprint 2: una historia de 5 Story Points, que pasó a Hecho. En Defectos se registraron tres defectos (Sprint de
+  detección: Sprint 2) y se resolvió uno ("Defecto resuelto en el Sprint 2"). Se cerró el Sprint 2.
+- Proyecto "HU10 Manual Beta", primero sin Sprints y después con su Sprint 1 activo.
+
+Pasos de quickstart.md
+1. Aplicación levantada y proyecto elegido en /contexto/proyecto: PASÓ. "Calidad y avance" figura en el menú.
+2. Sprint 1 con 3, 5, 8 y 2 Story Points, Hecho las de 3 y 5, cerrado con HU-15: PASÓ.
+3. Tres defectos en el Sprint 2, uno resuelto en él, y cierre del Sprint 2: PASÓ.
+4. /calidad: PASÓ. Lista "Sprint 2", "Sprint 1" y datos del Sprint 2: "1 de 1 historias completadas", "100,00 %",
+   5 y 5 Story Points, 3 defectos detectados y 1 resuelto.
+5. Elegir el Sprint 1 (/calidad?sprint=<id>): PASÓ. "2 de 4 historias completadas", "50,00 %", 18 Story Points
+   planificados y 8 completados, 0 defectos. El Sprint 1 queda resaltado en la lista.
+6. Con el Sprint 3 activo: PASÓ. "El Sprint 3 sigue en curso; sus métricas se calculan al cerrarlo" y el Sprint 3
+   no figura en la lista.
+7. Reabrir el defecto resuelto (HU-19, "Defecto reabierto") y recargar: PASÓ. Sprint 2 con 3 detectados y 0
+   resueltos.
+8. /calidad?sprint=abc y /calidad?sprint=<id del Sprint de Beta>: PASÓ. Los dos responden 200 con el Sprint 2 de
+   Alfa (el más reciente), sin mensaje de error y sin datos de Beta.
+9. Proyecto sin Sprints finalizados (Beta): PASÓ. "Aún no hay Sprints finalizados"; con su Sprint 1 activo se
+   agrega "El Sprint 1 sigue en curso; sus métricas se calculan al cerrarlo".
+
+Comprobaciones adicionales
+- GET /calidad sin proyecto elegido: 303 a /contexto/proyecto?volver_a=%2Fcalidad.
+- POST /calidad: 405.
+- Ningún valor "NaN" ni "%" suelto en las pantallas recorridas.
+
+Ajuste realizado durante la verificación
+- En la primera pasada, el Sprint elegido se marcaba solo con aria-current (lectores de pantalla) y no se
+  distinguía a la vista. Sin editar archivos compartidos, quality.html pasó a usar clases que ya existen en
+  app.css: "app-nav" en la lista (el elegido se resalta como la sección activa del menú), "muted" en los avisos y
+  "alert alert-warning" en la advertencia de Story Points. Las pruebas de T020–T024 siguen en verde.
+
+Capturas (adjuntas en el PR): paso4-calidad-sprint2.png, paso6-sprint3-activo.png, paso7-defecto-reabierto.png,
+paso8-sprint-ajeno.png y paso9-sin-finalizados.png se tomaron antes del ajuste visual; paso5-calidad-sprint1.png,
+después (mismos datos, con el Sprint elegido resaltado).

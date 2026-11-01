@@ -248,6 +248,40 @@ datos inválidos en historias completadas, corregí las historias indicadas ante
 envío de un Sprint ya cerrado se rechaza; si falla el guardado, no se aplican cambios parciales y se
 muestra **La operación no pudo completarse**.
 
+## Calidad y avance
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/calidad`, o la sección **Calidad y
+avance** del menú. La pantalla es de solo lectura: calcula todo al abrirla con los datos de ese momento y no guarda
+nada.
+
+Arriba aparece la lista de **Sprints finalizados**, del más reciente al más antiguo. Al abrir la pantalla se muestra
+el más reciente; elegí otro de la lista para ver sus datos (el elegido queda resaltado). El Sprint activo no figura
+en la lista: sus métricas se calculan cuando se cierra.
+
+Para el Sprint elegido se muestran:
+
+1. **Avance**: **X de Y historias completadas** y el porcentaje con dos decimales y coma (por ejemplo, 3 de 4 es
+   75,00 %). Las historias planificadas son las que tenía el Sprint al cerrarlo, incluidas las que volvieron al
+   Backlog; las completadas son las que cerraron en **Hecho**.
+2. **Story Points**: los planificados (suma de las historias estimadas del Sprint) y los completados (los de las
+   historias **Hecho**). Los completados coinciden con la velocidad del Sprint.
+3. **Defectos**: los **detectados** en el Sprint y los **resueltos** en el Sprint. Un defecto reabierto deja de
+   contar como resuelto, pero sigue contando como detectado en su Sprint de detección.
+
+Solo se cuentan datos del proyecto elegido.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `Aún no hay Sprints finalizados` | El proyecto todavía no cerró ningún Sprint. |
+| `El Sprint N sigue en curso; sus métricas se calculan al cerrarlo` | Hay un Sprint activo; se lo cierra desde **Cierre de Sprint**. |
+| `No disponible` (en el porcentaje) | El Sprint finalizado no tenía historias al cerrarse. |
+| `1 historia sin Story Points no se suma a los planificados` | Hay historias sin estimar: cuentan en el avance, pero no en los Story Points. Con varias, el mensaje indica cuántas. |
+| `Para entrar a esta sección primero elegí un proyecto.` | Elegí un proyecto: al elegirlo, la aplicación vuelve a esta pantalla. |
+| `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
+| `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer los datos; no se muestran números parciales. |
+
 ## Planning Poker
 
 Elegí el proyecto desde **Cambiar proyecto**, identificate como integrante y abrí
