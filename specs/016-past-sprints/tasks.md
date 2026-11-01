@@ -24,7 +24,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` que HU-15 está en `main` y sus nombres. **Si no está, detener todo**: no se
+- [x] T001 Confirmar con `git grep -n` que HU-15 está en `main` y sus nombres. **Si no está, detener todo**: no se
   crea la rama ni se sigue con T002; se avisa al equipo y se espera el merge de HU-15.
   - De HU-15 (T001: HU-15): la migración de `sprint_story_results` en `db/migrations/` y sus columnas `sprint_id`,
     `story_id`, `final_status` (valores 'En Sprint', 'En progreso', 'Hecho') y `story_points`. También, que su cierre
@@ -40,12 +40,12 @@ Formato: `[ID] [P] [E#] descripción`
     Si HU-23, HU-25 u otra historia ya importó `src/metrics` en `main.go`, anotarlo para T015.
 
   Revisar también "Planificación de proyecto.pdf": si contradice la spec, corregirla antes de T002.
-- [ ] T002 Crear la rama `HU-16` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-16` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-16`.
-- [ ] T003 Coordinar el bloque de registro que se suma al final de `src/cmd/server/main.go` (y el import de
+- [x] T003 Coordinar el bloque de registro que se suma al final de `src/cmd/server/main.go` (y el import de
   `src/metrics`) con quien tenga HU-08, HU-09, HU-10, HU-12, HU-23 y HU-25. Con HU-10 y HU-25, acordar que el
   registro de cierre de HU-15 se lee igual (`final_status = 'Hecho'` = completada).
-- [ ] T004 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T004 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
 
 ## Fase 2: Bloque Catálogo (adaptador PostgreSQL)
 
@@ -56,7 +56,7 @@ consistente.
 
 ### Pruebas (RED)
 
-- [ ] T005 Crear los datos de prueba en `src/web/past_sprint_fixtures_test.go`; los usan T006, T011, T018 y T019. Son
+- [x] T005 Crear los datos de prueba en `src/web/past_sprint_fixtures_test.go`; los usan T006, T011, T018 y T019. Son
   los de la tabla "Datos de prueba" de `data-model.md`, insertados directamente como los deja HU-15:
   - «Alfa» (18/08/2026 al 30/11/2026), con las historias en este orden: «Alta» 3, «Login» 5, «Tablero» 3, «Perfil» 2,
     «Reportes» 8, «Exportar» 5 y «Ayuda» sin estimar.
@@ -75,7 +75,7 @@ consistente.
       'Hecho' 2 asignada.
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T006 [E1, E2, E3, E4, E5, E6, E8] Escribir `TestPostgresPastSprintCatalog` en
+- [x] T006 [E1, E2, E3, E4, E5, E6, E8] Escribir `TestPostgresPastSprintCatalog` en
   `src/web/postgres_past_sprint_catalog_integration_test.go`:
   - `FinishedSprints` de «Alfa» → números [2, 1] con objetivo y fechas; el 3 no está;
   - `FinishedSprints` de «Beta» → vacío, sin error; los de «Gamma» no aparecen con «Alfa»;
@@ -86,12 +86,12 @@ consistente.
   - del Sprint 2 de «Gamma» → `Stories` vacío, sin error;
   - el Sprint 3 (en curso), el Sprint 1 de «Gamma» pedido con «Alfa» y el identificador 2147483647 →
     `KindOf(err) == KindNotFound`.
-- [ ] T007 Ejecutar T006, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
+- [x] T007 Ejecutar T006, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
   sección "Catálogo".
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear los dos archivos del catálogo:
+- [x] T008 Crear los dos archivos del catálogo:
   - `src/web/past_sprint_catalog.go`, con `PastSprintSummary`, `PastSprintStory`, `PastSprintDetail`,
     `PastSprintCatalog` y `PastSprintMetrics` (`CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error)`);
   - `src/web/postgres_past_sprint_catalog.go` (`PostgreSQLPastSprintCatalog`, `NewPostgreSQLPastSprintCatalog`).
@@ -99,7 +99,7 @@ consistente.
     sql.LevelRepeatableRead`) y las dos consultas de `data-model.md`: el Sprint filtrado por `id`, `project_id` y
     `status = 'Finalizado'` (sin fila → `NotFound(...)`) y el registro con `ORDER BY r.story_id`. Los otros errores
     se envuelven con `%w`.
-- [ ] T009 Ejecutar T006 en verde.
+- [x] T009 Ejecutar T006 en verde.
 
 **Punto de control**: el catálogo devuelve los datos propios de las dos pantallas.
 
@@ -112,36 +112,36 @@ ejemplo".
 
 ### Pruebas (RED)
 
-- [ ] T010 [P] [E1, E6] Escribir la parte de lista de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
+- [x] T010 [P] [E1, E6] Escribir la parte de lista de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
   - `pastSprintDateText` → "01/09/2026";
   - `buildPastSprintListView` con los Sprints 2 y 1 de «Alfa» → "Sprint 2", "Gestionar perfiles y reportes", "Del
     01/09/2026 al 14/09/2026", enlace `/sprints-anteriores/{id}`, y después "Sprint 1";
   - con una lista vacía → `Empty` = "Aún no hay Sprints anteriores".
-- [ ] T011 [E1, E2, E6] Escribir el servidor de prueba y las pruebas de la lista en
+- [x] T011 [E1, E2, E6] Escribir el servidor de prueba y las pruebas de la lista en
   `src/web/past_sprint_handlers_test.go`, con el catálogo y HU-07 reales y los datos de T005:
   - `TestHU16_Listado`: con «Alfa» activo, 200; "Sprint 2" aparece antes que "Sprint 1", cada uno con su objetivo y
     sus fechas; "Sprint 3" y "Exportar e informar" no aparecen; nada de «Gamma»;
   - `TestHU16_SinSprintsAnteriores`: con «Beta», "Aún no hay Sprints anteriores";
   - `TestHU16_SinProyecto` (lista): 303 a `/contexto/proyecto?volver_a=%2Fsprints-anteriores`.
-- [ ] T012 [P] [E1, E6] Escribir los escenarios BDD "Listado de Sprints finalizados" y "Sin Sprints finalizados" en
+- [x] T012 [P] [E1, E6] Escribir los escenarios BDD "Listado de Sprints finalizados" y "Sin Sprints finalizados" en
   `test/web_past_sprints_bdd_test.go`, con datos propios.
-- [ ] T013 Ejecutar T010–T012, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
+- [x] T013 Ejecutar T010–T012, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
   sección "Lista".
 
 ### Implementación (GREEN)
 
-- [ ] T014 Crear los archivos de la lista:
+- [x] T014 Crear los archivos de la lista:
   - `src/web/past_sprint_view.go`, con todos los textos de la tabla de `data-model.md`, `pastSprintDateText`,
     `pastSprintItem`, `pastSprintListView` y `buildPastSprintListView`;
   - `src/web/past_sprint_handlers.go`, con `RegisterPastSprints(s, catalog, calc)`: argumentos `nil` → error sin
     registrar; `Section{Name: TitlePastSprints, Path: "/sprints-anteriores", RequiresProject: true}`; por ahora,
     `Routes{"GET /sprints-anteriores": …}` con los pasos de la lista de `data-model.md`;
   - la plantilla `src/web/templates/past_sprints.html`, sin formularios ni `<script>`.
-- [ ] T015 Agregar en `src/cmd/server/main.go` el import de `src/metrics` (si no está) y, después del último bloque de
+- [x] T015 Agregar en `src/cmd/server/main.go` el import de `src/metrics` (si no está) y, después del último bloque de
   registro (hoy el de HU-24, `RegisterEffort`), el bloque que llama a `web.RegisterPastSprints(srv,
   web.NewPostgreSQLPastSprintCatalog(database), metrics.NewService(metrics.NewPostgreSQLMetricsStore(database)))`. Si
   falla, cerrar `ln` y `database`, como los otros bloques.
-- [ ] T016 Ejecutar T010–T012 en verde.
+- [x] T016 Ejecutar T010–T012 en verde.
 
 **Punto de control**: el Scrum Master ve la lista de Sprints anteriores del proyecto activo.
 
@@ -154,13 +154,13 @@ velocidad.
 
 ### Pruebas (RED)
 
-- [ ] T017 [P] [E3, E4, E5] Escribir la parte de detalle de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
+- [x] T017 [P] [E3, E4, E5] Escribir la parte de detalle de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
   - `pastSprintPointsText(nil)` → "Sin estimar";
   - `buildPastSprintDetailView` con los cuatro casos de la tabla de `data-model.md` (Sprint 2, Sprint 1, «Gamma» 1 y
     «Gamma» 2 sin registro): filas en orden, "volvió al Backlog" solo en las no completadas, "Velocidad: 10 Story
     Points", "Todas las historias se completaron", "Ninguna historia se completó", y "No hay registro de las
     historias de este Sprint" sin tablas ni los otros dos mensajes.
-- [ ] T018 [E3, E4, E5, E8] Escribir las pruebas del detalle en `src/web/past_sprint_handlers_test.go`, con el
+- [x] T018 [E3, E4, E5, E8] Escribir las pruebas del detalle en `src/web/past_sprint_handlers_test.go`, con el
   catálogo y HU-07 reales:
   - `TestHU16_Detalle`: Sprint 2 → "Sprint 2", "Objetivo: Gestionar perfiles y reportes", "Del 01/09/2026 al
     14/09/2026", "Velocidad: 10 Story Points"; Completadas «Login» 5, «Tablero» 3 y «Perfil» 2; No completadas
@@ -178,7 +178,7 @@ velocidad.
     «Gamma», 2147483647, "abc", "0", "-1" y "01". Con un `PastSprintMetrics` que cuenta llamadas, cero llamadas en
     todos. Con un `PastSprintCatalog` que envuelve al real y cuenta llamadas, cero llamadas a `SprintDetail` para
     "abc", "0", "-1" y "01" (FR-010: sin consultar la base).
-- [ ] T019 [E7, E9] Escribir las pruebas de solo lectura, errores y bordes en `src/web/past_sprint_handlers_test.go`:
+- [x] T019 [E7, E9] Escribir las pruebas de solo lectura, errores y bordes en `src/web/past_sprint_handlers_test.go`:
   - `TestHU16_SoloLectura`: el detalle del Sprint 2 no tiene `<form`, `<button` ni `<script`. `POST`, `PUT` y
     `DELETE` a `/sprints-anteriores/{id}` y `POST` a `/sprints-anteriores` (del mismo origen) → 405 con la página de
     HU-20a. El registro y las historias no cambian;
@@ -193,45 +193,45 @@ velocidad.
   - `TestHU16_Rendimiento`: un proyecto con 50 Sprints finalizados y, en uno, 200 filas en el registro (150 "Hecho"
     de 1 Story Point asignadas y 50 devueltas) → la lista y el detalle ("Velocidad: 150 Story Points") en menos de
     500 ms cada uno.
-- [ ] T020 [P] [E3, E7] Escribir los escenarios BDD "Detalle de un Sprint" y "Solo lectura" en
+- [x] T020 [P] [E3, E7] Escribir los escenarios BDD "Detalle de un Sprint" y "Solo lectura" en
   `test/web_past_sprints_bdd_test.go`.
-- [ ] T021 Ejecutar T017–T020, confirmar que fallan (la ruta del detalle no existe) y guardar la salida en
+- [x] T021 Ejecutar T017–T020, confirmar que fallan (la ruta del detalle no existe) y guardar la salida en
   `evidencia-red.txt`, sección "Detalle".
 
 ### Implementación (GREEN)
 
-- [ ] T022 Completar los archivos del detalle:
+- [x] T022 Completar los archivos del detalle:
   - `src/web/past_sprint_view.go`: `pastSprintPointsText`, `pastSprintRow`, `pastSprintDetailView` y
     `buildPastSprintDetailView`, que separa por `FinalStatus == string(sprint.Done)` y conserva el orden;
   - `src/web/past_sprint_handlers.go`: la ruta `"GET /sprints-anteriores/{id}"` con los pasos 1 a 4 de
     `data-model.md` (`parseID` → catálogo → `CalculateMetrics` → vista), sin escribir nada antes del paso 4;
   - la plantilla `src/web/templates/past_sprint.html`, sin formularios, botones ni `<script>`.
-- [ ] T023 Ejecutar T017–T020 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T023 Ejecutar T017–T020 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master revisa cualquier Sprint anterior con su velocidad y sus historias.
 
 ## Fase 5: Cierre
 
-- [ ] T024 REFACTOR:
+- [x] T024 REFACTOR:
   - revisar duplicación entre la lista y el detalle (fechas, etiqueta) y extraer una función local sin cambiar el
     comportamiento;
   - comprobar que ningún archivo de HU-07, HU-15, HU-25 ni de otras historias cambió y que no hay migraciones:
     `git diff --stat main` lista solo archivos nuevos y `main.go`.
-- [ ] T025 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
+- [x] T025 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
   `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T026 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde y `cobertura.txt`
+- [x] T026 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`. Anotar la cobertura de los archivos `past_sprint*` de `src/web`
   (`go tool cover -func`).
-- [ ] T027 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T028 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T027 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T028 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Sprints anteriores".
-- [ ] T029 [P] Avisar:
+- [x] T029 [P] Avisar:
   - a HU-10 y HU-25, cómo se lee el registro de cierre (completada = 'Hecho');
   - a HU-15, que HU-16 depende de los nombres de `sprint_story_results`;
   - a HU-07, que HU-16 usa `CalculateMetrics` y su `Velocity`;
   - al equipo, que si hay conflicto en `main.go` al mergear se conservan todos los bloques y un solo import de
     `src/metrics`.
-- [ ] T030 Abrir el Pull Request desde `HU-16` citando HU-16, con las evidencias y la confirmación de T001. Después de
+- [x] T030 Abrir el Pull Request desde `HU-16` citando HU-16, con las evidencias y la confirmación de T001. Después de
   la revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución

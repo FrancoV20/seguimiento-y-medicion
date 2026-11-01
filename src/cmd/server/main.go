@@ -187,6 +187,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Métricas del Sprint")
 	}
+	// Sprints anteriores: Sprints finalizados con su registro de cierre y la velocidad de HU-07 (HU-16).
+	if err := web.RegisterPastSprints(srv, web.NewPostgreSQLPastSprintCatalog(database),
+		metrics.NewService(metrics.NewPostgreSQLMetricsStore(database))); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Sprints anteriores")
+	}
 
 	if err := srv.Serve(ctx, ln, func() {
 		_ = sprintStore.Close()

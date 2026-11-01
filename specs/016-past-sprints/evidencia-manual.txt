@@ -1,0 +1,92 @@
+HU-16 — Evidencia de verificación manual (T027)
+Fecha: 2026-11-01
+Realizó: Claude (asistente de IA), a pedido de Alejandro Raúl Ruiz Andreola, que revisó el resultado.
+
+Entorno
+- Código de la rama HU-16 en el commit c76c851 (GREEN Detalle). Se comprobó que los 353 archivos de src/, test/ y db/
+  son idénticos (sin contar finales de línea) a los de la PC de Alejandro.
+- Servidor compilado con `go build ./src/cmd/server` y ejecutado en un entorno Linux aislado (no en la PC de
+  Alejandro), con PostgreSQL 16 y una base nueva con las migraciones 001 a 014 (schema_migrations = 14) y
+  db/seeds/members.sql.
+
+Método
+- Recorrido con Chromium real (Playwright): se completaron y enviaron los formularios de la aplicación como lo haría
+  una persona, y se registró el código HTTP de cada página.
+- Datos cargados desde la aplicación (quickstart.md, verificación manual, paso 2): proyectos «Alfa», «Beta», «Gamma» y
+  «Delta» en /proyectos; historias en /backlog; Sprints en /sprints; cambios de estado con Comenzar/Completar en
+  /tablero; cierres con "Cerrar Sprint" en /cierre (HU-15 guardó el registro de cierre).
+- Por SQL, solo «Gamma» 2: un Sprint 'Finalizado' sin registro de cierre, que la aplicación no puede generar porque
+  el cierre siempre guarda el registro.
+- «Delta» se agregó para el escenario 5 (Sprint cerrado sin historias completadas); «Gamma» 1 se usó además para los
+  textos con HTML (objetivo «Migrar <b>datos</b>» e historia «<script>alert(1)</script>»).
+- Escenario 7: los POST se enviaron con `fetch` desde la misma página. Escenario 9: se detuvo PostgreSQL con
+  `pg_ctl stop` y se volvió a levantar al terminar.
+
+Resultado: 13/13 verificaciones pasaron (más la preparación).
+
+Preparación: PASÓ
+  Preparación desde la aplicación: «Alfa», «Beta» y «Gamma» creados; 7 historias de «Alfa» cargadas en el Backlog;
+  Sprint 1 con «Alta» (Comenzar → Completar) y Sprint 2 con «Login», «Tablero» y «Perfil» en Hecho y «Reportes» en En
+  progreso, ambos cerrados en Cierre de Sprint; Sprint 3 «Exportar e informar» en curso. «Gamma» 1 cerrado desde la
+  aplicación con «Migración» en En progreso, «Respaldo» en En Sprint y una historia «<script>alert(1)</script>» en
+  Hecho; «Gamma» 2 'Finalizado' sin registro, armado en SQL. Estados de «Alfa»: {1: 'Finalizado', 2: 'Finalizado', 3:
+  'Activo'}.
+
+Escenario 1 – Listado: PASÓ
+  /sprints-anteriores (sección «Sprints anteriores» del menú): ['Sprint 2 Gestionar perfiles y reportes Del 01/09/2026
+  al 14/09/2026', 'Sprint 1 Dar de alta usuarios Del 18/08/2026 al 31/08/2026'].
+
+Escenario 2 – Sprint activo: PASÓ
+  El Sprint 3 «Exportar e informar» (en curso) no figura en la lista.
+
+Escenario 3 – Detalle: PASÓ
+  /sprints-anteriores/2: «Objetivo: Gestionar perfiles y reportes», «Del 01/09/2026 al 14/09/2026», «Velocidad: 10
+  Story Points»; Completadas ['Login 5 Hecho', 'Tablero 3 Hecho', 'Perfil 2 Hecho']; No completadas ['Reportes 8 En
+  progreso volvió al Backlog']; 0 formularios, botones o campos en el contenido.
+
+Escenario 4 – Todas completadas: PASÓ
+  Sprint 1: Completadas ['Alta 3 Hecho'], «Velocidad: 3 Story Points» y en No completadas «Todas las historias se
+  completaron».
+
+Escenario 5 – Ninguna completada: PASÓ
+  «Delta» Sprint 1 cerrado desde la aplicación con «Importar» en En progreso y «Exportar CSV» en En Sprint: «Ninguna
+  historia se completó», «Velocidad: 0 Story Points», No completadas ['Importar 5 En progreso volvió al Backlog',
+  'Exportar CSV Sin estimar En Sprint volvió al Backlog'].
+
+Nota del escenario 5 – Sprint sin registro: PASÓ
+  «Gamma» 2 (Finalizado sin registro): «No hay registro de las historias de este Sprint», sin tablas.
+
+Escenario 6 – Sin Sprints finalizados: PASÓ
+  «Beta» como proyecto activo: «Aún no hay Sprints anteriores».
+
+Escenario 7 – Solo lectura: PASÓ
+  POST a la lista y al detalle → [405, 405]; el registro del Sprint 2 sigue con 4 filas. Ninguna página tiene
+  formularios en el contenido (escenario 3).
+
+Escenario 8 – Inexistente, en curso u otro proyecto: PASÓ
+  Sprint 3 en curso → 404; Sprint de «Gamma» con «Alfa» activo → 404; identificador inexistente → 404; abc → 404; 0 →
+  404, sin datos de ningún Sprint.
+
+Escenario 9 – Error al consultar: PASÓ
+  Con PostgreSQL detenido: detalle → 503 y lista → 503, con «El servicio no está disponible temporalmente», sin datos
+  ni detalles internos. Después se volvió a levantar la base.
+
+HU-20b – Sin proyecto activo: PASÓ
+  Sin cookie de proyecto, el detalle del Sprint 2 lleva al selector («Para entrar a esta sección primero elegí un
+  proyecto.»); al elegir «Alfa» vuelve a /sprints-anteriores/2.
+
+Caso límite – Textos escapados y «Sin estimar»: PASÓ
+  «Gamma» 1 (textos con HTML): el objetivo se ve literal «Objetivo: Migrar <b>datos</b>» y la historia
+  «<script>alert(1)</script>» como texto, sin etiquetas en la página; No completadas ['Migración 5 En progreso volvió
+  al Backlog', 'Respaldo Sin estimar En Sprint volvió al Backlog'] («Sin estimar» para «Respaldo»).
+
+SC-004 – Rendimiento: PASÓ
+  Lista en 25 ms y detalle en 18 ms (navegador, incluye la carga de la página).
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-16 en el commit ________.
+1. /sprints-anteriores lista los Sprints finalizados del más reciente al más antiguo; el Sprint en curso no figura: ______
+2. El detalle de un Sprint muestra la velocidad, las completadas y las no completadas con "volvió al Backlog": ______
+3. Un Sprint en curso o un identificador inválido en la dirección da la página 404: ______
+Observaciones: ______________________________________________________________

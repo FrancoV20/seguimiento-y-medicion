@@ -1,0 +1,18 @@
+{{define "content"}}
+<h1>Sprints anteriores</h1>
+{{with .Data}}
+{{if .Sprints}}
+<ul class="past-sprints">
+  {{range .Sprints}}
+  <li>
+    <a href="{{.Link}}">{{.Label}}</a>
+    <p>{{.Goal}}</p>
+    <p>{{.Dates}}</p>
+  </li>
+  {{end}}
+</ul>
+{{else}}
+<p class="empty">{{.Empty}}</p>
+{{end}}
+{{end}}
+{{end}}
