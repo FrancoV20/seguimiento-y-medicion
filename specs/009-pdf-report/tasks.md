@@ -23,7 +23,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-09, ajustar `data-model.md`, `research.md` y las
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-09, ajustar `data-model.md`, `research.md` y las
   consultas si alguno cambió, y quitar las marcas "(T001)":
   - de HU-10: `NewQualityService`, `NewPostgreSQLQualityStore`, `(*QualityService).SprintQuality` y los campos
     `StoriesPlanned`, `StoriesCompleted`, `CompletionPercentage`, `PointsPlanned`, `PointsCompleted`,
@@ -51,10 +51,10 @@ Formato: `[ID] [P] [E#] descripción`
 
   **Si HU-08, HU-10 o HU-12 no están en `main`, no seguir y avisar al equipo.** Revisar también "Planificación de
   proyecto.pdf": si contradice la spec, corregirla antes de T002.
-- [ ] T002 Crear la rama `HU-09` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-09` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-09`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar con quien tenga HU-08, HU-10, HU-12 y HU-25 el bloque de registro que se suma al final de
+- [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T004 Coordinar con quien tenga HU-08, HU-10, HU-12 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`.
 
 ## Fase 2: Bloque Generador PDF
@@ -65,7 +65,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] Escribir `TestPDF_Texto` en `src/pdf/winansi_test.go` y `src/pdf/widths_test.go`, con las tablas de
+- [x] T005 [P] Escribir `TestPDF_Texto` en `src/pdf/winansi_test.go` y `src/pdf/widths_test.go`, con las tablas de
   `data-model.md`:
   - `encodeWinAnsi`: "Página", "Año – 5 €", comillas tipográficas y "…", "«Alfa» — ok", tabulación y salto de línea
     como espacio, emoji y "Ω" como "?", UTF-8 inválido como "?";
@@ -73,7 +73,7 @@ Formato: `[ID] [P] [E#] descripción`
   - `textWidth(Regular, 10, "Página")` = 31,13 y `textWidth(Bold, 10, "Página")` = 32,79;
   - `wrapText`: texto que entra (una línea), varias palabras (cada línea ≤ ancho, sin perder palabras), palabra más
     ancha que el ancho (cortada por caracteres) y texto vacío (una línea vacía).
-- [ ] T006 [P] Escribir en `src/pdf/pdftest_test.go` un ayudante que, sin bibliotecas externas, lee la `xref`, verifica
+- [x] T006 [P] Escribir en `src/pdf/pdftest_test.go` un ayudante que, sin bibliotecas externas, lee la `xref`, verifica
   que cada desplazamiento apunta a `N 0 obj`, que `startxref` apunta a `xref`, que cada `/Length` coincide con su flujo,
   y devuelve la cantidad de objetos `/Type /Page` y el contenido de cada página. Con él, en
   `src/pdf/document_test.go`:
@@ -84,19 +84,19 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestPDF_SaltoDePagina`: una tabla de 120 filas (una con un texto de 300 caracteres) pasa a varias páginas, el
     encabezado de la tabla está en cada página con filas, cada página tiene su "Página X de Y" con Y igual a la
     cantidad de páginas, y ninguna línea queda por debajo del margen inferior ni más allá del margen derecho.
-- [ ] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
+- [x] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt`, sección "Generador PDF".
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear `src/pdf/winansi.go` (`encodeWinAnsi`, `escapeLiteral`, `Literal`; research.md §3),
+- [x] T008 Crear `src/pdf/winansi.go` (`encodeWinAnsi`, `escapeLiteral`, `Literal`; research.md §3),
   `src/pdf/widths.go` (anchos AFM de Helvetica y Helvetica-Bold en milésimas, `textWidth`, `wrapText`; research.md
   §4) y `src/pdf/extract.go` (`ExtractText`; research.md §19).
-- [ ] T009 Crear `src/pdf/document.go` (`Font`, `Column`, `Document`, `New`, `Text`, `Space`, `Table`, `PageCount`,
+- [x] T009 Crear `src/pdf/document.go` (`Font`, `Column`, `Document`, `New`, `Text`, `Space`, `Table`, `PageCount`,
   `Bytes`, errores) y `src/pdf/writer.go` (serialización de research.md §5: encabezado con línea binaria, objetos 1 a
   4, una página y un flujo por página, `xref` de 20 bytes por entrada, `trailer`, `startxref`, `%%EOF`), con las
   medidas de research.md §6.
-- [ ] T010 Ejecutar T005 y T006 en verde.
+- [x] T010 Ejecutar T005 y T006 en verde.
 
 **Punto de control**: el generador produce PDF válidos; los dos reportes ya pueden usarlo.
 
@@ -108,12 +108,12 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 [P] [E3, E4, E5, E6, E7, E9] Escribir `TestReportTexts` en `src/report/texts_test.go` con las tablas de
+- [x] T011 [P] [E3, E4, E5, E6, E7, E9] Escribir `TestReportTexts` en `src/report/texts_test.go` con las tablas de
   `data-model.md`: `percentText`, `deviationText` ("+6,25 %", "-8,50 %", "0,00 %", "No disponible"), `hoursText` (17,
   2,5, 0,25 y 0), `dateText`, `storyStatusText`, `withoutHoursText` (0, 1 y 2), totales de horas en singular y plural,
   `defectsSummaryText` (2 y 1 → "2 defectos detectados y 1 resuelto en este Sprint"; 1 y 0; 0 y 1; 0 y 0 → "No se
   registraron defectos en este Sprint") y `defectsSoFarText` (0, 1 y 3).
-- [ ] T012 [P] [E1, E2, E3, E5, E9, E13] Escribir en `src/report/service_test.go`, con un almacén, un `MetricsSource`
+- [x] T012 [P] [E1, E2, E3, E5, E9, E13] Escribir en `src/report/service_test.go`, con un almacén, un `MetricsSource`
   y un `QualitySource` de prueba locales y un reloj fijo (28/10/2026 10:30):
   - `TestBuildSprintReport`: con los datos del Sprint 2 de «Alfa», el reporte trae los datos leídos, `Metrics` y
     `Quality` de las fuentes, `Partial` falso y `GeneratedAt` del reloj; con el Sprint 3 activo, `Partial` verdadero
@@ -122,7 +122,7 @@ Formato: `[ID] [P] [E#] descripción`
     `ErrSprintNotFound` del almacén sin cambios; falla del almacén, de HU-07 y de HU-10 envueltas (`errors.Is` con la
     causa); historias o defectos que no coinciden con HU-10 → `ErrInconsistentReport`; dependencias `nil` → error; en
     todos los casos `SprintPDF` devuelve `nil` como bytes.
-- [ ] T013 [P] [E1, E2, E3, E4, E5, E6, E7, E9] Escribir `TestRenderSprintReport` en `src/report/document_test.go`,
+- [x] T013 [P] [E1, E2, E3, E4, E5, E6, E7, E9] Escribir `TestRenderSprintReport` en `src/report/document_test.go`,
   buscando con `pdf.ExtractText`:
   - con el reporte del Sprint 2 de «Alfa», el PDF contiene, en este orden, los textos de "Datos de ejemplo"
     ("Proyecto: Alfa", "Sprint 2", "Objetivo: Gestionar perfiles y reportes", "Fechas: 01/09/2026 al 14/09/2026",
@@ -137,7 +137,7 @@ Formato: `[ID] [P] [E#] descripción`
     detectado hasta el momento", y no contiene "Velocidad:";
   - un Sprint sin historias muestra "No hay historias registradas en este Sprint" y "0 de 0 historias completadas (No
     disponible)".
-- [ ] T014 Ejecutar T011–T013, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Dominio del
+- [x] T014 Ejecutar T011–T013, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Dominio del
   reporte".
 
 ### Implementación (GREEN)

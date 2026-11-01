@@ -20,3 +20,26 @@ FAIL
 
 Resultado esperado: el paquete src/pdf todavía no existe (Document, New, Font, Column, ExtractText y Literal sin
 definir), así que las pruebas de T005 y T006 no compilan.
+
+## Dominio del reporte (T011-T014)
+
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v ./src/report/ 2>&1 | Out-File -Append -Encod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\report\service_test.go:35:20: undefined: Data
+src\report\service_test.go:54:20: undefined: Data
+src\report\service_test.go:82:20: undefined: Data
+src\report\service_test.go:98:8: undefined: Data
+src\report\service_test.go:103:70: undefined: Data
+src\report\service_test.go:144:27: undefined: Service
+src\report\document_test.go:14:33: undefined: SprintReport
+src\report\document_test.go:16:12: undefined: Render
+src\report\document_test.go:60:26: undefined: Data
+src\report\document_test.go:60:82: undefined: SprintReport
+src\report\document_test.go:16:12: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/report [build failed]
+FAIL
