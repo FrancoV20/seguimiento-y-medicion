@@ -29,8 +29,10 @@ func RegisterBacklog(s *Server, creator *backlog.BacklogService, catalog StoryCa
 		Path:            backlogPath,
 		RequiresProject: true,
 	}, Routes{
-		"GET /backlog":  http.HandlerFunc(handler.get),
-		"POST /backlog": http.HandlerFunc(handler.post),
+		"GET /backlog":              http.HandlerFunc(handler.get),
+		"POST /backlog":             http.HandlerFunc(handler.post),
+		"GET /backlog/{id}/editar":  http.HandlerFunc(handler.edit),   // HU-13
+		"POST /backlog/{id}/editar": http.HandlerFunc(handler.update), // HU-13
 	})
 }
 

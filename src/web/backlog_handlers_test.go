@@ -780,6 +780,11 @@ func (c hu22FailingStoryCatalog) ListStories(context.Context, int64) ([]StoryRow
 	return nil, c.err
 }
 
+// StoryForEdit completa el catálogo ampliado por HU-13 (T056).
+func (c hu22FailingStoryCatalog) StoryForEdit(context.Context, int64, int64) (StoryEdit, error) {
+	return StoryEdit{}, c.err
+}
+
 func TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog(t *testing.T) {
 	const internalFailure = "synthetic catalog query failure"
 	app := newHU22BacklogAppWithDependencies(

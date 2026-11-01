@@ -88,14 +88,36 @@ type backlogStoryView struct {
 	InFinishedSprint bool
 }
 
+// backlogEditPageData es lo que recibe templates/backlog_edit.html (HU-13).
+type backlogEditPageData struct {
+	ID                 int64
+	Action             string // /backlog/{id}/editar
+	Filter             string // campo oculto "estado"
+	BackURL            string // backlogListURL(Filter), para "Cancelar"
+	Criteria           []backlogCriterionField
+	Priorities         []string
+	StoryPoints        []int
+	InvalidPriority    string
+	InvalidStoryPoints string
+}
+
 func parseBacklogForm(r *http.Request) *backlogForm {
-	form := FormFromRequest(r,
+	return parseStoryFields(r, true)
+}
+
+// parseStoryFields lee los datos de una historia del envío. El alta (HU-22) los lee con las horas
+// estimadas; la edición (HU-13) sin ellas, así un campo horas_estimadas enviado se ignora.
+func parseStoryFields(r *http.Request, withHours bool) *backlogForm {
+	fields := []string{
 		BacklogFieldTitle,
 		BacklogFieldDescription,
 		BacklogFieldPriority,
 		BacklogFieldStoryPoints,
-		BacklogFieldEstimatedHours,
-	)
+	}
+	if withHours {
+		fields = append(fields, BacklogFieldEstimatedHours)
+	}
+	form := FormFromRequest(r, fields...)
 	criteria := append([]string(nil), r.PostForm[BacklogFieldCriterion]...)
 	if len(criteria) == 0 {
 		criteria = []string{""}
@@ -128,7 +150,7 @@ func parseBacklogForm(r *http.Request) *backlogForm {
 	}
 
 	rawHours := strings.TrimSpace(form.Values[BacklogFieldEstimatedHours])
-	if rawHours != "" {
+	if withHours && rawHours != "" {
 		normalized := strings.ReplaceAll(rawHours, ",", ".")
 		hours, err := strconv.ParseFloat(normalized, 64)
 		if err != nil {

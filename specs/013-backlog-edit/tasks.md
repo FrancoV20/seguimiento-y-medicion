@@ -264,14 +264,14 @@ horas.
 
 ### Implementación (GREEN)
 
-- [ ] T056 Ampliar el catálogo en el mismo commit:
+- [x] T056 Ampliar el catálogo en el mismo commit:
   - sumar `StoryEdit` y `StoryForEdit` a `StoryCatalog` (`src/web/backlog_catalog.go`);
   - implementar la consulta de `data-model.md` en `src/web/postgres_story_catalog_edit.go` (sin filas →
     `NotFound`; falla de la base → `Unavailable`);
   - sumar un `StoryForEdit` que devuelve `c.err` a `hu22FailingStoryCatalog` (`src/web/backlog_handlers_test.go`).
-- [ ] T057 Separar `parseStoryFields(r, withHours bool)` en `src/web/backlog_form.go`. `parseBacklogForm` la llama
+- [x] T057 Separar `parseStoryFields(r, withHours bool)` en `src/web/backlog_form.go`. `parseBacklogForm` la llama
   con `true` y las pruebas de HU-22 siguen en verde.
-- [ ] T058 Implementar `edit` y `update` en `src/web/backlog_edit_handlers.go`, según el flujo de `plan.md`:
+- [x] T058 Implementar `edit` y `update` en `src/web/backlog_edit_handlers.go`, según el flujo de `plan.md`:
   - `parseID`;
   - `StoryForEdit`;
   - `parseStoryFields(r, false)`, que solo lee los datos;
@@ -279,14 +279,14 @@ horas.
   - `applyAction` → 200;
   - `UpdateStory`;
   - `SetFlash` de éxito o advertencia, y `RedirectSeeOther(backlogListURL(estado))`.
-- [ ] T059 Agregar `"GET /backlog/{id}/editar"` y `"POST /backlog/{id}/editar"` al mapa de `Routes` de
+- [x] T059 Agregar `"GET /backlog/{id}/editar"` y `"POST /backlog/{id}/editar"` al mapa de `Routes` de
   `RegisterBacklog` (`src/web/backlog_handlers.go`), sin cambiar su firma ni la `Section`.
-- [ ] T060 Crear `src/web/templates/backlog_edit.html`:
+- [x] T060 Crear `src/web/templates/backlog_edit.html`:
   - los campos `titulo`, `descripcion`, `prioridad`, `story_points` y `criterio`, con el marcado de errores de
     `backlog.html`;
   - el campo oculto `estado` y el botón oculto "Guardar" primero, como en HU-22;
   - los botones "Quitar", "Agregar criterio" y "Guardar", y el enlace "Cancelar" a `BackURL`.
-- [ ] T061 Ejecutar T045–T054 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T061 Ejecutar T045–T054 en verde y `go test -count=1 -p 1 ./...` completo.
 
 ## Fase 5: Bloque C – Validaciones (escenarios 10a, 10b, 10c, 11a y 11b)
 
