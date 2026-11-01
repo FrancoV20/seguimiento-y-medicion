@@ -314,13 +314,13 @@ y la base sin cambios.
 
 ### Implementación (GREEN)
 
-- [ ] T068 En `update` (`src/web/backlog_edit_handlers.go`):
+- [x] T068 En `update` (`src/web/backlog_edit_handlers.go`):
   - con errores de formato, responder 422;
   - sin criterios, responder 422 con `ErrAcceptanceCriteriaRequired`, antes del servicio, como HU-22;
   - con errores de HU-02, usar `mapBacklogDomainError` y responder 422;
   - volver a mostrar `backlog_edit.html` con los valores enviados, `InvalidPriority`, `InvalidStoryPoints` y el
     filtro oculto.
-- [ ] T069 Ejecutar T062–T066 en verde.
+- [x] T069 Ejecutar T062–T066 en verde.
 
 ## Fase 6: Bloque D – Reglas, inexistencia y fallas (escenarios 12a, 12b, 12c, 13a, 13b, 13c y 15)
 

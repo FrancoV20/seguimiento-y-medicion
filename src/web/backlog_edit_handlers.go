@@ -44,7 +44,7 @@ func (h *backlogHandlers) edit(w http.ResponseWriter, r *http.Request) {
 	h.renderEdit(w, r, http.StatusOK, id, form, criteria, filter, nil)
 }
 
-// update guarda la edición: 404, agregar o quitar un criterio (200) y guardado.
+// update guarda la edición: 404, agregar o quitar un criterio (200), validación (422) y guardado.
 func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 	id := parseID(r.PathValue("id"))
 	if id == 0 {
@@ -69,6 +69,15 @@ func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 		h.renderEdit(w, r, http.StatusOK, id, form.Form, form.Criteria, filter, nil)
 		return
 	}
+	if form.Form.HasErrors() {
+		h.renderEdit(w, r, http.StatusUnprocessableEntity, id, form.Form, form.Criteria, filter, nil)
+		return
+	}
+	if len(form.AcceptanceCriteria) == 0 {
+		form.Form.AddError(BacklogFieldCriterion, backlog.ErrAcceptanceCriteriaRequired.Error())
+		h.renderEdit(w, r, http.StatusUnprocessableEntity, id, form.Form, form.Criteria, filter, nil)
+		return
+	}
 
 	result, err := h.creator.UpdateStory(r.Context(), backlog.UpdateStoryRequest{
 		ProjectID:          active.ProjectID,
@@ -79,8 +88,13 @@ func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 		AcceptanceCriteria: form.AcceptanceCriteria,
 		StoryPoints:        form.StoryPoints,
 	})
-	if err != nil {
-		// T068 y T079 completan el mapeo de los errores.
+	switch {
+	case err == nil:
+	case mapBacklogDomainError(form, err):
+		h.renderEdit(w, r, http.StatusUnprocessableEntity, id, form.Form, form.Criteria, filter, nil)
+		return
+	default:
+		// T079 completa el mapeo del Sprint finalizado, la historia inexistente y la falla al guardar.
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
