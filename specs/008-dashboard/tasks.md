@@ -19,7 +19,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-08, ajustar `data-model.md`, `research.md` y las
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-08, ajustar `data-model.md`, `research.md` y las
   consultas si alguno cambió, y quitar las marcas "(T001)":
   - de HU-10: `NewQualityService`, `NewPostgreSQLQualityStore`, `(*QualityService).SprintQuality`,
     `SprintQuality.PointsCompleted` en `src/metrics` y la interfaz `QualityReader` en `src/web`;
@@ -40,7 +40,7 @@ Formato: `[ID] [P] [E#] descripción`
 - [x] T002 Crear la rama `HU-08` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-08`.
 - [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar con quien tenga HU-09, HU-10 y HU-25 el bloque de registro que se suma al final de
+- [x] T004 Coordinar con quien tenga HU-09, HU-10 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`.
 
 ## Fase 2: Bloque Dominio de velocidad
@@ -126,8 +126,8 @@ consistente.
 ### Implementación (GREEN)
 
 - [ ] T012 Crear `src/web/dashboard_catalog.go` con `DashboardStoryCounts`, `DashboardSprint`, `DashboardSummary`,
-  `DashboardCatalog` y `DashboardDeviationSource` (`CalculateMetrics(sprintID int64) (metrics.SprintMetrics,
-  error)`), como en `data-model.md`. No redefinir `QualityReader` ni `BoardCatalog`.
+  y `DashboardCatalog`, como en `data-model.md`. No redefinir `QualityReader`, `BoardCatalog` ni `MetricsSource`
+  (HU-25).
 - [ ] T013 Crear `PostgreSQLDashboardCatalog` y `NewPostgreSQLDashboardCatalog(db *sql.DB)` en
   `src/web/postgres_dashboard_catalog.go`:
   - `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, y `defer tx.Rollback()`;
@@ -153,8 +153,8 @@ pasan sin PostgreSQL.
   - `TestNewDashboardChart`: posiciones `X` e `Y` de cada barra, `Width` y `Height`, y el `AriaLabel` "Historias por
     estado: Pendiente 2, En Sprint 1, En progreso 2, Hecho 3".
 - [ ] T016 [P] [E1, E4, E5, E6, E7, E8, E9] Escribir `TestDashboardView` en `src/web/dashboard_view_test.go`:
-  - `dashboardDeviationText` (o la de HU-25, según T001): "20.00" → "+20,00 %", "-8.50" → "-8,50 %", "0.00" →
-    "0,00 %", "No disponible" sin cambios;
+  - la desviación con `metricsDeviationText` de HU-25 (T001), dentro de `buildDashboardView`: "20.00" →
+    "+20,00 %", "No disponible" sin cambios;
   - `dashboardDecimalText("10.50")` → "10,50";
   - `dashboardOpenDefectsText`: 0 → "No hay defectos abiertos", 1 → "1 defecto abierto", 3 → "3 defectos
     abiertos";
@@ -175,7 +175,7 @@ pasan sin PostgreSQL.
   `dashboardChart` y `newDashboardChart`, con las reglas de `data-model.md` (máximo 0 → todo 0 sin dividir; mitad
   hacia arriba; un valor mayor que 0 mide al menos 1).
 - [ ] T019 Crear `src/web/dashboard_view.go` con los textos de la tabla de `data-model.md`, `dashboardDecimalText`,
-  `dashboardDeviationText` (solo si T001 no encontró la de HU-25), `dashboardOpenDefectsText`, `dashboardView`,
+  `dashboardOpenDefectsText`, `dashboardView`,
   `dashboardVelocityRow` y `buildDashboardView` (usa `metrics.SummarizeVelocity`).
 - [ ] T020 Ejecutar T015 y T016 en verde.
 
@@ -191,7 +191,7 @@ los proyectos de los escenarios vacíos y con una falla.
 ### Pruebas (RED)
 
 - [ ] T021 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11] Escribir el servidor de prueba y las pruebas de pantalla en
-  `src/web/dashboard_handlers_test.go`, con el catálogo, el Tablero, `QualityService` y `metrics.Service` reales y
+  `src/web/dashboard_handlers_test.go`, con el catálogo, el Tablero, `QualityService` y `NewHU07MetricsSource` reales y
   los datos de T009:
   - `TestHU08_SinDatos` («Vacío»): solo "Aún no hay datos suficientes para calcular métricas", sin `<svg`;
   - `TestHU08_HistoriasPorEstado` («Alfa»): tabla 2, 1, 2 y 3, y barras de alto 80, 40, 80 y 120;
@@ -218,7 +218,7 @@ los proyectos de los escenarios vacíos y con una falla.
   - `TestHU08_CoherenciaConHU07`: en los Sprints 1 y 2 de «Alfa», cada barra es igual a
     `SprintQuality(...).PointsCompleted` y a `CalculateMetrics(id).Velocity`.
 
-  Las pruebas borran las filas de `sprint_metrics` que escribe HU-07.
+  Además se comprueba que abrir el Dashboard no escribe filas en `sprint_metrics`.
 - [ ] T022 [E12] Escribir las pruebas de errores y bordes en `src/web/dashboard_handlers_test.go`, con dobles
   que fallan:
   - `TestHU08_ErrorAlLeer`: con el catálogo, el Tablero, el `QualityReader` y la fuente de desviación fallando (uno
@@ -237,7 +237,7 @@ los proyectos de los escenarios vacíos y con una falla.
 
 ### Implementación (GREEN)
 
-- [ ] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation)` en `src/web/dashboard_handlers.go`:
+- [ ] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation MetricsSource)` en `src/web/dashboard_handlers.go`:
   - si falta algún argumento, devolver un error sin registrar;
   - `Section{Name: TitleDashboard, Path: "/dashboard", RequiresProject: true}` y `Routes{"GET /dashboard": …}`;
   - los pasos 1 a 6 de `data-model.md`: cualquier error va a `Fail` antes de escribir la respuesta.
@@ -247,10 +247,10 @@ los proyectos de los escenarios vacíos y con una falla.
     por barra, cada gráfico con su `<table>`;
   - sin finalizados, el mensaje en lugar de velocidad y desviación;
   - sin `<script>` ni formularios.
-- [ ] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
-  de HU-10 si ya está) el bloque que llama a `web.RegisterDashboard` con `web.NewPostgreSQLDashboardCatalog(database)`,
+- [ ] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-16,
+  `RegisterPastSprints`) el bloque que llama a `web.RegisterDashboard` con `web.NewPostgreSQLDashboardCatalog(database)`,
   `web.NewPostgreSQLBoardCatalog(database)`, `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))`
-  y `metrics.NewService(metrics.NewPostgreSQLMetricsStore(database))`. Si falla, cerrar `ln` y `database`, como los
+  y `web.NewHU07MetricsSource(database)`. Si falla, cerrar `ln` y `database`, como los
   otros bloques.
 - [ ] T028 Ejecutar T021–T023 en verde y `go test -count=1 -p 1 ./...` completo.
 

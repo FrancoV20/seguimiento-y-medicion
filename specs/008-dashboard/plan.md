@@ -24,7 +24,7 @@ abiertos. Los dos gráficos son barras SVG armadas en el servidor, cada una con 
 **Dependencias**: biblioteca estándar (`net/http`, `html/template`, `database/sql`, `math/big`) y
 `github.com/jackc/pgx/v5/stdlib`, que ya están en el proyecto. No se agregan dependencias.
 **Almacenamiento**: PostgreSQL. Sin migración: lectura de `user_stories`, `sprints` y `defects` (HU-06); HU-10 y
-HU-07 leen lo suyo, y HU-07 reescribe `sprint_metrics` del último Sprint con los mismos valores.
+HU-07 leen lo suyo; la desviación se pide con la fuente de solo lectura de HU-25, así que no se escribe nada.
 **Pruebas**:
 
 - unitarias de `SummarizeVelocity`, de las alturas de barras y de los formatos;
@@ -52,11 +52,11 @@ archivos que se crean o se tocan.
 | Principio | Cómo se cumple | Estado |
 |---|---|---|
 | I. Alcance guiado por valor | Should Have, valor 75. Cada FR sale de un escenario del Issue o de una decisión del equipo; el Dashboard es una de las capacidades que pide la constitución ("measurement dashboards"). | PASA |
-| II. Calidad por construcción | Se reutilizan el Tablero (HU-14), `SprintQuality` (HU-10), `CalculateMetrics` y `roundToTwoDecimals` (HU-07) y `QualityReader`, sin copiarlos. La regla de promedio está en el dominio. Los textos están en un solo lugar. | PASA |
+| II. Calidad por construcción | Se reutilizan el Tablero (HU-14), `SprintQuality` y `QualityReader` (HU-10), `roundToTwoDecimals` (HU-07) y `MetricsSource` y `metricsDeviationText` (HU-25), sin copiarlos. La regla de promedio está en el dominio. Los textos están en un solo lugar. | PASA |
 | III. Primero las pruebas | Escenarios en Dado/Cuando/Entonces. Cada bloque sigue RED → `evidencia-red.txt` → GREEN → REFACTOR. | PASA |
 | IV. Trabajo ágil y colaborativo | T001 confirma los nombres de HU-06, HU-07, HU-10, HU-14, HU-15 y HU-25 y frena si HU-10 no está. T004 y T035 coordinan `main.go` y avisan a HU-09 y HU-25. | PASA |
 | V. Medición | Reúne en una pantalla velocidad, desviación de esfuerzo, avance del Sprint y defectos ("project health indicators"). | PASA |
-| VI. Persistencia PostgreSQL | El único puerto nuevo, `DashboardCatalog`, tiene adaptador PostgreSQL y prueba de integración. Las interfaces reutilizadas ya tienen el suyo. `DashboardDeviationSource` no es un puerto de almacenamiento: es la forma de `*metrics.Service`. | PASA |
+| VI. Persistencia PostgreSQL | El único puerto nuevo, `DashboardCatalog`, tiene adaptador PostgreSQL y prueba de integración. Las interfaces reutilizadas ya tienen el suyo. La desviación usa `MetricsSource` de HU-25, que ya tiene su adaptador sobre HU-07. | PASA |
 
 ## Estructura
 
@@ -86,7 +86,7 @@ Archivos nuevos:
 ```text
 src/metrics/velocity_summary.go                      VelocitySummary, SummarizeVelocity
 src/metrics/velocity_summary_test.go
-src/web/dashboard_catalog.go                         tipos, DashboardCatalog, DashboardDeviationSource
+src/web/dashboard_catalog.go                         tipos y DashboardCatalog
 src/web/postgres_dashboard_catalog.go                adaptador PostgreSQL (solo lectura)
 src/web/postgres_dashboard_catalog_integration_test.go
 src/web/dashboard_chart.go                           dashboardBarHeights y armado del SVG
@@ -118,28 +118,27 @@ Detalle y alternativas en [research.md](research.md).
 
 1. `SummarizeVelocity` en `src/metrics/velocity_summary.go`, con `roundToTwoDecimals` de HU-07; devuelve texto con
    punto, y la coma se pone en la pantalla.
-2. Se reutiliza `QualityReader` de HU-10 **(T001)**; para la desviación, una interfaz chica que `*metrics.Service`
-   cumple sin adaptador.
+2. Se reutilizan `QualityReader` de HU-10 y, para la desviación, `MetricsSource` de HU-25 (solo lectura sobre
+   HU-07).
 3. `DashboardCatalog` lee historias por estado, defectos abiertos y Sprints finalizados en una transacción
    `ReadOnly` + `REPEATABLE READ`.
 4. Orden: catálogo → Tablero → (si no hay datos, mensaje único) → HU-10 por Sprint → HU-07 del último. Cualquier error
    va a `Fail` antes de escribir la respuesta.
 5. Barras SVG con `html/template`, `role="img"`, `aria-label` y tabla; las alturas, con `dashboardBarHeights`.
-6. La desviación se formatea con la función de HU-25 si está en `main`, o con `dashboardDeviationText` **(T001)**;
-   el aviso parcial de HU-07 se muestra tal cual.
+6. La desviación se formatea con `metricsDeviationText` de HU-25; el aviso parcial de HU-07 se muestra tal cual.
 7. Los textos están en `dashboard_view.go`.
 
 ## Contratos que se consumen
 
-- **HU-07**: `NewService`, `NewPostgreSQLMetricsStore`, `CalculateMetrics` (`DeviationPercentage`, `IsPartial`,
-  `Warning`) y `roundToTwoDecimals`.
-- **HU-10** **(T001)**: `NewQualityService`, `NewPostgreSQLQualityStore`, `SprintQuality(...).PointsCompleted` y
+- **HU-07**: `roundToTwoDecimals`; `CalculateMetrics` (`DeviationPercentage`, `IsPartial`, `Warning`) se usa a través
+  de HU-25.
+- **HU-10**: `NewQualityService`, `NewPostgreSQLQualityStore`, `SprintQuality(...).PointsCompleted` y
   `web.QualityReader`.
 - **HU-14**: `BoardCatalog.ActiveBoard`, `BoardView` (`Number`, `Groups`, `PlannedPoints`, `CompletedPoints`),
   `NewPostgreSQLBoardCatalog` y `projectIDFrom`.
-- **HU-06** **(T001)**: `defects(project_id, status)`.
-- **HU-15** **(T001)**: `sprint_story_results`, solo en los datos de prueba.
-- **HU-25** **(T001)**: la función de formato de la desviación, si está en `main`.
+- **HU-06**: `defects(project_id, status)`.
+- **HU-15**: `sprint_story_results`, solo en los datos de prueba.
+- **HU-25**: `MetricsSource`, `NewHU07MetricsSource` y `metricsDeviationText`.
 - **HU-20a / HU-20b**: `Server.Register`, `Routes`, `Renderer.Page/Fail`, el menú, `layout.html`, el 405 de
   `Server.route`, `Section.RequiresProject` y `RequireContext`.
 
@@ -148,7 +147,7 @@ Detalle y alternativas en [research.md](research.md).
 | Riesgo | Mitigación |
 |---|---|
 | HU-10 (y con ella HU-06 y HU-15) no está en `main`, o sus nombres cambian | T001 los confirma con `git grep -n` antes de crear la rama, ajusta `data-model.md` y frena si HU-10 no está. |
-| `CalculateMetrics` reescribe `sprint_metrics` en cada apertura del Dashboard | Escribe los mismos valores, como en HU-25 (decisión aceptada). Las pruebas borran esas filas. |
+| Escribir `sprint_metrics` al abrir el Dashboard | No pasa: la fuente de HU-25 descarta el guardado de `CalculateMetrics` (T001). |
 | HU-07 rechaza el último Sprint (historia "Hecho" sin Story Points cargada a mano) y el Dashboard entero muestra la página de error | Es el comportamiento pedido (cualquier falla → error); queda como caso límite con prueba. Con el cierre de HU-15 no se puede llegar a ese estado. |
 | Un Sprint finalizado sin registro de cierre de HU-15 muestra velocidad 0 aunque HU-07 calcule otra | Caso límite documentado; la prueba de coherencia usa Sprints cerrados como los deja HU-15. |
 | Una llamada a HU-10 por Sprint finalizado (N + 1) | Medido en `TestHU08_Rendimiento` con 20 Sprints; menos de 500 ms. |
