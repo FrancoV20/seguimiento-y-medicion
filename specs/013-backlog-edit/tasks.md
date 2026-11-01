@@ -379,16 +379,16 @@ cambios cuando falla el guardado.
 
 ## Fase 7: Cierre
 
-- [ ] T081 REFACTOR:
+- [x] T081 REFACTOR:
   - revisar la duplicación entre `post` (HU-22) y `update` (HU-13) al armar `PageData` y renderizar, y extraer una
     función local sin cambiar el comportamiento;
   - `gofmt -l` sobre los archivos tocados (nuevos y existentes) sin salida, sin reformatear otros archivos;
   - dejar `go vet ./...` limpio.
-- [ ] T082 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
-- [ ] T083 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
+- [x] T082 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
+- [x] T083 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/backlog`.
 - [ ] T084 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T085 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T085 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con el filtro y la acción "Editar".
 - [ ] T086 [P] Avisar qué cambió en sus archivos (lista de T003):
   - a quien hizo HU-22: el orden, las tres pruebas actualizadas y los fakes;
