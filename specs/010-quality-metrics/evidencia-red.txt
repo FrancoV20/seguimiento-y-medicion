@@ -1,0 +1,57 @@
+Evidencia del ciclo Red de HU-10: secciones Dominio (T007), Almacenamiento (T017) y Pantalla (T025)
+
+================================================================================
+Sección Dominio (T005 y T006) — 2026-10-31 20:02 (UTC-3) — rama HU-10 en 9c8c820
+Comando: go test -count=1 -p 1 -v ./src/metrics/
+Falla esperada: el código del dominio (quality.go, quality_store.go, quality_service.go) no existe.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/metrics [github.com/FrancoV20/seguimiento-y-medicion/src/metrics.test]
+src/metrics/quality_service_test.go:14:8: undefined: QualityData
+src/metrics/quality_service_test.go:21:93: undefined: QualityData
+src/metrics/quality_service_test.go:25:10: undefined: QualityData
+src/metrics/quality_service_test.go:30:7: undefined: QualityStore
+src/metrics/quality_service_test.go:38:14: undefined: NewQualityService
+src/metrics/quality_service_test.go:39:23: undefined: ErrSprintNotFound
+src/metrics/quality_service_test.go:49:35: undefined: ErrSprintNotFound
+src/metrics/quality_service_test.go:50:13: undefined: NewQualityService
+src/metrics/quality_service_test.go:51:13: undefined: ErrSprintNotFound
+src/metrics/quality_test.go:10:47: undefined: QualityStoryResult
+src/metrics/quality_service_test.go:51:13: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/metrics [build failed]
+FAIL
+
+================================================================================
+Sección Almacenamiento (T011 a T016) — 2026-10-31 20:21 (UTC-3) — rama HU-10 en 4c5e101
+Comando: go test -count=1 -p 1 -v -run 'TestPostgresQuality|TestQuality_' ./src/metrics/
+Falla esperada: el adaptador PostgreSQLQualityStore (postgres_quality_store.go, T018) no existe.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/metrics [github.com/FrancoV20/seguimiento-y-medicion/src/metrics.test]
+src/metrics/postgres_quality_store_integration_test.go:28:9: undefined: PostgreSQLQualityStore
+src/metrics/postgres_quality_store_integration_test.go:68:38: undefined: NewPostgreSQLQualityStore
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/metrics [build failed]
+FAIL
+
+================================================================================
+Sección Pantalla (T020 a T024) — 2026-10-31 20:45 (UTC-3) — rama HU-10 en 187ae6c
+Comando: go test -count=1 -p 1 -v -run 'TestPostgresQualityCatalog|TestQualityView|TestHU10_|TestWebQualityBDD' ./src/web/ ./test/
+Falla esperada: la ruta /calidad y el catálogo no existen (quality_catalog.go, postgres_quality_catalog.go,
+quality_view.go, quality_handlers.go y templates/quality.html, T026 a T029).
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/quality_handlers_test.go:50:66: undefined: QualityReader
+src/web/quality_handlers_test.go:50:106: undefined: QualityCatalog
+src/web/quality_handlers_test.go:53:13: undefined: QualityReader
+src/web/quality_handlers_test.go:57:14: undefined: QualityCatalog
+src/web/quality_handlers_test.go:540:67: undefined: QualitySprintList
+src/web/postgres_quality_catalog_integration_test.go:74:13: undefined: NewPostgreSQLQualityCatalog
+src/web/postgres_quality_catalog_integration_test.go:82:13: undefined: QualitySprintOption
+src/web/postgres_quality_catalog_integration_test.go:114:13: undefined: QualitySprintOption
+src/web/postgres_quality_catalog_integration_test.go:134:54: undefined: QualitySprintOption
+src/web/postgres_quality_catalog_integration_test.go:152:13: undefined: NewPostgreSQLQualityCatalog
+src/web/quality_handlers_test.go:57:14: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test/web_quality_bdd_test.go:72:16: undefined: web.RegisterQuality
+test/web_quality_bdd_test.go:74:7: undefined: web.NewPostgreSQLQualityCatalog
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

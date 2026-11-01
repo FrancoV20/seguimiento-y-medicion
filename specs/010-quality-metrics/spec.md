@@ -331,21 +331,27 @@ El escenario 10 del Issue combina tres comprobaciones; se escribe como 10a, 10b 
 
 | Escenario | Requisitos | Éxito | Prueba de pantalla / BDD | Prueba de dominio / integración |
 |---|---|---|---|---|
-| 1 Porcentaje de avance | FR-006, FR-007 | SC-001 | `TestHU10_NumerosDelSprint`, `TestQualityView`, BDD "Porcentaje de avance" | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
-| 2 Ninguna completada | FR-006, FR-007 | SC-001 | — | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
-| 3 Sin historias registradas | FR-007 | SC-001 | — | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
+| 1 Porcentaje de avance | FR-006, FR-007 | SC-001 | `TestHU10_NumerosDelSprint`, `TestQualityView`, `TestWebQualityBDD_PorcentajeDeAvance` | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
+| 2 Ninguna completada | FR-006, FR-007 | SC-001 | `TestHU10_ElegirOtroSprint` | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
+| 3 Sin historias registradas | FR-007 | SC-001 | `TestHU10_NumerosDelSprint` | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
 | 4 Story Points planificados y completados | FR-008, FR-010 | SC-001, SC-002 | `TestHU10_NumerosDelSprint` | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias`, `TestQuality_CoherenciaConVelocidadHU07` |
 | 5 Historias sin Story Points | FR-008, FR-009 | SC-001 | `TestHU10_NumerosDelSprint`, `TestQualityView` | `TestCalculateSprintQuality`, `TestPostgresQuality_Historias` |
-| 6 Defectos detectados y resueltos | FR-011 | SC-001 | `TestHU10_NumerosDelSprint`, BDD "Defectos detectados y resueltos" | `TestCalculateSprintQuality`, `TestPostgresQuality_Defectos` |
-| 7 Sprint sin defectos | FR-011 | SC-001 | — | `TestPostgresQuality_Defectos` |
+| 6 Defectos detectados y resueltos | FR-011 | SC-001 | `TestHU10_NumerosDelSprint`, `TestWebQualityBDD_DefectosDetectadosYResueltos` | `TestCalculateSprintQuality`, `TestPostgresQuality_Defectos` |
+| 7 Sprint sin defectos | FR-011 | SC-001 | `TestHU10_ListaYSprintPorDefecto`, `TestHU10_ElegirOtroSprint` | `TestPostgresQuality_Defectos` |
 | 8 Defecto reabierto | FR-012 | SC-001 | — | `TestPostgresQuality_Defectos` |
 | 9 Datos de otro proyecto | FR-013 | SC-003 | `TestHU10_OtroProyecto` | `TestPostgresQuality_OtroProyecto`, `TestPostgresQualityCatalog` |
-| 10a Lista y Sprint por defecto | FR-002 | SC-005 | `TestHU10_ListaYSprintPorDefecto`, BDD "Lista de Sprints y Sprint por defecto" | `TestPostgresQualityCatalog` |
+| 10a Lista y Sprint por defecto | FR-002 | SC-005 | `TestHU10_ListaYSprintPorDefecto`, `TestWebQualityBDD_ListaDeSprintsYSprintPorDefecto` | `TestPostgresQualityCatalog` |
 | 10b Elegir otro Sprint | FR-003 | SC-005 | `TestHU10_ElegirOtroSprint`, `TestHU10_SprintInvalidoSeIgnora`, `TestQualityView` | — |
 | 10c Sprint activo no figura | FR-004 | SC-003 | `TestHU10_SprintActivoNoFigura` | `TestPostgresQualityCatalog`, `TestPostgresQuality_SprintActivoEInexistente` |
-| 11 Sin Sprints finalizados | FR-005 | — | `TestHU10_SinSprintsFinalizados`, BDD "Sin Sprints finalizados" | `TestPostgresQualityCatalog` |
-| 12 Error al leer | FR-015, FR-019 | SC-004 | `TestHU10_ErrorAlLeer` | `TestQualityService_SprintQuality` |
+| 11 Sin Sprints finalizados | FR-005 | — | `TestHU10_SinSprintsFinalizados`, `TestWebQualityBDD_SinSprintsFinalizados` | `TestPostgresQualityCatalog` |
+| 12 Error al leer | FR-015, FR-019 | SC-004 | `TestHU10_ErrorAlLeer` | `TestQualityService_SprintQuality`, `TestPostgresQualityCatalog` |
 | (HU-20b) Sin proyecto | FR-017 | — | `TestHU10_SinProyecto` | — |
 | (HU-20a) Solo lectura | FR-001 | — | `TestHU10_PostNoPermitido` | — |
 | Rendimiento | — | SC-005 | `TestHU10_Rendimiento` | — |
 | Cálculo reutilizable y sin persistencia | FR-014, FR-016, FR-018 | — | — | `TestQualityService_SprintQuality`, `TestPostgresQuality_SprintActivoEInexistente` |
+
+Nombres confirmados contra el código en T037. Las pruebas de pantalla están en `src/web/quality_handlers_test.go`,
+`src/web/quality_view_test.go` y `src/web/postgres_quality_catalog_integration_test.go`; las BDD en
+`test/web_quality_bdd_test.go`; las de dominio e integración en `src/metrics/quality_test.go`,
+`src/metrics/quality_service_test.go` y `src/metrics/postgres_quality_store_integration_test.go`. La verificación
+manual de los escenarios con la aplicación en ejecución está en `evidencia-manual.txt` (T036).

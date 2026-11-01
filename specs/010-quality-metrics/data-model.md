@@ -2,14 +2,33 @@
 
 ## Esquema
 
-Sin migración ni tablas nuevas. HU-10 solo lee. Los nombres marcados con **(T001)** salen de los documentos de HU-06 y
-HU-15 y se confirman en el código cuando esas historias estén en `main`.
+Sin migración ni tablas nuevas. HU-10 solo lee. Los nombres de HU-06 y HU-15 se confirmaron en `main` en T001
+(2026-10-31, `main` en `1b364b1`).
 
 | Tabla | Columnas usadas | Origen |
 |---|---|---|
 | `sprints` | `id`, `project_id`, `number`, `status` ('Activo' o 'Finalizado') | HU-04, en `main` |
-| `sprint_story_results` **(T001)** | `sprint_id`, `story_id`, `final_status`, `story_points` | HU-15 |
-| `defects` **(T001)** | `project_id`, `status` ('Abierto' o 'Resuelto'), `detection_sprint_id`, `resolution_sprint_id` | HU-06 y HU-19 |
+| `sprint_story_results` | `sprint_id`, `story_id`, `final_status`, `story_points` | HU-15 (migración `014_sprint_story_results`) |
+| `defects` | `project_id`, `status` ('Abierto' o 'Resuelto'), `detection_sprint_id`, `resolution_sprint_id` | HU-06 (migración `012_create_defects`) y HU-19 |
+
+### Confirmado en `main` en T001
+
+- **HU-06** (`db/migrations/012_create_defects.up.sql`): `defects(project_id INTEGER, status VARCHAR(20)` con
+  `CHECK (status IN ('Abierto', 'Resuelto'))`, `detection_sprint_id BIGINT NOT NULL` y `resolution_sprint_id BIGINT`,
+  nulo mientras el defecto está abierto`)`. Un defecto "Resuelto" siempre tiene `resolution_sprint_id` (CHECK de la
+  tabla). Lo usan `src/defect/postgres_store.go` y `src/web/postgres_defects_catalog.go`.
+- **HU-15** (`db/migrations/014_sprint_story_results.up.sql`): `sprint_story_results(sprint_id BIGINT, story_id
+  BIGINT, final_status VARCHAR(20), story_points INTEGER` nulo si no estaba estimada`)`, clave `(sprint_id,
+  story_id)`. La escribe `src/sprint/postgres_sprint_closer.go` al cerrar el Sprint, con todas las historias
+  asignadas en ese momento, terminadas o no.
+- **HU-07** (`src/metrics`): `roundToTwoDecimals(*big.Rat) *big.Rat` en `calculation.go`; `ErrSprintNotFinished`
+  en `errors.go`; `NewService(store MetricsStore) *Service` y `(*Service).CalculateMetrics(sprintID int64)` en
+  `service.go`; `NewPostgreSQLMetricsStore(db *sql.DB)` en `postgres_metrics_store.go`. HU-10 está en el mismo
+  paquete, así que puede usar `roundToTwoDecimals` sin exportarla.
+- **Nombres libres**: no existen `ErrSprintNotFound`, `QualityStore`, `QualityService` ni `SprintQuality` en
+  `src/metrics`, ni tipos `Quality*` en `src/web`. Tampoco `TitleQuality`, `MsgQuality*`, `selectQualitySprint`,
+  `qualityPageData` ni `qualityView`. Existen y se reutilizan `parseID` (`src/web/context.go`) y `Unavailable`
+  (`src/web/errors.go`).
 
 ## Dominio (`src/metrics`)
 
@@ -19,7 +38,7 @@ HU-15 y se confirman en el código cuando esas historias estén en `main`.
 var ErrSprintNotFound = errors.New("sprint not found") // nuevo; no existe otro en src/metrics
 
 type QualityStoryResult struct {
-    FinalStatus string // "Hecho", "En progreso" o "En Sprint"
+    FinalStatus string // estado al cierre: "Hecho", "En progreso" o "En Sprint" (el CHECK admite también "Pendiente")
     StoryPoints *int   // nil = sin estimar
 }
 
@@ -97,13 +116,13 @@ No guarda nada.
 -- 1. Sprint del proyecto (sin fila → ErrSprintNotFound)
 SELECT status FROM sprints WHERE id = $1 AND project_id = $2;
 
--- 2. Solo si status = 'Finalizado': registro de cierre (T001: nombres de HU-15)
+-- 2. Solo si status = 'Finalizado': registro de cierre de HU-15
 SELECT final_status, story_points
 FROM sprint_story_results
 WHERE sprint_id = $1
 ORDER BY story_id;
 
--- 3. Solo si status = 'Finalizado': defectos (T001: nombres de HU-06)
+-- 3. Solo si status = 'Finalizado': defectos de HU-06
 SELECT COUNT(*) FILTER (WHERE detection_sprint_id = $1),
        COUNT(*) FILTER (WHERE status = 'Resuelto' AND resolution_sprint_id = $1)
 FROM defects

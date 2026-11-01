@@ -20,7 +20,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-10, ajustar `data-model.md` y las consultas si alguno
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-10, ajustar `data-model.md` y las consultas si alguno
   cambió, y quitar las marcas "(T001)":
   - de HU-06: tabla `defects` y columnas `project_id`, `status` ('Abierto' y 'Resuelto'), `detection_sprint_id` y
     `resolution_sprint_id`;
@@ -31,10 +31,10 @@ Formato: `[ID] [P] [E#] descripción`
     tipos `Quality*` en `src/web`.
 
   Si HU-06 o HU-15 no están en `main`, no seguir y avisar al equipo.
-- [ ] T002 Crear la rama `HU-10` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [X] T002 Crear la rama `HU-10` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-10`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar dos cosas:
+- [X] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [X] T004 Coordinar dos cosas:
   - con quien tenga HU-08, HU-09 y HU-25, el bloque de registro que se suma en `src/cmd/server/main.go`;
   - con HU-08 y HU-09, el contrato `metrics.NewQualityService` / `SprintQuality` de `data-model.md`.
 
@@ -46,7 +46,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E1, E2, E3, E4, E5, E6, E7] Escribir `TestCalculateSprintQuality` como prueba de tabla en
+- [x] T005 [P] [E1, E2, E3, E4, E5, E6, E7] Escribir `TestCalculateSprintQuality` como prueba de tabla en
   `src/metrics/quality_test.go`. Casos:
   - 3 de 4 → "75.00";
   - 0 de 3 → "0.00";
@@ -57,7 +57,7 @@ Formato: `[ID] [P] [E#] descripción`
   - una "Hecho" sin Story Points → cuenta como completada y en `StoriesWithoutPoints`;
   - todas sin Story Points → 0 y 0;
   - los conteos de defectos se copian sin cambios.
-- [ ] T006 [P] [E3] Escribir `TestQualityService_SprintQuality` con un almacén de prueba local en
+- [x] T006 [P] [E3] Escribir `TestQualityService_SprintQuality` con un almacén de prueba local en
   `src/metrics/quality_service_test.go`. Casos:
   - `projectID` o `sprintID` en 0 → `ErrSprintNotFound`, sin llamar al almacén;
   - `ErrSprintNotFound` del almacén se devuelve sin cambios;
@@ -65,12 +65,12 @@ Formato: `[ID] [P] [E#] descripción`
   - otra falla se envuelve: `errors.Is` con la causa original;
   - almacén `nil` → error;
   - con un Sprint "Finalizado", el resultado es el de `calculateSprintQuality`.
-- [ ] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
+- [x] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt`, sección "Dominio".
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear `src/metrics/quality.go` con:
+- [x] T008 Crear `src/metrics/quality.go` con:
   - `ErrSprintNotFound = errors.New("sprint not found")`;
   - `QualityStoryResult`, `QualityData` y `SprintQuality` (campos de `data-model.md`);
   - `calculateSprintQuality`.
@@ -80,9 +80,9 @@ Formato: `[ID] [P] [E#] descripción`
   - el porcentaje es `roundToTwoDecimals(big.NewRat(completadas*100, planificadas)).FloatString(2)`;
   - se suman solo los Story Points no nulos;
   - `StoriesWithoutPoints` cuenta los nulos.
-- [ ] T009 Crear el puerto `QualityStore` en `src/metrics/quality_store.go`, y en `src/metrics/quality_service.go`
+- [x] T009 Crear el puerto `QualityStore` en `src/metrics/quality_store.go`, y en `src/metrics/quality_service.go`
   crear `QualityService`, `NewQualityService` y `SprintQuality` con los pasos 1 a 5 de `data-model.md`.
-- [ ] T010 Ejecutar T005 y T006 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 no
+- [x] T010 Ejecutar T005 y T006 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 no
   cambian.
 
 **Punto de control**: el cálculo y el servicio funcionan solos; HU-08 y HU-09 ya pueden programar contra
@@ -96,7 +96,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 Crear las fixtures en `src/metrics/postgres_quality_store_integration_test.go`:
+- [x] T011 Crear las fixtures en `src/metrics/postgres_quality_store_integration_test.go`:
   - proyectos «Alfa» y «Beta»;
   - en «Alfa», Sprints 1 y 2 "Finalizado" y Sprint 3 "Activo";
   - historias del Sprint 1: de 3, 5, 8 y 2 Story Points, con "Hecho" las de 3 y 5 (2 de 4, 18 planificados y 8
@@ -116,41 +116,41 @@ Formato: `[ID] [P] [E#] descripción`
 
   Limpieza, en este orden: defectos, registro de cierre, asignaciones, `sprint_metrics`, historias, Sprints y
   proyectos.
-- [ ] T012 [P] [E1, E2, E3, E4, E5] Escribir `TestPostgresQuality_Historias` con un subtest por caso:
+- [x] T012 [P] [E1, E2, E3, E4, E5] Escribir `TestPostgresQuality_Historias` con un subtest por caso:
   - Sprint 2: 3 de 4 → "75.00";
   - Sprint sin "Hecho" → "0.00";
   - Sprint finalizado sin registro → "No disponible";
   - Sprint 1: 3, 5, 8 y 2 → 18 y 8;
   - Sprint 2: una sin Story Points → advertencia de 1 y 3 planificados.
-- [ ] T013 [P] [E6, E7, E8] Escribir `TestPostgresQuality_Defectos`:
+- [x] T013 [P] [E6, E7, E8] Escribir `TestPostgresQuality_Defectos`:
   - Sprint 2 → 3 detectados y 2 resueltos;
   - Sprint sin defectos → 0 y 0;
   - el reabierto cuenta como detectado en su Sprint y no como resuelto.
-- [ ] T014 [P] [E9] Escribir `TestPostgresQuality_OtroProyecto`:
+- [x] T014 [P] [E9] Escribir `TestPostgresQuality_OtroProyecto`:
   - un Sprint de «Alfa» pedido con el proyecto «Beta» → `ErrSprintNotFound`;
   - un defecto de «Beta» que apunta a un Sprint de «Alfa» no cuenta.
-- [ ] T015 [P] Escribir `TestPostgresQuality_SprintActivoEInexistente`:
+- [x] T015 [P] Escribir `TestPostgresQuality_SprintActivoEInexistente`:
   - el Sprint 3 activo devuelve solo su estado, y el servicio responde `ErrSprintNotFinished`;
   - el identificador 2147483647 → `ErrSprintNotFound`.
-- [ ] T016 [P] [E4] Escribir `TestQuality_CoherenciaConVelocidadHU07`: en el mismo Sprint, `PointsCompleted` es igual
+- [x] T016 [P] [E4] Escribir `TestQuality_CoherenciaConVelocidadHU07`: en el mismo Sprint, `PointsCompleted` es igual
   a `NewService(NewPostgreSQLMetricsStore(db)).CalculateMetrics(id).Velocity`. La prueba borra la fila que HU-07
   guarda en `sprint_metrics`.
 
   El Sprint es el de 3, 5, 8 y 2 Story Points, y sus historias "Hecho" tienen Story Points y horas no negativas.
   Así pasa `ValidateSprintClosure` de HU-07, que rechaza historias "Hecho" sin Story Points.
-- [ ] T017 Ejecutar T012–T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
+- [x] T017 Ejecutar T012–T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
   "Almacenamiento".
 
 ### Implementación (GREEN)
 
-- [ ] T018 Implementar `PostgreSQLQualityStore` y `NewPostgreSQLQualityStore` en
+- [x] T018 Implementar `PostgreSQLQualityStore` y `NewPostgreSQLQualityStore` en
   `src/metrics/postgres_quality_store.go`:
   - `BeginTx` con `ReadOnly: true` y `Isolation: sql.LevelRepeatableRead`;
   - las tres consultas de `data-model.md`: el Sprint del proyecto (sin fila → `ErrSprintNotFound`), el registro de
     cierre ordenado por `story_id`, y los dos `COUNT(*) FILTER` con `WHERE project_id = $2`;
   - si el Sprint no está "Finalizado", no leer el registro ni los defectos;
   - errores envueltos con `%w`.
-- [ ] T019 Ejecutar T012–T016 en verde.
+- [x] T019 Ejecutar T012–T016 en verde.
 
 **Punto de control**: `SprintQuality` devuelve los números reales de un Sprint cerrado.
 
@@ -163,18 +163,18 @@ y comprobar los números; también con un proyecto sin finalizados.
 
 ### Pruebas (RED)
 
-- [ ] T020 [P] [E10a, E10c] Escribir `TestPostgresQualityCatalog` en
+- [x] T020 [P] [E10a, E10c] Escribir `TestPostgresQualityCatalog` en
   `src/web/postgres_quality_catalog_integration_test.go`. Casos:
   - solo los Sprints "Finalizado", del de mayor número al de menor;
   - `ActiveNumber` con el Sprint activo, o 0 si no hay;
   - nada de otro proyecto;
   - proyecto sin Sprints.
-- [ ] T021 [P] [E1, E5] Escribir `TestQualityView` en `src/web/quality_view_test.go`:
+- [x] T021 [P] [E1, E5] Escribir `TestQualityView` en `src/web/quality_view_test.go`:
   - `qualityPercentText`: "75.00" → "75,00 %" y "No disponible" sin cambios;
   - la advertencia en singular, en plural y vacía con 0;
   - `selectQualitySprint` con "", "abc", "0", "-1", "007", el identificador del activo, uno de otro proyecto y uno
     válido.
-- [ ] T022 [E1, E4, E5, E6, E9, E10a, E10b, E10c, E11] Escribir el servidor de prueba y las pruebas de pantalla en
+- [x] T022 [E1, E4, E5, E6, E9, E10a, E10b, E10c, E11] Escribir el servidor de prueba y las pruebas de pantalla en
   `src/web/quality_handlers_test.go`:
   - `TestHU10_ListaYSprintPorDefecto`;
   - `TestHU10_ElegirOtroSprint`;
@@ -189,68 +189,68 @@ y comprobar los números; también con un proyecto sin finalizados.
   - `TestHU10_OtroProyecto`.
 
   Las pruebas usan el servicio y el catálogo reales con datos propios.
-- [ ] T023 [P] [E12] Escribir las pruebas de errores y bordes en `src/web/quality_handlers_test.go`:
+- [x] T023 [P] [E12] Escribir las pruebas de errores y bordes en `src/web/quality_handlers_test.go`:
   - `TestHU10_ErrorAlLeer`: con un catálogo que falla y con un `QualityReader` que falla, se ve la página de error
     de HU-20a, sin números ni texto interno;
   - `TestHU10_SinProyecto`: 303 a `/contexto/proyecto?volver_a=%2Fcalidad`;
   - `TestHU10_PostNoPermitido`: 405;
   - `TestHU10_Rendimiento`: 20 Sprints, 50 historias por Sprint y 100 defectos, en menos de 500 ms.
-- [ ] T024 [P] [E1, E6, E10a, E11] Escribir los escenarios BDD en `test/web_quality_bdd_test.go`: "Porcentaje de
+- [x] T024 [P] [E1, E6, E10a, E11] Escribir los escenarios BDD en `test/web_quality_bdd_test.go`: "Porcentaje de
   avance", "Defectos detectados y resueltos", "Lista de Sprints y Sprint por defecto" y "Sin Sprints finalizados".
-- [ ] T025 Ejecutar T020–T024, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
+- [x] T025 Ejecutar T020–T024, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt`, sección "Pantalla".
 
 ### Implementación (GREEN)
 
-- [ ] T026 Crear el catálogo de la pantalla:
+- [x] T026 Crear el catálogo de la pantalla:
   - en `src/web/quality_catalog.go`: `QualitySprintOption`, `QualitySprintList`, `QualityCatalog` y
     `QualityReader`;
   - en `src/web/postgres_quality_catalog.go`: `PostgreSQLQualityCatalog` y `NewPostgreSQLQualityCatalog`, con la
     consulta de `data-model.md`; un error de la base devuelve `Unavailable`.
-- [ ] T027 Crear `src/web/quality_view.go` con:
+- [x] T027 Crear `src/web/quality_view.go` con:
   - los textos de la tabla de `data-model.md`;
   - `qualityPercentText` y `qualityWithoutPointsWarning`;
   - `selectQualitySprint`, que usa `parseID` y la lista de finalizados;
   - el armado de `qualityPageData`.
-- [ ] T028 Crear `RegisterQuality(s, reader, catalog)` en `src/web/quality_handlers.go`:
+- [x] T028 Crear `RegisterQuality(s, reader, catalog)` en `src/web/quality_handlers.go`:
   - `Section{Name: "Calidad y avance", Path: "/calidad", RequiresProject: true}`;
   - `Routes{"GET /calidad": ...}`;
   - si falta algún argumento, devolver un error;
   - si falla el catálogo o el cálculo, `Fail` sin renderizar números.
-- [ ] T029 Crear `src/web/templates/quality.html` con:
+- [x] T029 Crear `src/web/templates/quality.html` con:
   - la lista de enlaces `/calidad?sprint=ID` y `aria-current="page"` en el Sprint elegido;
   - los avisos;
   - los números del Sprint elegido.
 
   La pantalla no tiene formularios ni JavaScript.
-- [ ] T030 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-24, `RegisterEffort`), el bloque que construye
+- [x] T030 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-24, `RegisterEffort`), el bloque que construye
   `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))` y
   `web.NewPostgreSQLQualityCatalog(database)` y llama a `web.RegisterQuality`. Si falla, cerrar `ln` y `database`,
   como los otros bloques.
-- [ ] T031 Ejecutar T020–T024 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T031 Ejecutar T020–T024 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master ve la calidad y el avance de cada Sprint cerrado.
 
 ## Fase 5: Cierre
 
-- [ ] T032 REFACTOR:
+- [x] T032 REFACTOR:
   - revisar si el cálculo y la vista tienen duplicación y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-07 ni de HU-25 cambió: `git diff --stat main` lista solo archivos nuevos y
     `main.go`.
-- [ ] T033 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
+- [x] T033 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
   `go vet ./...` limpio y `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T034 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
-- [ ] T035 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
+- [x] T034 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
+- [x] T035 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/metrics`.
-- [ ] T036 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T037 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T036 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T037 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Calidad y avance".
-- [ ] T038 [P] Avisar:
+- [X] T038 [P] Avisar:
   - a HU-08 y HU-09, que el contrato `SprintQuality` está en `main`;
   - a HU-25, que no se tocaron sus archivos;
   - al equipo, que si hay conflicto en `main.go` al mergear se conservan todos los bloques.
-- [ ] T039 Abrir el Pull Request desde `HU-10` citando HU-10, con las evidencias y la confirmación de T001.
-- [ ] T040 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
+- [X] T039 Abrir el Pull Request desde `HU-10` citando HU-10, con las evidencias y la confirmación de T001.
+- [X] T040 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución
 

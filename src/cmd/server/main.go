@@ -134,6 +134,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		return fail("no se pudo registrar la sección Registro de esfuerzo")
 	}
 
+	// Calidad y avance: métricas de cada Sprint finalizado, de solo lectura (HU-10, T030).
+	qualityService := metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))
+	if err := web.RegisterQuality(srv, qualityService, web.NewPostgreSQLQualityCatalog(database)); err != nil {
+		_ = ln.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Calidad y avance")
+	}
+
 	defectService := defect.NewService(defect.NewPostgreSQLStore(database))
 	defectResolution := defect.NewResolutionService(defect.NewPostgreSQLResolutionStore(database))
 	defectCatalog := web.NewPostgreSQLDefectCatalog(database)
