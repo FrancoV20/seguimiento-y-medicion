@@ -200,13 +200,13 @@ velocidad.
 
 ### Implementación (GREEN)
 
-- [ ] T022 Completar los archivos del detalle:
+- [x] T022 Completar los archivos del detalle:
   - `src/web/past_sprint_view.go`: `pastSprintPointsText`, `pastSprintRow`, `pastSprintDetailView` y
     `buildPastSprintDetailView`, que separa por `FinalStatus == string(sprint.Done)` y conserva el orden;
   - `src/web/past_sprint_handlers.go`: la ruta `"GET /sprints-anteriores/{id}"` con los pasos 1 a 4 de
     `data-model.md` (`parseID` → catálogo → `CalculateMetrics` → vista), sin escribir nada antes del paso 4;
   - la plantilla `src/web/templates/past_sprint.html`, sin formularios, botones ni `<script>`.
-- [ ] T023 Ejecutar T017–T020 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T023 Ejecutar T017–T020 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master revisa cualquier Sprint anterior con su velocidad y sus historias.
 
