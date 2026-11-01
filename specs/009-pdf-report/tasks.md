@@ -142,17 +142,17 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T015 Crear `src/report/model.go` (`ErrSprintNotFound`, `ErrProjectNotFound`, `ErrInconsistentReport`,
+- [x] T015 Crear `src/report/model.go` (`ErrSprintNotFound`, `ErrProjectNotFound`, `ErrInconsistentReport`,
   `SprintInfo`, `Story`, `MemberHours`, `Defect`, `Data`, `SprintReport`), `src/report/store.go` (puerto `Store` con
   `LoadSprintReport`; `LoadProjectReport` se agrega en T043) y `src/report/sources.go` (`MetricsSource`,
   `QualitySource`), como en `data-model.md`.
-- [ ] T016 Crear `src/report/texts.go` con la tabla de textos del Sprint y las funciones de formato de
+- [x] T016 Crear `src/report/texts.go` con la tabla de textos del Sprint y las funciones de formato de
   `data-model.md`. Las horas usan `effort.Hours.String()` con coma.
-- [ ] T017 Crear `src/report/service.go` con `NewService` (reloj `nil` = `time.Now`), `Build` (pasos 1 a 6 de
+- [x] T017 Crear `src/report/service.go` con `NewService` (reloj `nil` = `time.Now`), `Build` (pasos 1 a 6 de
   `data-model.md`) y `SprintPDF` (`Build` + `Render`).
-- [ ] T018 Crear `src/report/document.go` con `Render`: las siete partes en el orden de `data-model.md`, con las
+- [x] T018 Crear `src/report/document.go` con `Render`: las siete partes en el orden de `data-model.md`, con las
   columnas de research.md §6 y el pie `fmtFooter`.
-- [ ] T019 Ejecutar T011–T013 en verde.
+- [x] T019 Ejecutar T011–T013 en verde.
 
 **Punto de control**: con datos en memoria se genera el PDF completo de un Sprint finalizado y de uno en curso.
 
