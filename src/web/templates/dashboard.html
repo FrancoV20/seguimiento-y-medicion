@@ -1,0 +1,75 @@
+{{define "dashboardChart"}}
+<svg role="img" aria-label="{{.AriaLabel}}" viewBox="0 0 {{.Width}} {{.Height}}" width="{{.Width}}" height="{{.Height}}" class="dashboard-chart">
+  {{- range .Bars}}
+  <rect x="{{.X}}" y="{{.Y}}" width="{{$.BarWidth}}" height="{{.Height}}" fill="#3b6ea5"></rect>
+  <text x="{{.TextX}}" y="{{.ValueY}}" text-anchor="middle" font-size="11">{{.Value}}</text>
+  <text x="{{.TextX}}" y="{{.LabelY}}" text-anchor="middle" font-size="10">{{.Label}}</text>
+  {{- end}}
+</svg>
+{{end}}
+
+{{define "content"}}
+<h1>{{.Title}}</h1>
+{{with .Data}}
+{{if .NoData}}
+<p class="muted">{{.NoDataMessage}}</p>
+{{else}}
+<section class="dashboard-block" aria-labelledby="dashboard-historias">
+  <h2 id="dashboard-historias">Historias por estado</h2>
+  {{template "dashboardChart" .StoriesChart}}
+  <table>
+    <caption>Historias por estado</caption>
+    <thead><tr><th scope="col">Estado</th><th scope="col">Historias</th></tr></thead>
+    <tbody>
+      {{- range .StoryRows}}
+      <tr><th scope="row">{{.Label}}</th><td>{{.Value}}</td></tr>
+      {{- end}}
+    </tbody>
+  </table>
+</section>
+
+<section class="dashboard-block" aria-labelledby="dashboard-sprint">
+  <h2 id="dashboard-sprint">Sprint en curso</h2>
+  {{if .HasActiveSprint}}
+  <p>{{.ActiveSprint}}</p>
+  <ul>
+    <li>En Sprint: {{index .ActiveCounts 0}}</li>
+    <li>En progreso: {{index .ActiveCounts 1}}</li>
+    <li>Hecho: {{index .ActiveCounts 2}}</li>
+  </ul>
+  <p>{{.ActivePoints}}</p>
+  {{else}}
+  <p class="muted">{{.NoActiveSprintMessage}}</p>
+  {{end}}
+</section>
+
+<section class="dashboard-block" aria-labelledby="dashboard-velocidad">
+  <h2 id="dashboard-velocidad">Velocidad y desviación</h2>
+  {{if .HasFinished}}
+  {{template "dashboardChart" .VelocityChart}}
+  <table>
+    <caption>Velocidad por Sprint</caption>
+    <thead><tr><th scope="col">Sprint</th><th scope="col">Story Points completados</th></tr></thead>
+    <tbody>
+      {{- range .VelocityRows}}
+      <tr><th scope="row">{{.Label}}</th><td>{{.Points}}</td></tr>
+      {{- end}}
+    </tbody>
+  </table>
+  {{if .LastTenNotice}}<p class="muted">{{.LastTenNotice}}</p>{{end}}
+  <p>{{.TotalVelocity}}</p>
+  <p>{{.AverageVelocity}}</p>
+  <p>{{.Deviation}}</p>
+  {{if .PartialWarning}}<div class="alert alert-warning" role="status">{{.PartialWarning}}</div>{{end}}
+  {{else}}
+  <p class="muted">{{.NoDataMessage}}</p>
+  {{end}}
+</section>
+
+<section class="dashboard-block" aria-labelledby="dashboard-defectos">
+  <h2 id="dashboard-defectos">Defectos</h2>
+  <p>{{.OpenDefects}}</p>
+</section>
+{{end}}
+{{end}}
+{{end}}

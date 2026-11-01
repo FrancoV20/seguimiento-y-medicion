@@ -441,3 +441,25 @@ se pueden cambiar.
 | `La operación no pudo completarse` | No se guardó nada; volvé a intentarlo más tarde. |
 
 Si no te identificaste, la aplicación te pide elegir un integrante y después vuelve a Planning Poker.
+
+## Dashboard
+
+Elegí primero el proyecto desde **Cambiar proyecto** y abrí **Dashboard** en el menú
+(`http://localhost:8080/dashboard`). Es una pantalla de solo lectura que reúne en un vistazo la salud del proyecto
+activo, con cinco bloques:
+
+1. **Historias por estado**: un gráfico de barras y una tabla con la cantidad de historias en Pendiente, En Sprint,
+   En progreso y Hecho.
+2. **Sprint en curso**: por ejemplo "Sprint 3 en curso", con sus historias En Sprint, En progreso y Hecho, y los Story
+   Points planificados y completados. Si no hay Sprint activo, muestra **No hay un Sprint en curso**.
+3. **Velocidad**: un gráfico y una tabla con los Story Points completados de cada Sprint finalizado (los últimos 10,
+   del más antiguo al más reciente), la **velocidad acumulada** y el **promedio por Sprint**, con dos decimales.
+4. **Desviación de esfuerzo** del último Sprint finalizado, con signo y coma (por ejemplo "+20,00 %"), o **No
+   disponible** si no hay horas estimadas. Si el cálculo usó solo algunas historias, se muestra el aviso de cálculo
+   parcial.
+5. **Defectos abiertos** del proyecto: "3 defectos abiertos", "1 defecto abierto" o "No hay defectos abiertos".
+
+Los gráficos no necesitan JavaScript, y cada uno tiene al lado una tabla con los mismos valores. Si el proyecto
+todavía no tiene historias ni Sprints, la pantalla muestra solo **Aún no hay datos suficientes para calcular
+métricas**; si no hay Sprints finalizados, ese mensaje aparece en el bloque de velocidad y desviación y el resto se ve
+igual. Si hay un problema al leer los datos, se muestra la página de error de la aplicación, sin números parciales.

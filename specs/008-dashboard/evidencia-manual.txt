@@ -1,0 +1,64 @@
+HU-08 — Evidencia de verificación manual (T033)
+Fecha: 2026-11-01
+Realizó: Claude (asistente de IA), a pedido de Giuliana Bettiol y con su aprobación, que revisó el resultado. El
+escenario 12 lo hizo Giuliana.
+
+Entorno
+- Código de la rama HU-08 en el commit 19b15fa (los commits posteriores solo cambian documentación).
+- Servidor en la PC de Giuliana: `go run ./src/cmd/server` con `ADDR=:8081`, contra su base local de Docker
+  (PostgreSQL 16, migraciones al día).
+
+Método
+- Recorrido desde el navegador, completando y enviando los formularios de la aplicación como lo haría una persona.
+- No se usó el proyecto «Alfa» de quickstart.md: se usaron el proyecto «PRUEBA», que ya existía en la base local, y
+  un proyecto nuevo «Dashboard vacío». Por eso los números no son los de la tabla de quickstart.md; para cada
+  escenario se anota lo que se esperaba con esos datos y lo que se vio.
+- Datos de «PRUEBA» antes del recorrido: HU-01 (Alta, sin estimar, Pendiente), HU-02 (Media, 1 Story Point,
+  Pendiente), el Sprint 1 finalizado sin historias "Hecho" y 1 defecto abierto.
+- Datos cargados desde la aplicación durante el recorrido: 10 horas estimadas en HU-02 (/estimaciones); el Sprint 2
+  con HU-02 (/sprints); 8 h y 4 h de esfuerzo sobre HU-02 (/esfuerzo); HU-02 a En progreso y a Hecho (/tablero); el
+  cierre del Sprint 2 (/cierre); el proyecto «Dashboard vacío» (/proyectos).
+- Escenario 11: se comprobó en el HTML de la página que no hay ningún `<script>` y que cada `<svg role="img">` llega
+  armado desde el servidor junto a su tabla. No se desactivó JavaScript en el navegador, porque sin scripts el
+  resultado es el mismo.
+
+Escenarios
+1. Sin datos suficientes: PASÓ. Proyecto «Dashboard vacío» → solo "Aún no hay datos suficientes para calcular
+   métricas", sin gráficos.
+2. Historias por estado: PASÓ. Con el Sprint 2 activo → Pendiente 1, En Sprint 1, En progreso 0, Hecho 0 en el
+   gráfico y en la tabla. Al pasar HU-02 a En progreso y después a Hecho, los dos se actualizaron (0/1/0 y 0/0/1).
+3. Sprint en curso: PASÓ. "Sprint 2 en curso", En Sprint 1, En progreso 0, Hecho 0 y "1 Story Points planificados y
+   0 completados".
+4. Sin Sprint en curso: PASÓ. Después de cerrar el Sprint 2 → "No hay un Sprint en curso" y los demás bloques igual.
+5. Velocidad: PASÓ. Barras Sprint 1 (0) y Sprint 2 (1); "Velocidad acumulada: 1 Story Points"; "Promedio: 0,50 Story
+   Points por Sprint" (1 ÷ 2).
+6. Sin Sprints finalizados: PASÓ. Con el Sprint 1 de «PRUEBA» activo y ninguno cerrado, el mensaje "Aún no hay datos
+   suficientes para calcular métricas" en el bloque de velocidad y desviación; se veían las historias y el Sprint en
+   curso.
+7. Desviación: PASÓ. "Desviación de esfuerzo del Sprint 2: +20,00 %" ((12 − 10) ÷ 10), sin aviso parcial; coincide
+   con **Métricas del Sprint** (HU-07) para el Sprint 2.
+8. Desviación no disponible: PASÓ. Con el Sprint 1 como último finalizado (sin horas estimadas) → "Desviación de
+   esfuerzo del Sprint 1: No disponible" y la velocidad igual se mostraba.
+9. Defectos abiertos: PASÓ. "1 defecto abierto" (singular).
+10. Otro proyecto: PASÓ. En «Dashboard vacío» no aparece nada de «PRUEBA».
+11. Sin JavaScript: PASÓ (ver Método). 0 `<script>`; 2 `<svg role="img">` con aria-label ("Historias por estado:
+    Pendiente 1, En Sprint 0, En progreso 0, Hecho 1" y "Velocidad por Sprint: Sprint 1, 0 Story Points; Sprint 2,
+    1 Story Points") y 2 tablas con caption "Historias por estado" y "Velocidad por Sprint".
+12. Error al leer: PASÓ. Con `docker compose stop`, al entrar a **Dashboard** desde el menú → "Servicio no
+    disponible" con "Volver al inicio", sin gráficos ni números. Después, `docker compose start`.
+
+Resultado: 12/12 escenarios pasaron.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-08 en el commit ________.
+Proyecto usado: ______________________
+1. Proyecto nuevo sin datos: un único mensaje "Aún no hay datos suficientes para calcular métricas": ______
+2. Historias por estado: el gráfico y la tabla coinciden con el Backlog: ______
+3. Sprint en curso: número, cantidades y Story Points iguales a los del Tablero: ______
+4. Sin Sprint activo: "No hay un Sprint en curso": ______
+5. Velocidad por Sprint, acumulada y promedio iguales a Calidad y avance (HU-10): ______
+6. Desviación del último Sprint igual a Métricas del Sprint (HU-07): ______
+7. Defectos abiertos iguales a los de Defectos: ______
+8. Al cambiar de proyecto no aparece nada del anterior: ______
+9. Con la base detenida, "Servicio no disponible" sin números: ______

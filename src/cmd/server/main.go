@@ -203,6 +203,16 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Sprints anteriores")
 	}
+	// Dashboard: estado general del proyecto en una pantalla, de solo lectura (HU-08, T027).
+	if err := web.RegisterDashboard(srv, web.NewPostgreSQLDashboardCatalog(database),
+		web.NewPostgreSQLBoardCatalog(database),
+		metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database)),
+		web.NewHU07MetricsSource(database)); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Dashboard")
+	}
 
 	if err := srv.Serve(ctx, ln, func() {
 		_ = sprintStore.Close()

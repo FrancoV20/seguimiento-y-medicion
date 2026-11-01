@@ -19,7 +19,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-08, ajustar `data-model.md`, `research.md` y las
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-08, ajustar `data-model.md`, `research.md` y las
   consultas si alguno cambió, y quitar las marcas "(T001)":
   - de HU-10: `NewQualityService`, `NewPostgreSQLQualityStore`, `(*QualityService).SprintQuality`,
     `SprintQuality.PointsCompleted` en `src/metrics` y la interfaz `QualityReader` en `src/web`;
@@ -37,10 +37,10 @@ Formato: `[ID] [P] [E#] descripción`
     `src/web`.
 
   **Si HU-10 no está en `main`, no seguir y avisar al equipo.**
-- [ ] T002 Crear la rama `HU-08` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-08` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-08`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar con quien tenga HU-09, HU-10 y HU-25 el bloque de registro que se suma al final de
+- [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T004 Coordinar con quien tenga HU-09, HU-10 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`.
 
 ## Fase 2: Bloque Dominio de velocidad
@@ -51,7 +51,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E5, E6] Escribir `TestSummarizeVelocity` como prueba de tabla en
+- [x] T005 [P] [E5, E6] Escribir `TestSummarizeVelocity` como prueba de tabla en
   `src/metrics/velocity_summary_test.go`, con los casos de `data-model.md`:
   - `[]` → 0 y "No disponible";
   - `[5]` → 5 y "5.00";
@@ -61,16 +61,16 @@ Formato: `[ID] [P] [E#] descripción`
   - `[2, 0, 0]` → 2 y "0.67";
   - `[0, 0]` → 0 y "0.00";
   - `SprintCount` igual a la cantidad de valores.
-- [ ] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
+- [x] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
   sección "Dominio de velocidad".
 
 ### Implementación (GREEN)
 
-- [ ] T007 Crear `src/metrics/velocity_summary.go` con `VelocitySummary` (`SprintCount`, `Total`, `Average`) y
+- [x] T007 Crear `src/metrics/velocity_summary.go` con `VelocitySummary` (`SprintCount`, `Total`, `Average`) y
   `SummarizeVelocity`: "No disponible" sin Sprints; si no,
   `roundToTwoDecimals(big.NewRat(int64(Total), int64(SprintCount))).FloatString(2)`. No editar otros archivos de
   `src/metrics`.
-- [ ] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 y HU-10 no
+- [x] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 y HU-10 no
   cambian.
 
 **Punto de control**: el promedio con el redondeo de HU-07 está listo para la pantalla.
@@ -84,7 +84,7 @@ consistente.
 
 ### Pruebas (RED)
 
-- [ ] T009 Crear los datos de prueba compartidos en `src/web/dashboard_fixtures_test.go` (los usan T010 y T021), con
+- [x] T009 Crear los datos de prueba compartidos en `src/web/dashboard_fixtures_test.go` (los usan T010 y T021), con
   un integrante «Ana» para el esfuerzo. Cada proyecto tiene sus propios Sprints; ningún Sprint se usa para dos
   repartos:
   - «Alfa», como la tabla "Datos de ejemplo" de la spec:
@@ -114,27 +114,27 @@ consistente.
     disponible").
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T010 [P] [E1, E2, E9, E10] Escribir `TestPostgresDashboardCatalog` en
+- [x] T010 [P] [E1, E2, E9, E10] Escribir `TestPostgresDashboardCatalog` en
   `src/web/postgres_dashboard_catalog_integration_test.go`:
   - «Alfa»: `Stories` = {2, 1, 2, 3}, `OpenDefects` = 3, `Finished` = Sprints 1 y 2 en ese orden;
   - «Beta»: {1, 0, 0, 1}, 1 defecto, solo su Sprint 1;
   - «Vacío»: todo en cero y `Finished` vacío;
   - «Doce»: 12 finalizados, del 1 al 12;
   - «Solo activo»: el Sprint activo no figura en `Finished`.
-- [ ] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
+- [x] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
 
 ### Implementación (GREEN)
 
-- [ ] T012 Crear `src/web/dashboard_catalog.go` con `DashboardStoryCounts`, `DashboardSprint`, `DashboardSummary`,
-  `DashboardCatalog` y `DashboardDeviationSource` (`CalculateMetrics(sprintID int64) (metrics.SprintMetrics,
-  error)`), como en `data-model.md`. No redefinir `QualityReader` ni `BoardCatalog`.
-- [ ] T013 Crear `PostgreSQLDashboardCatalog` y `NewPostgreSQLDashboardCatalog(db *sql.DB)` en
+- [x] T012 Crear `src/web/dashboard_catalog.go` con `DashboardStoryCounts`, `DashboardSprint`, `DashboardSummary`,
+  y `DashboardCatalog`, como en `data-model.md`. No redefinir `QualityReader`, `BoardCatalog` ni `MetricsSource`
+  (HU-25).
+- [x] T013 Crear `PostgreSQLDashboardCatalog` y `NewPostgreSQLDashboardCatalog(db *sql.DB)` en
   `src/web/postgres_dashboard_catalog.go`:
   - `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, y `defer tx.Rollback()`;
   - las tres consultas de `data-model.md` (cuatro `COUNT(*) FILTER` sobre `user_stories`, defectos "Abierto" y
     Sprints "Finalizado" `ORDER BY number`), todas con `WHERE project_id = $1`;
   - errores envueltos con `%w`, sin `Unavailable` (como `PostgreSQLBoardCatalog`).
-- [ ] T014 Ejecutar T010 en verde.
+- [x] T014 Ejecutar T010 en verde.
 
 **Punto de control**: el catálogo devuelve los datos propios del Dashboard de un proyecto.
 
@@ -147,14 +147,14 @@ pasan sin PostgreSQL.
 
 ### Pruebas (RED)
 
-- [ ] T015 [P] [E2, E5, E11] Escribir en `src/web/dashboard_chart_test.go`:
+- [x] T015 [P] [E2, E5, E11] Escribir en `src/web/dashboard_chart_test.go`:
   - `TestDashboardBarHeights` (tabla, alto 120): `[2, 1, 2, 3]` → `[80, 40, 80, 120]`; `[8, 13]` → `[74, 120]`;
     `[0, 0, 0, 0]` → todo 0; `[1, 1000]` → `[1, 120]`; `[]` → `[]`;
   - `TestNewDashboardChart`: posiciones `X` e `Y` de cada barra, `Width` y `Height`, y el `AriaLabel` "Historias por
     estado: Pendiente 2, En Sprint 1, En progreso 2, Hecho 3".
-- [ ] T016 [P] [E1, E4, E5, E6, E7, E8, E9] Escribir `TestDashboardView` en `src/web/dashboard_view_test.go`:
-  - `dashboardDeviationText` (o la de HU-25, según T001): "20.00" → "+20,00 %", "-8.50" → "-8,50 %", "0.00" →
-    "0,00 %", "No disponible" sin cambios;
+- [x] T016 [P] [E1, E4, E5, E6, E7, E8, E9] Escribir `TestDashboardView` en `src/web/dashboard_view_test.go`:
+  - la desviación con `metricsDeviationText` de HU-25 (T001), dentro de `buildDashboardView`: "20.00" →
+    "+20,00 %", "No disponible" sin cambios;
   - `dashboardDecimalText("10.50")` → "10,50";
   - `dashboardOpenDefectsText`: 0 → "No hay defectos abiertos", 1 → "1 defecto abierto", 3 → "3 defectos
     abiertos";
@@ -166,18 +166,18 @@ pasan sin PostgreSQL.
     - con 12 finalizados → 10 barras (Sprints 3 a 12), `LastTenNotice` y acumulada de los 12;
     - la desviación es la del último finalizado;
     - `PartialWarning` solo si `IsPartial`.
-- [ ] T017 Ejecutar T015 y T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Vista y
+- [x] T017 Ejecutar T015 y T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Vista y
   gráficos".
 
 ### Implementación (GREEN)
 
-- [ ] T018 Crear `src/web/dashboard_chart.go` con las constantes, `dashboardBarHeights`, `dashboardBar`,
+- [x] T018 Crear `src/web/dashboard_chart.go` con las constantes, `dashboardBarHeights`, `dashboardBar`,
   `dashboardChart` y `newDashboardChart`, con las reglas de `data-model.md` (máximo 0 → todo 0 sin dividir; mitad
   hacia arriba; un valor mayor que 0 mide al menos 1).
-- [ ] T019 Crear `src/web/dashboard_view.go` con los textos de la tabla de `data-model.md`, `dashboardDecimalText`,
-  `dashboardDeviationText` (solo si T001 no encontró la de HU-25), `dashboardOpenDefectsText`, `dashboardView`,
+- [x] T019 Crear `src/web/dashboard_view.go` con los textos de la tabla de `data-model.md`, `dashboardDecimalText`,
+  `dashboardOpenDefectsText`, `dashboardView`,
   `dashboardVelocityRow` y `buildDashboardView` (usa `metrics.SummarizeVelocity`).
-- [ ] T020 Ejecutar T015 y T016 en verde.
+- [x] T020 Ejecutar T015 y T016 en verde.
 
 **Punto de control**: con datos en memoria se arman los cinco bloques y los dos gráficos.
 
@@ -190,8 +190,8 @@ los proyectos de los escenarios vacíos y con una falla.
 
 ### Pruebas (RED)
 
-- [ ] T021 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11] Escribir el servidor de prueba y las pruebas de pantalla en
-  `src/web/dashboard_handlers_test.go`, con el catálogo, el Tablero, `QualityService` y `metrics.Service` reales y
+- [x] T021 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11] Escribir el servidor de prueba y las pruebas de pantalla en
+  `src/web/dashboard_handlers_test.go`, con el catálogo, el Tablero, `QualityService` y `NewHU07MetricsSource` reales y
   los datos de T009:
   - `TestHU08_SinDatos` («Vacío»): solo "Aún no hay datos suficientes para calcular métricas", sin `<svg`;
   - `TestHU08_HistoriasPorEstado` («Alfa»): tabla 2, 1, 2 y 3, y barras de alto 80, 40, 80 y 120;
@@ -218,8 +218,8 @@ los proyectos de los escenarios vacíos y con una falla.
   - `TestHU08_CoherenciaConHU07`: en los Sprints 1 y 2 de «Alfa», cada barra es igual a
     `SprintQuality(...).PointsCompleted` y a `CalculateMetrics(id).Velocity`.
 
-  Las pruebas borran las filas de `sprint_metrics` que escribe HU-07.
-- [ ] T022 [E12] Escribir las pruebas de errores y bordes en `src/web/dashboard_handlers_test.go`, con dobles
+  Además se comprueba que abrir el Dashboard no escribe filas en `sprint_metrics`.
+- [x] T022 [E12] Escribir las pruebas de errores y bordes en `src/web/dashboard_handlers_test.go`, con dobles
   que fallan:
   - `TestHU08_ErrorAlLeer`: con el catálogo, el Tablero, el `QualityReader` y la fuente de desviación fallando (uno
     por subtest, y uno con `ClosureValidationError`), se ve la página de error de HU-20a con 500, sin `<svg`, sin
@@ -230,51 +230,52 @@ los proyectos de los escenarios vacíos y con una falla.
     "Pendiente"), y 100 defectos (60 "Abierto" y 40 "Resuelto"), en menos de 500 ms; muestra 10 barras (Sprints 11 a
     20), "Velocidad acumulada: 200 Story Points", "Promedio: 10,00 Story Points por Sprint" y "60 defectos
     abiertos".
-- [ ] T023 [P] [E1, E2, E5, E7] Escribir los escenarios BDD en `test/web_dashboard_bdd_test.go`: "Proyecto sin datos
+- [x] T023 [P] [E1, E2, E5, E7] Escribir los escenarios BDD en `test/web_dashboard_bdd_test.go`: "Proyecto sin datos
   suficientes", "Historias por estado", "Velocidad del equipo" y "Desviación de esfuerzo del último Sprint".
-- [ ] T024 Ejecutar T021–T023, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
+- [x] T024 Ejecutar T021–T023, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
   sección "Pantalla".
 
 ### Implementación (GREEN)
 
-- [ ] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation)` en `src/web/dashboard_handlers.go`:
+- [x] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation MetricsSource)` en `src/web/dashboard_handlers.go`:
   - si falta algún argumento, devolver un error sin registrar;
   - `Section{Name: TitleDashboard, Path: "/dashboard", RequiresProject: true}` y `Routes{"GET /dashboard": …}`;
   - los pasos 1 a 6 de `data-model.md`: cualquier error va a `Fail` antes de escribir la respuesta.
-- [ ] T026 Crear `src/web/templates/dashboard.html`:
+- [x] T026 Crear `src/web/templates/dashboard.html`:
   - el mensaje único si `NoData`;
   - si no, los cinco bloques en orden, con `<svg role="img" aria-label="…" viewBox="…">` y un `<rect>` y un `<text>`
     por barra, cada gráfico con su `<table>`;
   - sin finalizados, el mensaje en lugar de velocidad y desviación;
   - sin `<script>` ni formularios.
-- [ ] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
-  de HU-10 si ya está) el bloque que llama a `web.RegisterDashboard` con `web.NewPostgreSQLDashboardCatalog(database)`,
+- [x] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-16,
+  `RegisterPastSprints`) el bloque que llama a `web.RegisterDashboard` con `web.NewPostgreSQLDashboardCatalog(database)`,
   `web.NewPostgreSQLBoardCatalog(database)`, `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))`
-  y `metrics.NewService(metrics.NewPostgreSQLMetricsStore(database))`. Si falla, cerrar `ln` y `database`, como los
+  y `web.NewHU07MetricsSource(database)`. Si falla, cerrar `ln` y `database`, como los
   otros bloques.
-- [ ] T028 Ejecutar T021–T023 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T028 Ejecutar T021–T023 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master ve la salud del proyecto en una pantalla.
 
 ## Fase 6: Cierre
 
-- [ ] T029 REFACTOR:
+- [x] T029 REFACTOR:
   - revisar si la vista y el handler tienen duplicación y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-07, HU-10, HU-14 ni HU-25 cambió y que no hay migraciones: `git diff --stat
     main` lista solo archivos nuevos y `main.go`.
-- [ ] T030 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
+- [x] T030 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
   `go vet ./...` limpio y `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T031 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
-- [ ] T032 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
+- [x] T031 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
+- [x] T032 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/metrics`.
-- [ ] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual)
+  y registrar el resultado en `evidencia-manual.txt`, con "Realizó:" y el "Recorrido del revisor".
+- [x] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Dashboard".
-- [ ] T035 [P] Avisar:
+- [x] T035 [P] Avisar:
   - a HU-09, que el Dashboard está en `main` y qué datos reúne;
   - a HU-10, HU-14 y HU-25, que no se tocaron sus archivos;
   - al equipo, que si hay conflicto en `main.go` al mergear se conservan todos los bloques.
-- [ ] T036 Abrir el Pull Request desde `HU-08` citando HU-08, con las evidencias y la confirmación de T001.
+- [x] T036 Abrir el Pull Request desde `HU-08` citando HU-08, con las evidencias y la confirmación de T001.
 - [ ] T037 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución

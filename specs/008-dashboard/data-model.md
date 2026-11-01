@@ -2,18 +2,18 @@
 
 ## Esquema
 
-Sin migración ni tablas nuevas. HU-08 solo lee (la única escritura es la de HU-07 en `sprint_metrics`, research.md
-§10). Los nombres marcados con **(T001)** salen de los documentos de HU-06, HU-10, HU-15 y HU-25 y se confirman en el
-código cuando esas historias estén en `main`.
+Sin migración ni tablas nuevas. HU-08 solo lee: la desviación se pide a HU-07 con la fuente de solo lectura de
+HU-25, que no guarda en `sprint_metrics` (research.md §10). Los nombres de HU-06, HU-10, HU-15 y HU-25 se
+confirmaron en el código de `main` en T001 (research.md, "Verificación de T001").
 
 | Tabla | Columnas usadas | Quién la lee | Origen |
 |---|---|---|---|
 | `user_stories` | `project_id`, `status` | `DashboardCatalog` | HU-02 y HU-04, en `main` |
 | `sprints` | `id`, `project_id`, `number`, `status` ('Activo' o 'Finalizado') | `DashboardCatalog`, Tablero, HU-10, HU-07 | HU-04, en `main` |
-| `defects` **(T001)** | `project_id`, `status` ('Abierto' o 'Resuelto') | `DashboardCatalog` | HU-06 |
+| `defects` | `project_id`, `status` ('Abierto' o 'Resuelto') | `DashboardCatalog` | HU-06 |
 | `sprint_story_assignments`, `effort_logs` | — (las lee HU-07 y el Tablero) | HU-07, HU-14 | en `main` |
-| `sprint_story_results` **(T001)** | — (la lee HU-10) | HU-10 | HU-15 |
-| `sprint_metrics` | — (la escribe HU-07) | HU-07 | en `main` |
+| `sprint_story_results` | — (la lee HU-10) | HU-10 | HU-15 |
+| `sprint_metrics` | — (HU-08 no la escribe: la fuente de HU-25 descarta el guardado) | — | en `main` |
 
 ## Dominio (`src/metrics/velocity_summary.go`, nuevo)
 
@@ -78,18 +78,16 @@ type DashboardSummary struct {
 type DashboardCatalog interface {
     DashboardSummary(ctx context.Context, projectID int64) (DashboardSummary, error)
 }
-
-// DashboardDeviationSource lo implementa *metrics.Service (HU-07).
-type DashboardDeviationSource interface {
-    CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error)
-}
 ```
 
 Interfaces que se reutilizan sin redefinir:
 
 - `BoardCatalog` (HU-14, `board_catalog.go`): `ActiveBoard(ctx, projectID) (BoardView, bool, error)`.
-- `QualityReader` **(T001)** (HU-10, `quality_catalog.go`): `SprintQuality(ctx, projectID, sprintID)
+- `QualityReader` (HU-10, `quality_catalog.go`): `SprintQuality(ctx, projectID, sprintID)
   (metrics.SprintQuality, error)`.
+- `MetricsSource` (HU-25, `metrics_source.go`): `Metrics(ctx, projectID, sprintID) (SprintMetrics, error)`, con
+  `Deviation` (el `DeviationPercentage` de HU-07), `Partial` y `PartialAlert`. Su implementación real,
+  `NewHU07MetricsSource(db)`, llama a `CalculateMetrics` de HU-07 con un almacenamiento que no guarda nada.
 
 ### `postgres_dashboard_catalog.go`
 
@@ -105,7 +103,7 @@ SELECT COUNT(*) FILTER (WHERE status = 'Pendiente'),
 FROM user_stories
 WHERE project_id = $1;
 
--- 2. Defectos abiertos (T001: nombres de HU-06)
+-- 2. Defectos abiertos (HU-06)
 SELECT COUNT(*) FROM defects WHERE project_id = $1 AND status = 'Abierto';
 
 -- 3. Sprints finalizados
@@ -191,8 +189,8 @@ Textos (únicos en el paquete; ninguno existe hoy):
 Funciones:
 
 - `dashboardDecimalText("10.50")` → "10,50".
-- `dashboardDeviationText` **(T001: o la de HU-25)**: "20.00" → "+20,00 %"; "-8.50" → "-8,50 %"; "0.00" → "0,00 %";
-  "No disponible" sin cambios.
+- La desviación se formatea con `metricsDeviationText` de HU-25 (`metrics_view.go`, mismo paquete): "20.00" →
+  "+20,00 %"; "-8.50" → "-8,50 %"; "0.00" → "0,00 %"; "No disponible" sin cambios. No se crea una función propia.
 - `dashboardOpenDefectsText(n)`: 0 → `MsgDashboardNoOpenDefects`; 1 → `MsgDashboardOneOpenDefect`; n →
   `msgDashboardOpenDefects`.
 - `buildDashboardView(summary, board, found, velocities, deviation) dashboardView`.
@@ -238,7 +236,7 @@ Reglas del armado:
 ### `dashboard_handlers.go`
 
 `RegisterDashboard(s *Server, catalog DashboardCatalog, board BoardCatalog, quality QualityReader, deviation
-DashboardDeviationSource) error`:
+MetricsSource) error`:
 
 - si falta algún argumento, devuelve un error sin registrar;
 - registra `Section{Name: TitleDashboard, Path: "/dashboard", RequiresProject: true}` con
@@ -250,7 +248,7 @@ Pasos de `GET /dashboard` (`projectIDFrom(r)` de HU-14):
 2. `board.ActiveBoard(ctx, projectID)`. Error → `Fail`.
 3. Si es `NoData`, renderizar solo el mensaje (200).
 4. Por cada `Finished`: `quality.SprintQuality(ctx, projectID, id)` → `PointsCompleted`. Error → `Fail`.
-5. Si hay finalizados: `deviation.CalculateMetrics(último.ID)`. Error → `Fail`.
+5. Si hay finalizados: `deviation.Metrics(ctx, projectID, último.ID)`. Error → `Fail`.
 6. `metrics.SummarizeVelocity(velocidades)`, `buildDashboardView` y `Page(w, r, "dashboard.html", …)` con 200.
 
 Nada se escribe en la respuesta antes del paso 6.
@@ -275,7 +273,7 @@ Nada se escribe en la respuesta antes del paso 6.
 | Sin proyecto activo | 303 | `/contexto/proyecto?volver_a=%2Fdashboard` |
 | `POST` u otro método | 405 | Página de HU-20a |
 
-## Contrato que se consume de HU-10 **(T001)**
+## Contrato que se consume de HU-10
 
 ```go
 q, err := quality.SprintQuality(ctx, projectID, sprintID) // q.PointsCompleted

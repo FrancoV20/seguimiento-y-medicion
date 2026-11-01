@@ -2,7 +2,7 @@
 
 **Rama**: `HU-08`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-07, HU-10, HU-14, HU-15, HU-20a, HU-20b
 **Orden de implementación**: después de HU-10 (y por lo tanto de HU-06 y HU-15); HU-10 tiene que estar en `main`
@@ -53,7 +53,8 @@ Decisiones del equipo registradas antes de `/speckit-clarify` (no se vuelven a p
   arriba a dos decimales (regla de HU-07), con coma ("10,50"). La suma y el promedio son una regla del dominio.
 - Q: ¿Qué desviación se muestra? → A: La del último Sprint finalizado (el de mayor número), tal como la calcula
   HU-07, igual que HU-25: con signo, coma y dos decimales ("+20,00 %", "-8,50 %", "0,00 %"); "No disponible" tal
-  cual. El cálculo de HU-07 vuelve a escribir los mismos valores en la tabla de métricas del Sprint, como en HU-25.
+  cual. Se pide con la fuente de HU-25, que usa el cálculo de HU-07 sin guardar nada (confirmado en T001: el
+  Dashboard no escribe en la tabla de métricas del Sprint).
 - Q: ¿Qué defectos cuentan? → A: Los del proyecto activo en estado "Abierto". Texto: "1 defecto abierto", "N
   defectos abiertos" o "No hay defectos abiertos".
 - Q: ¿Qué pasa sin datos? → A: Proyecto sin historias, sin Sprints y sin defectos: un único mensaje "Aún no hay datos
@@ -316,8 +317,8 @@ Cuentas:
   dividir por cero, y un valor mayor que 0 MUST medir al menos 1.
 - **FR-014**: Ante cualquier falla de lectura o de cálculo, la pantalla MUST mostrar la página de error de HU-20a y
   MUST NOT mostrar gráficos ni números parciales.
-- **FR-015**: El sistema MUST NOT agregar migraciones ni guardar datos propios; la única escritura es la que ya hace
-  HU-07 al calcular la desviación, con los mismos valores.
+- **FR-015**: El sistema MUST NOT agregar migraciones ni escribir en la base: la desviación se pide con la fuente
+  de solo lectura de HU-25, que usa el cálculo de HU-07 sin guardar en `sprint_metrics` (T001).
 - **FR-016**: Sin proyecto activo MUST aplicarse la redirección de HU-20b, con regreso al Dashboard.
 - **FR-017**: El Dashboard MUST reutilizar los cálculos de HU-07, HU-10 y HU-14 sin cambiarlos; la velocidad
   acumulada y el promedio MUST ser una regla del dominio con prueba propia.
@@ -354,8 +355,8 @@ Cuentas:
 
 - Los nombres de HU-06 (`defects`), HU-10 (`QualityService`, `SprintQuality`, `QualityReader`), HU-15 (registro de
   cierre) y HU-25 (formato de la desviación) salen de sus documentos (`specs/006-defects`,
-  `specs/010-quality-metrics`, `specs/015-sprint-close`, `specs/025-web-metrics`), porque todavía no están en el
-  código de `main`; se confirman en T001.
+  `specs/010-quality-metrics`, `specs/015-sprint-close`, `specs/025-web-metrics`); se confirmaron en el código de
+  `main` en T001 (research.md, "Verificación de T001").
 - La planificación del proyecto (PDF) lista como dependencias HU-06, HU-07, HU-10 y HU-14; el Issue agrega HU-15,
   HU-20a y HU-20b. Se toman todas.
 - El PDF nombra tres estados de historia (Pendiente, En progreso, Hecho); el esquema de `main` tiene cuatro desde
@@ -374,20 +375,20 @@ Cuentas:
 
 | Escenario | Requisitos | Éxito | Prueba de pantalla / BDD | Prueba de dominio / integración |
 |---|---|---|---|---|
-| 1 Sin datos suficientes | FR-009 | — | `TestHU08_SinDatos`, BDD "Proyecto sin datos suficientes" | `TestPostgresDashboardCatalog` |
-| 2 Historias por estado | FR-002, FR-012, FR-013 | SC-001, SC-006 | `TestHU08_HistoriasPorEstado`, `TestDashboardView`, BDD "Historias por estado" | `TestPostgresDashboardCatalog`, `TestDashboardBarHeights` |
+| 1 Sin datos suficientes | FR-009 | — | `TestHU08_SinDatos`, `TestEscenarioHU08_ProyectoSinDatosSuficientes` | `TestPostgresDashboardCatalog`, `TestBuildDashboardView` |
+| 2 Historias por estado | FR-002, FR-012, FR-013 | SC-001, SC-006 | `TestHU08_HistoriasPorEstado`, `TestBuildDashboardView`, `TestEscenarioHU08_HistoriasPorEstado` | `TestPostgresDashboardCatalog`, `TestDashboardBarHeights` |
 | 3 Sprint en curso | FR-003 | SC-001 | `TestHU08_SprintEnCurso` | — (HU-14 ya probado) |
 | 4 Sin Sprint en curso | FR-004 | — | `TestHU08_SinSprintEnCurso` | — |
-| 5 Velocidad del equipo | FR-005, FR-006, FR-017 | SC-001, SC-002 | `TestHU08_Velocidad`, `TestHU08_UltimosDiezSprints`, BDD "Velocidad del equipo" | `TestSummarizeVelocity`, `TestHU08_CoherenciaConHU07` |
+| 5 Velocidad del equipo | FR-005, FR-006, FR-017 | SC-001, SC-002 | `TestHU08_Velocidad`, `TestHU08_UltimosDiezSprints`, `TestEscenarioHU08_VelocidadDelEquipo` | `TestSummarizeVelocity`, `TestSummarizeVelocity_NoModificaLaEntrada`, `TestHU08_CoherenciaConHU07` |
 | 6 Sin Sprints finalizados | FR-010 | — | `TestHU08_SinSprintsFinalizados` | `TestSummarizeVelocity` |
-| 7 Desviación del último Sprint | FR-007 | SC-001 | `TestHU08_Desviacion`, `TestHU08_DesviacionParcial`, `TestDashboardView` | — (HU-07 ya probado) |
-| 8 Desviación no disponible | FR-007 | SC-001 | `TestHU08_DesviacionNoDisponible`, `TestDashboardView` | — |
-| 9 Defectos abiertos | FR-008 | SC-001 | `TestHU08_DefectosAbiertos`, `TestDashboardView` | `TestPostgresDashboardCatalog` |
+| 7 Desviación del último Sprint | FR-007 | SC-001 | `TestHU08_Desviacion`, `TestHU08_DesviacionParcial`, `TestBuildDashboardView`, `TestEscenarioHU08_DesviacionDelUltimoSprint` | `TestHU08_CoherenciaConHU07` (HU-07 ya probado) |
+| 8 Desviación no disponible | FR-007 | SC-001 | `TestHU08_DesviacionNoDisponible`, `TestBuildDashboardView` | — |
+| 9 Defectos abiertos | FR-008 | SC-001 | `TestHU08_DefectosAbiertos`, `TestDashboardTexts` | `TestPostgresDashboardCatalog` |
 | 10 Datos de otro proyecto | FR-011 | SC-003 | `TestHU08_OtroProyecto` | `TestPostgresDashboardCatalog` |
-| 11 Gráficos sin JavaScript | FR-012, FR-013 | SC-006 | `TestHU08_GraficosSinJavaScript` | `TestDashboardBarHeights`, `TestNewDashboardChart` |
-| 12 Error al leer | FR-014, FR-018 | SC-004 | `TestHU08_ErrorAlLeer` | — |
+| 11 Gráficos sin JavaScript | FR-012, FR-013 | SC-006 | `TestHU08_GraficosSinJavaScript` | `TestDashboardBarHeights`, `TestNewDashboardChart`, `TestNewDashboardChart_SinBarras` |
+| 12 Error al leer | FR-014, FR-018 | SC-004 | `TestHU08_ErrorAlLeer` | `TestPostgresDashboardCatalog_ErrorDeLectura` |
 | (HU-20b) Sin proyecto | FR-016 | — | `TestHU08_SinProyecto` | — |
 | (HU-20a) Solo lectura | FR-001 | — | `TestHU08_PostNoPermitido` | — |
 | Rendimiento | — | SC-005 | `TestHU08_Rendimiento` | — |
 | (Caso límite) Sprint finalizado sin historias | FR-002, FR-013 | SC-001 | `TestHU08_SprintSinHistorias` | `TestDashboardBarHeights`, `TestSummarizeVelocity` |
-| Sin persistencia propia | FR-015 | — | — | Revisión en T029 (`git diff --stat main`) |
+| Sin persistencia propia | FR-015 | — | `TestHU08_NoEscribeSprintMetrics` | Revisión en T029 (`git diff --stat main`: solo archivos nuevos y `main.go`) |

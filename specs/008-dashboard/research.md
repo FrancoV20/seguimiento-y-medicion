@@ -35,18 +35,36 @@ Lo que **está** en el código de `main`:
   `go test ./... -p 1 -race -coverprofile=coverage.out`.
 - No existe ningún nombre `Dashboard*`, `dashboard*`, `VelocitySummary` ni `SummarizeVelocity` en `src` ni en `test`.
 
-Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma en T001):
+## Verificación de T001 (01/11/2026, rama `HU-08` desde `main` con HU-10, HU-16, HU-19 y HU-25)
 
-- **HU-06** (`specs/006-defects/data-model.md`): `defects(project_id, story_id, status 'Abierto'|'Resuelto',
-  detection_sprint_id NOT NULL, resolution_sprint_id NULL)`, con un `CHECK` que exige `resolution_sprint_id` nulo
-  si está 'Abierto' y no nulo si está 'Resuelto'.
-- **HU-15** (`specs/015-sprint-close/data-model.md`): `sprint_story_results(sprint_id, story_id, final_status,
-  story_points)`; al cerrar, las "Hecho" quedan asignadas y las demás vuelven al Backlog como "Pendiente".
-- **HU-10** (`specs/010-quality-metrics/data-model.md`): `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(db))`,
-  `SprintQuality(ctx, projectID, sprintID) (metrics.SprintQuality, error)` con `PointsCompleted int`, y en `src/web`
-  la interfaz `QualityReader` con ese método.
-- **HU-25** (`specs/025-web-metrics/data-model.md`): el formato de la desviación vive en `src/web/metrics_view.go`
-  ("+20,00 %", "-8,50 %", "0,00 %"); el nombre exacto de la función no está en sus documentos.
+HU-10 está en `main` (PR #66), así que se puede empezar. Nombres confirmados con `git grep -n`:
+
+| Historia | Nombre real | Dónde |
+|---|---|---|
+| HU-10 | `NewQualityService(store QualityStore)`, `NewPostgreSQLQualityStore(db)`, `(*QualityService).SprintQuality(ctx, projectID, sprintID)` | `src/metrics/quality_service.go`, `postgres_quality_store.go` |
+| HU-10 | `SprintQuality.PointsCompleted int` | `src/metrics/quality.go` |
+| HU-10 | `QualityReader` (con `var _ QualityReader = (*metrics.QualityService)(nil)`) | `src/web/quality_catalog.go` |
+| HU-07 | `NewService`, `NewPostgreSQLMetricsStore`, `CalculateMetrics(sprintID)`, `SprintMetrics.DeviationPercentage`, `IsPartial`, `Warning`, `roundToTwoDecimals` (no exportada) | `src/metrics/service.go`, `model.go`, `calculation.go` |
+| HU-14 | `BoardCatalog.ActiveBoard(ctx, projectID) (BoardView, bool, error)`; `BoardView{Number, Label, Groups, PlannedPoints, CompletedPoints}`; `NewPostgreSQLBoardCatalog`; `projectIDFrom(r)` | `src/web/board_catalog.go`, `board_handlers.go` |
+| HU-06 | `defects(project_id INTEGER, status 'Abierto'|'Resuelto')` | migración `012_create_defects` |
+| HU-15 | `sprint_story_results(sprint_id, story_id, final_status, story_points)` con `BIGINT` y `CHECK` de los cuatro estados | migración `014_sprint_story_results` |
+| HU-25 | `MetricsSource.Metrics(ctx, projectID, sprintID) (SprintMetrics, error)`, `NewHU07MetricsSource(db)` y `metricsDeviationText(deviation string) string` | `src/web/metrics_source.go`, `metrics_view.go` |
+
+No existen `VelocitySummary`, `SummarizeVelocity` ni nombres `Dashboard*`/`dashboard*` en `src` ni en `test`. La
+última migración sigue siendo la 014. El último bloque de registro de `main.go` hoy es el de HU-16
+(`RegisterPastSprints`).
+
+Cambios que surgieron de T001:
+
+1. **La desviación se pide con `MetricsSource` de HU-25.** HU-25 no terminó escribiendo en `sprint_metrics`: su
+   `NewHU07MetricsSource` llama a `CalculateMetrics` con un almacenamiento de solo lectura (`readOnlyMetricsStore`,
+   "las métricas no se guardan"). Por eso se descarta `DashboardDeviationSource` sobre `*metrics.Service`, que sí
+   escribía: HU-08 queda de solo lectura de verdad y usa el mismo cálculo y la misma fuente que la pantalla de
+   Métricas (§4 y §10).
+2. **El formato de la desviación es `metricsDeviationText` de HU-25** (mismo paquete `web`), sin crear
+   `dashboardDeviationText` (§8).
+3. **El bloque de `main.go` va después del de HU-16**, que hoy es el último (§14).
+4. **T004**: los bloques de HU-09, HU-10 y HU-25 en `main.go` no se tocan; HU-08 solo agrega uno nuevo al final.
 
 ## Decisiones
 
@@ -79,7 +97,9 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
 
 ### 4. Interfaz chica para la desviación
 
-- **Decision**: `DashboardDeviationSource` con `CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error)`,
+- **Decision (actualizada en T001)**: se reutiliza `MetricsSource` de HU-25 (`Metrics(ctx, projectID, sprintID)`), que
+  permite simular fallas en las pruebas y no escribe nada. Antes de T001 era `DashboardDeviationSource` con
+  `CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error)`,
   que `*metrics.Service` cumple sin adaptador.
 - **Rationale**: permite simular fallas en las pruebas de pantalla sin tocar HU-07.
 - **Alternatives considered**: depender de `*metrics.Service` (no se puede simular una falla); un adaptador que
@@ -117,12 +137,12 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
 
 ### 8. Formato de la desviación
 
-- **Decision**: si HU-25 ya está en `main` con una función de formato de la desviación, se reutiliza; si no, se
-  crea `dashboardDeviationText` en `dashboard_view.go`: positivo con "+", cero y negativo sin agregar signo, punto
-  por coma y " %"; "No disponible" tal cual. T001 decide y lo anota acá.
-- **Rationale**: evita dos formatos distintos para el mismo número (principio II), sin bloquear HU-08 si HU-25 no
-  llegó.
-- **Alternatives considered**: editar HU-25 para exportar su función (prohibido por el plan).
+- **Decision (resuelta en T001)**: se reutiliza `metricsDeviationText` de HU-25 (`src/web/metrics_view.go`): "20.00"
+  → "+20,00 %", "-8.50" → "-8,50 %", "0.00" → "0,00 %" y "No disponible" tal cual. No se crea
+  `dashboardDeviationText`.
+- **Rationale**: evita dos formatos distintos para el mismo número (principio II); al ser del mismo paquete no hace
+  falta exportarla ni editar HU-25.
+- **Alternatives considered**: una función propia (duplica HU-25).
 
 ### 9. Aviso de cálculo parcial
 
@@ -131,9 +151,10 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
 - **Rationale**: es el mismo aviso que muestra HU-25 con el mismo cálculo; el texto ya viene de HU-07.
 - **Alternatives considered**: ocultarlo cuando la desviación es "No disponible" (contradice "tal cual").
 
-### 10. La escritura de HU-07 en `sprint_metrics`
+### 10. La escritura de HU-07 en `sprint_metrics` (actualizada en T001: ya no hay escritura)
 
-- **Decision**: se acepta que `CalculateMetrics` vuelva a escribir `sprint_metrics` del último Sprint en cada
+- **Decision (actualizada en T001)**: HU-08 no escribe en `sprint_metrics`, porque usa la fuente de solo lectura de
+  HU-25. La decisión original era aceptar que `CalculateMetrics` volviera a escribir `sprint_metrics` del último Sprint en cada
   apertura, con los mismos valores, como ya pasa en HU-25. HU-08 no escribe nada propio.
 - **Rationale**: es la forma de reutilizar el cálculo de HU-07 sin editarlo; el resultado de un Sprint finalizado no
   cambia mientras no cambien sus datos.
@@ -153,8 +174,7 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
 ### 12. Prueba de coherencia con HU-07 y HU-10
 
 - **Decision**: `TestHU08_CoherenciaConHU07` comprueba que, en los Sprints 1 y 2 de «Alfa», el valor de cada barra
-  es igual a `SprintQuality(...).PointsCompleted` y a `CalculateMetrics(id).Velocity`. La prueba borra las filas de
-  `sprint_metrics` que deja HU-07.
+  es igual a `SprintQuality(...).PointsCompleted` y a `CalculateMetrics(id).Velocity`.
 - **Rationale**: SC-002; detecta si los datos de prueba no reflejan un cierre real.
 
 ### 13. Datos de prueba propios
@@ -169,9 +189,9 @@ Lo que **no está** todavía en `main` (se toma de sus documentos y se confirma 
 
 ### 14. Bloque en `main.go`
 
-- **Decision**: un bloque nuevo al final de los registros (hoy después del de HU-24, o del de HU-10 si ya está),
+- **Decision**: un bloque nuevo al final de los registros (hoy después del de HU-16, `RegisterPastSprints`),
   que construye el catálogo, el Tablero, `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))` y
-  `metrics.NewService(metrics.NewPostgreSQLMetricsStore(database))`, y llama a `web.RegisterDashboard`. Si falla,
+  `web.NewHU07MetricsSource(database)` (HU-25), y llama a `web.RegisterDashboard`. Si falla,
   cierra `ln` y `database`, como los demás.
 - **Rationale**: no edita el bloque de HU-10 (el servicio de calidad no guarda estado, así que una segunda instancia
   no cambia nada).
