@@ -177,26 +177,26 @@ Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
 
 ### Implementación (GREEN)
 
-- [ ] T040 Sumar `InFinishedSprint` a `StoryRow` (`src/web/backlog_catalog.go`) y cambiar la consulta de
+- [x] T040 Sumar `InFinishedSprint` a `StoryRow` (`src/web/backlog_catalog.go`) y cambiar la consulta de
   `ListStories` en `src/web/postgres_story_catalog.go` por la de `data-model.md`: `JOIN` con Sprints y orden
   `CASE priority`, `created_at`, `id`.
-- [ ] T041 Agregar a `src/web/backlog_form.go`:
+- [x] T041 Agregar a `src/web/backlog_form.go`:
   - los textos de la tabla "Textos" de `data-model.md`;
   - `backlogListURL(estado)`;
   - `backlogStatusFilter(raw)`, que valida contra `backlog.StoryStatuses()`, trata "Todos" y vacío como la lista
     completa y devuelve el error.
-- [ ] T042 En `get` y `pageData` (`src/web/backlog_handlers.go`):
+- [x] T042 En `get` y `pageData` (`src/web/backlog_handlers.go`):
   - leer `estado` con `r.URL.Query().Get`;
   - filtrar las filas;
   - completar `Filter`, `Statuses`, `FilterError` y `NoResults` (solo si hay historias y ninguna coincide);
   - completar `EditURL` e `InFinishedSprint` en cada fila.
-- [ ] T043 Editar `src/web/templates/backlog.html`:
+- [x] T043 Editar `src/web/templates/backlog.html`:
   - formulario `GET /backlog` con `<select name="estado">` (Todos y los cuatro estados), el botón "Filtrar" y
     `FilterError` junto al selector;
   - mensaje `NoResults`;
   - columna "Acciones" con el enlace "Editar" (`EditURL`), o con un botón `disabled` y el motivo "Sprint
     finalizado" asociado por `aria-describedby`.
-- [ ] T044 Ejecutar T030–T038 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T044 Ejecutar T030–T038 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Backlog ya se consulta ordenado y filtrado.
 
