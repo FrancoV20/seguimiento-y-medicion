@@ -48,7 +48,7 @@ type UpdateStoryResult struct {
 }
 ```
 
-### Errores nuevos (`update_errors.go`)
+### Errores (de HU-17, en `update_estimated_hours.go`; ver research.md, Resultado de T002)
 
 | Error | Cuándo |
 |---|---|
@@ -120,6 +120,7 @@ LEFT JOIN sprint_story_assignments a ON a.story_id = us.id
 WHERE us.id = $1 AND us.project_id = $2
 FOR NO KEY UPDATE OF us;
 --    sin filas → ErrStoryNotFound (la borraron);
+--    'Finalizado' en el paso 2 → ErrStoryInFinishedSprint, recién después de confirmar la asignación;
 --    sprint_id distinto del paso 1 → ROLLBACK y repetir desde el paso 1 una sola vez;
 --    distinto otra vez → errAssignmentChanged (→ ErrPersistence, 500)
 

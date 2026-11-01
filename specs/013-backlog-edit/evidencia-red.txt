@@ -1,0 +1,15 @@
+﻿== Fundamentos (T005-T021): src/backlog no compila porque faltan StoryStatuses, validateStoryFields, UpdateStoryRequest, BacklogService.UpdateStory, el puerto UpdateStory y los campos de prueba del almacén ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/backlog [github.com/FrancoV20/seguimiento-y-medicion/src/backlog.test]
+src\backlog\update_service_test.go:12:27: undefined: UpdateStoryRequest
+src\backlog\postgres_backlog_store_update_integration_test.go:161:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:182:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:189:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:200:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:212:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:216:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:228:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:239:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:253:17: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:253:17: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/backlog [build failed]
+FAIL

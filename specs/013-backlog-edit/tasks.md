@@ -20,10 +20,10 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar que HU-15 y HU-17 ya están en `main` (`git log --oneline main` y sus carpetas en `specs/`); si
+- [x] T001 Confirmar que HU-15 y HU-17 ya están en `main` (`git log --oneline main` y sus carpetas en `specs/`); si
   no, no empezar. Después crear la rama `HU-13` desde `main` actualizado (`git switch main; git pull; git switch -c
   HU-13`).
-- [ ] T002 Confirmar en el código los "Datos verificados" de `research.md`:
+- [x] T002 Confirmar en el código los "Datos verificados" de `research.md`:
   - leer `src/backlog`, `src/web/backlog_*.go`, `src/web/postgres_story_catalog.go` y
     `src/web/templates/backlog.html`;
   - comprobar con `git grep -n` que no existen `UpdateStory`, `StoryForEdit`, `StoryEdit`, `ErrStoryNotFound` (en
@@ -45,23 +45,23 @@ Formato: `[ID] [P] [E#] descripción`
 
 Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
 
-- [ ] T005 [P] `TestStoryStatuses`: devuelve "Pendiente", "En Sprint", "En progreso" y "Hecho", en ese orden.
-- [ ] T006 [P] [E10a, E10b, E10c, E11a, E11b] `TestValidateStoryFields`:
+- [x] T005 [P] `TestStoryStatuses`: devuelve "Pendiente", "En Sprint", "En progreso" y "Hecho", en ese orden.
+- [x] T006 [P] [E10a, E10b, E10c, E11a, E11b] `TestValidateStoryFields`:
   - los errores aparecen en el orden título, descripción, prioridad, criterios y Story Points;
   - recorta título, descripción y criterios;
   - descarta los criterios vacíos y numera los demás desde 1;
   - acepta Story Points en `nil`.
-- [ ] T007 [P] [E10a, E10b, E10c, E11a, E11b] `TestUpdateStory_Validaciones`, con `InMemoryBacklogStore`:
+- [x] T007 [P] [E10a, E10b, E10c, E11a, E11b] `TestUpdateStory_Validaciones`, con `InMemoryBacklogStore`:
   - `ProjectID` 0 o `StoryID` 0 → `ErrStoryNotFound`;
   - título vacío, descripción con solo espacios, prioridad "Urgente", criterios vacíos y 4 Story Points → el error
     de HU-02 que corresponde;
   - en ningún caso se llama al almacén (`UpdateCalls == 0`).
-- [ ] T008 [P] [E7a, E9, E15] `TestUpdateStory_DelegaYPropaga`:
+- [x] T008 [P] [E7a, E9, E15] `TestUpdateStory_DelegaYPropaga`:
   - un envío válido llega al almacén recortado y con los criterios numerados;
   - con Story Points en `nil`, `Warning == WarnEstimationPending`;
   - `UpdateErr = ErrStoryNotFound` y `UpdateErr = ErrStoryInFinishedSprint` se devuelven sin cambios;
   - `FailOnUpdate` → `ErrPersistence`.
-- [ ] T009 Preparar las fixtures de integración en `src/backlog/postgres_backlog_store_update_integration_test.go`:
+- [x] T009 Preparar las fixtures de integración en `src/backlog/postgres_backlog_store_update_integration_test.go`:
   - proyectos «Alfa» y «Beta»;
   - «Login»: de «Alfa», Media, 5 Story Points, 4 horas estimadas, criterios «Acepta email» y «Rechaza clave
     vacía», "En Sprint" en el Sprint 2 activo;
@@ -69,36 +69,36 @@ Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
   - «Cierre»: de «Alfa», "Hecho" en el Sprint 2 activo;
   - «Facturas»: de «Beta»;
   - limpieza en este orden: asignaciones, criterios, historias, Sprints y proyectos.
-- [ ] T010 [P] [E7a, E7b, E7c, E7d] `TestPostgresUpdateStory_DatosYSinEfectos`: cambian el título, la
+- [x] T010 [P] [E7a, E7b, E7c, E7d] `TestPostgresUpdateStory_DatosYSinEfectos`: cambian el título, la
   descripción, la prioridad y los Story Points de «Login». No cambian `status`, `estimated_hours`,
   `active_sprint_id`, `created_at` ni la asignación. Es la primera prueba del adaptador.
-- [ ] T011 [P] [E8a, E8b] `TestPostgresUpdateStory_ReemplazaCriterios`:
+- [x] T011 [P] [E8a, E8b] `TestPostgresUpdateStory_ReemplazaCriterios`:
   - de dos criterios a tres, reordenados → posiciones 1..3 con el contenido en el orden enviado;
   - de tres a uno → queda solo la posición 1.
-- [ ] T012 [P] [E9] `TestPostgresUpdateStory_SinStoryPoints`: `story_points` queda `NULL`.
-- [ ] T013 [P] [E13a, E13c] `TestPostgresUpdateStory_InexistenteYOtroProyecto`:
+- [x] T012 [P] [E9] `TestPostgresUpdateStory_SinStoryPoints`: `story_points` queda `NULL`.
+- [x] T013 [P] [E13a, E13c] `TestPostgresUpdateStory_InexistenteYOtroProyecto`:
   - con el identificador 2147483647 → `ErrStoryNotFound`;
   - «Facturas» con el proyecto «Alfa» → `ErrStoryNotFound`, y «Facturas» no cambia.
-- [ ] T014 [P] [E12b] `TestPostgresUpdateStory_SprintFinalizado`: «Pagos» → `ErrStoryInFinishedSprint`; no cambian
+- [x] T014 [P] [E12b] `TestPostgresUpdateStory_SprintFinalizado`: «Pagos» → `ErrStoryInFinishedSprint`; no cambian
   sus datos ni sus criterios.
-- [ ] T015 [P] [E7a] `TestPostgresUpdateStory_HechoEnSprintActivo`: «Cierre», "Hecho" en un Sprint activo, se
+- [x] T015 [P] [E7a] `TestPostgresUpdateStory_HechoEnSprintActivo`: «Cierre», "Hecho" en un Sprint activo, se
   guarda (R6).
-- [ ] T016 [P] [E15] `TestPostgresUpdateStory_FalloNoDejaCambios`: un criterio `"   "` enviado directo al almacén
+- [x] T016 [P] [E15] `TestPostgresUpdateStory_FalloNoDejaCambios`: un criterio `"   "` enviado directo al almacén
   hace fallar el `INSERT` por el `CHECK` (paso 5), después del `UPDATE` y del `DELETE`. El título, los Story Points
   y los criterios originales siguen intactos.
-- [ ] T017 [P] `TestPostgresUpdateStory_SinCambios`: devuelve `nil` y deja los mismos datos.
-- [ ] T018 [P] `TestPostgresUpdateStory_ConcurrenteUltimaGana`: dos guardados simultáneos de «Login» con criterios
+- [x] T017 [P] `TestPostgresUpdateStory_SinCambios`: devuelve `nil` y deja los mismos datos.
+- [x] T018 [P] `TestPostgresUpdateStory_ConcurrenteUltimaGana`: dos guardados simultáneos de «Login» con criterios
   distintos terminan sin error; el resultado es uno de los dos completo, nunca una mezcla de criterios.
-- [ ] T019 [P] [E12b] `TestPostgresUpdateStory_EsperaAlCierre`:
+- [x] T019 [P] [E12b] `TestPostgresUpdateStory_EsperaAlCierre`:
   1. Una transacción manual bloquea el Sprint 2 con `FOR UPDATE` y lo marca 'Finalizado'.
   2. `UpdateStory` de «Login» corre en una goroutine.
   3. Se espera a que quede bloqueado, consultando `pg_stat_activity` con `wait_event_type = 'Lock'`.
   4. Se confirma la transacción manual (`COMMIT`).
   5. `UpdateStory` devuelve `ErrStoryInFinishedSprint` y «Login» no cambia.
-- [ ] T020 [P] `TestPostgresUpdateStory_AsignacionCambiaReintenta`: con el gancho de prueba `beforeStoryLock`, la
+- [x] T020 [P] `TestPostgresUpdateStory_AsignacionCambiaReintenta`: con el gancho de prueba `beforeStoryLock`, la
   primera vez se asigna «Login» a otro Sprint activo entre el paso 1 y el 3. El guardado repite una vez y termina
   bien.
-- [ ] T021 [P] `TestPostgresUpdateStory_AsignacionCambiaDosVeces`: el gancho cambia la asignación en los dos
+- [x] T021 [P] `TestPostgresUpdateStory_AsignacionCambiaDosVeces`: el gancho cambia la asignación en los dos
   intentos. Se devuelve un error que no es de dominio y «Login» no cambia.
 - [ ] T022 Ejecutar T005–T021, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt` (sección "Fundamentos").
