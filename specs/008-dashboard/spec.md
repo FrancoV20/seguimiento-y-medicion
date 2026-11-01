@@ -2,7 +2,7 @@
 
 **Rama**: `HU-08`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-07, HU-10, HU-14, HU-15, HU-20a, HU-20b
 **Orden de implementación**: después de HU-10 (y por lo tanto de HU-06 y HU-15); HU-10 tiene que estar en `main`
@@ -317,8 +317,8 @@ Cuentas:
   dividir por cero, y un valor mayor que 0 MUST medir al menos 1.
 - **FR-014**: Ante cualquier falla de lectura o de cálculo, la pantalla MUST mostrar la página de error de HU-20a y
   MUST NOT mostrar gráficos ni números parciales.
-- **FR-015**: El sistema MUST NOT agregar migraciones ni guardar datos propios; la única escritura es la que ya hace
-  HU-07 al calcular la desviación, con los mismos valores.
+- **FR-015**: El sistema MUST NOT agregar migraciones ni escribir en la base: la desviación se pide con la fuente
+  de solo lectura de HU-25, que usa el cálculo de HU-07 sin guardar en `sprint_metrics` (T001).
 - **FR-016**: Sin proyecto activo MUST aplicarse la redirección de HU-20b, con regreso al Dashboard.
 - **FR-017**: El Dashboard MUST reutilizar los cálculos de HU-07, HU-10 y HU-14 sin cambiarlos; la velocidad
   acumulada y el promedio MUST ser una regla del dominio con prueba propia.
@@ -379,7 +379,7 @@ Cuentas:
 | 2 Historias por estado | FR-002, FR-012, FR-013 | SC-001, SC-006 | `TestHU08_HistoriasPorEstado`, `TestBuildDashboardView`, `TestEscenarioHU08_HistoriasPorEstado` | `TestPostgresDashboardCatalog`, `TestDashboardBarHeights` |
 | 3 Sprint en curso | FR-003 | SC-001 | `TestHU08_SprintEnCurso` | — (HU-14 ya probado) |
 | 4 Sin Sprint en curso | FR-004 | — | `TestHU08_SinSprintEnCurso` | — |
-| 5 Velocidad del equipo | FR-005, FR-006, FR-017 | SC-001, SC-002 | `TestHU08_Velocidad`, `TestHU08_UltimosDiezSprints`, `TestEscenarioHU08_VelocidadDelEquipo` | `TestSummarizeVelocity`, `TestHU08_CoherenciaConHU07` |
+| 5 Velocidad del equipo | FR-005, FR-006, FR-017 | SC-001, SC-002 | `TestHU08_Velocidad`, `TestHU08_UltimosDiezSprints`, `TestEscenarioHU08_VelocidadDelEquipo` | `TestSummarizeVelocity`, `TestSummarizeVelocity_NoModificaLaEntrada`, `TestHU08_CoherenciaConHU07` |
 | 6 Sin Sprints finalizados | FR-010 | — | `TestHU08_SinSprintsFinalizados` | `TestSummarizeVelocity` |
 | 7 Desviación del último Sprint | FR-007 | SC-001 | `TestHU08_Desviacion`, `TestHU08_DesviacionParcial`, `TestBuildDashboardView`, `TestEscenarioHU08_DesviacionDelUltimoSprint` | `TestHU08_CoherenciaConHU07` (HU-07 ya probado) |
 | 8 Desviación no disponible | FR-007 | SC-001 | `TestHU08_DesviacionNoDisponible`, `TestBuildDashboardView` | — |
