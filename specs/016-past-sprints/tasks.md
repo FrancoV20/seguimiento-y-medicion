@@ -24,7 +24,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` que HU-15 está en `main` y sus nombres. **Si no está, detener todo**: no se
+- [x] T001 Confirmar con `git grep -n` que HU-15 está en `main` y sus nombres. **Si no está, detener todo**: no se
   crea la rama ni se sigue con T002; se avisa al equipo y se espera el merge de HU-15.
   - De HU-15 (T001: HU-15): la migración de `sprint_story_results` en `db/migrations/` y sus columnas `sprint_id`,
     `story_id`, `final_status` (valores 'En Sprint', 'En progreso', 'Hecho') y `story_points`. También, que su cierre
@@ -40,12 +40,12 @@ Formato: `[ID] [P] [E#] descripción`
     Si HU-23, HU-25 u otra historia ya importó `src/metrics` en `main.go`, anotarlo para T015.
 
   Revisar también "Planificación de proyecto.pdf": si contradice la spec, corregirla antes de T002.
-- [ ] T002 Crear la rama `HU-16` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-16` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-16`.
-- [ ] T003 Coordinar el bloque de registro que se suma al final de `src/cmd/server/main.go` (y el import de
+- [x] T003 Coordinar el bloque de registro que se suma al final de `src/cmd/server/main.go` (y el import de
   `src/metrics`) con quien tenga HU-08, HU-09, HU-10, HU-12, HU-23 y HU-25. Con HU-10 y HU-25, acordar que el
   registro de cierre de HU-15 se lee igual (`final_status = 'Hecho'` = completada).
-- [ ] T004 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T004 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
 
 ## Fase 2: Bloque Catálogo (adaptador PostgreSQL)
 

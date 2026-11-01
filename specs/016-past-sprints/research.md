@@ -222,3 +222,22 @@ Verificado con `git grep -n`:
 ## Preguntas abiertas
 
 Ninguna.
+
+## Resultado de T001 (01/11/2026, sobre `main` en `fd82929`)
+
+- **HU-15 está en `main`** (PR #59) con la migración `014_sprint_story_results`: columnas `sprint_id`, `story_id`,
+  `final_status` y `story_points` (`NULL` = sin estimar). El `CHECK` de `final_status` admite también 'Pendiente'
+  (cuatro estados); para HU-16 sigue valiendo que 'Hecho' = completada y cualquier otro = no completada.
+- **El cierre de HU-15** (`PostgreSQLSprintCloser`) escribe una fila por historia del Sprint, borra la asignación de
+  las que no están "Hecho" y las pasa a 'Pendiente' con `active_sprint_id = NULL`; las "Hecho" conservan su asignación
+  y su `active_sprint_id`. Coincide con §10 y con los datos de prueba de `data-model.md`.
+- **HU-07**: siguen `metrics.NewService`, `metrics.NewPostgreSQLMetricsStore` y `(*Service).CalculateMetrics(sprintID
+  int64) (SprintMetrics, error)` con `Velocity int`. Lee las historias asignadas al Sprint, exige que esté
+  'Finalizado', valida las "Hecho" (`ValidateSprintClosure`) y hace el `upsert` en `sprint_metrics`.
+- **HU-20a/b y HU-14**: están `Server.Register`, `Section.RequiresProject`, `Routes`, `parseID`, `projectIDFrom`,
+  `Renderer.Page`, `Renderer.Fail`, `NotFound`, `KindOf` y `sprint.Done`.
+- **No existen** la ruta `/sprints-anteriores`, el texto "Sprints anteriores" ni nombres `PastSprint*` en `src/web`.
+- **`main.go` ya importa `src/metrics`** (lo usa el validador de cierre de HU-15), así que T015 solo agrega el bloque
+  de registro, después del de HU-25 (`RegisterMetrics`), que hoy es el último.
+- HU-25 (PR #64) muestra la velocidad de HU-07 con el mismo criterio (lee y no guarda nada propio); HU-16 usa
+  `CalculateMetrics` directamente, como indica la nota 3 para el equipo.
