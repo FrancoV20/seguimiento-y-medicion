@@ -1,40 +1,24 @@
 ﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.325s	coverage: 83.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.263s	coverage: 90.1% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.083s	coverage: 6.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.642s	coverage: 87.8% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.428s	coverage: 92.5% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.139s	coverage: 84.2% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	3.338s	coverage: 88.5% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.834s	coverage: 87.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.862s	coverage: 83.3% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	24.412s	coverage: 89.7% of statements
-ok  	github.com/FrancoV20/seguimiento-y-medicion/test	7.134s	coverage: [no statements]
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.258s	coverage: 90.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.089s	coverage: 6.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.659s	coverage: 87.8% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.431s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.143s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	3.256s	coverage: 88.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.842s	coverage: 87.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	2.829s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	24.459s	coverage: 89.7% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	7.221s	coverage: [no statements]
 
 == Cobertura de past_sprint* (go tool cover -func) ==
-
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:16:	
-		RegisterPastSprints			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:32:	
-		list					100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:45:	
-		detail					100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:35:			
-pastSprintDateText			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:40:			
-pastSprintDatesText			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:59:			
-buildPastSprintListView			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:76:			
-pastSprintPointsText			100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:108:			
-buildPastSprintDetailView		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog
-.go:18:		NewPostgreSQLPastSprintCatalog		100.0%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog
-.go:43:		FinishedSprints				81.2%
-github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog
-.go:67:		SprintDetail				82.4%
-
-
-
-== Cobertura de past_sprint* (go tool cover -func) ==
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:16:			RegisterPastSprints			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:32:			list					100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_handlers.go:45:			detail					100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:35:			pastSprintDateText			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:40:			pastSprintDatesText			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:59:			buildPastSprintListView			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:76:			pastSprintPointsText			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/past_sprint_view.go:108:			buildPastSprintDetailView		100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog.go:18:		NewPostgreSQLPastSprintCatalog		100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog.go:43:		FinishedSprints				81.2%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_past_sprint_catalog.go:67:		SprintDetail				82.4%
