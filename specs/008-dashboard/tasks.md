@@ -270,11 +270,11 @@ los proyectos de los escenarios vacíos y con una falla.
 - [x] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
 - [x] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Dashboard".
-- [ ] T035 [P] Avisar:
+- [x] T035 [P] Avisar:
   - a HU-09, que el Dashboard está en `main` y qué datos reúne;
   - a HU-10, HU-14 y HU-25, que no se tocaron sus archivos;
   - al equipo, que si hay conflicto en `main.go` al mergear se conservan todos los bloques.
-- [ ] T036 Abrir el Pull Request desde `HU-08` citando HU-08, con las evidencias y la confirmación de T001.
+- [x] T036 Abrir el Pull Request desde `HU-08` citando HU-08, con las evidencias y la confirmación de T001.
 - [ ] T037 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución
