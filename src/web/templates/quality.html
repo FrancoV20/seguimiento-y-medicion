@@ -1,0 +1,52 @@
+{{define "content"}}
+<h1>Calidad y avance</h1>
+<p>Avance, Story Points y defectos de cada Sprint finalizado del proyecto.</p>
+
+{{with .Data}}
+{{if .ActiveHint}}<p class="hint">{{.ActiveHint}}</p>{{end}}
+
+{{if .NoSprints}}
+<p>{{.NoSprints}}</p>
+{{else}}
+<nav aria-labelledby="quality-sprints-heading">
+  <h2 id="quality-sprints-heading">Sprints finalizados</h2>
+  <ul>
+    {{range .Sprints}}
+    <li><a href="{{.URL}}"{{if .Current}} aria-current="page"{{end}}>Sprint {{.Number}}</a></li>
+    {{end}}
+  </ul>
+</nav>
+
+{{with .Selected}}
+<section aria-labelledby="quality-selected-heading">
+  <h2 id="quality-selected-heading">Sprint {{.SprintNumber}}</h2>
+
+  <h3>Avance</h3>
+  <dl>
+    <dt>Historias</dt>
+    <dd>{{.StoriesText}}</dd>
+    <dt>Porcentaje de avance</dt>
+    <dd>{{.Percentage}}</dd>
+  </dl>
+
+  <h3>Story Points</h3>
+  <dl>
+    <dt>Story Points planificados</dt>
+    <dd>{{.PointsPlanned}}</dd>
+    <dt>Story Points completados</dt>
+    <dd>{{.PointsCompleted}}</dd>
+  </dl>
+  {{if .PointsWarning}}<p class="hint">{{.PointsWarning}}</p>{{end}}
+
+  <h3>Defectos</h3>
+  <dl>
+    <dt>Defectos detectados</dt>
+    <dd>{{.DefectsDetected}}</dd>
+    <dt>Defectos resueltos</dt>
+    <dd>{{.DefectsResolved}}</dd>
+  </dl>
+</section>
+{{end}}
+{{end}}
+{{end}}
+{{end}}

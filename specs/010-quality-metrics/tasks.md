@@ -202,32 +202,32 @@ y comprobar los números; también con un proyecto sin finalizados.
 
 ### Implementación (GREEN)
 
-- [ ] T026 Crear el catálogo de la pantalla:
+- [x] T026 Crear el catálogo de la pantalla:
   - en `src/web/quality_catalog.go`: `QualitySprintOption`, `QualitySprintList`, `QualityCatalog` y
     `QualityReader`;
   - en `src/web/postgres_quality_catalog.go`: `PostgreSQLQualityCatalog` y `NewPostgreSQLQualityCatalog`, con la
     consulta de `data-model.md`; un error de la base devuelve `Unavailable`.
-- [ ] T027 Crear `src/web/quality_view.go` con:
+- [x] T027 Crear `src/web/quality_view.go` con:
   - los textos de la tabla de `data-model.md`;
   - `qualityPercentText` y `qualityWithoutPointsWarning`;
   - `selectQualitySprint`, que usa `parseID` y la lista de finalizados;
   - el armado de `qualityPageData`.
-- [ ] T028 Crear `RegisterQuality(s, reader, catalog)` en `src/web/quality_handlers.go`:
+- [x] T028 Crear `RegisterQuality(s, reader, catalog)` en `src/web/quality_handlers.go`:
   - `Section{Name: "Calidad y avance", Path: "/calidad", RequiresProject: true}`;
   - `Routes{"GET /calidad": ...}`;
   - si falta algún argumento, devolver un error;
   - si falla el catálogo o el cálculo, `Fail` sin renderizar números.
-- [ ] T029 Crear `src/web/templates/quality.html` con:
+- [x] T029 Crear `src/web/templates/quality.html` con:
   - la lista de enlaces `/calidad?sprint=ID` y `aria-current="page"` en el Sprint elegido;
   - los avisos;
   - los números del Sprint elegido.
 
   La pantalla no tiene formularios ni JavaScript.
-- [ ] T030 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-24, `RegisterEffort`), el bloque que construye
+- [x] T030 Agregar en `src/cmd/server/main.go`, después del último bloque de registro (hoy el de HU-24, `RegisterEffort`), el bloque que construye
   `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))` y
   `web.NewPostgreSQLQualityCatalog(database)` y llama a `web.RegisterQuality`. Si falla, cerrar `ln` y `database`,
   como los otros bloques.
-- [ ] T031 Ejecutar T020–T024 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T031 Ejecutar T020–T024 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master ve la calidad y el avance de cada Sprint cerrado.
 
