@@ -1,0 +1,22 @@
+# HU-09 – Evidencia RED
+
+Salida de las pruebas de cada bloque antes de escribir el código (TDD: RED → GREEN → REFACTOR).
+
+## Generador PDF (T005–T007)
+
+PS> go test -count=1 -p 1 -v ./src/pdf/
+# github.com/FrancoV20/seguimiento-y-medicion/src/pdf [github.com/FrancoV20/seguimiento-y-medicion/src/pdf.test]
+src\pdf\document_test.go:17:7: undefined: New
+src\pdf\document_test.go:18:9: undefined: Bold
+src\pdf\document_test.go:19:9: undefined: Regular
+src\pdf\document_test.go:22:5: undefined: Column
+src\pdf\document_test.go:68:15: undefined: ExtractText
+src\pdf\document_test.go:82:24: undefined: Literal
+src\pdf\document_test.go:87:11: undefined: New
+src\pdf\document_test.go:88:23: undefined: Column
+src\pdf\document_test.go:88:23: too many errors
+FAIL    github.com/FrancoV20/seguimiento-y-medicion/src/pdf [build failed]
+FAIL
+
+Resultado esperado: el paquete src/pdf todavía no existe (Document, New, Font, Column, ExtractText y Literal sin
+definir), así que las pruebas de T005 y T006 no compilan.
