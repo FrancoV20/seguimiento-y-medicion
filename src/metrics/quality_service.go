@@ -34,7 +34,7 @@ func (s *QualityService) SprintQuality(ctx context.Context, projectID, sprintID 
 	if err != nil {
 		return SprintQuality{}, fmt.Errorf("load sprint quality %d: %w", sprintID, err)
 	}
-	if data.Status != "Finalizado" {
+	if data.Status != qualityFinishedStatus {
 		return SprintQuality{}, fmt.Errorf("%w: %d", ErrSprintNotFinished, sprintID)
 	}
 	return calculateSprintQuality(data), nil

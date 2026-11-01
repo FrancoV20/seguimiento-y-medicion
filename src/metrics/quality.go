@@ -13,6 +13,9 @@ var ErrSprintNotFound = errors.New("sprint not found")
 // qualityDoneStatus es el estado final que cuenta una historia como completada.
 const qualityDoneStatus = "Hecho"
 
+// qualityFinishedStatus es el estado del Sprint cuyas métricas se calculan.
+const qualityFinishedStatus = "Finalizado"
+
 // qualityNotAvailable es el porcentaje de avance cuando el Sprint no tiene historias planificadas.
 const qualityNotAvailable = "No disponible"
 

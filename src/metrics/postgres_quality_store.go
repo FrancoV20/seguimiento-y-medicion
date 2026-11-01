@@ -48,7 +48,7 @@ func (s *PostgreSQLQualityStore) LoadSprintQuality(ctx context.Context, projectI
 	if err != nil {
 		return QualityData{}, fmt.Errorf("load sprint quality %d: read sprint: %w", sprintID, err)
 	}
-	if data.Status != "Finalizado" {
+	if data.Status != qualityFinishedStatus {
 		return data, nil
 	}
 

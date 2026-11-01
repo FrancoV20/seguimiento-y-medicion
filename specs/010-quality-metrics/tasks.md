@@ -233,11 +233,11 @@ y comprobar los números; también con un proyecto sin finalizados.
 
 ## Fase 5: Cierre
 
-- [ ] T032 REFACTOR:
+- [x] T032 REFACTOR:
   - revisar si el cálculo y la vista tienen duplicación y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-07 ni de HU-25 cambió: `git diff --stat main` lista solo archivos nuevos y
     `main.go`.
-- [ ] T033 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
+- [x] T033 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
   `go vet ./...` limpio y `go test ./... -p 1 -race` en verde, como en el CI.
 - [ ] T034 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
 - [ ] T035 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
