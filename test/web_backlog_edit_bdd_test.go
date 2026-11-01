@@ -1,9 +1,13 @@
 package test
 
 import (
+	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
 
 // HU-13: escenarios BDD de la consulta y edición del Product Backlog, con la aplicación completa
@@ -62,6 +66,25 @@ func hu13BDDOrder(body string, titles ...string) string {
 	return strings.Join(out, ", ")
 }
 
+func hu13BDDEditValues(title string) url.Values {
+	return url.Values{
+		web.BacklogFieldTitle:       {title},
+		web.BacklogFieldDescription: {"Descripción de Login"},
+		web.BacklogFieldPriority:    {"Media"},
+		web.BacklogFieldStoryPoints: {"5"},
+		web.BacklogFieldCriterion:   {"Criterio de Login"},
+	}
+}
+
+func hu13BDDTitle(t *testing.T, app *hu22BDDApp, id int64) string {
+	t.Helper()
+	var title string
+	if err := app.db.QueryRow(`SELECT title FROM user_stories WHERE id = $1`, id).Scan(&title); err != nil {
+		t.Fatalf("read HU-13 BDD story: %v", err)
+	}
+	return title
+}
+
 func TestWebBacklogEditBDD_ListadoOrdenado(t *testing.T) {
 	t.Run("Given historias de distintas prioridades, When abro el Product Backlog, Then se listan por prioridad y antigüedad", func(t *testing.T) {
 		app := newHU22BDDApp(t)
@@ -89,6 +112,47 @@ func TestWebBacklogEditBDD_FiltroPorEstado(t *testing.T) {
 		_, body = app.request(t, http.MethodGet, "/backlog?estado=Todos", nil)
 		if got := hu13BDDOrder(body, "Login", "Pagos", "Reportes", "Perfil"); got != "Pagos, Login, Perfil, Reportes" {
 			t.Errorf("con Todos = [%s]; se esperaba la lista completa", got)
+		}
+	})
+}
+
+// ---- Bloque B
+
+func TestWebBacklogEditBDD_EdicionExitosa(t *testing.T) {
+	t.Run("Given la historia Login, When cambio el título y guardo, Then veo Historia modificada correctamente y el título nuevo", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+		ids := hu13BDDStories(t, app)
+		path := fmt.Sprintf("/backlog/%d/editar", ids["Login"])
+
+		resp, form := app.request(t, http.MethodGet, path, nil)
+		if resp.StatusCode != http.StatusOK || !strings.Contains(form, `value="Login"`) {
+			t.Fatalf("GET %s = %d; se esperaba el formulario con «Login»", path, resp.StatusCode)
+		}
+		resp, _ = app.request(t, http.MethodPost, path, hu13BDDEditValues("Inicio de sesión"))
+		if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/backlog" {
+			t.Fatalf("POST %s = %d a %q; se esperaba 303 a /backlog", path, resp.StatusCode, resp.Header.Get("Location"))
+		}
+		_, list := app.request(t, http.MethodGet, "/backlog", nil)
+		if strings.Count(list, web.MsgStoryUpdated) != 1 || !strings.Contains(list, "<td>Inicio de sesión</td>") {
+			t.Error("la lista no muestra el mensaje una sola vez o el título nuevo")
+		}
+	})
+}
+
+func TestWebBacklogEditBDD_QuitarStoryPoints(t *testing.T) {
+	t.Run("Given Login con 5 Story Points, When elijo Sin estimar y guardo, Then veo la advertencia de estimación", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+		ids := hu13BDDStories(t, app)
+		values := hu13BDDEditValues("Login")
+		values.Set(web.BacklogFieldStoryPoints, "")
+
+		resp, _ := app.request(t, http.MethodPost, fmt.Sprintf("/backlog/%d/editar", ids["Login"]), values)
+		if resp.StatusCode != http.StatusSeeOther {
+			t.Fatalf("POST = %d; se esperaba 303", resp.StatusCode)
+		}
+		_, list := app.request(t, http.MethodGet, "/backlog", nil)
+		if !strings.Contains(list, web.MsgStoryUpdatedMissingPoints) {
+			t.Errorf("no aparece %q", web.MsgStoryUpdatedMissingPoints)
 		}
 	})
 }

@@ -214,52 +214,52 @@ horas.
 
 ### Pruebas (RED)
 
-- [ ] T045 [P] [E6] Pruebas de integración de `StoryForEdit` en
+- [x] T045 [P] [E6] Pruebas de integración de `StoryForEdit` en
   `src/web/postgres_story_catalog_edit_integration_test.go`:
   - `TestPostgresStoryForEdit_ConCriteriosEnOrden`;
   - `TestPostgresStoryForEdit_SinCriterios`;
   - `TestPostgresStoryForEdit_Inexistente` y `TestPostgresStoryForEdit_OtroProyecto`, que devuelven `KindNotFound`;
   - `TestPostgresStoryForEdit_SprintFinalizado`.
-- [ ] T046 Crear el servidor de prueba `newHU13EditApp` en `src/web/backlog_edit_handlers_test.go`, con el servicio
+- [x] T046 Crear el servidor de prueba `newHU13EditApp` en `src/web/backlog_edit_handlers_test.go`, con el servicio
   y el catálogo reales, y las fixtures de T031 más un Sprint activo y uno finalizado.
-- [ ] T047 [P] [E6] `TestHU13_FormularioConDatosActuales`. `GET /backlog/{id}/editar?estado=Pendiente` responde 200
+- [x] T047 [P] [E6] `TestHU13_FormularioConDatosActuales`. `GET /backlog/{id}/editar?estado=Pendiente` responde 200
   con:
   - título "Editar historia" y `action="/backlog/{id}/editar"`;
   - título, descripción, prioridad y Story Points `selected`;
   - los criterios en orden;
   - el campo oculto `estado=Pendiente` y el enlace "Cancelar" a `/backlog?estado=Pendiente`;
   - ningún campo `horas_estimadas`.
-- [ ] T048 [P] [E7a, E7b, E7c, E7d] `TestHU13_EdicionExitosa`, con un subtest por dato. Cada uno:
+- [x] T048 [P] [E7a, E7b, E7c, E7d] `TestHU13_EdicionExitosa`, con un subtest por dato. Cada uno:
   - responde 303 a `/backlog`;
   - muestra "Historia modificada correctamente" una sola vez;
   - la lista muestra el valor nuevo;
   - en la base no cambian el estado ni las horas estimadas.
 
   En 7c, «Reportes» pasa al grupo Alta, después de «Pagos».
-- [ ] T049 [P] [E7e] `TestHU13_VuelveALaListaFiltrada`:
+- [x] T049 [P] [E7e] `TestHU13_VuelveALaListaFiltrada`:
   - el enlace "Editar" de la lista filtrada lleva `?estado=Pendiente`;
   - el `POST` con `estado=Pendiente` redirige a `/backlog?estado=Pendiente` y la historia aparece ahí;
   - con `estado=Archivada`, `estado=` o `estado=https://otro.sitio`, redirige a `/backlog`.
-- [ ] T050 [P] [E8a, E8b] `TestHU13_AgregarYQuitarCriterio`:
+- [x] T050 [P] [E8a, E8b] `TestHU13_AgregarYQuitarCriterio`:
   - `accion=agregar_criterio` → 200 con un campo más y el título escrito conservado;
   - `accion=quitar_criterio:0` → 200 sin «Acepta email»;
   - en ningún caso cambia la base.
-- [ ] T051 [P] [E9] `TestHU13_QuitarStoryPoints`: con `story_points` vacío, la respuesta es 303 con
+- [x] T051 [P] [E9] `TestHU13_QuitarStoryPoints`: con `story_points` vacío, la respuesta es 303 con
   "Historia modificada correctamente. Falta completar la estimación de Story Points" como advertencia, y la lista
   muestra "Sin estimar".
-- [ ] T052 [P] [E14] `TestHU13_EdicionSinProyecto`:
+- [x] T052 [P] [E14] `TestHU13_EdicionSinProyecto`:
   1. `GET /backlog/{id}/editar` sin proyecto responde 303 a `/contexto/proyecto?volver_a=%2Fbacklog%2F{id}%2Feditar`.
   2. Al elegir el proyecto, se vuelve a esa dirección.
   3. El formulario se muestra.
-- [ ] T053 [P] Pruebas transversales:
+- [x] T053 [P] Pruebas transversales:
   - `TestHU13_IgnoraHorasEstimadas`: `horas_estimadas=abc` y `horas_estimadas=7` no producen error ni cambian las
     horas;
   - `TestHU13_TextoEscapado`: `<script>` en el título y en un criterio se ve como texto en el formulario y en la
     lista;
   - `TestHU13_RecargaSinReenviar`: recargar la lista después del 303 no repite el mensaje.
-- [ ] T054 [P] [E7a, E9] Escribir los escenarios BDD "Edición exitosa" y "Quitar los Story Points" en
+- [x] T054 [P] [E7a, E9] Escribir los escenarios BDD "Edición exitosa" y "Quitar los Story Points" en
   `test/web_backlog_edit_bdd_test.go`.
-- [ ] T055 Ejecutar T045–T054, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
+- [x] T055 Ejecutar T045–T054, confirmar que fallan (la ruta y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt` (sección "Edición").
 
 ### Implementación (GREEN)

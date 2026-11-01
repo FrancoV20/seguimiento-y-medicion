@@ -37,3 +37,21 @@ FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	12.169s
 FAIL
+
+== Edición (T045-T054): src/web no compila (faltan StoryEdit y StoryForEdit en el catálogo); los BDD fallan porque /backlog/{id}/editar no existe ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\postgres_story_catalog_edit_integration_test.go:55:22: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:70:22: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:89:20: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:96:20: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:103:23: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+--- FAIL: TestWebBacklogEditBDD_EdicionExitosa (0.06s)
+    --- FAIL: TestWebBacklogEditBDD_EdicionExitosa/Given_la_historia_Login,_When_cambio_el_t├¡tulo_y_guardo,_Then_veo_Historia_modificada_correctamente_y_el_t├¡tulo_nuevo (0.06s)
+        web_backlog_edit_bdd_test.go:129: GET /backlog/4206/editar = 404; se esperaba el formulario con ┬½Login┬╗
+--- FAIL: TestWebBacklogEditBDD_QuitarStoryPoints (0.05s)
+    --- FAIL: TestWebBacklogEditBDD_QuitarStoryPoints/Given_Login_con_5_Story_Points,_When_elijo_Sin_estimar_y_guardo,_Then_veo_la_advertencia_de_estimaci├│n (0.05s)
+        web_backlog_edit_bdd_test.go:151: POST = 404; se esperaba 303
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	14.210s
+FAIL
