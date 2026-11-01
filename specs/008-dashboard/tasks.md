@@ -84,7 +84,7 @@ consistente.
 
 ### Pruebas (RED)
 
-- [ ] T009 Crear los datos de prueba compartidos en `src/web/dashboard_fixtures_test.go` (los usan T010 y T021), con
+- [x] T009 Crear los datos de prueba compartidos en `src/web/dashboard_fixtures_test.go` (los usan T010 y T021), con
   un integrante «Ana» para el esfuerzo. Cada proyecto tiene sus propios Sprints; ningún Sprint se usa para dos
   repartos:
   - «Alfa», como la tabla "Datos de ejemplo" de la spec:
@@ -114,14 +114,14 @@ consistente.
     disponible").
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T010 [P] [E1, E2, E9, E10] Escribir `TestPostgresDashboardCatalog` en
+- [x] T010 [P] [E1, E2, E9, E10] Escribir `TestPostgresDashboardCatalog` en
   `src/web/postgres_dashboard_catalog_integration_test.go`:
   - «Alfa»: `Stories` = {2, 1, 2, 3}, `OpenDefects` = 3, `Finished` = Sprints 1 y 2 en ese orden;
   - «Beta»: {1, 0, 0, 1}, 1 defecto, solo su Sprint 1;
   - «Vacío»: todo en cero y `Finished` vacío;
   - «Doce»: 12 finalizados, del 1 al 12;
   - «Solo activo»: el Sprint activo no figura en `Finished`.
-- [ ] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
+- [x] T011 Ejecutar T010, confirmar que falla y guardar la salida en `evidencia-red.txt`, sección "Catálogo".
 
 ### Implementación (GREEN)
 
