@@ -368,14 +368,14 @@ cambios cuando falla el guardado.
 
 ### Implementación (GREEN)
 
-- [ ] T079 Completar el mapeo en `src/web/backlog_edit_handlers.go`:
+- [x] T079 Completar el mapeo en `src/web/backlog_edit_handlers.go`:
   - `GET` de una historia `InFinishedSprint` → `SetFlash(FlashWarning, MsgStoryInFinishedSprint)` y 303 a
     `backlogListURL(estado)`;
   - `POST` de esa historia (en la lectura o en `ErrStoryInFinishedSprint`) → 409 con el formulario enviado (leído
     antes del control, sin validar) y `Flash`;
   - `ErrStoryNotFound` → `Fail(NotFound(...))`;
   - cualquier otro error → 500 con `MsgOperationFailed`.
-- [ ] T080 Ejecutar T070–T077 en verde.
+- [x] T080 Ejecutar T070–T077 en verde.
 
 ## Fase 7: Cierre
 

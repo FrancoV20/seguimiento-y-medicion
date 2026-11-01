@@ -11,7 +11,8 @@ import (
 // HU-13: edición de una historia del Backlog (GET y POST /backlog/{id}/editar). La sección es la de
 // HU-22, que exige proyecto activo; la historia se busca siempre dentro de ese proyecto.
 
-// edit muestra el formulario con los datos actuales.
+// edit muestra el formulario con los datos actuales. Una historia de un Sprint finalizado no se
+// edita: se vuelve a la lista (con el filtro) con la advertencia.
 func (h *backlogHandlers) edit(w http.ResponseWriter, r *http.Request) {
 	id := parseID(r.PathValue("id"))
 	if id == 0 {
@@ -29,6 +30,11 @@ func (h *backlogHandlers) edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filter, _ := backlogStatusFilter(r.URL.Query().Get(BacklogFieldStatus))
+	if story.InFinishedSprint {
+		SetFlash(w, r, FlashWarning, MsgStoryInFinishedSprint)
+		RedirectSeeOther(w, r, backlogListURL(filter))
+		return
+	}
 
 	form := NewFormView()
 	form.Values[BacklogFieldTitle] = story.Title
@@ -44,7 +50,8 @@ func (h *backlogHandlers) edit(w http.ResponseWriter, r *http.Request) {
 	h.renderEdit(w, r, http.StatusOK, id, form, criteria, filter, nil)
 }
 
-// update guarda la edición: 404, agregar o quitar un criterio (200), validación (422) y guardado.
+// update guarda la edición. El orden de las respuestas es el de plan.md: 404, Sprint finalizado
+// (409), agregar o quitar un criterio (200), validación (422), guardado.
 func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 	id := parseID(r.PathValue("id"))
 	if id == 0 {
@@ -56,7 +63,8 @@ func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 		h.server.renderer.Fail(w, r, errors.New("active project context is required"))
 		return
 	}
-	if _, err := h.catalog.StoryForEdit(r.Context(), active.ProjectID, id); err != nil {
+	story, err := h.catalog.StoryForEdit(r.Context(), active.ProjectID, id)
+	if err != nil {
 		h.server.renderer.Fail(w, r, err)
 		return
 	}
@@ -64,7 +72,11 @@ func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 	// Se leen los datos sin validarlos, para mostrarlos en cualquier respuesta que siga.
 	form := parseStoryFields(r, false)
 	filter, _ := backlogStatusFilter(r.PostFormValue(BacklogFieldStatus))
-	// T079 completa aquí el control de la historia de un Sprint finalizado.
+	finishedSprint := &Flash{Kind: FlashError, Text: MsgStoryInFinishedSprint}
+	if story.InFinishedSprint {
+		h.renderEdit(w, r, http.StatusConflict, id, form.Form, form.Criteria, filter, finishedSprint)
+		return
+	}
 	if !form.applyAction() {
 		h.renderEdit(w, r, http.StatusOK, id, form.Form, form.Criteria, filter, nil)
 		return
@@ -93,9 +105,15 @@ func (h *backlogHandlers) update(w http.ResponseWriter, r *http.Request) {
 	case mapBacklogDomainError(form, err):
 		h.renderEdit(w, r, http.StatusUnprocessableEntity, id, form.Form, form.Criteria, filter, nil)
 		return
+	case errors.Is(err, backlog.ErrStoryInFinishedSprint):
+		h.renderEdit(w, r, http.StatusConflict, id, form.Form, form.Criteria, filter, finishedSprint)
+		return
+	case errors.Is(err, backlog.ErrStoryNotFound):
+		h.server.renderer.Fail(w, r, NotFound(err))
+		return
 	default:
-		// T079 completa el mapeo del Sprint finalizado, la historia inexistente y la falla al guardar.
-		h.server.renderer.Fail(w, r, err)
+		h.renderEdit(w, r, http.StatusInternalServerError, id, form.Form, form.Criteria, filter,
+			&Flash{Kind: FlashError, Text: MsgOperationFailed})
 		return
 	}
 
