@@ -125,16 +125,16 @@ consistente.
 
 ### Implementación (GREEN)
 
-- [ ] T012 Crear `src/web/dashboard_catalog.go` con `DashboardStoryCounts`, `DashboardSprint`, `DashboardSummary`,
+- [x] T012 Crear `src/web/dashboard_catalog.go` con `DashboardStoryCounts`, `DashboardSprint`, `DashboardSummary`,
   y `DashboardCatalog`, como en `data-model.md`. No redefinir `QualityReader`, `BoardCatalog` ni `MetricsSource`
   (HU-25).
-- [ ] T013 Crear `PostgreSQLDashboardCatalog` y `NewPostgreSQLDashboardCatalog(db *sql.DB)` en
+- [x] T013 Crear `PostgreSQLDashboardCatalog` y `NewPostgreSQLDashboardCatalog(db *sql.DB)` en
   `src/web/postgres_dashboard_catalog.go`:
   - `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, y `defer tx.Rollback()`;
   - las tres consultas de `data-model.md` (cuatro `COUNT(*) FILTER` sobre `user_stories`, defectos "Abierto" y
     Sprints "Finalizado" `ORDER BY number`), todas con `WHERE project_id = $1`;
   - errores envueltos con `%w`, sin `Unavailable` (como `PostgreSQLBoardCatalog`).
-- [ ] T014 Ejecutar T010 en verde.
+- [x] T014 Ejecutar T010 en verde.
 
 **Punto de control**: el catálogo devuelve los datos propios del Dashboard de un proyecto.
 
