@@ -395,9 +395,9 @@ cambios cuando falla el guardado.
   - a quien hizo HU-02: el puerto y `validateStoryFields`;
   - a quien tenga HU-15: el orden de bloqueos;
   - a quien tenga HU-17: la edición no toca las horas estimadas.
-- [ ] T087 Abrir el Pull Request desde `HU-13` citando HU-13, con las evidencias y la lista de archivos ajenos
+- [x] T087 Abrir el Pull Request desde `HU-13` citando HU-13, con las evidencias y la lista de archivos ajenos
   editados.
-- [ ] T088 Pedir la revisión y aprobación de otro integrante, hacer el merge con "Create a merge commit" y pasar la
+- [x] T088 Pedir la revisión y aprobación de otro integrante, hacer el merge con "Create a merge commit" y pasar la
   tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución
