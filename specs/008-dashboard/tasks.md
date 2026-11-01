@@ -66,11 +66,11 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T007 Crear `src/metrics/velocity_summary.go` con `VelocitySummary` (`SprintCount`, `Total`, `Average`) y
+- [x] T007 Crear `src/metrics/velocity_summary.go` con `VelocitySummary` (`SprintCount`, `Total`, `Average`) y
   `SummarizeVelocity`: "No disponible" sin Sprints; si no,
   `roundToTwoDecimals(big.NewRat(int64(Total), int64(SprintCount))).FloatString(2)`. No editar otros archivos de
   `src/metrics`.
-- [ ] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 y HU-10 no
+- [x] T008 Ejecutar T005 en verde junto con las pruebas existentes de `./src/metrics/...`. Las de HU-07 y HU-10 no
   cambian.
 
 **Punto de control**: el promedio con el redondeo de HU-07 está listo para la pantalla.
