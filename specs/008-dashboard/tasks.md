@@ -262,13 +262,13 @@ los proyectos de los escenarios vacíos y con una falla.
   - revisar si la vista y el handler tienen duplicación y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-07, HU-10, HU-14 ni HU-25 cambió y que no hay migraciones: `git diff --stat
     main` lista solo archivos nuevos y `main.go`.
-- [ ] T030 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
+- [x] T030 Correr `gofmt -l` sobre los archivos creados y sobre `main.go`, que no tiene que listar nada; después
   `go vet ./...` limpio y `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T031 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
-- [ ] T032 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
+- [x] T031 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
+- [x] T032 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/metrics`.
-- [ ] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Dashboard".
 - [ ] T035 [P] Avisar:
   - a HU-09, que el Dashboard está en `main` y qué datos reúne;

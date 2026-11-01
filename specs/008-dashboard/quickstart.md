@@ -46,25 +46,47 @@ Los valores esperados y sus cuentas están en [data-model.md](data-model.md) y e
    - coherencia de las barras con HU-10 y HU-07;
    - sin proyecto (303), `POST` (405) y rendimiento.
 
-## Verificación manual
+## Verificación manual (T033)
 
-1. Levantar la aplicación (`go run ./src/cmd/server`) y crear un proyecto nuevo; abrir
-   `http://localhost:8080/dashboard`: "Aún no hay datos suficientes para calcular métricas".
-2. Con HU-22, HU-23, HU-24 y HU-14, armar el proyecto «Alfa» de "Datos de ejemplo" de la spec:
-   - Sprint 1 con A (8) terminada y P1 (3) sin terminar; cerrarlo con HU-15;
-   - Sprint 2 con B (13, 10 horas estimadas, 8 + 4 horas registradas) terminada y P2 (2) sin terminar; cerrarlo;
-   - Sprint 3 activo con C (1) "En Sprint", D (3) y E (5) "En progreso", F (2) "Hecho".
-3. Con HU-06 y HU-19, registrar 5 defectos y resolver 2.
-4. Abrir el Dashboard y comprobar:
-   - historias por estado 2, 1, 2 y 3, en el gráfico y en la tabla;
-   - "Sprint 3 en curso", 1, 2 y 1 historias, "11 Story Points planificados y 2 completados";
-   - barras Sprint 1 (8) y Sprint 2 (13), "Velocidad acumulada: 21 Story Points", "Promedio: 10,50 Story Points por
-     Sprint";
-   - "Desviación de esfuerzo del Sprint 2: +20,00 %", sin aviso parcial;
-   - "3 defectos abiertos".
-5. Desactivar JavaScript en el navegador y recargar: se ven igual los gráficos y las tablas.
-6. Cambiar al proyecto «Beta»: no aparece nada de «Alfa».
-7. Detener la base (`docker compose stop`) y recargar: página de error 503, sin gráficos ni números.
+Con la base al día, `DATABASE_URL` y `COOKIE_SECRET` definidas, ejecutar `go run ./src/cmd/server` (con
+`$env:ADDR = ":8081"` si el 8080 está ocupado), elegir el proyecto desde **Cambiar proyecto** y abrir **Dashboard**.
+El proyecto «Alfa» se arma con las pantallas de Backlog, Sprints, Tablero, Registro de esfuerzo, Cierre de Sprint y
+Defectos, como la tabla "Datos de ejemplo" de la spec.
+
+| # | Escenario | Pasos | Resultado esperado | ✓ |
+|---|---|---|---|---|
+| 1 | Sin datos suficientes | Crear un proyecto nuevo y abrir el Dashboard | Solo "Aún no hay datos suficientes para calcular métricas", sin gráficos | ✓ |
+| 2 | Historias por estado | Abrir el Dashboard de «Alfa» | Gráfico y tabla con 2, 1, 2 y 3 | ✓ |
+| 3 | Sprint en curso | Ídem | "Sprint 3 en curso", 1, 2 y 1 historias, "11 Story Points planificados y 2 completados" | ✓ |
+| 4 | Sin Sprint en curso | Proyecto con historias en el Backlog y sin Sprint activo | "No hay un Sprint en curso" y el resto igual | ✓ |
+| 5 | Velocidad | Abrir el Dashboard de «Alfa» | Barras Sprint 1 (8) y Sprint 2 (13), "Velocidad acumulada: 21 Story Points", "Promedio: 10,50 Story Points por Sprint" | ✓ |
+| 6 | Sin Sprints finalizados | Proyecto con un Sprint activo y ninguno cerrado | El mensaje en el bloque de velocidad y desviación; se ven las historias y el Sprint en curso | ✓ |
+| 7 | Desviación | Abrir el Dashboard de «Alfa» | "Desviación de esfuerzo del Sprint 2: +20,00 %", sin aviso parcial | ✓ |
+| 8 | Desviación no disponible | Cerrar un Sprint cuya historia "Hecho" no tiene horas estimadas | "No disponible" y la velocidad igual se muestra | ✓ |
+| 9 | Defectos abiertos | Registrar 5 defectos en «Alfa» y resolver 2 | "3 defectos abiertos" | ✓ |
+| 10 | Otro proyecto | Cambiar a otro proyecto | No aparece nada de «Alfa» | ✓ |
+| 11 | Sin JavaScript | Desactivar JavaScript en el navegador y recargar | Se ven igual los gráficos y las tablas | ✓ |
+| 12 | Error al leer | Detener la base (`docker compose stop`) y volver a entrar desde el menú | Página "Servicio no disponible" (503), sin gráficos ni números | ✓ |
+
+Resultados de la verificación manual (01/11/2026, servidor local en `:8081`). Se usó el proyecto «PRUEBA» en lugar
+de «Alfa», así que los números son los de esos datos:
+
+- 1 y 10: proyecto nuevo «Dashboard vacío» → solo el mensaje "Aún no hay datos suficientes para calcular métricas" y
+  nada de «PRUEBA».
+- 2 y 3: con el Sprint 2 activo (HU-02, 1 Story Point) → Pendiente 1, En Sprint 1, En progreso 0, Hecho 0;
+  "Sprint 2 en curso" y "1 Story Points planificados y 0 completados". Al pasar HU-02 a En progreso y a Hecho, el
+  gráfico y la tabla se actualizaron.
+- 4, 5 y 7: tras cerrar el Sprint 2 (10 h estimadas, 8 + 4 h registradas) → "No hay un Sprint en curso", barras
+  Sprint 1 (0) y Sprint 2 (1), "Velocidad acumulada: 1 Story Points", "Promedio: 0,50 Story Points por Sprint" y
+  "Desviación de esfuerzo del Sprint 2: +20,00 %", igual que **Métricas del Sprint** (HU-07).
+- 6: con el Sprint 1 activo y ninguno cerrado se vio el mensaje en el bloque de velocidad.
+- 8: con el Sprint 1 cerrado sin horas estimadas → "Desviación de esfuerzo del Sprint 1: No disponible" y la
+  velocidad igual se muestra.
+- 9: "1 defecto abierto".
+- 11: la página no incluye ningún `<script>`; los dos `<svg role="img">` llegan armados desde el servidor, cada uno
+  con su tabla ("Historias por estado" y "Velocidad por Sprint").
+- 12: con `docker compose stop`, al entrar a **Dashboard** desde el menú se vio "Servicio no disponible" con el
+  enlace "Volver al inicio", sin gráficos ni números.
 
 ## Evidencias a guardar en el PR
 
@@ -75,5 +97,6 @@ go test -count=1 -p 1 -v ./... 2>&1 | Out-File -Encoding utf8 specs/008-dashboar
 go test -count=1 -p 1 -cover ./... 2>&1 | Out-File -Encoding utf8 specs/008-dashboard/cobertura.txt
 ```
 
-`evidencia-red.txt` se completa por secciones (Dominio de velocidad, Catálogo, Vista y gráficos, Pantalla), y cada
-sección se guarda antes de escribir el código de su bloque.
+`evidencia-red.txt` se completa por secciones (Dominio de velocidad, Catálogo, y Vista, gráficos y pantalla, que
+se trabajaron como un solo bloque rojo/verde para reducir commits), y cada sección se guarda antes de escribir el
+código de su bloque.
