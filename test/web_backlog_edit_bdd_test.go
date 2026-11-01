@@ -177,3 +177,52 @@ func TestWebBacklogEditBDD_EdicionInvalida(t *testing.T) {
 		}
 	})
 }
+
+// ---- Bloque D
+
+func TestWebBacklogEditBDD_SprintFinalizado(t *testing.T) {
+	t.Run("Given Pagos en un Sprint finalizado, When miro el Backlog y envío un cambio, Then Editar está deshabilitado y el cambio se bloquea", func(t *testing.T) {
+		app := newHU22BDDApp(t)
+		ids := hu13BDDStories(t, app)
+		var sprintID int64
+		if err := app.db.QueryRow(`INSERT INTO sprints (project_id, number, goal, start_date, end_date, status)
+			VALUES ($1, 1, 'Cobrar', CURRENT_DATE, CURRENT_DATE + 14, 'Finalizado') RETURNING id`, app.projectID).Scan(&sprintID); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := app.db.Exec(`INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES ($1, $2)`, sprintID, ids["Pagos"]); err != nil {
+			t.Fatal(err)
+		}
+
+		_, list := app.request(t, http.MethodGet, "/backlog", nil)
+		if !strings.Contains(list, web.LabelFinishedSprint) || strings.Contains(list, fmt.Sprintf(`href="/backlog/%d/editar"`, ids["Pagos"])) {
+			t.Error("«Editar» de «Pagos» no aparece deshabilitado con «Sprint finalizado»")
+		}
+		values := hu13BDDEditValues("Pagos cambiado")
+		resp, body := app.request(t, http.MethodPost, fmt.Sprintf("/backlog/%d/editar", ids["Pagos"]), values)
+		if resp.StatusCode != http.StatusConflict || !strings.Contains(body, web.MsgStoryInFinishedSprint) {
+			t.Errorf("POST = %d; se esperaba 409 con %q", resp.StatusCode, web.MsgStoryInFinishedSprint)
+		}
+		if got := hu13BDDTitle(t, app, ids["Pagos"]); got != "Pagos" {
+			t.Errorf("la historia cambió: título %q", got)
+		}
+	})
+}
+
+func TestWebBacklogEditBDD_ErrorAlGuardar(t *testing.T) {
+	t.Run("Given datos válidos y una falla al guardar, When guardo, Then veo La operación no pudo completarse y la historia no cambia", func(t *testing.T) {
+		app := newHU22BDDAppWithStore(t, hu22BDDFailingBacklogStore{})
+		ids := hu13BDDStories(t, app)
+
+		resp, body := app.request(t, http.MethodPost, fmt.Sprintf("/backlog/%d/editar", ids["Login"]), hu13BDDEditValues("Inicio de sesión"))
+		if resp.StatusCode != http.StatusInternalServerError {
+			t.Fatalf("POST = %d; se esperaba 500", resp.StatusCode)
+		}
+		if !strings.Contains(body, web.MsgOperationFailed) || strings.Contains(body, web.MsgStoryUpdated) ||
+			!strings.Contains(body, `value="Inicio de sesión"`) {
+			t.Error("se esperaba el mensaje de falla con los datos enviados y sin mensaje de éxito")
+		}
+		if got := hu13BDDTitle(t, app, ids["Login"]); got != "Login" {
+			t.Errorf("la historia cambió: título %q", got)
+		}
+	})
+}

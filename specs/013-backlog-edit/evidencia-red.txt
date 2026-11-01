@@ -79,3 +79,47 @@ FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	1.073s
 FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.329s
 FAIL
+
+== Reglas y errores (T070-T077): compila; fallan el envío y la apertura de una historia de un Sprint finalizado (500 y 200 en vez de 409 y 303) y la falla al guardar (página de error genérica en vez del formulario con 'La operación no pudo completarse'). Ya pasan EditarDeshabilitado (T043), HistoriaInexistente, 404AntesQue422 y ErrorAlLeer (búsqueda de la historia de T058) y Rendimiento ==
+=== RUN   TestHU13_EditarDeshabilitadoSprintFinalizado
+--- PASS: TestHU13_EditarDeshabilitadoSprintFinalizado (0.12s)
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/cambio_de_t├¡tulo
+    backlog_edit_handlers_test.go:503: POST = 500; se esperaba 409
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/agregar_criterio
+    backlog_edit_handlers_test.go:515: agregar criterio = 200; se esperaba 409
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/cierre_despu├®s_de_la_lectura
+    backlog_edit_handlers_test.go:524: POST = 500; se esperaba 409 con "La historia pertenece a un Sprint finalizado; no se puede editar"
+--- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado (0.42s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/cambio_de_t├¡tulo (0.14s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/agregar_criterio (0.16s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/cierre_despu├®s_de_la_lectura (0.12s)
+=== RUN   TestHU13_AbrirEdicionSprintFinalizado
+    backlog_edit_handlers_test.go:534: GET = 200 a ""; se esperaba 303 a /backlog?estado=Hecho
+--- FAIL: TestHU13_AbrirEdicionSprintFinalizado (0.11s)
+=== RUN   TestHU13_HistoriaInexistente
+--- PASS: TestHU13_HistoriaInexistente (0.15s)
+=== RUN   TestHU13_404AntesQue422
+--- PASS: TestHU13_404AntesQue422 (0.13s)
+=== RUN   TestHU13_ErrorAlGuardar
+    backlog_edit_handlers_test.go:583: no aparece ┬½La operaci├│n no pudo completarse┬╗ o los datos enviados
+--- FAIL: TestHU13_ErrorAlGuardar (0.14s)
+=== RUN   TestHU13_ErrorAlLeer
+--- PASS: TestHU13_ErrorAlLeer (0.07s)
+=== RUN   TestHU13_Rendimiento
+--- PASS: TestHU13_Rendimiento (0.50s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	1.928s
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea
+    web_backlog_edit_bdd_test.go:203: POST = 500; se esperaba 409 con "La historia pertenece a un Sprint finalizado; no se puede editar"
+--- FAIL: TestWebBacklogEditBDD_SprintFinalizado (0.12s)
+    --- FAIL: TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea (0.12s)
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia
+    web_backlog_edit_bdd_test.go:222: se esperaba el mensaje de falla con los datos enviados y sin mensaje de ├®xito
+--- FAIL: TestWebBacklogEditBDD_ErrorAlGuardar (0.08s)
+    --- FAIL: TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia (0.08s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.453s
+FAIL

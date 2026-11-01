@@ -2,6 +2,7 @@ package web
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -468,5 +469,178 @@ func TestHU13_StoryPointsInvalidos(t *testing.T) {
 			}
 			app.assertUnchanged(t, "Login", before)
 		})
+	}
+}
+
+// ---- Bloque D: reglas, inexistencia y fallas (T070–T076)
+
+// T070
+func TestHU13_EditarDeshabilitadoSprintFinalizado(t *testing.T) {
+	app := newHU13EditApp(t)
+	_, body := app.get(t, app.client, "/backlog")
+	pagos := rowOf(t, body, "Pagos")
+	if !strings.Contains(pagos, "disabled") || !strings.Contains(pagos, LabelFinishedSprint) {
+		t.Error("«Pagos» no tiene «Editar» deshabilitado con el motivo «Sprint finalizado»")
+	}
+	if strings.Contains(body, `href="`+app.editPath("Pagos")) {
+		t.Error("«Pagos» no debe tener enlace a su edición")
+	}
+	for _, title := range []string{"Login", "Perfil", "Reportes"} {
+		if !strings.Contains(rowOf(t, body, title), `href="`+app.editPath(title)+`"`) {
+			t.Errorf("«%s» no tiene el enlace «Editar»", title)
+		}
+	}
+}
+
+// T071
+func TestHU13_EnvioBloqueadoSprintFinalizado(t *testing.T) {
+	t.Run("cambio de título", func(t *testing.T) {
+		app := newHU13EditApp(t)
+		before := app.stored(t, "Pagos")
+		values := editValues("Pagos cambiado")
+		resp, body := app.post(t, app.client, app.editPath("Pagos"), values)
+		if resp.StatusCode != http.StatusConflict {
+			t.Fatalf("POST = %d; se esperaba 409", resp.StatusCode)
+		}
+		if !strings.Contains(body, MsgStoryInFinishedSprint) || !strings.Contains(body, `value="Pagos cambiado"`) {
+			t.Error("no aparece el mensaje del Sprint finalizado o el título enviado")
+		}
+		app.assertUnchanged(t, "Pagos", before)
+	})
+	t.Run("agregar criterio", func(t *testing.T) {
+		app := newHU13EditApp(t)
+		values := editValues("Pagos")
+		values.Set(BacklogFieldAction, "agregar_criterio")
+		if resp, _ := app.post(t, app.client, app.editPath("Pagos"), values); resp.StatusCode != http.StatusConflict {
+			t.Errorf("agregar criterio = %d; se esperaba 409", resp.StatusCode)
+		}
+	})
+	t.Run("cierre después de la lectura", func(t *testing.T) {
+		store := backlog.NewInMemoryBacklogStore()
+		store.UpdateErr = backlog.ErrStoryInFinishedSprint
+		app := newHU13EditAppWithStore(t, func(*ctxApp) backlog.BacklogStore { return store })
+		resp, body := app.post(t, app.client, app.editPath("Login"), editValues("Inicio de sesión"))
+		if resp.StatusCode != http.StatusConflict || !strings.Contains(body, MsgStoryInFinishedSprint) {
+			t.Errorf("POST = %d; se esperaba 409 con %q", resp.StatusCode, MsgStoryInFinishedSprint)
+		}
+	})
+}
+
+// T072
+func TestHU13_AbrirEdicionSprintFinalizado(t *testing.T) {
+	app := newHU13EditApp(t)
+	resp, _ := app.get(t, app.client, app.editPath("Pagos")+"?estado=Hecho")
+	if loc := resp.Header.Get("Location"); resp.StatusCode != http.StatusSeeOther || loc != "/backlog?estado=Hecho" {
+		t.Fatalf("GET = %d a %q; se esperaba 303 a /backlog?estado=Hecho", resp.StatusCode, loc)
+	}
+	body := app.follow(t, resp)
+	if strings.Count(body, MsgStoryInFinishedSprint) != 1 || strings.Contains(body, TitleStoryEdit) {
+		t.Error("se esperaba la advertencia una sola vez y sin el formulario de edición")
+	}
+	if _, again := app.get(t, app.client, "/backlog?estado=Hecho"); strings.Contains(again, MsgStoryInFinishedSprint) {
+		t.Error("la advertencia se repitió al recargar")
+	}
+}
+
+// T073
+func TestHU13_HistoriaInexistente(t *testing.T) {
+	app := newHU13EditApp(t)
+	before := app.stored(t, "Facturas")
+	ids := []string{"999999", "abc", "0", "-1", "007", "2147483648", id64(app.stories["Facturas"])}
+	for _, id := range ids {
+		path := "/backlog/" + id + "/editar"
+		resp, body := app.get(t, app.client, path)
+		if resp.StatusCode != http.StatusNotFound || !strings.Contains(body, TitleNotFound) {
+			t.Errorf("GET %s = %d; se esperaba el 404 de HU-20a", path, resp.StatusCode)
+		}
+		resp, body = app.post(t, app.client, path, editValues("Cambio"))
+		if resp.StatusCode != http.StatusNotFound || !strings.Contains(body, TitleNotFound) {
+			t.Errorf("POST %s = %d; se esperaba el 404 de HU-20a", path, resp.StatusCode)
+		}
+	}
+	app.assertUnchanged(t, "Facturas", before)
+}
+
+func TestHU13_404AntesQue422(t *testing.T) {
+	app := newHU13EditApp(t)
+	values := editValues("")
+	values.Set(BacklogFieldStoryPoints, "abc")
+	if resp, _ := app.post(t, app.client, "/backlog/999999/editar", values); resp.StatusCode != http.StatusNotFound {
+		t.Errorf("formulario inválido a una historia inexistente = %d; se esperaba 404", resp.StatusCode)
+	}
+}
+
+// T074
+func TestHU13_ErrorAlGuardar(t *testing.T) {
+	store := backlog.NewInMemoryBacklogStore()
+	store.FailOnUpdate = true
+	app := newHU13EditAppWithStore(t, func(*ctxApp) backlog.BacklogStore { return store })
+	resp, body := app.post(t, app.client, app.editPath("Login"), editValues("Inicio de sesión"))
+	if resp.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("POST = %d; se esperaba 500", resp.StatusCode)
+	}
+	if !strings.Contains(body, MsgOperationFailed) || !strings.Contains(body, `value="Inicio de sesión"`) {
+		t.Error("no aparece «La operación no pudo completarse» o los datos enviados")
+	}
+	if strings.Contains(body, MsgStoryUpdated) {
+		t.Error("una falla no debe mostrar el mensaje de éxito")
+	}
+	hu22AssertNoInternalDetails(t, body)
+	if strings.Contains(body, "falla simulada") {
+		t.Error("la respuesta muestra el detalle interno de la falla")
+	}
+}
+
+// T075
+func TestHU13_ErrorAlLeer(t *testing.T) {
+	const internalFailure = "synthetic catalog query failure"
+	app := newHU22BacklogAppWithDependencies(t,
+		func(ctx *ctxApp) backlog.BacklogStore { return backlog.NewPostgreSQLBacklogStore(ctx.db) },
+		func(*ctxApp) StoryCatalog { return hu22FailingStoryCatalog{err: fmt.Errorf("%s", internalFailure)} },
+	)
+	app.chooseProject(t, app.fx.projectA)
+	for method, do := range map[string]func() (*http.Response, string){
+		"GET":  func() (*http.Response, string) { return app.get(t, app.client, "/backlog/1/editar") },
+		"POST": func() (*http.Response, string) { return app.post(t, app.client, "/backlog/1/editar", editValues("X")) },
+	} {
+		resp, body := do()
+		if resp.StatusCode != http.StatusInternalServerError || !strings.Contains(body, TitleInternal) {
+			t.Errorf("%s = %d; se esperaba la página de error de HU-20a", method, resp.StatusCode)
+		}
+		if strings.Contains(body, internalFailure) {
+			t.Errorf("%s: la respuesta muestra el detalle interno", method)
+		}
+	}
+}
+
+// T076
+func TestHU13_Rendimiento(t *testing.T) {
+	app := newHU13EditApp(t)
+	var finished int64
+	if err := app.db.QueryRow(`SELECT id FROM sprints WHERE project_id = $1 AND status = 'Finalizado'`, app.fx.projectA).Scan(&finished); err != nil {
+		t.Fatal(err)
+	}
+	inFinished := 1 // «Pagos»
+	for i := 0; i < 196; i++ {
+		status := []string{"Pendiente", "Hecho"}[i%2]
+		var id int64
+		if err := app.db.QueryRow(`INSERT INTO user_stories (project_id, title, description, priority, status)
+			VALUES ($1, $2, 'Rendimiento', $3, $4) RETURNING id`, app.fx.projectA, fmt.Sprintf("Historia %03d", i),
+			[]string{"Alta", "Media", "Baja"}[i%3], status).Scan(&id); err != nil {
+			t.Fatal(err)
+		}
+		if status == "Hecho" && inFinished < 20 {
+			if _, err := app.db.Exec(`INSERT INTO sprint_story_assignments (sprint_id, story_id) VALUES ($1, $2)`, finished, id); err != nil {
+				t.Fatal(err)
+			}
+			inFinished++
+		}
+	}
+	for _, path := range []string{"/backlog", "/backlog?estado=Pendiente", app.editPath("Login")} {
+		start := time.Now()
+		resp, _ := app.get(t, app.client, path)
+		if elapsed := time.Since(start); resp.StatusCode != http.StatusOK || elapsed > 500*time.Millisecond {
+			t.Errorf("GET %s = %d en %v; se esperaba 200 en menos de 500 ms", path, resp.StatusCode, elapsed)
+		}
 	}
 }

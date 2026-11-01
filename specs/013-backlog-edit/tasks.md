@@ -335,35 +335,35 @@ cambios cuando falla el guardado.
 
 ### Pruebas (RED)
 
-- [ ] T070 [P] [E12a] `TestHU13_EditarDeshabilitadoSprintFinalizado`: en la lista, «Pagos» tiene un botón
+- [x] T070 [P] [E12a] `TestHU13_EditarDeshabilitadoSprintFinalizado`: en la lista, «Pagos» tiene un botón
   "Editar" `disabled` con "Sprint finalizado" y ningún enlace a su edición. Las demás historias tienen enlace.
-- [ ] T071 [P] [E12b] `TestHU13_EnvioBloqueadoSprintFinalizado`:
+- [x] T071 [P] [E12b] `TestHU13_EnvioBloqueadoSprintFinalizado`:
   - el `POST` de «Pagos» con un título nuevo responde 409 con "La historia pertenece a un Sprint finalizado; no se
     puede editar"; el formulario muestra el título enviado, y en la base «Pagos» no cambia;
   - `accion=agregar_criterio` sobre «Pagos» también responde 409, no 200;
   - con `InMemoryBacklogStore.UpdateErr = ErrStoryInFinishedSprint` y el catálogo real (el cierre ocurrió después de
     la lectura), también responde 409.
-- [ ] T072 [P] [E12c] `TestHU13_AbrirEdicionSprintFinalizado`: `GET /backlog/{id}/editar?estado=Hecho` de «Pagos»
+- [x] T072 [P] [E12c] `TestHU13_AbrirEdicionSprintFinalizado`: `GET /backlog/{id}/editar?estado=Hecho` de «Pagos»
   responde 303 a `/backlog?estado=Hecho`. Al seguirlo, se ve la advertencia una sola vez y no aparece el
   formulario de edición.
-- [ ] T073 [P] [E13a, E13b, E13c] `TestHU13_HistoriaInexistente`:
+- [x] T073 [P] [E13a, E13b, E13c] `TestHU13_HistoriaInexistente`:
   - `GET` y `POST` con `999999`, `abc`, `0`, `-1`, `007`, `2147483648` y con «Facturas» (de otro proyecto)
     responden con el 404 de HU-20a, sin cambios en la base;
   - `TestHU13_404AntesQue422`: un formulario inválido enviado a una historia inexistente responde 404.
-- [ ] T074 [P] [E15] `TestHU13_ErrorAlGuardar`, con `InMemoryBacklogStore.FailOnUpdate` y el catálogo real. La
+- [x] T074 [P] [E15] `TestHU13_ErrorAlGuardar`, con `InMemoryBacklogStore.FailOnUpdate` y el catálogo real. La
   respuesta:
   - es 500 con "La operación no pudo completarse" y los datos enviados;
   - no trae mensaje de éxito;
   - no contiene texto de consultas ni rutas internas.
 
   La reversión real en la base la prueba T016.
-- [ ] T075 [P] `TestHU13_ErrorAlLeer`: con `hu22FailingStoryCatalog`, el `GET` y el `POST` de edición muestran la
+- [x] T075 [P] `TestHU13_ErrorAlLeer`: con `hu22FailingStoryCatalog`, el `GET` y el `POST` de edición muestran la
   página de error de HU-20a sin texto interno.
-- [ ] T076 [P] `TestHU13_Rendimiento`: con 200 historias, 20 de ellas en un Sprint finalizado, la lista sin filtro,
+- [x] T076 [P] `TestHU13_Rendimiento`: con 200 historias, 20 de ellas en un Sprint finalizado, la lista sin filtro,
   la lista con `?estado=Pendiente` y el formulario de edición responden en menos de 500 ms.
-- [ ] T077 [P] [E12a, E15] Escribir los escenarios BDD "Historia de un Sprint finalizado" y "Error al guardar" en
+- [x] T077 [P] [E12a, E15] Escribir los escenarios BDD "Historia de un Sprint finalizado" y "Error al guardar" en
   `test/web_backlog_edit_bdd_test.go`.
-- [ ] T078 Ejecutar T070–T077, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Reglas y
+- [x] T078 Ejecutar T070–T077, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Reglas y
   errores").
 
 ### Implementación (GREEN)
