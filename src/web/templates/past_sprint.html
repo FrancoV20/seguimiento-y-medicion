@@ -1,0 +1,49 @@
+{{define "content"}}
+{{with .Data}}
+<h1>{{.Label}}</h1>
+<section class="past-sprint-summary">
+  <p>{{.Goal}}</p>
+  <p>{{.Dates}}</p>
+  <p><strong>{{.Velocity}}</strong></p>
+</section>
+{{if .NoRecord}}
+<p class="empty">{{.NoRecord}}</p>
+{{else}}
+<section class="past-sprint-done">
+  <h2>Completadas</h2>
+  {{if .Completed}}
+  <table>
+    <thead>
+      <tr><th scope="col">Historia</th><th scope="col">Story Points</th><th scope="col">Estado al cerrar</th></tr>
+    </thead>
+    <tbody>
+      {{range .Completed}}
+      <tr><td>{{.Title}}</td><td>{{.StoryPoints}}</td><td>{{.FinalStatus}}</td></tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="empty">{{.NoneCompleted}}</p>
+  {{end}}
+</section>
+<section class="past-sprint-pending">
+  <h2>No completadas</h2>
+  {{if .Pending}}
+  <table>
+    <thead>
+      <tr><th scope="col">Historia</th><th scope="col">Story Points</th><th scope="col">Estado al cerrar</th><th scope="col">Backlog</th></tr>
+    </thead>
+    <tbody>
+      {{range .Pending}}
+      <tr><td>{{.Title}}</td><td>{{.StoryPoints}}</td><td>{{.FinalStatus}}</td><td>{{.Returned}}</td></tr>
+      {{end}}
+    </tbody>
+  </table>
+  {{else}}
+  <p class="empty">{{.AllCompleted}}</p>
+  {{end}}
+</section>
+{{end}}
+<p><a href="/sprints-anteriores">{{.Back}}</a></p>
+{{end}}
+{{end}}

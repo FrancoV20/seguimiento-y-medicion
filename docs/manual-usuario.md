@@ -287,6 +287,38 @@ muestra el finalizado más reciente.
 | `Para entrar a esta sección primero elegí un proyecto.` | La aplicación te lleva a elegir el proyecto y después vuelve a esta pantalla. |
 | `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
 | `Ocurrió un error inesperado. Intentá nuevamente en unos minutos.` | Hubo un problema al leer o calcular; no se muestran métricas parciales. |
+## Sprints anteriores
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/sprints-anteriores`, o la sección
+**Sprints anteriores** del menú. La pantalla es de solo lectura: no tiene formularios ni botones que modifiquen datos.
+
+### Lista de Sprints finalizados
+
+Se muestran los Sprints **finalizados** del proyecto activo, del más reciente al más antiguo, con número, objetivo y
+fechas (dd/mm/aaaa). El Sprint en curso no figura. Hacé clic en un Sprint para ver su detalle
+(`/sprints-anteriores/ID`).
+
+### Detalle de un Sprint
+
+1. **Velocidad**: la que calcula HU-07, igual a la suma de los Story Points de las historias completadas.
+2. **Completadas**: las historias que estaban en **Hecho** al cerrar el Sprint, con sus Story Points.
+3. **No completadas**: las que estaban **En Sprint** o **En progreso** al cerrar, con su estado y la marca
+   **volvió al Backlog**.
+
+Los Story Points y estados son los que guardó **Cierre de Sprint** en el momento del cierre; una historia sin estimar
+muestra **Sin estimar**. El título es el actual de la historia. **Volver a Sprints anteriores** regresa a la lista.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `Aún no hay Sprints anteriores` | El proyecto todavía no cerró ningún Sprint. |
+| `Todas las historias se completaron` | Ninguna historia del Sprint volvió al Backlog. |
+| `Ninguna historia se completó` | Todas las historias del Sprint volvieron al Backlog; la velocidad es 0. |
+| `No hay registro de las historias de este Sprint` | El Sprint se finalizó sin el registro de cierre de **Cierre de Sprint**. |
+| Página 404 | El Sprint no existe, sigue en curso o es de otro proyecto. |
+| `Para entrar a esta sección primero elegí un proyecto.` | La aplicación te lleva a elegir el proyecto y después vuelve a esta pantalla. |
+| `El servicio no está disponible temporalmente` | La base de datos no responde. Intentá de nuevo en unos minutos. |
 
 ## Calidad y avance
 
