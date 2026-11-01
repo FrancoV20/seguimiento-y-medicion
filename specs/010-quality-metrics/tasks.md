@@ -245,12 +245,12 @@ y comprobar los números; también con un proyecto sin finalizados.
 - [x] T036 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
 - [x] T037 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Calidad y avance".
-- [ ] T038 [P] Avisar:
+- [X] T038 [P] Avisar:
   - a HU-08 y HU-09, que el contrato `SprintQuality` está en `main`;
   - a HU-25, que no se tocaron sus archivos;
   - al equipo, que si hay conflicto en `main.go` al mergear se conservan todos los bloques.
-- [ ] T039 Abrir el Pull Request desde `HU-10` citando HU-10, con las evidencias y la confirmación de T001.
-- [ ] T040 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
+- [X] T039 Abrir el Pull Request desde `HU-10` citando HU-10, con las evidencias y la confirmación de T001.
+- [X] T040 Revisión y aprobación de otro integrante, merge con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución
 
