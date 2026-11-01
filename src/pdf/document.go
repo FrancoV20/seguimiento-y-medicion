@@ -148,7 +148,7 @@ func (d *Document) Table(columns []Column, rows [][]string) error {
 		}
 		d.drawRow(columns, cells, 0, maxLines(cells))
 		d.y -= height
-		d.drawRule(0.8)
+		d.drawRule(tableWidth(columns))
 	}
 	return nil
 }
@@ -222,13 +222,13 @@ func (d *Document) drawTallRow(columns []Column, cells, headerCells [][][]byte, 
 			d.drawHeader(columns, headerCells, headerHeight)
 		}
 	}
-	d.drawRule(0.8)
+	d.drawRule(tableWidth(columns))
 }
 
-// drawRule dibuja una línea fina gris en el borde actual, a lo ancho del contenido.
-func (d *Document) drawRule(gray float64) {
-	fmt.Fprintf(d.current(), "%s G 0.5 w %s %s m %s %s l S 0 G\n",
-		num(gray), num(marginLeft), num(d.y), num(marginLeft+contentWidth), num(d.y))
+// drawRule dibuja una línea fina gris en el borde actual, a lo ancho de la tabla.
+func (d *Document) drawRule(width float64) {
+	fmt.Fprintf(d.current(), "0.8 G 0.5 w %s %s m %s %s l S 0 G\n",
+		num(marginLeft), num(d.y), num(marginLeft+width), num(d.y))
 }
 
 func tableWidth(columns []Column) float64 {
