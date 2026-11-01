@@ -60,3 +60,30 @@ src\report\postgres_store_integration_test.go:136:11: undefined: NewPostgreSQLSt
 src\report\postgres_store_integration_test.go:169:24: undefined: NewPostgreSQLStore
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/report [build failed]
 FAIL
+
+## Pantalla y descarga (T026-T031)
+
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v ./src/web/ ./test/ 2>&1 | Out-File -Append - ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\web\report_handlers_test.go:27:17: undefined: ReportCatalog
+src\web\report_handlers_test.go:28:17: undefined: ReportGenerator
+src\web\report_handlers_test.go:33:34: undefined: ReportCatalog
+src\web\report_handlers_test.go:37:36: undefined: ReportGenerator
+src\web\report_handlers_test.go:300:2: undefined: ReportCatalog
+src\web\report_handlers_test.go:304:95: undefined: ReportSprintOption
+src\web\report_handlers_test.go:342:2: undefined: ReportCatalog
+src\web\report_handlers_test.go:346:72: undefined: ReportSprintOption
+src\web\report_handlers_test.go:350:76: undefined: ReportSprintOption
+src\web\report_handlers_test.go:355:2: undefined: ReportGenerator
+src\web\report_handlers_test.go:350:76: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_report_bdd_test.go:65:16: undefined: web.RegisterReports
+test\web_report_bdd_test.go:65:44: undefined: web.NewPostgreSQLReportCatalog
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

@@ -219,18 +219,18 @@ valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos
 
 ### Pruebas (RED)
 
-- [ ] T026 Crear los datos de prueba de la web en `src/web/report_fixtures_test.go` (los usan T028, T029 y T040): los
+- [x] T026 Crear los datos de prueba de la web en `src/web/report_fixtures_test.go` (los usan T028, T029 y T040): los
   mismos «Alfa», «Beta», «Gamma» y «Delta» de T020, y «Largo» (integrante Ana) con su Sprint 1 finalizado
   (research.md §15: 120 historias, una con un título de 300 caracteres, y 50 defectos). Escribir
   `TestPostgresReportCatalog` en `src/web/postgres_report_catalog_integration_test.go`:
   - «Alfa»: Sprint 3 (activo), 2 y 1, en ese orden, con objetivo y `Active`;
   - `ReportSprint` del Sprint 1 de «Delta» con «Alfa» → no encontrado; inexistente → no encontrado;
   - «Beta»: lista vacía.
-- [ ] T027 [P] [E8, E11, E12] Escribir `TestReportView` en `src/web/report_view_test.go`: `reportPDFPath`,
+- [x] T027 [P] [E8, E11, E12] Escribir `TestReportView` en `src/web/report_view_test.go`: `reportPDFPath`,
   `reportConfirmPath`, `reportFileName(2)` = "reporte-sprint-2.pdf", `reportProjectFileName(5)` =
   "reporte-proyecto-5.pdf", `reportConfirmed` ("si" verdadero; "SI", "1", "no", vacío y ausente falsos) y el armado
   de la lista (con `ProjectURL` siempre) y de las dos advertencias.
-- [ ] T028 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12] Escribir el servidor de prueba y las pruebas de
+- [x] T028 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12] Escribir el servidor de prueba y las pruebas de
   pantalla en `src/web/report_handlers_test.go`, con el catálogo y `report.Service` reales (HU-07, HU-08, HU-10 y
   HU-12 reales, reloj fijo) y los datos de T026, buscando con `pdf.ExtractText`:
   - `TestHU09_ListaDeSprints`: «Alfa» muestra "Sprint 3", "Sprint 2" y "Sprint 1" en ese orden con objetivo, "En
@@ -258,7 +258,7 @@ valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos
     HTML de HU-20a y sin `%PDF`.
 
   Las pruebas borran las filas de `sprint_metrics` que escribe HU-07.
-- [ ] T029 [E13] Escribir las pruebas de errores y bordes en `src/web/report_handlers_test.go`, con dobles que
+- [x] T029 [E13] Escribir las pruebas de errores y bordes en `src/web/report_handlers_test.go`, con dobles que
   fallan:
   - `TestHU09_ErrorAlGenerar`: catálogo que falla, `ReportGenerator` que falla, `ErrInconsistentReport` y
     `ClosureValidationError` → 500 con la página de error, sin `application/pdf`, sin `%PDF`, sin
@@ -271,10 +271,10 @@ valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos
     completadas (75,00 %)", "270 Story Points planificados y 180 completados", "480 horas estimadas en total", "360
     horas registradas en total", "Ana: 360 h", "Desviación de esfuerzo: 0,00 %", "50 defectos detectados y 20
     resueltos en este Sprint", más de una página y "Página X de Y" en todas.
-- [ ] T030 [P] [E1, E2, E5, E8, E11] Escribir los escenarios BDD en `test/web_report_bdd_test.go`, con datos propios:
+- [x] T030 [P] [E1, E2, E5, E8, E11] Escribir los escenarios BDD en `test/web_report_bdd_test.go`, con datos propios:
   "Exportación exitosa de un Sprint finalizado", "Historias planificadas y completadas", "Métricas del Sprint",
   "Advertencia al exportar un Sprint en curso" y "Sin Sprints".
-- [ ] T031 Ejecutar T026–T030, confirmar que fallan (las rutas y el catálogo no existen) y guardar la salida en
+- [x] T031 Ejecutar T026–T030, confirmar que fallan (las rutas y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt`, sección "Pantalla y descarga".
 
 ### Implementación (GREEN)
