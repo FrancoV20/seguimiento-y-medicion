@@ -18,10 +18,10 @@
 
 **Purpose**: Confirmar lo que se reutiliza de HU-07, HU-15, HU-20a y HU-20b.
 
-- [ ] T001 Revisar HU-07 y HU-15 en `main`: ruta del paquete de HU-07 y firma de su servicio (entrada con Sprint y proyecto, resultado con velocidad, desviación o su falta, X e Y del cálculo parcial), tipo y redondeo de la desviación, textos exactos "No disponible" y "Cálculo parcial: basado en X de Y historias", si exige Sprint finalizado, qué devuelve para un Sprint sin historias completadas y cómo trata las historias devueltas por HU-15; valor exacto del estado de Sprint finalizado en `sprints.status`; identificadores ya definidos en el paquete `web` (HU-14, HU-15, HU-21 a HU-24) y cómo formatean fechas; anotar el resultado en `specs/025-web-metrics/data-model.md` y ajustar `plan.md`
-- [ ] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET`, `Section.RequiresProject`, `ActiveContextFrom`, `Renderer.Page`, `Fail`, `RenderError` y la página 405
-- [ ] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/025-web-metrics/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
-- [ ] T004 [P] Confirmar que las migraciones de Sprints (HU-04) y de las tablas que lee HU-07 en `main` coinciden con el esquema anotado en `specs/025-web-metrics/data-model.md` y avisar al equipo si cambiaron
+- [x] T001 Revisar HU-07 y HU-15 en `main`: ruta del paquete de HU-07 y firma de su servicio (entrada con Sprint y proyecto, resultado con velocidad, desviación o su falta, X e Y del cálculo parcial), tipo y redondeo de la desviación, textos exactos "No disponible" y "Cálculo parcial: basado en X de Y historias", si exige Sprint finalizado, qué devuelve para un Sprint sin historias completadas y cómo trata las historias devueltas por HU-15; valor exacto del estado de Sprint finalizado en `sprints.status`; identificadores ya definidos en el paquete `web` (HU-14, HU-15, HU-21 a HU-24) y cómo formatean fechas; anotar el resultado en `specs/025-web-metrics/data-model.md` y ajustar `plan.md`
+- [x] T002 Hacer `git merge origin/main` y verificar que HU-20a y HU-20b están integradas: `Server.Register` con rutas `GET`, `Section.RequiresProject`, `ActiveContextFrom`, `Renderer.Page`, `Fail`, `RenderError` y la página 405
+- [x] T003 [P] Verificar que `docker-compose.yml` levanta PostgreSQL y documentar en `specs/025-web-metrics/quickstart.md` `DATABASE_URL` con la nota del puerto 5432 o 5433
+- [x] T004 [P] Confirmar que las migraciones de Sprints (HU-04) y de las tablas que lee HU-07 en `main` coinciden con el esquema anotado en `specs/025-web-metrics/data-model.md` y avisar al equipo si cambiaron
 
 ---
 
@@ -29,13 +29,13 @@
 
 **Purpose**: Catálogo de solo lectura, adaptador de HU-07 y formato de la vista, compartidos por las historias.
 
-- [ ] T005 [P] Definir `FinishedSprint` y la interfaz `MetricsCatalog` con `FinishedSprints` y `ActiveSprintNumber` en `src/web/metrics_catalog.go`
-- [ ] T006 [P] Escribir la prueba de integración de `PostgreSQLMetricsCatalog` con fixtures propias (dos proyectos; Sprints finalizados 1, 2 y 3 y uno activo en el primero; un Sprint finalizado en el segundo): solo Sprints finalizados del proyecto, más reciente primero, el activo no figura y su número se informa, otro proyecto no se mezcla y proyecto sin Sprints, en `src/web/postgres_metrics_catalog_integration_test.go`
-- [ ] T007 Implementar `PostgreSQLMetricsCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_metrics_catalog.go`
-- [ ] T008 [P] Escribir la prueba del adaptador sobre el servicio real de HU-07 y PostgreSQL real, con Sprints cerrados por el servicio de HU-15: velocidad de las historias "Hecho"; desviación con valores conocidos (10 horas estimadas y 12 reales dan 20 %); sin horas estimadas; cálculo parcial con X de Y; Sprint sin historias completadas con velocidad cero; las historias devueltas no cuentan, en `src/web/metrics_source_test.go`
-- [ ] T009 Definir en `src/web/metrics_source.go` la interfaz `MetricsSource`, el tipo `SprintMetrics` y el adaptador sobre el servicio de HU-07, que traduce tipos sin calcular ni redondear
-- [ ] T010 [P] Escribir las pruebas unitarias del formato y la selección: desviación positiva, negativa y cero con dos decimales, coma y signo; "No disponible"; `0 Story Points`; alerta de cálculo parcial con X de Y; elección del Sprint (válido, no numérico, inexistente, activo, de otro proyecto y sin lista); aviso del Sprint en curso, en `src/web/metrics_view_test.go`
-- [ ] T011 Implementar en `src/web/metrics_view.go` los textos en un solo lugar (`MsgMetricsNoSprints`, `MsgMetricsActiveHint`), el formato de la desviación y la velocidad, la selección del Sprint y el armado de `MetricsView`
+- [x] T005 [P] Definir `FinishedSprint` y la interfaz `MetricsCatalog` con `FinishedSprints` y `ActiveSprintNumber` en `src/web/metrics_catalog.go`
+- [x] T006 [P] Escribir la prueba de integración de `PostgreSQLMetricsCatalog` con fixtures propias (dos proyectos; Sprints finalizados 1, 2 y 3 y uno activo en el primero; un Sprint finalizado en el segundo): solo Sprints finalizados del proyecto, más reciente primero, el activo no figura y su número se informa, otro proyecto no se mezcla y proyecto sin Sprints, en `src/web/postgres_metrics_catalog_integration_test.go`
+- [x] T007 Implementar `PostgreSQLMetricsCatalog` con `database/sql` y pgx y las consultas de `data-model.md` en `src/web/postgres_metrics_catalog.go`
+- [x] T008 [P] Escribir la prueba del adaptador sobre el servicio real de HU-07 y PostgreSQL real, con Sprints cerrados por el servicio de HU-15: velocidad de las historias "Hecho"; desviación con valores conocidos (10 horas estimadas y 12 reales dan 20 %); sin horas estimadas; cálculo parcial con X de Y; Sprint sin historias completadas con velocidad cero; las historias devueltas no cuentan, en `src/web/metrics_source_test.go`
+- [x] T009 Definir en `src/web/metrics_source.go` la interfaz `MetricsSource`, el tipo `SprintMetrics` y el adaptador sobre el servicio de HU-07, que traduce tipos sin calcular ni redondear
+- [x] T010 [P] Escribir las pruebas unitarias del formato y la selección: desviación positiva, negativa y cero con dos decimales, coma y signo; "No disponible"; `0 Story Points`; alerta de cálculo parcial con X de Y; elección del Sprint (válido, no numérico, inexistente, activo, de otro proyecto y sin lista); aviso del Sprint en curso, en `src/web/metrics_view_test.go`
+- [x] T011 Implementar en `src/web/metrics_view.go` los textos en un solo lugar (`MsgMetricsNoSprints`, `MsgMetricsActiveHint`), el formato de la desviación y la velocidad, la selección del Sprint y el armado de `MetricsView`
 
 **Checkpoint**: El catálogo PostgreSQL, el adaptador de HU-07 y el formato están listos y probados con datos reales.
 
@@ -49,17 +49,17 @@
 
 ### Tests for User Story 1
 
-- [ ] T012 [P] [US1] Escribir la prueba de handler con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: Sprint finalizado con 10 horas estimadas, 12 reales y 8 Story Points completados muestra `8 Story Points` y `+20,00 %`, es el más reciente por defecto, solo del proyecto activo y con verificación de tiempo de respuesta, en `src/web/metrics_handlers_test.go`
-- [ ] T013 [P] [US1] Escribir la prueba de handler de un Sprint sin horas estimadas: "No disponible" en la desviación, la velocidad visible y sin error ni valor inválido, en `src/web/metrics_handlers_test.go`
-- [ ] T014 [P] [US1] Escribir la prueba de handler de un Sprint con datos incompletos: la alerta "Cálculo parcial: basado en X de Y historias" con los valores de HU-07, en `src/web/metrics_handlers_test.go`
-- [ ] T015 [P] [US1] Escribir la prueba de handler de un Sprint cerrado por HU-15 sin historias en "Hecho": `0 Story Points` y desviación "No disponible", sin error, en `src/web/metrics_handlers_test.go`
-- [ ] T016 [P] [US1] Escribir los escenarios BDD de métricas de un Sprint finalizado, sin esfuerzo estimado, cálculo parcial y velocidad cero en `test/web_metrics_bdd_test.go`
+- [x] T012 [P] [US1] Escribir la prueba de handler con `cookiejar` y proyecto activo elegido por el flujo de HU-20b: Sprint finalizado con 10 horas estimadas, 12 reales y 8 Story Points completados muestra `8 Story Points` y `+20,00 %`, es el más reciente por defecto, solo del proyecto activo y con verificación de tiempo de respuesta, en `src/web/metrics_handlers_test.go`
+- [x] T013 [P] [US1] Escribir la prueba de handler de un Sprint sin horas estimadas: "No disponible" en la desviación, la velocidad visible y sin error ni valor inválido, en `src/web/metrics_handlers_test.go`
+- [x] T014 [P] [US1] Escribir la prueba de handler de un Sprint con datos incompletos: la alerta "Cálculo parcial: basado en X de Y historias" con los valores de HU-07, en `src/web/metrics_handlers_test.go`
+- [x] T015 [P] [US1] Escribir la prueba de handler de un Sprint cerrado por HU-15 sin historias en "Hecho": `0 Story Points` y desviación "No disponible", sin error, en `src/web/metrics_handlers_test.go`
+- [x] T016 [P] [US1] Escribir los escenarios BDD de métricas de un Sprint finalizado, sin esfuerzo estimado, cálculo parcial y velocidad cero en `test/web_metrics_bdd_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Implementar el handler `GET /metricas` en `src/web/metrics_handlers.go`: lee los Sprints finalizados del proyecto del contexto, elige el Sprint, pide las métricas a HU-07, arma la vista y usa `Fail` si falla la lectura o el cálculo
-- [ ] T018 [US1] Crear `metrics.html` con la velocidad, la desviación con su fórmula, la alerta de cálculo parcial y el Sprint elegido, escapando los textos, en `src/web/templates/metrics.html`
-- [ ] T019 [US1] Construir el catálogo y el adaptador de HU-07 y registrar la sección "Métricas del Sprint" (`/metricas`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
+- [x] T017 [US1] Implementar el handler `GET /metricas` en `src/web/metrics_handlers.go`: lee los Sprints finalizados del proyecto del contexto, elige el Sprint, pide las métricas a HU-07, arma la vista y usa `Fail` si falla la lectura o el cálculo
+- [x] T018 [US1] Crear `metrics.html` con la velocidad, la desviación con su fórmula, la alerta de cálculo parcial y el Sprint elegido, escapando los textos, en `src/web/templates/metrics.html`
+- [x] T019 [US1] Construir el catálogo y el adaptador de HU-07 y registrar la sección "Métricas del Sprint" (`/metricas`, `RequiresProject: true`) con `Server.Register` en `src/cmd/server/main.go`
 
 **Checkpoint**: US1 muestra las métricas de HU-07 desde la web; el MVP cierra el ciclo de punta a punta.
 
@@ -73,16 +73,16 @@
 
 ### Tests for User Story 2
 
-- [ ] T020 [P] [US2] Escribir la prueba de handler de la lista: Sprints finalizados del más reciente al más antiguo con número, Sprint Goal y fechas, y métricas del más reciente; con `?sprint=ID` las del Sprint elegido, en `src/web/metrics_handlers_test.go`
-- [ ] T021 [P] [US2] Escribir la prueba de handler de un `sprint` no numérico, inexistente, activo o de otro proyecto en la dirección: se ignora y se muestra el más reciente sin error, en `src/web/metrics_handlers_test.go`
-- [ ] T022 [P] [US2] Escribir la prueba de handler sin Sprints finalizados: "Aún no hay Sprints finalizados", con y sin Sprint activo, y sin pedir nada a HU-07, en `src/web/metrics_handlers_test.go`
-- [ ] T023 [P] [US2] Escribir la prueba de handler con un Sprint activo y Sprints finalizados: el activo no figura en la lista y se informa que sus métricas se calculan al cerrarlo, en `src/web/metrics_handlers_test.go`
-- [ ] T024 [P] [US2] Escribir los escenarios BDD de elegir otro Sprint, sin Sprints finalizados y Sprint en curso en `test/web_metrics_bdd_test.go`
+- [x] T020 [P] [US2] Escribir la prueba de handler de la lista: Sprints finalizados del más reciente al más antiguo con número, Sprint Goal y fechas, y métricas del más reciente; con `?sprint=ID` las del Sprint elegido, en `src/web/metrics_handlers_test.go`
+- [x] T021 [P] [US2] Escribir la prueba de handler de un `sprint` no numérico, inexistente, activo o de otro proyecto en la dirección: se ignora y se muestra el más reciente sin error, en `src/web/metrics_handlers_test.go`
+- [x] T022 [P] [US2] Escribir la prueba de handler sin Sprints finalizados: "Aún no hay Sprints finalizados", con y sin Sprint activo, y sin pedir nada a HU-07, en `src/web/metrics_handlers_test.go`
+- [x] T023 [P] [US2] Escribir la prueba de handler con un Sprint activo y Sprints finalizados: el activo no figura en la lista y se informa que sus métricas se calculan al cerrarlo, en `src/web/metrics_handlers_test.go`
+- [x] T024 [P] [US2] Escribir los escenarios BDD de elegir otro Sprint, sin Sprints finalizados y Sprint en curso en `test/web_metrics_bdd_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T025 [US2] Completar `metrics.html` con la lista de Sprints (enlace `?sprint=ID` y el elegido marcado), el mensaje de sin Sprints y el aviso del Sprint en curso en `src/web/templates/metrics.html`
-- [ ] T026 [US2] Completar el armado de la vista y el handler en `src/web/metrics_view.go` y `src/web/metrics_handlers.go` para la selección, el mensaje vacío y el aviso del Sprint activo
+- [x] T025 [US2] Completar `metrics.html` con la lista de Sprints (enlace `?sprint=ID` y el elegido marcado), el mensaje de sin Sprints y el aviso del Sprint en curso en `src/web/templates/metrics.html`
+- [x] T026 [US2] Completar el armado de la vista y el handler en `src/web/metrics_view.go` y `src/web/metrics_handlers.go` para la selección, el mensaje vacío y el aviso del Sprint activo
 
 **Checkpoint**: US2 permite recorrer los Sprints finalizados y explica los casos vacíos.
 
@@ -92,21 +92,21 @@
 
 **Purpose**: Validación final, evidencias, coordinación y trazabilidad.
 
-- [ ] T027 [P] Documentar en `specs/025-web-metrics/quickstart.md` los pasos para probar a mano con un Sprint cerrado y la nota de puerto
-- [ ] T028 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/metrics_handlers.go` y `src/web/metrics_view.go`
-- [ ] T029 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
-- [ ] T030 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
-- [ ] T031 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/metrics_handlers_test.go`
-- [ ] T032 [P] Escribir la prueba de handler con una fuente de métricas que falla al calcular: página de error de HU-20a y no métricas incompletas ni detalles internos, en `src/web/metrics_handlers_test.go`
-- [ ] T033 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b, en `src/web/metrics_handlers_test.go`
-- [ ] T034 [P] Escribir la prueba de handler de un Sprint Goal con `<script>`: se muestra como texto, en `src/web/metrics_handlers_test.go`
-- [ ] T035 [P] Escribir la prueba de que un `POST` a `/metricas` recibe la página 405 de HU-20a y no modifica nada, en `src/web/metrics_handlers_test.go`
-- [ ] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
-- [ ] T037 Guardar en `specs/025-web-metrics/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/025-web-metrics/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
+- [x] T027 [P] Documentar en `specs/025-web-metrics/quickstart.md` los pasos para probar a mano con un Sprint cerrado y la nota de puerto
+- [x] T028 [P] Revisar que errores y registros no expongan detalles internos ni valores de configuración en `src/web/metrics_handlers.go` y `src/web/metrics_view.go`
+- [x] T029 Ejecutar `docker compose config` y `docker compose up -d postgres` para validar el entorno local
+- [x] T030 Ejecutar `go test -count=1 -p 1 ./...` y completar todos los escenarios de `quickstart.md`
+- [x] T031 [P] Escribir la prueba de handler con un catálogo que falla al leer: página de error de HU-20a y no una pantalla incompleta, en `src/web/metrics_handlers_test.go`
+- [x] T032 [P] Escribir la prueba de handler con una fuente de métricas que falla al calcular: página de error de HU-20a y no métricas incompletas ni detalles internos, en `src/web/metrics_handlers_test.go`
+- [x] T033 [P] Escribir la prueba de handler sin proyecto activo válido (sin selección, proyecto eliminado y cookie inválida): redirección de HU-20b, en `src/web/metrics_handlers_test.go`
+- [x] T034 [P] Escribir la prueba de handler de un Sprint Goal con `<script>`: se muestra como texto, en `src/web/metrics_handlers_test.go`
+- [x] T035 [P] Escribir la prueba de que un `POST` a `/metricas` recibe la página 405 de HU-20a y no modifica nada, en `src/web/metrics_handlers_test.go`
+- [x] T036 Guardar en `specs/025-web-metrics/evidencia-red.txt` la salida de `go test -count=1 -p 1 -v ./...` tomada antes de implementar, con las pruebas nuevas fallando
+- [x] T037 Guardar en `specs/025-web-metrics/evidencia-pruebas.txt` la salida final de `go test -count=1 -p 1 -v ./...` y en `specs/025-web-metrics/cobertura.txt` la de `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en los paquetes de reglas y cálculos
 - [ ] T038 Coordinar con HU-16 que puede reutilizar `MetricsSource` para mostrar la velocidad en el detalle de un Sprint; con HU-10 que los Story Points planificados y el porcentaje completado se muestran en su propia historia; con HU-08 y HU-09 que consumen los mismos cálculos de HU-07; y con HU-15 que el escenario "Cierre bloqueado" quedó solo en su pantalla
-- [ ] T039 Revisar trazabilidad de FR-001 a FR-014 y SC-001 a SC-006 en `specs/025-web-metrics/tasks.md` y la tabla de trazabilidad de `spec.md`
-- [ ] T040 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Métricas del Sprint"
-- [ ] T041 Verificar a mano con la aplicación en ejecución los 7 escenarios del Issue y la lista de `quickstart.md`
+- [x] T039 Revisar trazabilidad de FR-001 a FR-014 y SC-001 a SC-006 en `specs/025-web-metrics/tasks.md` y la tabla de trazabilidad de `spec.md`
+- [x] T040 [P] Ejecutar `go vet ./...` y `gofmt -l .` sin diferencias, verificar que el pipeline de GitHub Actions queda en verde y actualizar el manual breve de usuario con la pantalla "Métricas del Sprint"
+- [x] T041 Verificar a mano con la aplicación en ejecución los 7 escenarios del Issue y la lista de `quickstart.md`
 - [ ] T042 Abrir el Pull Request desde `HU-25`, con revisión y aprobación de otro integrante, y pasar la tarjeta a "Hecho" cuando se integre a `main`
 
 ---
@@ -154,28 +154,43 @@
 - Las pruebas crean sus propios proyectos, historias, Sprints, horas y cierres (con el servicio de HU-15); no dependen de otras pantallas.
 - `user_stories.project_id` no tiene borrado en cascada: las fixtures borran primero las historias (los Sprints, sus asignaciones y los registros caen en cascada) y después el proyecto.
 - Los textos "No disponible" y "Cálculo parcial..." se toman de HU-07 en las pruebas, no se reescriben.
+- Refactor opcional (corte 10, sin tarea asociada): **omitido** por decisión del Product Builder el 31/10/2026; el
+  código de `metrics_view.go`, `metrics_handlers.go` y `metrics.html` quedó como en los cortes GREEN.
 
 ## Trazabilidad
 
-| Requisito | Pruebas |
-|---|---|
-| FR-001 | T019, T033 |
-| FR-002 | T006, T020 |
-| FR-003 | T008, T010, T012 |
-| FR-004 | T010, T012 |
-| FR-005 | T008, T010, T013 |
-| FR-006 | T008, T010, T014 |
-| FR-007 | T008, T015 |
-| FR-008 | T006, T023 |
-| FR-009 | T022 |
-| FR-010 | T010, T021 |
-| FR-011 | T031, T032 |
-| FR-012 | T028, T032 |
-| FR-013 | T034 |
-| FR-014 | T006, T033, T035 |
-| SC-001 | T008, T012 |
-| SC-002 | T006, T021, T023 |
-| SC-003 | T008, T013, T015 |
-| SC-004 | T008, T014 |
-| SC-005 | Verificación de tiempo en T012 |
-| SC-006 | T035 |
+Revisada en T039 (31/10/2026) contra la tabla de `spec.md` y las pruebas del repositorio. Todas las pruebas listadas
+pasan en `evidencia-pruebas.txt`. Prefijos: `H_` = `TestMetricsHandler_` (`src/web/metrics_handlers_test.go`),
+`S_` = `TestHU07MetricsSource_` (`src/web/metrics_source_test.go`), `C_` = `TestPostgreSQLMetricsCatalog_`
+(`src/web/postgres_metrics_catalog_integration_test.go`), `V_` = pruebas de `src/web/metrics_view_test.go` y
+`B_` = `TestMetricsBDD_` (`test/web_metrics_bdd_test.go`).
+
+| Requisito | Tareas | Pruebas automatizadas | Estado |
+|---|---|---|---|
+| FR-001 | T019, T033 | `H_SinProyectoActivoValidoRedirige` | Cubierto. La entrada del menú y el registro en `main.go` se verificaron a mano (T030); ver observación 1 |
+| FR-002 | T006, T020 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `C_ProyectoSinSprints`, `H_ListaDeSprintsFinalizadosYEleccionPorDireccion`, `B_ElegirOtroSprint` | Cubierto |
+| FR-003 | T008, T010, T012 | `S_VelocidadYDesviacionConValoresConocidos`, `V_BuildMetricsView_ConSprintElegido`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente`, `B_MetricasDeUnSprintFinalizado` | Cubierto |
+| FR-004 | T010, T012 | `V_MetricsDeviationText_DosDecimalesComaYSigno`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| FR-005 | T008, T010, T013 | `S_SinHorasEstimadas`, `V_MetricsDeviationText_NoDisponibleSeMuestraComoLoDaHU07`, `H_SinHorasEstimadasMuestraNoDisponibleYLaVelocidad`, `B_SprintSinEsfuerzoEstimado` | Cubierto |
+| FR-006 | T008, T010, T014 | `S_CalculoParcialConXdeY`, `V_BuildMetricsView_CalculoParcialMuestraElAvisoDeHU07`, `H_DatosIncompletosMuestranLaAlertaDeCalculoParcial`, `B_CalculoParcial` | Cubierto |
+| FR-007 | T008, T015 | `S_SinHistoriasCompletadasVelocidadCero`, `V_BuildMetricsView_SinHorasEstimadasYVelocidadCero`, `H_SinHistoriasHechoMuestraVelocidadCeroYNoDisponible`, `B_VelocidadCero` | Cubierto |
+| FR-008 | T006, T023 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `V_BuildMetricsView_AvisoDelSprintEnCurso`, `H_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo`, `B_SprintEnCurso` | Cubierto |
+| FR-009 | T022 | `V_BuildMetricsView_SinSprintsFinalizados`, `H_SinSprintsFinalizados`, `B_SinSprintsFinalizados` | Cubierto |
+| FR-010 | T010, T021 | `V_SelectMetricsSprint`, `H_SprintInvalidoActivoOAjenoSeIgnora` | Cubierto |
+| FR-011 | T031, T032 | `H_FallaDeLecturaDelCatalogoMuestraLaPaginaDeError`, `H_FallaDeCalculoMuestraLaPaginaDeErrorSinMetricasIncompletas` | Cubierto |
+| FR-012 | T028, T031, T032 | Las mismas de FR-011 (exigen que no aparezcan consulta, clave ni ruta) y la revisión de `quickstart.md` | Cubierto |
+| FR-013 | T034 | `H_SprintGoalConScriptSeMuestraComoTexto` | Cubierto |
+| FR-014 | T006, T012, T021, T033, T035 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente`, `H_SprintInvalidoActivoOAjenoSeIgnora`, `H_SinProyectoActivoValidoRedirige`, `H_PostRecibe405YNoModificaNada` | Cubierto |
+| SC-001 | T008, T012 | `S_*` (valores de HU-07 con datos reales), `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| SC-002 | T006, T021, T023 | `C_SoloFinalizadosDelProyectoMasRecientePrimero`, `H_SprintInvalidoActivoOAjenoSeIgnora`, `H_SprintActivoNoFiguraYSeAvisaQueSeCalculaAlCerrarlo` | Cubierto |
+| SC-003 | T008, T013, T015 | `S_SinHorasEstimadas`, `S_SinHistoriasCompletadasVelocidadCero`, `H_SinHorasEstimadasMuestraNoDisponibleYLaVelocidad`, `H_SinHistoriasHechoMuestraVelocidadCeroYNoDisponible` | Cubierto |
+| SC-004 | T008, T014 | `S_CalculoParcialConXdeY`, `H_DatosIncompletosMuestranLaAlertaDeCalculoParcial` | Cubierto |
+| SC-005 | T012 | `H_RespondeEnMenosDe500msCon20SprintsY49Historias` y la medición de `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` | Cubierto |
+| SC-006 | T008, T012, T035 | `H_PostRecibe405YNoModificaNada` y `assertNoMetricsSnapshot` en `S_*` y en `H_SprintFinalizadoMuestraVelocidadYDesviacionDelMasReciente` (no se escribe `sprint_metrics`) | Cubierto |
+
+Observaciones:
+
+1. FR-001 pide la sección "Métricas del Sprint" en el menú. Las pruebas verifican que la sección exige proyecto, pero
+   ninguna afirma que el menú muestre la entrada ni que `main.go` la registre; se comprobó a mano en T030 y se repite
+   en T041.
+2. Los 7 escenarios del Issue tienen escenario BDD: 1 a 4 en T016 y 5 a 7 en T024.

@@ -1,0 +1,11 @@
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.555s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.544s	coverage: 90.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.103s	coverage: 6.6% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.370s	coverage: 89.4% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.538s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.192s	coverage: 84.2% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	1.838s	coverage: 89.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	1.047s	coverage: 87.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.554s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	23.990s	coverage: 89.6% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	7.821s	coverage: [no statements]

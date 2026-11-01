@@ -8,26 +8,26 @@
 
 ## Content Quality
 
-- [ ] No contiene detalles de implementación en los escenarios de aceptación
-- [ ] Enfocada en el valor para el Scrum Master
-- [ ] Escrita de forma que el Product Owner pueda revisarla
-- [ ] Todas las secciones obligatorias están completas
+- [x] No contiene detalles de implementación en los escenarios de aceptación
+- [x] Enfocada en el valor para el Scrum Master
+- [x] Escrita de forma que el Product Owner pueda revisarla
+- [x] Todas las secciones obligatorias están completas
 
 ## Requirement Completeness
 
-- [ ] No quedan marcadores [NEEDS CLARIFICATION] ni "(a definir)"
-- [ ] Los requisitos son comprobables y no ambiguos
-- [ ] Los criterios de éxito son medibles
-- [ ] Todos los escenarios de aceptación están definidos y son simples (sin esquemas)
-- [ ] Los casos límite están identificados
-- [ ] El alcance está acotado y las dependencias están identificadas
-- [ ] La sección SDD (objetivo, entradas, salidas, reglas, restricciones, casos límite y errores) está completa
+- [x] No quedan marcadores [NEEDS CLARIFICATION] ni "(a definir)"
+- [x] Los requisitos son comprobables y no ambiguos
+- [x] Los criterios de éxito son medibles
+- [x] Todos los escenarios de aceptación están definidos y son simples (sin esquemas)
+- [x] Los casos límite están identificados
+- [x] El alcance está acotado y las dependencias están identificadas
+- [x] La sección SDD (objetivo, entradas, salidas, reglas, restricciones, casos límite y errores) está completa
 
 ## Feature Readiness
 
-- [ ] Todos los requisitos funcionales tienen criterios de aceptación y pruebas en `tasks.md`
-- [ ] Las historias de usuario cubren los flujos principales
-- [ ] La trazabilidad Historia → Spec → Criterios → BDD → Tests → Código está completa
+- [x] Todos los requisitos funcionales tienen criterios de aceptación y pruebas en `tasks.md`
+- [x] Las historias de usuario cubren los flujos principales
+- [x] La trazabilidad Historia → Spec → Criterios → BDD → Tests → Código está completa
 
 ## Notes
 
@@ -51,7 +51,9 @@
   integrante.
 - Depende de HU-07, HU-15, HU-17, HU-20a y HU-20b (sin cambios respecto del PDF). Estimación: 3 Story Points (sin
   cambios), porque es de solo lectura.
+- Revisión del 31/10/2026 (antes de integrar a `main`): checklist verificado contra `spec.md`, `tasks.md`,
+  la trazabilidad final y las pruebas; sin marcadores pendientes y con los 7 escenarios simples (sin esquemas).
 - No incluido: Story Points planificados y porcentaje de historias completadas (HU-10), detalle de historias y
   Sprints anteriores (HU-16), gráficos (HU-08) y exportar (HU-09).
 
-All checklist items pass. The feature is ready for `/speckit-plan`.
+All checklist items pass. The feature is ready for `/speckit-plan`.
