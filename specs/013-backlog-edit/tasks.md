@@ -387,10 +387,10 @@ cambios cuando falla el guardado.
 - [x] T082 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
 - [x] T083 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/backlog`.
-- [ ] T084 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T084 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
 - [x] T085 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con el filtro y la acción "Editar".
-- [ ] T086 [P] Avisar qué cambió en sus archivos (lista de T003):
+- [x] T086 [P] Avisar qué cambió en sus archivos (lista de T003):
   - a quien hizo HU-22: el orden, las tres pruebas actualizadas y los fakes;
   - a quien hizo HU-02: el puerto y `validateStoryFields`;
   - a quien tenga HU-15: el orden de bloqueos;
