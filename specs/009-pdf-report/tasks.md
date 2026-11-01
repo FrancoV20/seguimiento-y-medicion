@@ -308,7 +308,7 @@ el puerto, el servicio y la advertencia.
 
 ### Pruebas (RED)
 
-- [ ] T037 [P] [E15, E16, E17, E18] Escribir en `src/report/texts_test.go` `TestProjectReportTexts` (`decimalText`,
+- [x] T037 [P] [E15, E16, E17, E18] Escribir en `src/report/texts_test.go` `TestProjectReportTexts` (`decimalText`,
   `projectDefectsText` y `sprintDefectsCell` con las tablas de `data-model.md`, y "Integrantes: Sin integrantes") y en
   `src/report/project_document_test.go` `TestRenderProjectReport`, buscando con `pdf.ExtractText`:
   - con el reporte de «Alfa»: en este orden, "Reporte parcial: hay un Sprint en curso", "Proyecto: Alfa", "Fechas:
@@ -324,7 +324,7 @@ el puerto, el servicio y la advertencia.
     en este proyecto";
   - con un proyecto con solo un Sprint en curso: "Velocidad acumulada: 0 Story Points" y "Promedio: No disponible";
   - con defectos todos resueltos: "No hay defectos abiertos".
-- [ ] T038 [P] [E13, E15, E16, E18] Escribir en `src/report/project_service_test.go`, con el almacén de prueba de T012
+- [x] T038 [P] [E13, E15, E16, E18] Escribir en `src/report/project_service_test.go`, con el almacén de prueba de T012
   extendido con `LoadProjectReport`, las fuentes de prueba de T012, las reglas reales de HU-08 y HU-12 y el reloj
   fijo:
   - `TestBuildProjectReport`: con los datos de «Alfa», `Status` de HU-12 ("En curso"), `Progress` de HU-12 para 4 de
@@ -334,7 +334,7 @@ el puerto, el servicio y la advertencia.
   - `TestProjectReportService_Errores`: `projectID` 0 → `ErrProjectNotFound` sin llamar al almacén;
     `ErrProjectNotFound` del almacén sin cambios; falla del almacén, de HU-07 y de HU-10 envueltas; en todos los casos
     `ProjectPDF` devuelve `nil` como bytes.
-- [ ] T039 [E16, E17, E18] Escribir en `src/report/postgres_store_integration_test.go`, con los datos de T020:
+- [x] T039 [E16, E17, E18] Escribir en `src/report/postgres_store_integration_test.go`, con los datos de T020:
   - `TestPostgresReportStore_Proyecto`: «Alfa» → nombre y fechas, integrantes Ana y Beto, historias 1, 1, 1 y 4,
     Sprints 1, 2 y 3 con su estado, `EstimatedTotal` 3800 y `WithoutEstimate` 2, integrantes Ana 2300 y Beto 700
     (suma 3000), 2 abiertos y 1 resuelto, y los 2 abiertos con historia y Sprint de detección 2 y 3; «Beta» → todo en
@@ -343,7 +343,7 @@ el puerto, el servicio y la advertencia.
   - `TestProjectReport_Coherencia`: con los servicios reales, cada fila de «Alfa» coincide con `SprintQuality` y
     `CalculateMetrics` del mismo Sprint, `Velocity` con `SummarizeVelocity` de esas velocidades, y `Status` y
     `Progress` con las reglas de HU-12. Borra las filas de `sprint_metrics`.
-- [ ] T040 [E11, E13, E14, E15, E16, E17, E18] Escribir en `src/web/report_project_handlers_test.go`, con el servidor
+- [x] T040 [E11, E13, E14, E15, E16, E17, E18] Escribir en `src/web/report_project_handlers_test.go`, con el servidor
   de prueba y los datos de T026:
   - `TestHU09_ProyectoAdvertencia`: «Alfa» sin `confirmar` y con `confirmar=SI` → 200 HTML con "El proyecto tiene un
     Sprint en curso (Sprint 3): el reporte puede estar incompleto", "Generar igual" a
@@ -364,10 +364,10 @@ el puerto, el servicio y la advertencia.
   "Velocidad acumulada: 180 Story Points", "Promedio: 180,00 Story Points por Sprint", "480 horas estimadas en
   total", "360 horas registradas en total", "50 defectos registrados: 30 abiertos y 20 resueltos" y "Página X de Y"
   en todas las páginas.
-- [ ] T041 [E14, E16, E18] Agregar a `test/web_report_bdd_test.go` (después de T030) los escenarios "Advertencia al
+- [x] T041 [E14, E16, E18] Agregar a `test/web_report_bdd_test.go` (después de T030) los escenarios "Advertencia al
   exportar un proyecto con un Sprint en curso", "Avance y Sprints del proyecto" y "Proyecto sin Sprints ni
   historias", con datos propios.
-- [ ] T042 Ejecutar T037–T041, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Reporte del
+- [x] T042 Ejecutar T037–T041, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Reporte del
   proyecto".
 
 ### Implementación (GREEN)

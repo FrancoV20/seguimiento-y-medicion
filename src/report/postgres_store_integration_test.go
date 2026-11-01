@@ -3,11 +3,13 @@ package report
 import (
 	"context"
 	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/effort"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
 )
 
 // HU-09, T021 y T022: PostgreSQLStore contra PostgreSQL real con los datos de fixtures_test.go.
@@ -186,6 +188,123 @@ func TestReport_CoherenciaConHU07YHU10(t *testing.T) {
 	}
 	if q.PointsPlanned != 18 || q.PointsCompleted != 10 || q.DefectsDetected != 2 || q.DefectsResolved != 1 {
 		t.Errorf("HU-10 = %+v", q)
+	}
+	// HU-07 guarda en sprint_metrics; la limpieza de los datos de prueba lo borra.
+}
+
+// T039: LoadProjectReport contra PostgreSQL real.
+func TestPostgresReportStore_Proyecto(t *testing.T) {
+	db := openReportTestDB(t)
+	f := newReportFixture(t, db)
+	store := NewPostgreSQLStore(db)
+	ctx := context.Background()
+
+	t.Run("«Alfa»", func(t *testing.T) {
+		data, err := store.LoadProjectReport(ctx, f.projects["Alfa"])
+		if err != nil {
+			t.Fatalf("LoadProjectReport: %v", err)
+		}
+		if data.ID != f.projects["Alfa"] || data.Name != "Alfa" ||
+			dateText(data.StartDate) != "18/08/2026" || dateText(data.EndDate) != "30/11/2026" {
+			t.Errorf("encabezado = %d %q %v %v", data.ID, data.Name, data.StartDate, data.EndDate)
+		}
+		if want := []string{"Ana", "Beto"}; !reflect.DeepEqual(data.Members, want) {
+			t.Errorf("integrantes = %v, se esperaba %v", data.Members, want)
+		}
+		if want := (StoryCounts{Pending: 1, InSprint: 1, InProgress: 1, Done: 4}); data.Stories != want {
+			t.Errorf("historias por estado = %+v, se esperaba %+v", data.Stories, want)
+		}
+		wantSprints := []ProjectSprint{
+			{ID: f.sprints["Alfa 1"], Number: 1, Status: "Finalizado"},
+			{ID: f.sprints["Alfa 2"], Number: 2, Status: "Finalizado"},
+			{ID: f.sprints["Alfa 3"], Number: 3, Status: "Activo"},
+		}
+		if !reflect.DeepEqual(data.Sprints, wantSprints) {
+			t.Errorf("Sprints = %+v, se esperaba %+v", data.Sprints, wantSprints)
+		}
+		if data.EstimatedTotal != 3800 || data.WithoutEstimate != 2 {
+			t.Errorf("horas estimadas %d y sin estimar %d; se esperaba 3800 y 2", data.EstimatedTotal, data.WithoutEstimate)
+		}
+		if want := []MemberHours{{"Ana", 2300}, {"Beto", 700}}; !reflect.DeepEqual(data.MemberHours, want) || data.RegisteredTotal != 3000 {
+			t.Errorf("esfuerzo = %+v (total %d), se esperaba %+v (total 3000)", data.MemberHours, data.RegisteredTotal, want)
+		}
+		if data.DefectsOpen != 2 || data.DefectsResolved != 1 {
+			t.Errorf("defectos: %d abiertos y %d resueltos; se esperaba 2 y 1", data.DefectsOpen, data.DefectsResolved)
+		}
+		wantOpen := []OpenDefect{
+			{Description: "La foto de perfil no se guarda", Severity: "Media", StoryTitle: "Perfil", DetectionSprint: 2},
+			{Description: "El PDF sale en blanco", Severity: "Crítica", StoryTitle: "Exportar", DetectionSprint: 3},
+		}
+		if !reflect.DeepEqual(data.OpenDefects, wantOpen) {
+			t.Errorf("abiertos = %+v, se esperaba %+v", data.OpenDefects, wantOpen)
+		}
+		for _, m := range data.MemberHours {
+			if m.Name == "Caro" {
+				t.Error("aparecen horas de Caro, que solo trabajó en «Delta»")
+			}
+		}
+	})
+
+	t.Run("«Beta» vacío", func(t *testing.T) {
+		data, err := store.LoadProjectReport(ctx, f.projects["Beta"])
+		if err != nil {
+			t.Fatalf("LoadProjectReport: %v", err)
+		}
+		if !reflect.DeepEqual(data.Members, []string{"Ana"}) || data.Stories != (StoryCounts{}) || len(data.Sprints) != 0 ||
+			data.EstimatedTotal != 0 || data.WithoutEstimate != 0 || data.RegisteredTotal != 0 || len(data.MemberHours) != 0 ||
+			data.DefectsOpen != 0 || data.DefectsResolved != 0 || len(data.OpenDefects) != 0 {
+			t.Errorf("«Beta» debía venir vacío con su integrante Ana: %+v", data)
+		}
+	})
+
+	t.Run("proyecto inexistente", func(t *testing.T) {
+		if _, err := store.LoadProjectReport(ctx, 2147483647); !errors.Is(err, ErrProjectNotFound) {
+			t.Errorf("se esperaba ErrProjectNotFound, se obtuvo %v", err)
+		}
+	})
+}
+
+// T039: cada fila del reporte del proyecto coincide con HU-07, HU-08, HU-10 y HU-12 reales.
+func TestProjectReport_Coherencia(t *testing.T) {
+	db := openReportTestDB(t)
+	f := newReportFixture(t, db)
+	metricsService := metrics.NewService(metrics.NewPostgreSQLMetricsStore(db))
+	qualityService := metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(db))
+	service := NewService(NewPostgreSQLStore(db), metricsService, qualityService, clock)
+	ctx := context.Background()
+
+	r, err := service.BuildProject(ctx, f.projects["Alfa"])
+	if err != nil {
+		t.Fatalf("BuildProject: %v", err)
+	}
+	var velocities []int
+	for _, row := range r.Sprints {
+		if row.Active {
+			continue
+		}
+		id := f.sprints[fmt.Sprintf("Alfa %d", row.Number)]
+		q, err := qualityService.SprintQuality(ctx, f.projects["Alfa"], id)
+		if err != nil {
+			t.Fatalf("SprintQuality: %v", err)
+		}
+		m, err := metricsService.CalculateMetrics(id)
+		if err != nil {
+			t.Fatalf("CalculateMetrics: %v", err)
+		}
+		if !reflect.DeepEqual(*row.Quality, q) || row.Metrics.Velocity != m.Velocity ||
+			row.Metrics.DeviationPercentage != m.DeviationPercentage || row.Metrics.IsPartial != m.IsPartial {
+			t.Errorf("Sprint %d: la fila no coincide con HU-07 y HU-10", row.Number)
+		}
+		velocities = append(velocities, m.Velocity)
+	}
+	if want := metrics.SummarizeVelocity(velocities); r.Velocity != want || want.Total != 13 {
+		t.Errorf("velocidad = %+v, se esperaba %+v", r.Velocity, want)
+	}
+	if want := string(project.StatusOn(r.Data.StartDate, r.Data.EndDate, fixedNow)); r.Status != want {
+		t.Errorf("estado = %q, se esperaba el de HU-12 %q", r.Status, want)
+	}
+	if want := project.ProgressPercentage(4, 7); r.Progress != want {
+		t.Errorf("avance = %q, se esperaba el de HU-12 %q", r.Progress, want)
 	}
 	// HU-07 guarda en sprint_metrics; la limpieza de los datos de prueba lo borra.
 }

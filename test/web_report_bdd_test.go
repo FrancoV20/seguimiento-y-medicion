@@ -359,3 +359,59 @@ func TestHU09BDD_SinSprints(t *testing.T) {
 	}
 	thenContains(t, body, "Aún no hay Sprints para exportar", `href="/reportes/proyecto/pdf"`, "Exportar reporte del proyecto")
 }
+
+// Escenario 14: Advertencia al exportar un proyecto con un Sprint en curso.
+func TestHU09BDD_AdvertenciaAlExportarUnProyectoConUnSprintEnCurso(t *testing.T) {
+	app := newHU09BDDApp(t)
+	// Dado el proyecto «Alfa», con el Sprint 3 en curso
+	project, _ := app.givenAlfa(t)
+	app.selectProject(t, project)
+	// Cuando en "Reportes" presiono "Exportar reporte del proyecto"
+	resp, body := app.get(t, "/reportes/proyecto/pdf")
+	// Entonces veo la advertencia con "Generar igual" y "Cancelar", y todavía no se genera el PDF
+	if resp.StatusCode != http.StatusOK || strings.Contains(resp.Header.Get("Content-Type"), "pdf") || strings.Contains(body, "%PDF") {
+		t.Fatalf("se esperaba la advertencia sin PDF: estado %d, Content-Type %q", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	thenContains(t, body, "El proyecto tiene un Sprint en curso (Sprint 3): el reporte puede estar incompleto",
+		`href="/reportes/proyecto/pdf?confirmar=si"`, "Generar igual", `href="/reportes"`, "Cancelar")
+}
+
+// Escenario 16: Avance y Sprints del proyecto.
+func TestHU09BDD_AvanceYSprintsDelProyecto(t *testing.T) {
+	app := newHU09BDDApp(t)
+	// Dado el reporte del proyecto «Alfa»
+	project, _ := app.givenAlfa(t)
+	app.selectProject(t, project)
+	// Cuando lo genero igual y lo abro
+	resp, body := app.get(t, "/reportes/proyecto/pdf?confirmar=si")
+	// Entonces veo las historias por estado, el avance, una fila por Sprint y la velocidad acumulada
+	text := thenPDF(t, resp, body, fmt.Sprintf("reporte-proyecto-%d.pdf", project))
+	thenContains(t, text,
+		"Reporte parcial: hay un Sprint en curso",
+		"Pendiente 1", "En Sprint 1", "En progreso 1", "Hecho 4",
+		"4 de 7 historias completadas (57,14 %)",
+		"Sprint 1 Finalizado 1 de 1 3 de 3 3 0,00 % 0 detectados y 0 resueltos",
+		"Sprint 2 Finalizado 3 de 4 10 de 18 10 +6,25 % (cálculo parcial) 2 detectados y 1 resuelto",
+		"Sprint 3 En curso: se calcula al cerrar el Sprint",
+		"Velocidad acumulada: 13 Story Points",
+		"Promedio: 6,50 Story Points por Sprint",
+	)
+}
+
+// Escenario 18: Proyecto sin Sprints ni historias.
+func TestHU09BDD_ProyectoSinSprintsNiHistorias(t *testing.T) {
+	app := newHU09BDDApp(t)
+	// Dado el proyecto «Beta», sin Sprints ni historias
+	project := app.givenProject(t, fmt.Sprintf("Beta BDD %d", app.stamp), "Ana")
+	app.selectProject(t, project)
+	// Cuando presiono "Exportar reporte del proyecto"
+	resp, body := app.get(t, "/reportes/proyecto/pdf")
+	// Entonces se descarga el PDF sin advertencia, con "Aún no hay Sprints", "0 de 0 historias completadas
+	// (0,00 %)", "0 horas registradas en total" y "No se registraron defectos en este proyecto"
+	text := thenPDF(t, resp, body, fmt.Sprintf("reporte-proyecto-%d.pdf", project))
+	thenContains(t, text, "Aún no hay Sprints", "0 de 0 historias completadas (0,00 %)",
+		"0 horas registradas en total", "No se registraron defectos en este proyecto")
+	if strings.Contains(text, "Reporte parcial") {
+		t.Error("sin Sprint en curso el reporte no es parcial")
+	}
+}

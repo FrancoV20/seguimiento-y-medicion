@@ -80,3 +80,31 @@ func TestReportTexts(t *testing.T) {
 		check(t, "(3)", defectsSoFarText(3), "3 defectos detectados hasta el momento")
 	})
 }
+
+// HU-09, T037: textos del reporte del proyecto.
+func TestProjectReportTexts(t *testing.T) {
+	check := func(t *testing.T, name, got, want string) {
+		t.Helper()
+		if got != want {
+			t.Errorf("%s = %q, se esperaba %q", name, got, want)
+		}
+	}
+	check(t, `decimalText("6.50")`, decimalText("6.50"), "6,50")
+	check(t, `decimalText("No disponible")`, decimalText("No disponible"), "No disponible")
+
+	check(t, "projectDefectsText(0, 0)", projectDefectsText(0, 0), "No se registraron defectos en este proyecto")
+	check(t, "projectDefectsText(2, 1)", projectDefectsText(2, 1), "3 defectos registrados: 2 abiertos y 1 resuelto")
+	check(t, "projectDefectsText(1, 0)", projectDefectsText(1, 0), "1 defecto registrado: 1 abierto y 0 resueltos")
+	check(t, "projectDefectsText(0, 2)", projectDefectsText(0, 2), "2 defectos registrados: 0 abiertos y 2 resueltos")
+	check(t, "projectDefectsText(0, 1)", projectDefectsText(0, 1), "1 defecto registrado: 0 abiertos y 1 resuelto")
+
+	check(t, "sprintDefectsCell(0, 0)", sprintDefectsCell(0, 0), "0 detectados y 0 resueltos")
+	check(t, "sprintDefectsCell(2, 1)", sprintDefectsCell(2, 1), "2 detectados y 1 resuelto")
+	check(t, "sprintDefectsCell(1, 2)", sprintDefectsCell(1, 2), "1 detectado y 2 resueltos")
+
+	check(t, "membersText(Ana, Beto)", membersText([]string{"Ana", "Beto"}), "Integrantes: Ana, Beto")
+	check(t, "membersText()", membersText(nil), "Integrantes: Sin integrantes")
+
+	check(t, "averageVelocityText(6.50)", averageVelocityText("6.50"), "Promedio: 6,50 Story Points por Sprint")
+	check(t, "averageVelocityText(No disponible)", averageVelocityText("No disponible"), "Promedio: No disponible")
+}

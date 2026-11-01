@@ -360,6 +360,10 @@ func (g failingReportGenerator) SprintPDF(context.Context, int64, int64) ([]byte
 	return nil, g.err
 }
 
+func (g failingReportGenerator) ProjectPDF(context.Context, int64) ([]byte, error) {
+	return nil, g.err
+}
+
 // Escenario 13.
 func TestHU09_ErrorAlGenerar(t *testing.T) {
 	cause := errors.New("detalle interno de prueba")
@@ -480,15 +484,33 @@ func TestHU09_Rendimiento(t *testing.T) {
 		largoLongTitle,
 	)
 	reportWantNoText(t, text, "Cálculo parcial")
-	wantAllPagesNumbered(t, text)
+	wantAllPagesNumbered(t, text, 2)
+
+	// T040: el PDF del proyecto «Largo».
+	start = time.Now()
+	resp, body = app.get(t, c, "/reportes/proyecto/pdf")
+	if elapsed := time.Since(start); elapsed > time.Second {
+		t.Errorf("el PDF del proyecto «Largo» tardó %v; se esperaba menos de 1 s", elapsed)
+	}
+	text = reportPDFText(t, resp, body, reportProjectFileName(app.fx.projects["Largo"]))
+	reportWantText(t, text,
+		"90 de 120 historias completadas (75,00 %)",
+		"Sprint 1 Finalizado 90 de 120 180 de 270 180 0,00 % 50 detectados y 20 resueltos",
+		"Velocidad acumulada: 180 Story Points",
+		"Promedio: 180,00 Story Points por Sprint",
+		"480 horas estimadas en total",
+		"360 horas registradas en total",
+		"50 defectos registrados: 30 abiertos y 20 resueltos",
+	)
+	wantAllPagesNumbered(t, text, 1)
 }
 
-// wantAllPagesNumbered exige más de una página y "Página X de Y" en todas.
-func wantAllPagesNumbered(t *testing.T, text string) {
+// wantAllPagesNumbered exige al menos minPages páginas y "Página X de Y" en todas.
+func wantAllPagesNumbered(t *testing.T, text string, minPages int) {
 	t.Helper()
 	total := strings.Count(text, "Página ")
-	if total < 2 {
-		t.Fatalf("se esperaba más de una página, se encontraron %d pies", total)
+	if total < minPages {
+		t.Fatalf("se esperaban al menos %d páginas, se encontraron %d pies", minPages, total)
 	}
 	for page := 1; page <= total; page++ {
 		if want := fmt.Sprintf("Página %d de %d", page, total); !strings.Contains(text, want) {

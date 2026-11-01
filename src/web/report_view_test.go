@@ -76,4 +76,16 @@ func TestReportView(t *testing.T) {
 			t.Errorf("advertencia = %+v, se esperaba %+v", got, want)
 		}
 	})
+
+	t.Run("advertencia del proyecto con un Sprint en curso", func(t *testing.T) {
+		got := projectWarningData(3)
+		want := reportWarningData{
+			Message:     "El proyecto tiene un Sprint en curso (Sprint 3): el reporte puede estar incompleto",
+			GenerateURL: "/reportes/proyecto/pdf?confirmar=si",
+			CancelURL:   "/reportes",
+		}
+		if got != want {
+			t.Errorf("advertencia = %+v, se esperaba %+v", got, want)
+		}
+	})
 }

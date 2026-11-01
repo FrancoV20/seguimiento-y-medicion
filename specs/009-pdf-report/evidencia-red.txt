@@ -87,3 +87,712 @@ test\web_report_bdd_test.go:65:16: undefined: web.RegisterReports
 test\web_report_bdd_test.go:65:44: undefined: web.NewPostgreSQLReportCatalog
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
 FAIL
+
+## Reporte del proyecto (T037-T042)
+
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v ./src/report/ ./src/web/ ./test/ 2>&1 | Out- ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\report\service_test.go:103:15: undefined: ProjectData
+src\report\service_test.go:113:64: undefined: ProjectData
+src\report\project_document_test.go:12:40: undefined: ProjectReport
+src\report\project_document_test.go:25:26: undefined: ProjectReport
+src\report\project_service_test.go:23:20: undefined: ProjectData
+src\report\project_service_test.go:44:20: undefined: ProjectData
+src\report\postgres_store_integration_test.go:203:22: store.LoadProjectReport undefined (type *PostgreSQLStore has no field or method LoadProjectReport)
+src\report\postgres_store_integration_test.go:214:15: undefined: StoryCounts
+src\report\postgres_store_integration_test.go:217:20: undefined: ProjectSprint
+src\report\postgres_store_integration_test.go:234:17: undefined: OpenDefect
+src\report\postgres_store_integration_test.go:234:17: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/report [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\report_view_test.go:81:10: undefined: projectWarningData
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+=== RUN   TestEscenario_RegistroDeNuevaHistoria
+--- PASS: TestEscenario_RegistroDeNuevaHistoria (0.00s)
+=== RUN   TestEscenario_CriteriosDeAceptacionObligatorios
+--- PASS: TestEscenario_CriteriosDeAceptacionObligatorios (0.00s)
+=== RUN   TestEscenarioContexto_SeleccionQueSeMantiene
+--- PASS: TestEscenarioContexto_SeleccionQueSeMantiene (0.06s)
+=== RUN   TestEscenarioContexto_SinProyectos
+=== RUN   TestEscenarioContexto_SinProyectos/sin_la_secci├│n_Proyectos
+=== RUN   TestEscenarioContexto_SinProyectos/con_la_secci├│n_Proyectos
+--- PASS: TestEscenarioContexto_SinProyectos (0.07s)
+    --- PASS: TestEscenarioContexto_SinProyectos/sin_la_secci├│n_Proyectos (0.04s)
+    --- PASS: TestEscenarioContexto_SinProyectos/con_la_secci├│n_Proyectos (0.04s)
+=== RUN   TestEscenarioContexto_CambioDeProyectoLimpiaElIntegrante
+--- PASS: TestEscenarioContexto_CambioDeProyectoLimpiaElIntegrante (0.04s)
+=== RUN   TestEscenarioContexto_MismoProyectoConservaElIntegrante
+--- PASS: TestEscenarioContexto_MismoProyectoConservaElIntegrante (0.06s)
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999
+=== RUN   TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647
+--- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion (0.32s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/abc (0.08s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/-1 (0.08s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/99999999999 (0.08s)
+    --- PASS: TestEscenarioContexto_IdentificadorInvalidoConservaLaSeleccion/2147483647 (0.08s)
+=== RUN   TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia
+--- PASS: TestEscenarioContexto_ProyectoEliminadoSeLimpiaConAdvertencia (0.08s)
+=== RUN   TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona
+--- PASS: TestEscenarioContexto_UnSoloProyectoNoSeAutoselecciona (0.07s)
+=== RUN   TestEscenarioContexto_SesionNuevaPideElegirDeNuevo
+--- PASS: TestEscenarioContexto_SesionNuevaPideElegirDeNuevo (0.07s)
+=== RUN   TestEscenarioIntegrante_Identificacion
+--- PASS: TestEscenarioIntegrante_Identificacion (0.10s)
+=== RUN   TestEscenarioIntegrante_AccionSinIdentificarse
+--- PASS: TestEscenarioIntegrante_AccionSinIdentificarse (0.08s)
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector
+=== RUN   TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada
+--- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto (0.10s)
+    --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/al_elegirlo_en_el_selector (0.02s)
+    --- PASS: TestEscenarioIntegrante_IntegranteAjenoAlProyecto/con_una_identificaci├│n_forjada (0.00s)
+=== RUN   TestEscenarioIntegrante_DejoDePertenecerAlProyecto
+--- PASS: TestEscenarioIntegrante_DejoDePertenecerAlProyecto (0.08s)
+=== RUN   TestEscenarioSeccion_SinProyectoRedirigeYVuelve
+--- PASS: TestEscenarioSeccion_SinProyectoRedirigeYVuelve (0.08s)
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_proyecto_y_no_hay_proyecto
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_hay_proyecto
+=== RUN   TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_me_identifiqu├®
+--- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError (0.09s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_proyecto_y_no_hay_proyecto (0.01s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_hay_proyecto (0.00s)
+    --- PASS: TestEscenarioSeccion_SinContextoNuncaTerminaEnPantallaVaciaNiError/requiere_integrante_y_no_me_identifiqu├® (0.01s)
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe
+=== RUN   TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1)
+--- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora (0.09s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com (0.01s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com (0.00s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe (0.00s)
+    --- PASS: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1) (0.00s)
+=== RUN   TestEscenarioSeccion_SinRequisitosSeMuestraNormalmente
+--- PASS: TestEscenarioSeccion_SinRequisitosSeMuestraNormalmente (0.07s)
+=== RUN   TestScenarioDailyEffortLog
+--- PASS: TestScenarioDailyEffortLog (0.00s)
+=== RUN   TestScenarioEffortAddsToPreviousHours
+--- PASS: TestScenarioEffortAddsToPreviousHours (0.00s)
+=== RUN   TestScenarioInvalidHours
+=== RUN   TestScenarioInvalidHours/horas_-1
+=== RUN   TestScenarioInvalidHours/horas_0
+=== RUN   TestScenarioInvalidHours/horas_25
+--- PASS: TestScenarioInvalidHours (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_-1 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_0 (0.00s)
+    --- PASS: TestScenarioInvalidHours/horas_25 (0.00s)
+=== RUN   TestScenarioEmptyActivity
+--- PASS: TestScenarioEmptyActivity (0.00s)
+=== RUN   TestScenarioMissingDate
+--- PASS: TestScenarioMissingDate (0.00s)
+=== RUN   TestScenarioMemberNotSpecified
+=== RUN   TestScenarioMemberNotSpecified/integrante_''
+=== RUN   TestScenarioMemberNotSpecified/integrante_'M999'
+--- PASS: TestScenarioMemberNotSpecified (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'' (0.00s)
+    --- PASS: TestScenarioMemberNotSpecified/integrante_'M999' (0.00s)
+=== RUN   TestScenarioStorageFailure
+--- PASS: TestScenarioStorageFailure (0.00s)
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas
+=== RUN   TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas/Then_muestra_velocidad_y_desviaci├│n_calculadas
+--- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation (0.00s)
+    --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad (0.00s)
+        --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes (0.00s)
+            --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas (0.00s)
+                --- PASS: TestMetricsBDD_SprintVelocityAndEffortDeviation/Escenario_1:_c├ílculo_de_desviaci├│n_de_esfuerzo_y_velocidad/Given_un_Sprint_finalizado_con_historias_completas_y_pendientes/When_el_sistema_calcula_las_m├®tricas/Then_muestra_velocidad_y_desviaci├│n_calculadas (0.00s)
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n
+=== RUN   TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n/Then_indica_No_disponible_sin_error_de_divisi├│n_por_cero
+--- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort (0.00s)
+    --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado (0.00s)
+        --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas (0.00s)
+            --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n (0.00s)
+                --- PASS: TestMetricsBDD_SprintWithoutEstimatedEffort/Escenario_2:_Sprint_sin_esfuerzo_estimado/Given_un_Sprint_finalizado_sin_horas_estimadas/When_el_sistema_calcula_la_desviaci├│n/Then_indica_No_disponible_sin_error_de_divisi├│n_por_cero (0.00s)
+=== RUN   TestMetricsBDD_PartialEffortCalculation
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas
+=== RUN   TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas/Then_informa_el_conteo_exacto_del_c├ílculo_parcial
+--- PASS: TestMetricsBDD_PartialEffortCalculation (0.00s)
+    --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos (0.00s)
+        --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias (0.00s)
+            --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas (0.00s)
+                --- PASS: TestMetricsBDD_PartialEffortCalculation/Escenario_3:_c├ílculo_parcial_de_desviaci├│n_por_datos_incompletos/Given_un_Sprint_con_datos_completos_solo_en_una_de_tres_historias/When_el_sistema_calcula_la_desviaci├│n_con_historias_completas/Then_informa_el_conteo_exacto_del_c├ílculo_parcial (0.00s)
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint
+=== RUN   TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint/Then_el_cierre_queda_bloqueado_e_identifica_historias_y_motivos
+--- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData (0.00s)
+    --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos (0.00s)
+        --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos (0.00s)
+            --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint (0.00s)
+                --- PASS: TestMetricsBDD_SprintClosureBlockedByInvalidStoryData/Escenario_4:_bloqueo_del_cierre_de_Sprint_por_datos_inv├ílidos/Given_un_Sprint_con_horas_reales_negativas_y_Story_Points_inv├ílidos/When_el_Scrum_Master_intenta_cerrar_el_Sprint/Then_el_cierre_queda_bloqueado_e_identifica_historias_y_motivos (0.00s)
+=== RUN   TestEscenario_ProyectoRecienCreadoAdmiteHistorias
+--- PASS: TestEscenario_ProyectoRecienCreadoAdmiteHistorias (0.11s)
+=== RUN   TestProjectCreation_BDD
+--- PASS: TestProjectCreation_BDD (0.00s)
+=== RUN   TestProjectCreation_InvalidDates_BDD
+--- PASS: TestProjectCreation_InvalidDates_BDD (0.00s)
+=== RUN   TestProjectCreation_EqualDates_BDD
+--- PASS: TestProjectCreation_EqualDates_BDD (0.00s)
+=== RUN   TestProjectCreation_EndDateOneDayAfter_BDD
+--- PASS: TestProjectCreation_EndDateOneDayAfter_BDD (0.00s)
+=== RUN   TestSprintBDDScenarios
+=== RUN   TestSprintBDDScenarios/crear_Sprint_con_tres_historias_pendientes
+=== RUN   TestSprintBDDScenarios/bloquear_historia_que_ya_est├í_asignada_a_un_Sprint
+=== RUN   TestSprintBDDScenarios/quitar_una_historia_y_volver_a_asignarla
+=== RUN   TestSprintBDDScenarios/un_solo_Sprint_activo_por_proyecto
+=== RUN   TestSprintBDDScenarios/asignaci├│n_exitosa_deja_las_historias_En_Sprint
+=== RUN   TestSprintBDDScenarios/generar_identificador_de_Sprint_y_no_solicitarlo_al_usuario
+=== RUN   TestSprintBDDScenarios/crear_Sprint_sin_historias_y_mostrar_advertencia
+=== RUN   TestSprintBDDScenarios/rechazar_Sprint_Goal_vac├¡o
+=== RUN   TestSprintBDDScenarios/rechazar_fecha_final_anterior_o_igual_a_la_inicial
+--- PASS: TestSprintBDDScenarios (0.00s)
+    --- PASS: TestSprintBDDScenarios/crear_Sprint_con_tres_historias_pendientes (0.00s)
+    --- PASS: TestSprintBDDScenarios/bloquear_historia_que_ya_est├í_asignada_a_un_Sprint (0.00s)
+    --- PASS: TestSprintBDDScenarios/quitar_una_historia_y_volver_a_asignarla (0.00s)
+    --- PASS: TestSprintBDDScenarios/un_solo_Sprint_activo_por_proyecto (0.00s)
+    --- PASS: TestSprintBDDScenarios/asignaci├│n_exitosa_deja_las_historias_En_Sprint (0.00s)
+    --- PASS: TestSprintBDDScenarios/generar_identificador_de_Sprint_y_no_solicitarlo_al_usuario (0.00s)
+    --- PASS: TestSprintBDDScenarios/crear_Sprint_sin_historias_y_mostrar_advertencia (0.00s)
+    --- PASS: TestSprintBDDScenarios/rechazar_Sprint_Goal_vac├¡o (0.00s)
+    --- PASS: TestSprintBDDScenarios/rechazar_fecha_final_anterior_o_igual_a_la_inicial (0.00s)
+=== RUN   TestWebBacklogBDD_CreateStory
+=== RUN   TestWebBacklogBDD_CreateStory/Given_un_proyecto_activo_y_datos_v├ílidos,_When_guardo,_Then_veo_la_historia_Pendiente
+--- PASS: TestWebBacklogBDD_CreateStory (0.12s)
+    --- PASS: TestWebBacklogBDD_CreateStory/Given_un_proyecto_activo_y_datos_v├ílidos,_When_guardo,_Then_veo_la_historia_Pendiente (0.12s)
+=== RUN   TestWebBacklogBDD_AddCriterionPreservesForm
+=== RUN   TestWebBacklogBDD_AddCriterionPreservesForm/Given_el_formulario_escrito,_When_agrego_un_criterio,_Then_conserva_los_datos_y_no_guarda
+--- PASS: TestWebBacklogBDD_AddCriterionPreservesForm (0.11s)
+    --- PASS: TestWebBacklogBDD_AddCriterionPreservesForm/Given_el_formulario_escrito,_When_agrego_un_criterio,_Then_conserva_los_datos_y_no_guarda (0.11s)
+=== RUN   TestWebBacklogBDD_RemoveCriterion
+=== RUN   TestWebBacklogBDD_RemoveCriterion/Given_varios_criterios,_When_quito_uno,_Then_solo_desaparece_ese_campo
+--- PASS: TestWebBacklogBDD_RemoveCriterion (0.10s)
+    --- PASS: TestWebBacklogBDD_RemoveCriterion/Given_varios_criterios,_When_quito_uno,_Then_solo_desaparece_ese_campo (0.10s)
+=== RUN   TestWebBacklogBDD_CannotRemoveLastCriterion
+=== RUN   TestWebBacklogBDD_CannotRemoveLastCriterion/Given_un_├║nico_criterio,_When_lo_quito,_Then_permanece_sin_guardar
+--- PASS: TestWebBacklogBDD_CannotRemoveLastCriterion (0.10s)
+    --- PASS: TestWebBacklogBDD_CannotRemoveLastCriterion/Given_un_├║nico_criterio,_When_lo_quito,_Then_permanece_sin_guardar (0.10s)
+=== RUN   TestWebBacklogBDD_BlankCriteriaAreIgnored
+=== RUN   TestWebBacklogBDD_BlankCriteriaAreIgnored/Given_criterios_en_blanco_y_uno_completo,_When_guardo,_Then_solo_persiste_el_completo
+--- PASS: TestWebBacklogBDD_BlankCriteriaAreIgnored (0.12s)
+    --- PASS: TestWebBacklogBDD_BlankCriteriaAreIgnored/Given_criterios_en_blanco_y_uno_completo,_When_guardo,_Then_solo_persiste_el_completo (0.12s)
+=== RUN   TestWebBacklogBDD_StoryPointsCanBeMissing
+=== RUN   TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar
+--- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing (0.13s)
+    --- PASS: TestWebBacklogBDD_StoryPointsCanBeMissing/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_Story_Points,_Then_veo_advertencia_y_Sin_estimar (0.13s)
+=== RUN   TestWebBacklogBDD_EstimatedHoursAreOptional
+=== RUN   TestWebBacklogBDD_EstimatedHoursAreOptional/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_horas,_Then_no_hay_advertencia_y_dice_Sin_estimar
+--- PASS: TestWebBacklogBDD_EstimatedHoursAreOptional (0.11s)
+    --- PASS: TestWebBacklogBDD_EstimatedHoursAreOptional/Given_los_dem├ís_datos_v├ílidos,_When_guardo_sin_horas,_Then_no_hay_advertencia_y_dice_Sin_estimar (0.11s)
+=== RUN   TestWebBacklogBDD_CommaDecimalHours
+=== RUN   TestWebBacklogBDD_CommaDecimalHours/Given_horas_con_coma_decimal,_When_guardo_1,5,_Then_el_valor_queda_exacto_y_visible
+--- PASS: TestWebBacklogBDD_CommaDecimalHours (0.11s)
+    --- PASS: TestWebBacklogBDD_CommaDecimalHours/Given_horas_con_coma_decimal,_When_guardo_1,5,_Then_el_valor_queda_exacto_y_visible (0.11s)
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_criterios_sin_texto,_When_guardo,_Then_recibo_el_error_de_HU-02_y_no_se_crea_la_historia
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_el_t├¡tulo_vac├¡o,_When_guardo,_Then_recibo_el_error_junto_al_t├¡tulo
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_la_descripci├│n_vac├¡a,_When_guardo,_Then_recibo_el_error_junto_a_la_descripci├│n
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_una_prioridad_manipulada,_When_guardo,_Then_recibo_el_error_de_HU-02
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_fuera_de_Fibonacci,_When_guardo,_Then_recibo_el_error_de_HU-22
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_no_num├®ricos,_When_guardo,_Then_recibo_el_error_de_HU-22
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_inv├ílidas,_When_guardo,_Then_recibo_el_error_de_HU-17
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_por_encima_del_m├íximo,_When_guardo,_Then_recibo_el_mensaje_de_l├¡mite
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_abc,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_10000,_When_guardo,_Then_se_informa_el_m├íximo_permitido
+=== RUN   TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_9999,995,_When_guardo,_Then_se_informa_el_m├íximo_permitido
+--- PASS: TestWebBacklogBDD_InvalidFormSubmissions (0.18s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_criterios_sin_texto,_When_guardo,_Then_recibo_el_error_de_HU-02_y_no_se_crea_la_historia (0.03s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_el_t├¡tulo_vac├¡o,_When_guardo,_Then_recibo_el_error_junto_al_t├¡tulo (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_la_descripci├│n_vac├¡a,_When_guardo,_Then_recibo_el_error_junto_a_la_descripci├│n (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_una_prioridad_manipulada,_When_guardo,_Then_recibo_el_error_de_HU-02 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_fuera_de_Fibonacci,_When_guardo,_Then_recibo_el_error_de_HU-22 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_no_num├®ricos,_When_guardo,_Then_recibo_el_error_de_HU-22 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_inv├ílidas,_When_guardo,_Then_recibo_el_error_de_HU-17 (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_estimadas_por_encima_del_m├íximo,_When_guardo,_Then_recibo_el_mensaje_de_l├¡mite (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_abc,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.00s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_0,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_Story_Points_-1,_When_guardo,_Then_el_valor_se_rechaza_sin_guardar (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_10000,_When_guardo,_Then_se_informa_el_m├íximo_permitido (0.01s)
+    --- PASS: TestWebBacklogBDD_InvalidFormSubmissions/Given_horas_9999,995,_When_guardo,_Then_se_informa_el_m├íximo_permitido (0.01s)
+=== RUN   TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm
+--- PASS: TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm (0.07s)
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_ordenadas_por_prioridad
+=== RUN   TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario
+--- PASS: TestWebBacklogBDD_BacklogListAndEmptyState (0.17s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_ordenadas_por_prioridad (0.10s)
+    --- PASS: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_sin_historias,_When_abro_Backlog,_Then_veo_el_estado_vac├¡o_y_el_formulario (0.08s)
+=== RUN   TestWebBacklogEditBDD_ListadoOrdenado
+=== RUN   TestWebBacklogEditBDD_ListadoOrdenado/Given_historias_de_distintas_prioridades,_When_abro_el_Product_Backlog,_Then_se_listan_por_prioridad_y_antig├╝edad
+--- PASS: TestWebBacklogEditBDD_ListadoOrdenado (0.10s)
+    --- PASS: TestWebBacklogEditBDD_ListadoOrdenado/Given_historias_de_distintas_prioridades,_When_abro_el_Product_Backlog,_Then_se_listan_por_prioridad_y_antig├╝edad (0.10s)
+=== RUN   TestWebBacklogEditBDD_FiltroPorEstado
+=== RUN   TestWebBacklogEditBDD_FiltroPorEstado/Given_historias_en_distintos_estados,_When_filtro_por_Pendiente_y_despu├®s_por_Todos,_Then_veo_las_pendientes_y_luego_todas
+--- PASS: TestWebBacklogEditBDD_FiltroPorEstado (0.12s)
+    --- PASS: TestWebBacklogEditBDD_FiltroPorEstado/Given_historias_en_distintos_estados,_When_filtro_por_Pendiente_y_despu├®s_por_Todos,_Then_veo_las_pendientes_y_luego_todas (0.12s)
+=== RUN   TestWebBacklogEditBDD_EdicionExitosa
+=== RUN   TestWebBacklogEditBDD_EdicionExitosa/Given_la_historia_Login,_When_cambio_el_t├¡tulo_y_guardo,_Then_veo_Historia_modificada_correctamente_y_el_t├¡tulo_nuevo
+--- PASS: TestWebBacklogEditBDD_EdicionExitosa (0.13s)
+    --- PASS: TestWebBacklogEditBDD_EdicionExitosa/Given_la_historia_Login,_When_cambio_el_t├¡tulo_y_guardo,_Then_veo_Historia_modificada_correctamente_y_el_t├¡tulo_nuevo (0.13s)
+=== RUN   TestWebBacklogEditBDD_QuitarStoryPoints
+=== RUN   TestWebBacklogEditBDD_QuitarStoryPoints/Given_Login_con_5_Story_Points,_When_elijo_Sin_estimar_y_guardo,_Then_veo_la_advertencia_de_estimaci├│n
+--- PASS: TestWebBacklogEditBDD_QuitarStoryPoints (0.11s)
+    --- PASS: TestWebBacklogEditBDD_QuitarStoryPoints/Given_Login_con_5_Story_Points,_When_elijo_Sin_estimar_y_guardo,_Then_veo_la_advertencia_de_estimaci├│n (0.11s)
+=== RUN   TestWebBacklogEditBDD_EdicionInvalida
+=== RUN   TestWebBacklogEditBDD_EdicionInvalida/Given_la_historia_Login,_When_borro_el_t├¡tulo_y_guardo,_Then_veo_el_mensaje_de_HU-02_y_la_historia_no_cambia
+--- PASS: TestWebBacklogEditBDD_EdicionInvalida (0.09s)
+    --- PASS: TestWebBacklogEditBDD_EdicionInvalida/Given_la_historia_Login,_When_borro_el_t├¡tulo_y_guardo,_Then_veo_el_mensaje_de_HU-02_y_la_historia_no_cambia (0.09s)
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea
+--- PASS: TestWebBacklogEditBDD_SprintFinalizado (0.13s)
+    --- PASS: TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea (0.13s)
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia
+--- PASS: TestWebBacklogEditBDD_ErrorAlGuardar (0.12s)
+    --- PASS: TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia (0.12s)
+=== RUN   TestEscenarioWeb_PaginaDeInicioConMenu
+--- PASS: TestEscenarioWeb_PaginaDeInicioConMenu (0.00s)
+=== RUN   TestEscenarioWeb_FaltaDatabaseURL
+--- PASS: TestEscenarioWeb_FaltaDatabaseURL (0.00s)
+=== RUN   TestEscenarioWeb_BaseLentaReintentaYConecta
+--- PASS: TestEscenarioWeb_BaseLentaReintentaYConecta (0.00s)
+=== RUN   TestEscenarioWeb_BaseCaidaNoExponeLaClave
+--- PASS: TestEscenarioWeb_BaseCaidaNoExponeLaClave (0.00s)
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes
+=== RUN   TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty
+--- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca (0.00s)
+    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/migraciones_pendientes (0.00s)
+    --- PASS: TestEscenarioWeb_EsquemaDesactualizadoODirtyNoArranca/estado_dirty (0.00s)
+=== RUN   TestEscenarioWeb_PuertoEnUso
+--- PASS: TestEscenarioWeb_PuertoEnUso (0.00s)
+=== RUN   TestEscenarioWeb_EstructuraComunConMenuYContexto
+--- PASS: TestEscenarioWeb_EstructuraComunConMenuYContexto (0.00s)
+=== RUN   TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu
+--- PASS: TestEscenarioWeb_SoloSeccionesRegistradasEnElMenu (0.00s)
+=== RUN   TestEscenarioWeb_SinRecursosExternos
+--- PASS: TestEscenarioWeb_SinRecursosExternos (0.10s)
+=== RUN   TestEscenarioWeb_CaracteresEspeciales
+--- PASS: TestEscenarioWeb_CaracteresEspeciales (0.00s)
+=== RUN   TestEscenarioWeb_DireccionInexistenteOMalformadaDa404
+--- PASS: TestEscenarioWeb_DireccionInexistenteOMalformadaDa404 (0.00s)
+=== RUN   TestEscenarioWeb_MetodoNoSoportadoDa405
+--- PASS: TestEscenarioWeb_MetodoNoSoportadoDa405 (0.00s)
+=== RUN   TestEscenarioWeb_FalloInesperadoDa500Generico
+--- PASS: TestEscenarioWeb_FalloInesperadoDa500Generico (0.00s)
+=== RUN   TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar
+--- PASS: TestEscenarioWeb_BaseCaidaDa503YSeRecuperaSinReiniciar (0.00s)
+=== RUN   TestEscenarioTablero_ComenzarUnaHistoria
+--- PASS: TestEscenarioTablero_ComenzarUnaHistoria (0.14s)
+=== RUN   TestEscenarioTablero_CompletarUnaHistoria
+--- PASS: TestEscenarioTablero_CompletarUnaHistoria (0.15s)
+=== RUN   TestEscenarioTablero_CompletarSinHorasRegistradas
+--- PASS: TestEscenarioTablero_CompletarSinHorasRegistradas (0.13s)
+=== RUN   TestEscenarioTablero_ReabrirUnaHistoria
+--- PASS: TestEscenarioTablero_ReabrirUnaHistoria (0.14s)
+=== RUN   TestEscenarioTablero_FueraDeUnSprintActivo
+--- PASS: TestEscenarioTablero_FueraDeUnSprintActivo (0.13s)
+=== RUN   TestEscenarioTablero_MarcarDosVeces
+--- PASS: TestEscenarioTablero_MarcarDosVeces (0.15s)
+=== RUN   TestEscenarioTablero_TransicionNoPermitida
+--- PASS: TestEscenarioTablero_TransicionNoPermitida (0.15s)
+=== RUN   TestEscenarioTablero_EstadoDesactualizado
+--- PASS: TestEscenarioTablero_EstadoDesactualizado (0.13s)
+=== RUN   TestEscenarioTablero_ErrorAlGuardar
+--- PASS: TestEscenarioTablero_ErrorAlGuardar (0.12s)
+=== RUN   TestEscenarioTablero_TableroDelSprintActivo
+--- PASS: TestEscenarioTablero_TableroDelSprintActivo (0.13s)
+=== RUN   TestEscenarioTablero_AccionesSegunElEstado
+--- PASS: TestEscenarioTablero_AccionesSegunElEstado (0.13s)
+=== RUN   TestEscenarioTablero_SinSprintActivo
+--- PASS: TestEscenarioTablero_SinSprintActivo (0.14s)
+=== RUN   TestEscenarioTablero_SprintSinHistorias
+--- PASS: TestEscenarioTablero_SprintSinHistorias (0.11s)
+=== RUN   TestCloseBDD_ResumenPrevioAntesDeConfirmar
+--- PASS: TestCloseBDD_ResumenPrevioAntesDeConfirmar (0.13s)
+=== RUN   TestCloseBDD_SinSprintActivoSinBoton
+--- PASS: TestCloseBDD_SinSprintActivoSinBoton (0.08s)
+=== RUN   TestCloseBDD_CierreExitoso
+--- PASS: TestCloseBDD_CierreExitoso (0.15s)
+=== RUN   TestCloseBDD_HistoriasCompletadasConservadas
+--- PASS: TestCloseBDD_HistoriasCompletadasConservadas (0.14s)
+=== RUN   TestCloseBDD_DatosDelSprintCongeladosTrasReasignar
+--- PASS: TestCloseBDD_DatosDelSprintCongeladosTrasReasignar (0.20s)
+=== RUN   TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero
+--- PASS: TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero (0.19s)
+=== RUN   TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo
+--- PASS: TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo (0.39s)
+=== RUN   TestCloseBDD_SprintYaCerradoSeRechaza
+--- PASS: TestCloseBDD_SprintYaCerradoSeRechaza (0.13s)
+=== RUN   TestCloseBDD_CierreBloqueadoPorValidacionHU07
+--- PASS: TestCloseBDD_CierreBloqueadoPorValidacionHU07 (0.13s)
+=== RUN   TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico
+--- PASS: TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico (0.11s)
+=== RUN   TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza
+--- PASS: TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza (0.17s)
+=== RUN   TestEscenarioHU08_ProyectoSinDatosSuficientes
+--- PASS: TestEscenarioHU08_ProyectoSinDatosSuficientes (0.11s)
+=== RUN   TestEscenarioHU08_HistoriasPorEstado
+--- PASS: TestEscenarioHU08_HistoriasPorEstado (0.16s)
+=== RUN   TestEscenarioHU08_VelocidadDelEquipo
+--- PASS: TestEscenarioHU08_VelocidadDelEquipo (0.22s)
+=== RUN   TestEscenarioHU08_DesviacionDelUltimoSprint
+--- PASS: TestEscenarioHU08_DesviacionDelUltimoSprint (0.19s)
+=== RUN   TestEscenarioHU19_ResolucionExitosa
+--- PASS: TestEscenarioHU19_ResolucionExitosa (0.13s)
+=== RUN   TestEscenarioHU19_ResolverSinSprintActivo
+--- PASS: TestEscenarioHU19_ResolverSinSprintActivo (0.11s)
+=== RUN   TestEscenarioHU19_ReabrirUnDefecto
+--- PASS: TestEscenarioHU19_ReabrirUnDefecto (0.13s)
+=== RUN   TestEscenarioHU19_DefectoInexistente
+--- PASS: TestEscenarioHU19_DefectoInexistente (0.14s)
+=== RUN   TestScenarioDefectIsLinkedToRelatedStory
+--- PASS: TestScenarioDefectIsLinkedToRelatedStory (0.09s)
+=== RUN   TestScenarioDefectCanReferenceStoryFromFinishedSprint
+--- PASS: TestScenarioDefectCanReferenceStoryFromFinishedSprint (0.09s)
+=== RUN   TestScenarioMissingRequiredDefectFields
+--- PASS: TestScenarioMissingRequiredDefectFields (0.06s)
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/vac├¡a
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/solo_espacios
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/supera_el_l├¡mite
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/car├ícter_NUL
+=== RUN   TestScenarioInvalidDefectDescriptionIsRejected/UTF-8_inv├ílido
+--- PASS: TestScenarioInvalidDefectDescriptionIsRejected (0.08s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/vac├¡a (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/solo_espacios (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/supera_el_l├¡mite (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/car├ícter_NUL (0.00s)
+    --- PASS: TestScenarioInvalidDefectDescriptionIsRejected/UTF-8_inv├ílido (0.00s)
+=== RUN   TestScenarioDefectRequiresActiveSprint
+--- PASS: TestScenarioDefectRequiresActiveSprint (0.08s)
+=== RUN   TestScenarioDefectCannotReferenceStoryFromAnotherProject
+--- PASS: TestScenarioDefectCannotReferenceStoryFromAnotherProject (0.09s)
+=== RUN   TestScenarioDefectStorageFailureDoesNotSucceed
+--- PASS: TestScenarioDefectStorageFailureDoesNotSucceed (0.07s)
+=== RUN   TestScenarioDefectListIsProjectScopedAndNewestFirst
+--- PASS: TestScenarioDefectListIsProjectScopedAndNewestFirst (0.13s)
+=== RUN   TestScenarioDefectListCanBeEmpty
+--- PASS: TestScenarioDefectListCanBeEmpty (0.07s)
+=== RUN   TestEscenarioEsfuerzo_CargaExitosa
+--- PASS: TestEscenarioEsfuerzo_CargaExitosa (0.19s)
+=== RUN   TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo
+--- PASS: TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo (0.16s)
+=== RUN   TestEscenarioEsfuerzo_SinSprintActivo
+--- PASS: TestEscenarioEsfuerzo_SinSprintActivo (0.15s)
+=== RUN   TestEscenarioEsfuerzo_SinIntegranteIdentificado
+--- PASS: TestEscenarioEsfuerzo_SinIntegranteIdentificado (0.16s)
+=== RUN   TestEscenarioEsfuerzo_ErroresJuntos
+--- PASS: TestEscenarioEsfuerzo_ErroresJuntos (0.17s)
+=== RUN   TestEscenarioEsfuerzo_HistoriaNoDisponible
+--- PASS: TestEscenarioEsfuerzo_HistoriaNoDisponible (0.16s)
+=== RUN   TestEscenarioEsfuerzo_FallaDeAlmacenamiento
+--- PASS: TestEscenarioEsfuerzo_FallaDeAlmacenamiento (0.15s)
+=== RUN   TestEscenarioEsfuerzo_HistorialDeLaHistoria
+--- PASS: TestEscenarioEsfuerzo_HistorialDeLaHistoria (0.16s)
+=== RUN   TestEscenarioEsfuerzo_HistoriaSinRegistros
+--- PASS: TestEscenarioEsfuerzo_HistoriaSinRegistros (0.16s)
+=== RUN   TestWebEstimatesBDD_EstimacionRegistrada
+--- PASS: TestWebEstimatesBDD_EstimacionRegistrada (0.11s)
+=== RUN   TestWebEstimatesBDD_ModificarLaEstimacion
+--- PASS: TestWebEstimatesBDD_ModificarLaEstimacion (0.13s)
+=== RUN   TestWebEstimatesBDD_HorasConComaDecimal
+=== RUN   TestWebEstimatesBDD_HorasConComaDecimal/1,5
+=== RUN   TestWebEstimatesBDD_HorasConComaDecimal/1.5
+--- PASS: TestWebEstimatesBDD_HorasConComaDecimal (0.22s)
+    --- PASS: TestWebEstimatesBDD_HorasConComaDecimal/1,5 (0.11s)
+    --- PASS: TestWebEstimatesBDD_HorasConComaDecimal/1.5 (0.11s)
+=== RUN   TestWebEstimatesBDD_HorasInvalidas
+=== RUN   TestWebEstimatesBDD_HorasInvalidas/-1
+=== RUN   TestWebEstimatesBDD_HorasInvalidas/0
+=== RUN   TestWebEstimatesBDD_HorasInvalidas/abc
+=== RUN   TestWebEstimatesBDD_HorasInvalidas/1,555
+--- PASS: TestWebEstimatesBDD_HorasInvalidas (0.40s)
+    --- PASS: TestWebEstimatesBDD_HorasInvalidas/-1 (0.10s)
+    --- PASS: TestWebEstimatesBDD_HorasInvalidas/0 (0.10s)
+    --- PASS: TestWebEstimatesBDD_HorasInvalidas/abc (0.10s)
+    --- PASS: TestWebEstimatesBDD_HorasInvalidas/1,555 (0.10s)
+=== RUN   TestWebEstimatesBDD_HorasPorEncimaDelMaximo
+--- PASS: TestWebEstimatesBDD_HorasPorEncimaDelMaximo (0.10s)
+=== RUN   TestWebEstimatesBDD_HistoriaDeSprintFinalizado
+--- PASS: TestWebEstimatesBDD_HistoriaDeSprintFinalizado (0.11s)
+=== RUN   TestWebEstimatesBDD_ErrorAlGuardar
+--- PASS: TestWebEstimatesBDD_ErrorAlGuardar (0.10s)
+=== RUN   TestWebEstimatesBDD_ListaDeEstimaciones
+--- PASS: TestWebEstimatesBDD_ListaDeEstimaciones (0.10s)
+=== RUN   TestWebEstimatesBDD_HistoriaSinEstimar
+--- PASS: TestWebEstimatesBDD_HistoriaSinEstimar (0.10s)
+=== RUN   TestWebEstimatesBDD_HistoriaBloqueadaEnLaLista
+--- PASS: TestWebEstimatesBDD_HistoriaBloqueadaEnLaLista (0.11s)
+=== RUN   TestWebEstimatesBDD_SinHistorias
+--- PASS: TestWebEstimatesBDD_SinHistorias (0.09s)
+=== RUN   TestEscenarioForm_FormatoDeMensajes
+=== RUN   TestEscenarioForm_FormatoDeMensajes/success
+=== RUN   TestEscenarioForm_FormatoDeMensajes/error
+=== RUN   TestEscenarioForm_FormatoDeMensajes/warning
+--- PASS: TestEscenarioForm_FormatoDeMensajes (0.01s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/success (0.00s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/error (0.00s)
+    --- PASS: TestEscenarioForm_FormatoDeMensajes/warning (0.00s)
+=== RUN   TestEscenarioForm_ErrorAlGuardar
+--- PASS: TestEscenarioForm_ErrorAlGuardar (0.00s)
+=== RUN   TestEscenarioForm_EnvioValidoSinReenvio
+--- PASS: TestEscenarioForm_EnvioValidoSinReenvio (0.00s)
+=== RUN   TestEscenarioForm_MensajeDeUnaSolaVista
+--- PASS: TestEscenarioForm_MensajeDeUnaSolaVista (0.00s)
+=== RUN   TestEscenarioForm_ContenidoConHTMLSeVeComoTexto
+--- PASS: TestEscenarioForm_ContenidoConHTMLSeVeComoTexto (0.00s)
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Sec-Fetch-Site_cross-site
+=== RUN   TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Origin_de_otro_sitio
+--- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Sec-Fetch-Site_cross-site (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeOtroSitioSeRechaza/Origin_de_otro_sitio (0.00s)
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Origin_de_la_aplicaci├│n
+=== RUN   TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Sec-Fetch-Site_same-origin
+--- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Origin_de_la_aplicaci├│n (0.00s)
+    --- PASS: TestEscenarioForm_EnvioDesdeLaAplicacionSeProcesa/Sec-Fetch-Site_same-origin (0.00s)
+=== RUN   TestMetricsBDD_MetricasDeUnSprintFinalizado
+=== RUN   TestMetricsBDD_MetricasDeUnSprintFinalizado/Escenario_1:_m├®tricas_de_un_Sprint_finalizado
+--- PASS: TestMetricsBDD_MetricasDeUnSprintFinalizado (0.19s)
+    --- PASS: TestMetricsBDD_MetricasDeUnSprintFinalizado/Escenario_1:_m├®tricas_de_un_Sprint_finalizado (0.19s)
+=== RUN   TestMetricsBDD_SprintSinEsfuerzoEstimado
+=== RUN   TestMetricsBDD_SprintSinEsfuerzoEstimado/Escenario_2:_Sprint_sin_horas_estimadas
+--- PASS: TestMetricsBDD_SprintSinEsfuerzoEstimado (0.19s)
+    --- PASS: TestMetricsBDD_SprintSinEsfuerzoEstimado/Escenario_2:_Sprint_sin_horas_estimadas (0.19s)
+=== RUN   TestMetricsBDD_CalculoParcial
+=== RUN   TestMetricsBDD_CalculoParcial/Escenario_3:_Sprint_con_datos_incompletos
+--- PASS: TestMetricsBDD_CalculoParcial (0.21s)
+    --- PASS: TestMetricsBDD_CalculoParcial/Escenario_3:_Sprint_con_datos_incompletos (0.21s)
+=== RUN   TestMetricsBDD_VelocidadCero
+=== RUN   TestMetricsBDD_VelocidadCero/Escenario_4:_Sprint_finalizado_sin_historias_completadas
+--- PASS: TestMetricsBDD_VelocidadCero (0.20s)
+    --- PASS: TestMetricsBDD_VelocidadCero/Escenario_4:_Sprint_finalizado_sin_historias_completadas (0.20s)
+=== RUN   TestMetricsBDD_ElegirOtroSprint
+=== RUN   TestMetricsBDD_ElegirOtroSprint/Escenario_5:_elegir_otro_Sprint_finalizado
+--- PASS: TestMetricsBDD_ElegirOtroSprint (0.24s)
+    --- PASS: TestMetricsBDD_ElegirOtroSprint/Escenario_5:_elegir_otro_Sprint_finalizado (0.24s)
+=== RUN   TestMetricsBDD_SinSprintsFinalizados
+=== RUN   TestMetricsBDD_SinSprintsFinalizados/Escenario_6:_proyecto_sin_Sprints_finalizados
+--- PASS: TestMetricsBDD_SinSprintsFinalizados (0.08s)
+    --- PASS: TestMetricsBDD_SinSprintsFinalizados/Escenario_6:_proyecto_sin_Sprints_finalizados (0.08s)
+=== RUN   TestMetricsBDD_SprintEnCurso
+=== RUN   TestMetricsBDD_SprintEnCurso/Escenario_7:_Sprint_en_curso
+--- PASS: TestMetricsBDD_SprintEnCurso (0.19s)
+    --- PASS: TestMetricsBDD_SprintEnCurso/Escenario_7:_Sprint_en_curso (0.19s)
+=== RUN   TestBDD_HU16_ListadoDeSprintsFinalizados
+--- PASS: TestBDD_HU16_ListadoDeSprintsFinalizados (0.18s)
+=== RUN   TestBDD_HU16_SinSprintsFinalizados
+--- PASS: TestBDD_HU16_SinSprintsFinalizados (0.18s)
+=== RUN   TestBDD_HU16_DetalleDeUnSprint
+--- PASS: TestBDD_HU16_DetalleDeUnSprint (0.24s)
+=== RUN   TestBDD_HU16_SoloLectura
+--- PASS: TestBDD_HU16_SoloLectura (0.29s)
+=== RUN   TestBDD_HU05a_AbrirRonda
+--- PASS: TestBDD_HU05a_AbrirRonda (0.14s)
+=== RUN   TestBDD_HU05a_HistoriaConRondaAbierta
+--- PASS: TestBDD_HU05a_HistoriaConRondaAbierta (0.20s)
+=== RUN   TestBDD_HU05a_VotoOculto
+--- PASS: TestBDD_HU05a_VotoOculto (0.17s)
+=== RUN   TestBDD_HU05a_CambioDeVoto
+--- PASS: TestBDD_HU05a_CambioDeVoto (0.21s)
+=== RUN   TestBDD_HU05a_VotosOcultos
+--- PASS: TestBDD_HU05a_VotosOcultos (0.22s)
+=== RUN   TestBDD_HU05a_RondaCerrada
+--- PASS: TestBDD_HU05a_RondaCerrada (0.15s)
+=== RUN   TestBDD_HU05a_SinIdentificarme
+--- PASS: TestBDD_HU05a_SinIdentificarme (0.15s)
+=== RUN   TestBDD_HU05a_PantallaVacia
+--- PASS: TestBDD_HU05a_PantallaVacia (0.12s)
+=== RUN   TestBDD_HU18_NuevaRondaTrasDivergencia
+--- PASS: TestBDD_HU18_NuevaRondaTrasDivergencia (0.24s)
+=== RUN   TestBDD_HU18_VotosOcultosEnLaNuevaRonda
+--- PASS: TestBDD_HU18_VotosOcultosEnLaNuevaRonda (0.28s)
+=== RUN   TestBDD_HU18_RegistrarEstimacionAcordada
+--- PASS: TestBDD_HU18_RegistrarEstimacionAcordada (0.37s)
+=== RUN   TestBDD_HU18_ConsensoDirecto
+--- PASS: TestBDD_HU18_ConsensoDirecto (0.24s)
+=== RUN   TestBDD_HU18_RegistrarDespuesDeDebatir
+--- PASS: TestBDD_HU18_RegistrarDespuesDeDebatir (0.25s)
+=== RUN   TestBDD_HU18_ValorFueraDeLaSerie
+--- PASS: TestBDD_HU18_ValorFueraDeLaSerie (0.26s)
+=== RUN   TestBDD_HU18_RondaSinCerrar
+--- PASS: TestBDD_HU18_RondaSinCerrar (0.26s)
+=== RUN   TestBDD_HU18_NuevaRondaConRondaAbierta
+--- PASS: TestBDD_HU18_NuevaRondaConRondaAbierta (0.29s)
+=== RUN   TestBDD_HU18_RondaQueYaNoEsLaUltima
+--- PASS: TestBDD_HU18_RondaQueYaNoEsLaUltima (0.26s)
+=== RUN   TestBDD_HU18_HistoriaDeUnSprintFinalizado
+--- PASS: TestBDD_HU18_HistoriaDeUnSprintFinalizado (0.26s)
+=== RUN   TestBDD_HU18_RondaInexistente
+--- PASS: TestBDD_HU18_RondaInexistente (0.29s)
+=== RUN   TestBDD_HU05b_RevelacionDeVotos
+--- PASS: TestBDD_HU05b_RevelacionDeVotos (0.32s)
+=== RUN   TestBDD_HU05b_AlertaDeDivergencia
+--- PASS: TestBDD_HU05b_AlertaDeDivergencia (0.34s)
+=== RUN   TestBDD_HU05b_SinDivergenciaEnElLimite
+--- PASS: TestBDD_HU05b_SinDivergenciaEnElLimite (0.20s)
+=== RUN   TestBDD_HU05b_DivergenciaDeTresNiveles
+--- PASS: TestBDD_HU05b_DivergenciaDeTresNiveles (0.27s)
+=== RUN   TestBDD_HU05b_CerrarSinQueTodosVoten
+--- PASS: TestBDD_HU05b_CerrarSinQueTodosVoten (0.23s)
+=== RUN   TestBDD_HU05b_RondaSinVotos
+--- PASS: TestBDD_HU05b_RondaSinVotos (0.24s)
+=== RUN   TestBDD_HU05b_VotosParaTodos
+--- PASS: TestBDD_HU05b_VotosParaTodos (0.23s)
+=== RUN   TestBDD_HU05b_VotarEnRondaCerrada
+--- PASS: TestBDD_HU05b_VotarEnRondaCerrada (0.30s)
+=== RUN   TestBDD_HU05b_CerrarDosVeces
+--- PASS: TestBDD_HU05b_CerrarDosVeces (0.27s)
+=== RUN   TestBDD_HU05b_RondaInexistente
+--- PASS: TestBDD_HU05b_RondaInexistente (0.28s)
+=== RUN   TestBDD_HU05b_SinIdentificarme
+--- PASS: TestBDD_HU05b_SinIdentificarme (0.19s)
+=== RUN   TestEscenarioEstado_ProyectoEnCurso
+--- PASS: TestEscenarioEstado_ProyectoEnCurso (0.15s)
+=== RUN   TestEscenarioEstado_ProyectoNoIniciado
+--- PASS: TestEscenarioEstado_ProyectoNoIniciado (0.11s)
+=== RUN   TestEscenarioEstado_ProyectoFinalizado
+--- PASS: TestEscenarioEstado_ProyectoFinalizado (0.14s)
+=== RUN   TestEscenarioEstado_SinProyectoSeleccionado
+--- PASS: TestEscenarioEstado_SinProyectoSeleccionado (0.07s)
+=== RUN   TestEscenarioModificarProyecto_ModificacionExitosa
+--- PASS: TestEscenarioModificarProyecto_ModificacionExitosa (0.13s)
+=== RUN   TestEscenarioModificarProyecto_NombreVisibleEnEstructuraComun
+--- PASS: TestEscenarioModificarProyecto_NombreVisibleEnEstructuraComun (0.16s)
+=== RUN   TestEscenarioModificarProyecto_AgregarIntegrante
+--- PASS: TestEscenarioModificarProyecto_AgregarIntegrante (0.17s)
+=== RUN   TestEscenarioModificarProyecto_QuitarIntegranteConHoras
+--- PASS: TestEscenarioModificarProyecto_QuitarIntegranteConHoras (0.18s)
+=== RUN   TestEscenarioModificarProyecto_FechasQueDejanSprintsFuera
+--- PASS: TestEscenarioModificarProyecto_FechasQueDejanSprintsFuera (0.16s)
+=== RUN   TestEscenarioModificarProyecto_ErrorAlGuardar
+--- PASS: TestEscenarioModificarProyecto_ErrorAlGuardar (0.14s)
+=== RUN   TestWebProjects_CreateValidProject_BDD
+--- PASS: TestWebProjects_CreateValidProject_BDD (0.09s)
+=== RUN   TestWebProjects_EqualDatesAreRejected_BDD
+--- PASS: TestWebProjects_EqualDatesAreRejected_BDD (0.06s)
+=== RUN   TestWebProjects_NoAvailableMembersPreventsCreation_BDD
+--- PASS: TestWebProjects_NoAvailableMembersPreventsCreation_BDD (0.06s)
+=== RUN   TestWebProjects_EmptyNameIsRejected_BDD
+--- PASS: TestWebProjects_EmptyNameIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_EarlierEndDateIsRejected_BDD
+--- PASS: TestWebProjects_EarlierEndDateIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_MissingDateIsRejected_BDD
+--- PASS: TestWebProjects_MissingDateIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_NoSelectedMembersIsRejected_BDD
+--- PASS: TestWebProjects_NoSelectedMembersIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_InvalidDateFormatIsRejected_BDD
+--- PASS: TestWebProjects_InvalidDateFormatIsRejected_BDD (0.06s)
+=== RUN   TestWebProjects_InvalidMemberIsRejected_BDD
+--- PASS: TestWebProjects_InvalidMemberIsRejected_BDD (0.07s)
+=== RUN   TestWebProjects_SaveFailureShowsGenericError_BDD
+--- PASS: TestWebProjects_SaveFailureShowsGenericError_BDD (0.06s)
+=== RUN   TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD
+--- PASS: TestWebProjects_ListShowsProjectDetailsNewestFirst_BDD (0.09s)
+=== RUN   TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD
+--- PASS: TestWebProjects_EmptyListShowsMessageAndCreationForm_BDD (0.06s)
+=== RUN   TestWebQualityBDD_PorcentajeDeAvance
+--- PASS: TestWebQualityBDD_PorcentajeDeAvance (0.13s)
+=== RUN   TestWebQualityBDD_DefectosDetectadosYResueltos
+--- PASS: TestWebQualityBDD_DefectosDetectadosYResueltos (0.15s)
+=== RUN   TestWebQualityBDD_ListaDeSprintsYSprintPorDefecto
+--- PASS: TestWebQualityBDD_ListaDeSprintsYSprintPorDefecto (0.15s)
+=== RUN   TestWebQualityBDD_SinSprintsFinalizados
+--- PASS: TestWebQualityBDD_SinSprintsFinalizados (0.08s)
+=== RUN   TestHU09BDD_ExportacionExitosaDeUnSprintFinalizado
+--- PASS: TestHU09BDD_ExportacionExitosaDeUnSprintFinalizado (0.31s)
+=== RUN   TestHU09BDD_HistoriasPlanificadasYCompletadas
+--- PASS: TestHU09BDD_HistoriasPlanificadasYCompletadas (0.31s)
+=== RUN   TestHU09BDD_MetricasDelSprint
+--- PASS: TestHU09BDD_MetricasDelSprint (0.28s)
+=== RUN   TestHU09BDD_AdvertenciaAlExportarUnSprintEnCurso
+--- PASS: TestHU09BDD_AdvertenciaAlExportarUnSprintEnCurso (0.24s)
+=== RUN   TestHU09BDD_SinSprints
+--- PASS: TestHU09BDD_SinSprints (0.10s)
+=== RUN   TestHU09BDD_AdvertenciaAlExportarUnProyectoConUnSprintEnCurso
+    web_report_bdd_test.go:373: se esperaba la advertencia sin PDF: estado 404, Content-Type "text/html; charset=utf-8"
+--- FAIL: TestHU09BDD_AdvertenciaAlExportarUnProyectoConUnSprintEnCurso (0.24s)
+=== RUN   TestHU09BDD_AvanceYSprintsDelProyecto
+    web_report_bdd_test.go:388: se esperaba un PDF: estado 404, Content-Type "text/html; charset=utf-8"
+--- FAIL: TestHU09BDD_AvanceYSprintsDelProyecto (0.22s)
+=== RUN   TestHU09BDD_ProyectoSinSprintsNiHistorias
+    web_report_bdd_test.go:411: se esperaba un PDF: estado 404, Content-Type "text/html; charset=utf-8"
+--- FAIL: TestHU09BDD_ProyectoSinSprintsNiHistorias (0.09s)
+=== RUN   TestHU26_ContextoValidoSeConserva
+--- PASS: TestHU26_ContextoValidoSeConserva (0.08s)
+=== RUN   TestHU26_CookieProyectoModificada
+--- PASS: TestHU26_CookieProyectoModificada (0.08s)
+=== RUN   TestHU26_CookieIntegranteModificada
+--- PASS: TestHU26_CookieIntegranteModificada (0.09s)
+=== RUN   TestHU26_ValorCopiadoEntreCookies
+--- PASS: TestHU26_ValorCopiadoEntreCookies (0.09s)
+=== RUN   TestHU26_CookiesSinFirmaSeDescartan
+--- PASS: TestHU26_CookiesSinFirmaSeDescartan (0.08s)
+=== RUN   TestWebSprintsBDD_CreateWithSelectedStories
+--- PASS: TestWebSprintsBDD_CreateWithSelectedStories (0.00s)
+=== RUN   TestWebSprintsBDD_CreateWithoutStoriesShowsWarning
+--- PASS: TestWebSprintsBDD_CreateWithoutStoriesShowsWarning (0.00s)
+=== RUN   TestWebSprintsBDD_ExistingActiveSprintBlocksAnother
+--- PASS: TestWebSprintsBDD_ExistingActiveSprintBlocksAnother (0.00s)
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vac├¡o
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inv├ílido
+=== RUN   TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado
+--- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors (0.03s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vac├¡o (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inv├ílido (0.00s)
+    --- PASS: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado (0.00s)
+=== RUN   TestWebSprintsBDD_ViewActiveSprint
+--- PASS: TestWebSprintsBDD_ViewActiveSprint (0.00s)
+=== RUN   TestWebSprintsBDD_NoActiveSprintShowsCreationForm
+--- PASS: TestWebSprintsBDD_NoActiveSprintShowsCreationForm (0.00s)
+=== RUN   TestWebSprintsBDD_AddAvailableStory
+--- PASS: TestWebSprintsBDD_AddAvailableStory (0.18s)
+=== RUN   TestWebSprintsBDD_AddWithoutSelection
+--- PASS: TestWebSprintsBDD_AddWithoutSelection (0.16s)
+=== RUN   TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog
+--- PASS: TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog (0.19s)
+=== RUN   TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission
+--- PASS: TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission (0.20s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	27.861s
+FAIL

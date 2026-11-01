@@ -98,6 +98,11 @@ type fakeStore struct {
 	data  Data
 	err   error
 	calls int
+
+	// Reporte del proyecto (T038).
+	project      ProjectData
+	projectErr   error
+	projectCalls int
 }
 
 func (s *fakeStore) LoadSprintReport(_ context.Context, _, _ int64) (Data, error) {
@@ -105,25 +110,40 @@ func (s *fakeStore) LoadSprintReport(_ context.Context, _, _ int64) (Data, error
 	return s.data, s.err
 }
 
+func (s *fakeStore) LoadProjectReport(context.Context, int64) (ProjectData, error) {
+	s.projectCalls++
+	return s.project, s.projectErr
+}
+
+// fakeMetrics devuelve byID[sprintID] si está cargado y, si no, result.
 type fakeMetrics struct {
 	result metrics.SprintMetrics
+	byID   map[int64]metrics.SprintMetrics
 	err    error
 	calls  int
 }
 
-func (m *fakeMetrics) CalculateMetrics(int64) (metrics.SprintMetrics, error) {
+func (m *fakeMetrics) CalculateMetrics(sprintID int64) (metrics.SprintMetrics, error) {
 	m.calls++
+	if r, ok := m.byID[sprintID]; ok {
+		return r, m.err
+	}
 	return m.result, m.err
 }
 
+// fakeQuality devuelve byID[sprintID] si está cargado y, si no, result.
 type fakeQuality struct {
 	result metrics.SprintQuality
+	byID   map[int64]metrics.SprintQuality
 	err    error
 	calls  int
 }
 
-func (q *fakeQuality) SprintQuality(context.Context, int64, int64) (metrics.SprintQuality, error) {
+func (q *fakeQuality) SprintQuality(_ context.Context, _, sprintID int64) (metrics.SprintQuality, error) {
 	q.calls++
+	if r, ok := q.byID[sprintID]; ok {
+		return r, q.err
+	}
 	return q.result, q.err
 }
 
