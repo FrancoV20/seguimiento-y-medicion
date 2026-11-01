@@ -171,13 +171,13 @@ pasan sin PostgreSQL.
 
 ### Implementación (GREEN)
 
-- [ ] T018 Crear `src/web/dashboard_chart.go` con las constantes, `dashboardBarHeights`, `dashboardBar`,
+- [x] T018 Crear `src/web/dashboard_chart.go` con las constantes, `dashboardBarHeights`, `dashboardBar`,
   `dashboardChart` y `newDashboardChart`, con las reglas de `data-model.md` (máximo 0 → todo 0 sin dividir; mitad
   hacia arriba; un valor mayor que 0 mide al menos 1).
-- [ ] T019 Crear `src/web/dashboard_view.go` con los textos de la tabla de `data-model.md`, `dashboardDecimalText`,
+- [x] T019 Crear `src/web/dashboard_view.go` con los textos de la tabla de `data-model.md`, `dashboardDecimalText`,
   `dashboardOpenDefectsText`, `dashboardView`,
   `dashboardVelocityRow` y `buildDashboardView` (usa `metrics.SummarizeVelocity`).
-- [ ] T020 Ejecutar T015 y T016 en verde.
+- [x] T020 Ejecutar T015 y T016 en verde.
 
 **Punto de control**: con datos en memoria se arman los cinco bloques y los dos gráficos.
 
@@ -237,22 +237,22 @@ los proyectos de los escenarios vacíos y con una falla.
 
 ### Implementación (GREEN)
 
-- [ ] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation MetricsSource)` en `src/web/dashboard_handlers.go`:
+- [x] T025 Crear `RegisterDashboard(s, catalog, board, quality, deviation MetricsSource)` en `src/web/dashboard_handlers.go`:
   - si falta algún argumento, devolver un error sin registrar;
   - `Section{Name: TitleDashboard, Path: "/dashboard", RequiresProject: true}` y `Routes{"GET /dashboard": …}`;
   - los pasos 1 a 6 de `data-model.md`: cualquier error va a `Fail` antes de escribir la respuesta.
-- [ ] T026 Crear `src/web/templates/dashboard.html`:
+- [x] T026 Crear `src/web/templates/dashboard.html`:
   - el mensaje único si `NoData`;
   - si no, los cinco bloques en orden, con `<svg role="img" aria-label="…" viewBox="…">` y un `<rect>` y un `<text>`
     por barra, cada gráfico con su `<table>`;
   - sin finalizados, el mensaje en lugar de velocidad y desviación;
   - sin `<script>` ni formularios.
-- [ ] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-16,
+- [x] T027 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-16,
   `RegisterPastSprints`) el bloque que llama a `web.RegisterDashboard` con `web.NewPostgreSQLDashboardCatalog(database)`,
   `web.NewPostgreSQLBoardCatalog(database)`, `metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database))`
   y `web.NewHU07MetricsSource(database)`. Si falla, cerrar `ln` y `database`, como los
   otros bloques.
-- [ ] T028 Ejecutar T021–T023 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T028 Ejecutar T021–T023 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master ve la salud del proyecto en una pantalla.
 
