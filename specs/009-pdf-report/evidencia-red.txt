@@ -43,3 +43,20 @@ src\report\document_test.go:60:82: undefined: SprintReport
 src\report\document_test.go:16:12: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/report [build failed]
 FAIL
+
+## Almacenamiento (T020-T023)
+
+go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
+En línea: 1 Carácter: 1
++ go test -count=1 -p 1 -v ./src/report/ 2>&1 | Out-File -Append -Encod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+src\report\postgres_store_integration_test.go:15:34: undefined: PostgreSQLStore
+src\report\postgres_store_integration_test.go:43:11: undefined: NewPostgreSQLStore
+src\report\postgres_store_integration_test.go:111:24: undefined: NewPostgreSQLStore
+src\report\postgres_store_integration_test.go:136:11: undefined: NewPostgreSQLStore
+src\report\postgres_store_integration_test.go:169:24: undefined: NewPostgreSQLStore
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/report [build failed]
+FAIL

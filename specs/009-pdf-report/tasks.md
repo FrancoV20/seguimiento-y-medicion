@@ -164,7 +164,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T020 Crear los datos de prueba en `src/report/fixtures_test.go` (los usan T021, T022 y T039): integrantes
+- [x] T020 Crear los datos de prueba en `src/report/fixtures_test.go` (los usan T021, T022 y T039): integrantes
   «Ana», «Beto» y «Caro»;
   - «Alfa» (18/08/2026 al 30/11/2026, integrantes Ana y Beto) con los Sprints 1, 2 y 3, las historias, los registros
     de esfuerzo y los defectos de "Datos de ejemplo" de la spec (Sprints 1 y 2 cerrados como los deja HU-15: registro
@@ -178,7 +178,7 @@ Formato: `[ID] [P] [E#] descripción`
     1 hora de Caro (que no está en `project_members` de «Delta») y un defecto "Abierto".
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T021 [P] [E2, E3, E4, E6, E9, E12] Escribir en `src/report/postgres_store_integration_test.go`:
+- [x] T021 [P] [E2, E3, E4, E6, E9, E12] Escribir en `src/report/postgres_store_integration_test.go`:
   - `TestPostgresReportStore_Finalizado`: Sprint 2 de «Alfa» → encabezado; 4 historias en orden de creación con
     estado final, Story Points del registro y horas estimadas (1000, 600, `nil`, 1200) y reales (1100, 600, 400,
     300); integrantes Ana 1700 y Beto 700 en ese orden; los 2 defectos con historia y "Resuelto en" 2 y 0. Sprint 1 de
@@ -189,11 +189,11 @@ Formato: `[ID] [P] [E#] descripción`
     horas, Ana 200 y el defecto "El PDF sale en blanco"; las horas de Ana en «Alta» y en el Sprint 2 no cuentan;
   - `TestPostgresReportStore_OtroProyecto`: el Sprint 1 de «Delta» pedido con «Alfa» y el identificador 2147483647 →
     `ErrSprintNotFound`; nada de «Delta» aparece en los datos de los Sprints de «Alfa».
-- [ ] T022 [P] [E2, E5, E6] Escribir `TestReport_CoherenciaConHU07YHU10` en el mismo archivo: con los servicios reales
+- [x] T022 [P] [E2, E5, E6] Escribir `TestReport_CoherenciaConHU07YHU10` en el mismo archivo: con los servicios reales
   de HU-07 y HU-10 y el Sprint 2 de «Alfa», `Build` da velocidad 10 igual a `PointsCompleted`, desviación "6.25",
   aviso "Cálculo parcial: basado en 2 de 3 historias", 4 historias igual a `StoriesPlanned`, "75.00", 18 y 10, y 2
   detectados y 1 resuelto. La prueba borra las filas de `sprint_metrics` que escribe HU-07.
-- [ ] T023 Ejecutar T021 y T022, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
+- [x] T023 Ejecutar T021 y T022, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
   "Almacenamiento".
 
 ### Implementación (GREEN)
