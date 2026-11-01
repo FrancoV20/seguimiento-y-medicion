@@ -372,19 +372,19 @@ el puerto, el servicio y la advertencia.
 
 ### Implementación (GREEN)
 
-- [ ] T043 Crear `src/report/project_model.go` (`StoryCounts`, `ProjectSprint`, `OpenDefect`, `ProjectData`,
+- [x] T043 Crear `src/report/project_model.go` (`StoryCounts`, `ProjectSprint`, `OpenDefect`, `ProjectData`,
   `ProjectSprintRow`, `ProjectReport`), agregar `LoadProjectReport` al puerto en `src/report/store.go`, sumar a
   `src/report/texts.go` los textos del proyecto de `data-model.md` y crear
   `src/report/project_document.go` con `RenderProject` (columnas de research.md §18).
-- [ ] T044 Crear `src/report/project_service.go` con `BuildProject` (pasos 1 a 6 de `data-model.md`, con las reglas de
+- [x] T044 Crear `src/report/project_service.go` con `BuildProject` (pasos 1 a 6 de `data-model.md`, con las reglas de
   HU-12 y `metrics.SummarizeVelocity` de HU-08) y `ProjectPDF`, e implementar `LoadProjectReport` en
   `src/report/postgres_store.go` con las siete consultas de `data-model.md` en una transacción `ReadOnly` +
   `REPEATABLE READ` (sin fila de proyecto → `ErrProjectNotFound`).
-- [ ] T045 En la web: agregar `ProjectPDF` a `ReportGenerator` en `src/web/report_catalog.go` y a los dobles de T029;
+- [x] T045 En la web: agregar `ProjectPDF` a `ReportGenerator` en `src/web/report_catalog.go` y a los dobles de T029;
   sumar a `src/web/report_handlers.go` la ruta `GET /reportes/proyecto/pdf` con los pasos 1 a 4 de `data-model.md`
   (advertencia con `msgReportProjectActiveWarning`, misma plantilla `report_warning.html`, encabezados con
   `reportProjectFileName`). `main.go` no cambia: `*report.Service` ya cumple la interfaz completa.
-- [ ] T046 Ejecutar T037–T041 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T046 Ejecutar T037–T041 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master descarga el informe del proyecto en PDF (DoD de la entrega final).
 

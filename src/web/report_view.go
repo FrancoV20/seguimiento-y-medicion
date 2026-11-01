@@ -18,8 +18,9 @@ const (
 	ReportStatusActive       = "En curso"
 	ReportStatusFinished     = "Finalizado"
 
-	msgReportActiveWarning = "El Sprint %d sigue en curso: el reporte puede estar incompleto"
-	msgReportSprint        = "Sprint %d"
+	msgReportActiveWarning        = "El Sprint %d sigue en curso: el reporte puede estar incompleto"
+	msgReportProjectActiveWarning = "El proyecto tiene un Sprint en curso (Sprint %d): el reporte puede estar incompleto"
+	msgReportSprint               = "Sprint %d"
 
 	pathReports       = "/reportes"
 	reportProjectPath = "/reportes/proyecto/pdf"
@@ -93,6 +94,15 @@ func sprintWarningData(s ReportSprintOption) reportWarningData {
 	return reportWarningData{
 		Message:     fmt.Sprintf(msgReportActiveWarning, s.Number),
 		GenerateURL: reportConfirmPath(s.ID),
+		CancelURL:   pathReports,
+	}
+}
+
+// projectWarningData arma la advertencia del reporte del proyecto con un Sprint en curso.
+func projectWarningData(activeNumber int) reportWarningData {
+	return reportWarningData{
+		Message:     fmt.Sprintf(msgReportProjectActiveWarning, activeNumber),
+		GenerateURL: reportProjectPath + "?" + reportConfirmKey + "=" + reportConfirmYes,
 		CancelURL:   pathReports,
 	}
 }

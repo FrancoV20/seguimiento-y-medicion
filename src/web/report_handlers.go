@@ -26,6 +26,7 @@ func RegisterReports(s *Server, catalog ReportCatalog, generator ReportGenerator
 		Routes{
 			"GET " + pathReports:                       http.HandlerFunc(h.list),
 			"GET " + pathReports + "/sprints/{id}/pdf": http.HandlerFunc(h.sprintPDF),
+			"GET " + reportProjectPath:                 http.HandlerFunc(h.projectPDF),
 		},
 	)
 }
@@ -73,6 +74,33 @@ func (h *reportHandlers) sprintPDF(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writePDF(w, reportFileName(sprint.Number), b)
+}
+
+// projectPDF atiende GET /reportes/proyecto/pdf con el proyecto del contexto. Si hay un Sprint en
+// curso y no viene confirmar=si, muestra la advertencia. No escribe nada hasta tener el PDF completo.
+func (h *reportHandlers) projectPDF(w http.ResponseWriter, r *http.Request) {
+	projectID := projectIDFrom(r)
+	sprints, err := h.catalog.ReportSprints(r.Context(), projectID)
+	if err != nil {
+		h.rd.Fail(w, r, err)
+		return
+	}
+	for _, s := range sprints {
+		if s.Active && !reportConfirmed(r) {
+			h.rd.Page(w, r, "report_warning.html", PageData{Title: TitleReports, Data: projectWarningData(s.Number)})
+			return
+		}
+	}
+	b, err := h.generator.ProjectPDF(r.Context(), projectID)
+	if errors.Is(err, report.ErrProjectNotFound) {
+		h.rd.Fail(w, r, NotFound(err))
+		return
+	}
+	if err != nil {
+		h.rd.Fail(w, r, err)
+		return
+	}
+	writePDF(w, reportProjectFileName(projectID), b)
 }
 
 // writePDF envía el PDF ya armado como descarga.

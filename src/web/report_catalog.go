@@ -24,4 +24,5 @@ type ReportCatalog interface {
 // ReportGenerator arma los PDF; lo implementa *report.Service.
 type ReportGenerator interface {
 	SprintPDF(ctx context.Context, projectID, sprintID int64) ([]byte, error)
+	ProjectPDF(ctx context.Context, projectID int64) ([]byte, error)
 }

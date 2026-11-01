@@ -177,3 +177,66 @@ func defectsSoFarText(detected int) string {
 }
 
 func footerText(page, total int) string { return fmt.Sprintf(fmtFooter, page, total) }
+
+// Textos del PDF del proyecto (HU-09, T043).
+const (
+	titleProjectReport = "Reporte del proyecto"
+	msgProjectPartial  = "Reporte parcial: hay un Sprint en curso"
+	fmtMembers         = "Integrantes: %s"
+	msgNoMembers       = "Sin integrantes"
+
+	headingProgress = "Avance"
+	headingSprints  = "Sprints"
+
+	colStories     = "Historias"
+	colSprint      = "Sprint"
+	colVelocity    = "Velocidad"
+	colDeviation   = "Desviación"
+	colDefects     = "Defectos"
+	colDetectedIn  = "Detectado en"
+	statusPending  = "Pendiente"
+	statusInSprint = "En Sprint"
+	statusProgress = "En progreso"
+
+	msgActiveRow       = "En curso: se calcula al cerrar el Sprint"
+	fmtRatio           = "%d de %d"
+	msgPartialSuffix   = " (cálculo parcial)"
+	msgNoSprints       = "Aún no hay Sprints"
+	fmtTotalVelocity   = "Velocidad acumulada: %d Story Points"
+	fmtAverageVelocity = "Promedio: %s Story Points por Sprint"
+	msgAverageNA       = "Promedio: No disponible"
+	msgNoProjectDefect = "No se registraron defectos en este proyecto"
+	msgNoOpenDefects   = "No hay defectos abiertos"
+	fmtDetectedIn      = "Sprint %d"
+)
+
+// membersText es "Integrantes: Ana, Beto" o "Integrantes: Sin integrantes".
+func membersText(names []string) string {
+	if len(names) == 0 {
+		return fmt.Sprintf(fmtMembers, msgNoMembers)
+	}
+	return fmt.Sprintf(fmtMembers, strings.Join(names, ", "))
+}
+
+// averageVelocityText es el promedio de HU-08 ("6.50") con coma decimal.
+func averageVelocityText(average string) string {
+	if average == notAvailable {
+		return msgAverageNA
+	}
+	return fmt.Sprintf(fmtAverageVelocity, decimalText(average))
+}
+
+// sprintDefectsCell es la celda de defectos de un Sprint: "2 detectados y 1 resuelto".
+func sprintDefectsCell(detected, resolved int) string {
+	return plural(detected, "1 detectado", "%d detectados") + " y " + resolvedText(resolved)
+}
+
+// projectDefectsText es el resumen de defectos del proyecto.
+func projectDefectsText(open, resolved int) string {
+	total := open + resolved
+	if total == 0 {
+		return msgNoProjectDefect
+	}
+	return plural(total, "1 defecto registrado", "%d defectos registrados") + ": " +
+		plural(open, "1 abierto", "%d abiertos") + " y " + resolvedText(resolved)
+}

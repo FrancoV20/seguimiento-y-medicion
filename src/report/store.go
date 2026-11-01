@@ -6,4 +6,6 @@ import "context"
 type Store interface {
 	// LoadSprintReport devuelve ErrSprintNotFound si el Sprint no existe en el proyecto.
 	LoadSprintReport(ctx context.Context, projectID, sprintID int64) (Data, error)
+	// LoadProjectReport devuelve ErrProjectNotFound si el proyecto no existe.
+	LoadProjectReport(ctx context.Context, projectID int64) (ProjectData, error)
 }
