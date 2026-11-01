@@ -51,7 +51,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E5, E6] Escribir `TestSummarizeVelocity` como prueba de tabla en
+- [x] T005 [P] [E5, E6] Escribir `TestSummarizeVelocity` como prueba de tabla en
   `src/metrics/velocity_summary_test.go`, con los casos de `data-model.md`:
   - `[]` → 0 y "No disponible";
   - `[5]` → 5 y "5.00";
@@ -61,7 +61,7 @@ Formato: `[ID] [P] [E#] descripción`
   - `[2, 0, 0]` → 2 y "0.67";
   - `[0, 0]` → 0 y "0.00";
   - `SprintCount` igual a la cantidad de valores.
-- [ ] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
+- [x] T006 Ejecutar T005, confirmar que falla porque el código no existe y guardar la salida en `evidencia-red.txt`,
   sección "Dominio de velocidad".
 
 ### Implementación (GREEN)
