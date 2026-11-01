@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-23
 
-**Status**: Draft
+**Status**: Implementada (pendiente de integración a `main`)
 
 **Input**: User description: "HU-25 / Interfaz Web de Métricas del Sprint (presenta HU-07): Como Scrum Master, quiero ver la velocidad y la desviación de esfuerzo de un Sprint en una pantalla, para evaluar la salud del proyecto. Depende de HU-07, HU-15, HU-17, HU-20a y HU-20b."
 
@@ -212,4 +212,4 @@ Los textos propios de HU-25 son una propuesta del equipo y se definen en un solo
 | (HU-20a) POST no soportado | FR-014, SC-006 | T035 | | `metrics_handlers.go` (solo `GET`), registrada en `src/cmd/server/main.go` |
 
 Trazabilidad revisada en T039 (31/10/2026); el detalle por requisito y criterio, con los nombres de las pruebas, está en
-`tasks.md`.
+`tasks.md`.

@@ -69,6 +69,27 @@ Preparación: un proyecto con al menos un Sprint cerrado y, para el aviso, otro 
     - sin proyecto elegido (ventana privada), `/metricas` redirige a elegir el proyecto;
     - un Sprint Goal con `<script>` se ve como texto.
 
+### Resultado de la verificación manual
+
+Recorrido hecho el 01/11/2026 sobre el commit `8e564d2`, con Chromium real y los datos cargados desde las pantallas
+de la aplicación. El detalle de cada paso (códigos HTTP, textos observados y conteos de la base) está en
+[evidencia-manual.txt](evidencia-manual.txt).
+
+| Paso | Resultado observado | Estado |
+|---|---|---|
+| 7 Sprint 1 cerrado | "Sprint 1 · Primer incremento · Del 01/09/2026 al 14/09/2026", "8 Story Points", "+20,00 %" con la fórmula, sin alerta | OK |
+| 8 Sin horas estimadas | Sprint 2 elegido por defecto: "No disponible", "2 Story Points", "Cálculo parcial: basado en 0 de 1 historias" | OK |
+| 9 Elegir otro Sprint | `/metricas?sprint=1`: "8 Story Points" y "+20,00 %"; "Sprint 1" marcado en la lista | OK |
+| Velocidad cero (escenario 4) | Sprint 3 cerrado sin historias Hecho: "0 Story Points" y "No disponible" | OK |
+| 10 Sprint en curso | "El Sprint 4 sigue en curso; sus métricas se calculan al cerrarlo"; la lista muestra solo los Sprints 3, 2 y 1 | OK |
+| 11 Sin Sprints finalizados | "Aún no hay Sprints finalizados"; con un Sprint activo, además el aviso "El Sprint 1 sigue en curso…" | OK |
+| 11 `sprint` inválido, activo o ajeno | `abc`, el activo, el de otro proyecto, `999`, `-1` y `01`: 200 con el Sprint 3 (el más reciente) | OK |
+| 11 Sin proyecto elegido | 303 a `/contexto/proyecto?volver_a=%2Fmetricas`; al elegir, vuelve a `/metricas` | OK |
+| 11 Sprint Goal con `<script>` | Se ve como texto, escapado en el HTML, sin diálogo | OK |
+| `POST /metricas` | 405 "Acción no permitida"; conteos de la base iguales antes y después (sin filas en `sprint_metrics`) | OK |
+| Sin JavaScript / sin internet | Métricas visibles con JavaScript desactivado; ningún recurso externo | OK |
+| Base detenida | 503 "El servicio no está disponible temporalmente", sin métricas ni texto técnico; al volver la base, 200 sin reiniciar | OK |
+
 Si alguna de esas pantallas no está disponible, cargar los mismos datos por SQL respetando el esquema de
 `data-model.md` y cerrar el Sprint desde `/cierre`.
 
@@ -151,4 +172,4 @@ Revisado `src/web/metrics_handlers.go`, `src/web/metrics_view.go`, `src/web/metr
   (Sprint Goal) se escriben con `html/template`, que los escapa (T034).
 - El parámetro `sprint` se valida con `parseID` de HU-20b y solo se usa para buscar en la lista del proyecto
   activo; nunca llega a una consulta. El proyecto sale siempre del contexto del servidor.
-- La pantalla no usa JavaScript ni recursos externos y solo acepta `GET` (T035).
+- La pantalla no usa JavaScript ni recursos externos y solo acepta `GET` (T035).

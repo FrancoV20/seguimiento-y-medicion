@@ -272,7 +272,9 @@ muestra el finalizado más reciente.
    Positiva (`+20,00 %`) significa que se trabajó más de lo estimado; negativa (`-8,50 %`), menos; `0,00 %`, lo
    estimado. Las horas estimadas salen de **Estimaciones** y las reales del **Registro de esfuerzo**.
 3. **Cálculo parcial**: si alguna historia Hecho no tiene horas estimadas o reales, la desviación se calcula con las
-   que sí tienen y aparece la alerta **Cálculo parcial: basado en X de Y historias**.
+   que sí tienen y aparece la alerta **Cálculo parcial: basado en X de Y historias**. Y cuenta solo las historias
+   que quedaron en el Sprint al cerrarlo (las Hecho): el cierre les quita el Sprint a las que no terminaron y las
+   devuelve al Backlog, así que esas no aparecen ni en X ni en Y.
 
 ### Mensajes
 
