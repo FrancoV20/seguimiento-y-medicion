@@ -1,0 +1,28 @@
+{{define "content"}}
+<h1>Reportes</h1>
+<p>Exportá en PDF el reporte de un Sprint o el del proyecto activo.</p>
+{{with .Data}}
+<p><a class="report-project" href="{{.ProjectURL}}">Exportar reporte del proyecto</a></p>
+
+<h2>Sprints</h2>
+{{if .NoSprints}}
+<p class="muted" role="status">{{.NoSprints}}</p>
+{{else}}
+<table class="report-sprints">
+  <thead>
+    <tr><th scope="col">Sprint</th><th scope="col">Objetivo</th><th scope="col">Estado</th><th scope="col">Reporte</th></tr>
+  </thead>
+  <tbody>
+    {{range .Sprints}}
+    <tr>
+      <td>{{.Label}}</td>
+      <td>{{.Goal}}</td>
+      <td>{{.Status}}</td>
+      <td><a href="{{.ExportURL}}">Exportar PDF</a></td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{end}}
+{{end}}
+{{end}}

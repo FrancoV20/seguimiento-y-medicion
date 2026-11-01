@@ -19,6 +19,7 @@ import (
 	"github.com/FrancoV20/seguimiento-y-medicion/src/metrics"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/poker"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/project"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/report"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -212,6 +213,16 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = sprintStore.Close()
 		_ = database.Close()
 		return fail("no se pudo registrar la sección Dashboard")
+	}
+	// Reportes: PDF de un Sprint y del proyecto, armados con HU-07, HU-08, HU-10 y HU-12 (HU-09, T035).
+	reportService := report.NewService(report.NewPostgreSQLStore(database),
+		metrics.NewService(metrics.NewPostgreSQLMetricsStore(database)),
+		metrics.NewQualityService(metrics.NewPostgreSQLQualityStore(database)), nil)
+	if err := web.RegisterReports(srv, web.NewPostgreSQLReportCatalog(database), reportService); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Reportes")
 	}
 
 	if err := srv.Serve(ctx, ln, func() {

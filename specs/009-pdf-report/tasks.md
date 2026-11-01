@@ -279,22 +279,22 @@ valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos
 
 ### Implementación (GREEN)
 
-- [ ] T032 Crear `src/web/report_catalog.go` (`ReportSprintOption`, `ReportCatalog`, `ReportGenerator` con
+- [x] T032 Crear `src/web/report_catalog.go` (`ReportSprintOption`, `ReportCatalog`, `ReportGenerator` con
   `SprintPDF`; `ProjectPDF` se agrega en T045) y `src/web/postgres_report_catalog.go` (`PostgreSQLReportCatalog`,
   `NewPostgreSQLReportCatalog`, las dos consultas de `data-model.md`, errores envueltos con `%w`).
-- [ ] T033 Crear `src/web/report_view.go` con los textos de la tabla de `data-model.md`, `reportPDFPath`,
+- [x] T033 Crear `src/web/report_view.go` con los textos de la tabla de `data-model.md`, `reportPDFPath`,
   `reportConfirmPath`, `reportFileName`, `reportProjectFileName`, `reportConfirmed`, `reportListData` (con
   `ProjectURL`) y `reportWarningData`.
-- [ ] T034 Crear `RegisterReports(s, catalog, generator)` en `src/web/report_handlers.go` (si falta un argumento,
+- [x] T034 Crear `RegisterReports(s, catalog, generator)` en `src/web/report_handlers.go` (si falta un argumento,
   error sin registrar; `Section{Name: TitleReports, Path: "/reportes", RequiresProject: true}`; `GET /reportes` y la
   descarga del Sprint con los pasos 1 a 5 de `data-model.md`, sin escribir nada antes de tener el PDF completo) y las
   plantillas `src/web/templates/reports.html` (con el botón "Exportar reporte del proyecto") y
   `src/web/templates/report_warning.html`, sin `<script>` ni formularios.
-- [ ] T035 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
+- [x] T035 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
   último que esté en `main`) el bloque de research.md §17, que llama a `web.RegisterReports` con
   `web.NewPostgreSQLReportCatalog(database)` y `report.NewService(...)`. Si falla, cerrar `ln` y `database`, como los
   otros bloques.
-- [ ] T036 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo.
+- [xgit add src] T036 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master descarga el PDF de cualquier Sprint del proyecto activo.
 
