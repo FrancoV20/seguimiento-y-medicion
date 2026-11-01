@@ -37,9 +37,9 @@ Formato: `[ID] [P] [E#] descripción`
     `src/web`.
 
   **Si HU-10 no está en `main`, no seguir y avisar al equipo.**
-- [ ] T002 Crear la rama `HU-08` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-08` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-08`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
 - [ ] T004 Coordinar con quien tenga HU-09, HU-10 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`.
 
