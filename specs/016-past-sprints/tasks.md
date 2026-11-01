@@ -212,18 +212,18 @@ velocidad.
 
 ## Fase 5: Cierre
 
-- [ ] T024 REFACTOR:
+- [x] T024 REFACTOR:
   - revisar duplicación entre la lista y el detalle (fechas, etiqueta) y extraer una función local sin cambiar el
     comportamiento;
   - comprobar que ningún archivo de HU-07, HU-15, HU-25 ni de otras historias cambió y que no hay migraciones:
     `git diff --stat main` lista solo archivos nuevos y `main.go`.
-- [ ] T025 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
+- [x] T025 Correr `gofmt -l` sobre los archivos creados (sin salida), `go vet ./...` limpio y
   `go test ./... -p 1 -race` en verde, como en el CI.
-- [ ] T026 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde y `cobertura.txt`
+- [x] T026 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`. Anotar la cobertura de los archivos `past_sprint*` de `src/web`
   (`go tool cover -func`).
 - [ ] T027 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
-- [ ] T028 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
+- [x] T028 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Sprints anteriores".
 - [ ] T029 [P] Avisar:
   - a HU-10 y HU-25, cómo se lee el registro de cierre (completada = 'Hecho');

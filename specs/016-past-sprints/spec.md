@@ -2,7 +2,7 @@
 
 **Rama**: `HU-16`
 **Creada**: 2026-10-28
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-07, HU-15, HU-20a, HU-20b (verificación manual: HU-23 y HU-14 para armar y completar Sprints)
 **Prioridad**: Media (Should Have) · **Valor**: 65 · **Estimación**: 3 SP (sugerida)
@@ -339,17 +339,18 @@ Cuentas:
 
 | Escenario | Requisitos | Éxito | Prueba de pantalla / BDD | Prueba de integración |
 |---|---|---|---|---|
-| 1 Listado | FR-002 | SC-001 | `TestHU16_Listado`, `TestPastSprintView`, BDD "Listado de Sprints finalizados" | `TestPostgresPastSprintCatalog` |
+| 1 Listado | FR-002 | SC-001 | `TestHU16_Listado`, `TestPastSprintView`, `TestBDD_HU16_ListadoDeSprintsFinalizados` | `TestPostgresPastSprintCatalog` |
 | 2 Sprint activo | FR-003 | SC-001 | `TestHU16_Listado` | `TestPostgresPastSprintCatalog` |
-| 3 Detalle | FR-005, FR-006, FR-009 | SC-001, SC-002 | `TestHU16_Detalle`, `TestPastSprintView`, BDD "Detalle de un Sprint" | `TestPostgresPastSprintCatalog`, `TestHU16_VelocidadCoherente` |
-| 4 Todas completadas | FR-006, FR-007 | SC-001, SC-002 | `TestHU16_TodasCompletadas`, `TestPastSprintView` | `TestHU16_VelocidadCoherente` |
-| 5 Ninguna completada | FR-006, FR-007 | SC-001, SC-002 | `TestHU16_NingunaCompletada`, `TestPastSprintView` | `TestPostgresPastSprintCatalog`, `TestHU16_VelocidadCoherente` |
-| (Nota 5) Sprint sin registro | FR-008, FR-009 | SC-001 | `TestHU16_SinRegistro`, `TestPastSprintView` | `TestPostgresPastSprintCatalog` |
-| 6 Sin finalizados | FR-004 | — | `TestHU16_SinSprintsAnteriores`, BDD "Sin Sprints finalizados" | `TestPostgresPastSprintCatalog` |
-| 7 Solo lectura | FR-001, FR-014 | — | `TestHU16_SoloLectura`, BDD "Solo lectura" | — |
+| 3 Detalle | FR-005, FR-006, FR-009 | SC-001, SC-002 | `TestHU16_Detalle`, `TestPastSprintDetailView`, `TestBDD_HU16_DetalleDeUnSprint` | `TestPostgresPastSprintCatalog`, `TestHU16_VelocidadCoherente` |
+| 4 Todas completadas | FR-006, FR-007 | SC-001, SC-002 | `TestHU16_TodasCompletadas`, `TestPastSprintDetailView` | `TestHU16_VelocidadCoherente` |
+| 5 Ninguna completada | FR-006, FR-007 | SC-001, SC-002 | `TestHU16_NingunaCompletada`, `TestPastSprintDetailView` | `TestPostgresPastSprintCatalog`, `TestHU16_VelocidadCoherente` |
+| (Nota 5) Sprint sin registro | FR-008, FR-009 | SC-001 | `TestHU16_SinRegistro`, `TestPastSprintDetailView` | `TestPostgresPastSprintCatalog` |
+| 6 Sin finalizados | FR-004 | — | `TestHU16_SinSprintsAnteriores`, `TestBDD_HU16_SinSprintsFinalizados` | `TestPostgresPastSprintCatalog` |
+| 7 Solo lectura | FR-001, FR-014 | — | `TestHU16_SoloLectura`, `TestBDD_HU16_SoloLectura` | — |
 | 8 Inexistente, en curso u otro proyecto | FR-010, FR-012 | SC-003 | `TestHU16_DetalleNoEncontrado` | `TestPostgresPastSprintCatalog` |
 | 9 Error al consultar | FR-011, FR-015 | SC-003 | `TestHU16_ErrorAlConsultar` | — |
-| (HU-20b) Sin proyecto | FR-013 | — | `TestHU16_SinProyecto` | — |
+| (HU-20b) Sin proyecto | FR-013 | — | `TestHU16_SinProyecto`, `TestHU16_SinProyectoDetalle` | — |
 | Rendimiento | — | SC-004 | `TestHU16_Rendimiento` | — |
 | (Caso límite) Textos escapados | FR-002, FR-006 | — | `TestHU16_TextosEscapados` | — |
-| Sin migración ni cambios | FR-014 | — | — | revisión en T024 (`git diff --stat main`) |
+| (Registro) Dependencias nulas | FR-011 | — | `TestRegisterPastSprints_ArgumentosNil` | — |
+| Sin migración ni cambios | FR-014 | — | — | revisión en T024 (`git diff --stat main`: solo archivos nuevos, `main.go` y `specs/016-past-sprints`) |
