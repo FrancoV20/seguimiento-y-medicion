@@ -94,48 +94,56 @@ func buildDashboardView(summary DashboardSummary, board BoardView, found bool, v
 	view.StoriesChart = newDashboardChart(titleDashboardStoriesChart, dashboardStoryLabels,
 		[]int{stories.Pending, stories.InSprint, stories.InProgress, stories.Done})
 	view.StoryRows = view.StoriesChart.Bars
-
 	if found {
-		view.HasActiveSprint = true
-		view.ActiveSprint = fmt.Sprintf(msgDashboardActiveSprint, board.Number)
-		for i, group := range board.Groups {
-			if i < len(view.ActiveCounts) {
-				view.ActiveCounts[i] = len(group.Stories)
-			}
-		}
-		view.ActivePoints = fmt.Sprintf(msgDashboardSprintPoints, board.PlannedPoints, board.CompletedPoints)
+		setDashboardActiveSprint(&view, board)
 	}
-
-	if n := len(summary.Finished); n > 0 {
-		view.HasFinished = true
-		start := 0
-		if n > dashboardMaxVelocityBars {
-			start = n - dashboardMaxVelocityBars
-			view.LastTenNotice = MsgDashboardLastTenSprints
-		}
-		for i := start; i < n; i++ {
-			points := 0
-			if i < len(velocities) {
-				points = velocities[i]
-			}
-			view.VelocityRows = append(view.VelocityRows, dashboardVelocityRow{
-				Label:  fmt.Sprintf("Sprint %d", summary.Finished[i].Number),
-				Points: points,
-			})
-		}
-		view.VelocityChart = newDashboardVelocityChart(view.VelocityRows)
-
-		velocity := metrics.SummarizeVelocity(velocities)
-		view.TotalVelocity = fmt.Sprintf(msgDashboardTotalVelocity, velocity.Total)
-		view.AverageVelocity = fmt.Sprintf(msgDashboardAverageVelocity, dashboardDecimalText(velocity.Average))
-
-		last := summary.Finished[n-1]
-		view.Deviation = fmt.Sprintf(msgDashboardDeviation, last.Number, metricsDeviationText(deviation.Deviation))
-		if deviation.Partial {
-			view.PartialWarning = deviation.PartialAlert
-		}
+	if len(summary.Finished) > 0 {
+		setDashboardVelocity(&view, summary.Finished, velocities, deviation)
 	}
-
 	view.OpenDefects = dashboardOpenDefectsText(summary.OpenDefects)
 	return view
+}
+
+// setDashboardActiveSprint completa el bloque del Sprint en curso con el Tablero de HU-14.
+func setDashboardActiveSprint(view *dashboardView, board BoardView) {
+	view.HasActiveSprint = true
+	view.ActiveSprint = fmt.Sprintf(msgDashboardActiveSprint, board.Number)
+	for i, group := range board.Groups {
+		if i < len(view.ActiveCounts) {
+			view.ActiveCounts[i] = len(group.Stories)
+		}
+	}
+	view.ActivePoints = fmt.Sprintf(msgDashboardSprintPoints, board.PlannedPoints, board.CompletedPoints)
+}
+
+// setDashboardVelocity completa el bloque de velocidad y desviación: el gráfico con los últimos 10
+// Sprints finalizados, la acumulada y el promedio de todos, y la desviación del último.
+func setDashboardVelocity(view *dashboardView, finished []DashboardSprint, velocities []int, deviation SprintMetrics) {
+	n := len(finished)
+	view.HasFinished = true
+	start := 0
+	if n > dashboardMaxVelocityBars {
+		start = n - dashboardMaxVelocityBars
+		view.LastTenNotice = MsgDashboardLastTenSprints
+	}
+	for i := start; i < n; i++ {
+		points := 0
+		if i < len(velocities) {
+			points = velocities[i]
+		}
+		view.VelocityRows = append(view.VelocityRows, dashboardVelocityRow{
+			Label:  fmt.Sprintf("Sprint %d", finished[i].Number),
+			Points: points,
+		})
+	}
+	view.VelocityChart = newDashboardVelocityChart(view.VelocityRows)
+
+	velocity := metrics.SummarizeVelocity(velocities)
+	view.TotalVelocity = fmt.Sprintf(msgDashboardTotalVelocity, velocity.Total)
+	view.AverageVelocity = fmt.Sprintf(msgDashboardAverageVelocity, dashboardDecimalText(velocity.Average))
+
+	view.Deviation = fmt.Sprintf(msgDashboardDeviation, finished[n-1].Number, metricsDeviationText(deviation.Deviation))
+	if deviation.Partial {
+		view.PartialWarning = deviation.PartialAlert
+	}
 }

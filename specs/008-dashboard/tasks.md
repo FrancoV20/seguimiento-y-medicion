@@ -258,7 +258,7 @@ los proyectos de los escenarios vacíos y con una falla.
 
 ## Fase 6: Cierre
 
-- [ ] T029 REFACTOR:
+- [x] T029 REFACTOR:
   - revisar si la vista y el handler tienen duplicación y extraer una función local sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-07, HU-10, HU-14 ni HU-25 cambió y que no hay migraciones: `git diff --stat
     main` lista solo archivos nuevos y `main.go`.

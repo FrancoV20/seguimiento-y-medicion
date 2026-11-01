@@ -1,6 +1,7 @@
 package web
 
 import (
+	"context"
 	"errors"
 	"net/http"
 )
@@ -30,44 +31,45 @@ func RegisterDashboard(s *Server, catalog DashboardCatalog, board BoardCatalog, 
 	)
 }
 
-// show atiende GET /dashboard: lee todo antes de escribir la respuesta. Orden: catálogo, Tablero,
-// (sin datos: solo el mensaje), velocidad de HU-10 por Sprint finalizado y desviación de HU-07 del
-// último. Ante cualquier falla muestra la página de error de HU-20a, nunca números parciales.
+// show atiende GET /dashboard: lee todos los datos y recién después escribe la respuesta. Ante
+// cualquier falla muestra la página de error de HU-20a, nunca números parciales.
 func (h *dashboardHandlers) show(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	projectID := projectIDFrom(r)
-
-	summary, err := h.catalog.DashboardSummary(ctx, projectID)
+	view, err := h.load(r.Context(), projectIDFrom(r))
 	if err != nil {
 		h.rd.Fail(w, r, err)
 		return
+	}
+	h.rd.Page(w, r, "dashboard.html", PageData{Title: TitleDashboard, Data: view})
+}
+
+// load lee los datos del Dashboard en este orden: catálogo, Tablero, velocidad de HU-10 por Sprint
+// finalizado y desviación de HU-07 del último. Sin Sprints finalizados no le pide nada a HU-10 ni a
+// HU-07.
+func (h *dashboardHandlers) load(ctx context.Context, projectID int64) (dashboardView, error) {
+	summary, err := h.catalog.DashboardSummary(ctx, projectID)
+	if err != nil {
+		return dashboardView{}, err
 	}
 	board, found, err := h.board.ActiveBoard(ctx, projectID)
 	if err != nil {
-		h.rd.Fail(w, r, err)
-		return
+		return dashboardView{}, err
 	}
 
 	velocities := make([]int, 0, len(summary.Finished))
-	var deviation SprintMetrics
 	for _, finished := range summary.Finished {
 		quality, err := h.quality.SprintQuality(ctx, projectID, finished.ID)
 		if err != nil {
-			h.rd.Fail(w, r, err)
-			return
+			return dashboardView{}, err
 		}
 		velocities = append(velocities, quality.PointsCompleted)
 	}
+
+	var deviation SprintMetrics
 	if n := len(summary.Finished); n > 0 {
 		deviation, err = h.deviation.Metrics(ctx, projectID, summary.Finished[n-1].ID)
 		if err != nil {
-			h.rd.Fail(w, r, err)
-			return
+			return dashboardView{}, err
 		}
 	}
-
-	h.rd.Page(w, r, "dashboard.html", PageData{
-		Title: TitleDashboard,
-		Data:  buildDashboardView(summary, board, found, velocities, deviation),
-	})
+	return buildDashboardView(summary, board, found, velocities, deviation), nil
 }
