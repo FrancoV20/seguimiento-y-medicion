@@ -267,7 +267,8 @@ los proyectos de los escenarios vacíos y con una falla.
 - [x] T031 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde.
 - [x] T032 Guardar `cobertura.txt` con `go test -count=1 -p 1 -cover ./...` y verificar al menos 80% en
   `src/metrics`.
-- [x] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual).
+- [x] T033 Verificar a mano los escenarios con la aplicación en ejecución (`quickstart.md`, verificación manual)
+  y registrar el resultado en `evidencia-manual.txt`, con "Realizó:" y el "Recorrido del revisor".
 - [x] T034 [P] Actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas, y el manual
   breve de usuario con la sección "Dashboard".
 - [x] T035 [P] Avisar:
