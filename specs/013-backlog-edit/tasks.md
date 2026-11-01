@@ -143,36 +143,36 @@ Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
 
 ### Pruebas (RED)
 
-- [ ] T030 [P] [E1] Pruebas de integración del catálogo en `src/web/postgres_story_catalog_integration_test.go`:
+- [x] T030 [P] [E1] Pruebas de integración del catálogo en `src/web/postgres_story_catalog_integration_test.go`:
   - renombrar `TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInDescendingOrder` a
     `TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInPriorityOrder`, con la expectativa de FR-001;
   - agregar `TestPostgreSQLStoryCatalog_OrdenPorPrioridadYAntiguedad`, con dos historias Media creadas en orden y
     empate de `created_at` resuelto por `id`;
   - agregar `TestPostgreSQLStoryCatalog_MarcaSprintFinalizado`, que solo marca la historia asignada a un Sprint
     'Finalizado'.
-- [ ] T031 Crear el servidor de prueba `newHU13BacklogApp` en `src/web/backlog_list_handlers_test.go`:
+- [x] T031 Crear el servidor de prueba `newHU13BacklogApp` en `src/web/backlog_list_handlers_test.go`:
   - reutiliza `newHU22BacklogAppWithDependencies`;
   - fixtures: «Login» (Media, primera), «Pagos» (Alta), «Reportes» (Baja) y «Perfil» (Media, después), con estados
     "Pendiente", "En Sprint" y "Hecho".
-- [ ] T032 [P] [E1] `TestHU13_ListadoOrdenado`: la tabla muestra «Pagos», «Login», «Perfil», «Reportes».
-- [ ] T033 [P] [E2a, E2b] `TestHU13_FiltroPorEstado`:
+- [x] T032 [P] [E1] `TestHU13_ListadoOrdenado`: la tabla muestra «Pagos», «Login», «Perfil», «Reportes».
+- [x] T033 [P] [E2a, E2b] `TestHU13_FiltroPorEstado`:
   - con `?estado=Pendiente` solo aparecen las "Pendiente", en el orden de FR-001, y la opción queda seleccionada;
   - con `?estado=Todos` y sin parámetro se ve la lista completa.
-- [ ] T034 [P] [E3] `TestHU13_FiltroSinResultados`: con `?estado=Hecho` y ninguna historia "Hecho", la respuesta es
+- [x] T034 [P] [E3] `TestHU13_FiltroSinResultados`: con `?estado=Hecho` y ninguna historia "Hecho", la respuesta es
   200 con "No hay historias con ese estado", sin página de error.
-- [ ] T035 [P] [E4] `TestHU13_FiltroEstadoInvalido`: `?estado=Archivada` y `?estado=pendiente` responden 200 con
+- [x] T035 [P] [E4] `TestHU13_FiltroEstadoInvalido`: `?estado=Archivada` y `?estado=pendiente` responden 200 con
   "El estado no es válido" junto al filtro y la lista completa. Con `?estado=Hecho&estado=Pendiente` cuenta el
   primero.
-- [ ] T036 [P] [E5] `TestHU13_BacklogVacioConFiltro`: un proyecto sin historias, con y sin `?estado=Hecho`, muestra
+- [x] T036 [P] [E5] `TestHU13_BacklogVacioConFiltro`: un proyecto sin historias, con y sin `?estado=Hecho`, muestra
   "Aún no hay historias" y el formulario de alta, y nunca "No hay historias con ese estado".
-- [ ] T037 [E1] Actualizar dos pruebas de HU-22 a la expectativa de FR-001:
+- [x] T037 [E1] Actualizar dos pruebas de HU-22 a la expectativa de FR-001:
   - `TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst` (`src/web/backlog_handlers_test.go`), renombrada a
     `…InPriorityOrder`;
   - el subtest "…recientes primero" de `TestWebBacklogBDD_BacklogListAndEmptyState`
     (`test/web_backlog_bdd_test.go`), que pasa a "…ordenadas por prioridad".
-- [ ] T038 [P] [E1, E2a] Escribir los escenarios BDD "Listado ordenado" y "Filtro por estado" en
+- [x] T038 [P] [E1, E2a] Escribir los escenarios BDD "Listado ordenado" y "Filtro por estado" en
   `test/web_backlog_edit_bdd_test.go`.
-- [ ] T039 Ejecutar T030–T038, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Listado y
+- [x] T039 Ejecutar T030–T038, confirmar que fallan y guardar la salida en `evidencia-red.txt` (sección "Listado y
   filtro").
 
 ### Implementación (GREEN)

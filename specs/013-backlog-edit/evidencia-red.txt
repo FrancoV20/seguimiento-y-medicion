@@ -13,3 +13,27 @@ src\backlog\postgres_backlog_store_update_integration_test.go:253:17: f.store.Up
 src\backlog\postgres_backlog_store_update_integration_test.go:253:17: too many errors
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/backlog [build failed]
 FAIL
+
+== Listado y filtro (T030-T038): src/web no compila (faltan InFinishedSprint, MsgNoStoriesWithStatus y MsgInvalidStatusFilter); los BDD fallan porque la lista sigue ordenada por id descendente y sin filtro ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\backlog_list_handlers_test.go:152:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:153:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:168:78: undefined: MsgInvalidStatusFilter
+src\web\backlog_list_handlers_test.go:169:56: undefined: MsgInvalidStatusFilter
+src\web\backlog_list_handlers_test.go:192:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:193:63: undefined: MsgNoStoriesWithStatus
+src\web\postgres_story_catalog_integration_test.go:213:23: row.InFinishedSprint undefined (type StoryRow has no field or method InFinishedSprint)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+--- FAIL: TestWebBacklogBDD_BacklogListAndEmptyState (0.07s)
+    --- FAIL: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_ordenadas_por_prioridad (0.04s)
+        web_backlog_bdd_test.go:685: older story "HU22 BDD older 1793562863215145400" should precede newer story "HU22 BDD newer 1793562863215145400"
+--- FAIL: TestWebBacklogEditBDD_ListadoOrdenado (0.04s)
+    --- FAIL: TestWebBacklogEditBDD_ListadoOrdenado/Given_historias_de_distintas_prioridades,_When_abro_el_Product_Backlog,_Then_se_listan_por_prioridad_y_antig├╝edad (0.04s)
+        web_backlog_edit_bdd_test.go:75: orden = [Perfil, Reportes, Pagos, Login]; se esperaba [Pagos, Login, Perfil, Reportes]
+--- FAIL: TestWebBacklogEditBDD_FiltroPorEstado (0.04s)
+    --- FAIL: TestWebBacklogEditBDD_FiltroPorEstado/Given_historias_en_distintos_estados,_When_filtro_por_Pendiente_y_despu├®s_por_Todos,_Then_veo_las_pendientes_y_luego_todas (0.04s)
+        web_backlog_edit_bdd_test.go:87: con Pendiente = [Perfil, Reportes, Pagos, Login]; se esperaba [Login, Perfil]
+        web_backlog_edit_bdd_test.go:91: con Todos = [Perfil, Reportes, Pagos, Login]; se esperaba la lista completa
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	12.169s
+FAIL

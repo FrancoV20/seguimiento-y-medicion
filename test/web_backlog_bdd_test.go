@@ -592,7 +592,7 @@ func TestWebBacklogBDD_PersistenceFailureShowsGenericErrorAndRetainsForm(t *test
 }
 
 func TestWebBacklogBDD_BacklogListAndEmptyState(t *testing.T) {
-	t.Run("Given un proyecto activo con historias, When abro Backlog, Then veo solo sus historias recientes primero", func(t *testing.T) {
+	t.Run("Given un proyecto activo con historias, When abro Backlog, Then veo solo sus historias ordenadas por prioridad", func(t *testing.T) {
 		app := newHU22BDDApp(t)
 		ctx := context.Background()
 
@@ -680,8 +680,9 @@ func TestWebBacklogBDD_BacklogListAndEmptyState(t *testing.T) {
 		if strings.Contains(body, otherTitle) {
 			t.Errorf("Backlog included another project's story %q", otherTitle)
 		}
-		if strings.Index(body, newerTitle) >= strings.Index(body, olderTitle) {
-			t.Errorf("newer story %q should precede older story %q", newerTitle, olderTitle)
+		// HU-13 (T037): a igual prioridad, la más antigua primero (FR-001).
+		if strings.Index(body, olderTitle) >= strings.Index(body, newerTitle) {
+			t.Errorf("older story %q should precede newer story %q", olderTitle, newerTitle)
 		}
 	})
 

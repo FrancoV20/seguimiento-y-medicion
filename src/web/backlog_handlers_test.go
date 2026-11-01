@@ -666,7 +666,8 @@ func TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave(t *
 	}
 }
 
-func TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst(t *testing.T) {
+// HU-13 (T037): antes "NewestFirst"; con FR-001, a igual prioridad la más antigua va primero.
+func TestBacklogHandler_GetListsActiveProjectStoriesInPriorityOrder(t *testing.T) {
 	app := newHU22BacklogApp(t)
 	app.chooseProject(t, app.fx.projectA)
 
@@ -735,8 +736,8 @@ func TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst(t *testing.T) {
 	if strings.Contains(body, otherTitle) {
 		t.Errorf("Backlog leaked a story from the inactive project: %q", otherTitle)
 	}
-	if strings.Index(body, newestTitle) >= strings.Index(body, oldestTitle) {
-		t.Errorf("Backlog stories are not ordered newest first: %q should precede %q", newestTitle, oldestTitle)
+	if strings.Index(body, oldestTitle) >= strings.Index(body, newestTitle) {
+		t.Errorf("Backlog stories are not ordered oldest first within a priority: %q should precede %q", oldestTitle, newestTitle)
 	}
 }
 
