@@ -1,0 +1,85 @@
+HU-25 — Evidencia de verificación manual (T027, T041)
+Fecha: 2026-11-01
+Realizó: Claude (asistente de IA), a pedido de Adriel Alonso, que revisó el resultado.
+
+Entorno
+- Código de la rama HU-25 en el commit 8e564d2, el mismo que tiene checkouteado la PC de Adriel.
+- Servidor compilado con Go 1.27.1 (`go build ./src/cmd/server`) y ejecutado en http://127.0.0.1:8091, en un
+  entorno Linux aislado (no en la PC de Adriel).
+- PostgreSQL 16 local con una base nueva: migraciones 001 a 014 aplicadas (schema_migrations = 14) y
+  db/seeds/members.sql.
+
+Método
+- Recorrido de quickstart.md ("Probar a mano con un Sprint cerrado") con Chromium real (Playwright). Se
+  completaron y enviaron los formularios de la aplicación como lo haría una persona. Para la "ventana privada"
+  se usó un contexto de navegador nuevo, sin cookies.
+- Los datos se cargaron desde la aplicación:
+  - proyectos en /proyectos e historias en /backlog;
+  - horas estimadas en /estimaciones y Sprints en /sprints;
+  - estados en /tablero, horas reales en /esfuerzo (identificado como Adriel Alonso Gonzalez) y cierres en
+    /cierre.
+  La base solo se consultó para confirmar el resultado.
+- Se registró el código HTTP de cada respuesta. Todos los envíos de formularios devolvieron 303.
+
+Datos del proyecto «Metricas Demo» (01/09/2026 a 31/12/2026)
+- Sprint 1 «Primer incremento» (01/09 a 14/09):
+  - Historia A: 5 Story Points, 4 h estimadas, 5 h reales, Hecho.
+  - Historia B: 3 Story Points, 6 h estimadas, 7 h reales, Hecho.
+  - Historia C: 13 Story Points, sin horas estimadas, En progreso. Al cerrar volvió al Backlog: "Historias
+    devueltas al Backlog: 1".
+- Sprint 2 «Sin estimar <script>alert(1)</script>» (15/09 a 28/09):
+  - Historia D: 2 Story Points, sin horas estimadas, 3 h reales, Hecho.
+- Sprint 3 «Sin terminar» (29/09 a 12/10):
+  - Historia E: 8 Story Points, sin pasar a Hecho. Al cerrar volvió al Backlog.
+- Sprint 4 «En curso» (13/10 a 26/10): queda Activo.
+- Además: proyecto «Sin Sprints» (después, con un Sprint 1 activo) y proyecto «Ajeno» (Sprint 1 finalizado,
+  identificador 6).
+
+Escenarios del Issue
+1. Métricas de un Sprint finalizado: PASÓ. Con el Sprint 1 como único cerrado, GET /metricas = 200:
+   - en la lista, «Sprint 1 · Primer incremento · Del 01/09/2026 al 14/09/2026»;
+   - velocidad «8 Story Points» y desviación «+20,00 %» (10 h estimadas y 12 reales), con la fórmula
+     «(horas reales − horas estimadas) ÷ horas estimadas»;
+   - sin alerta de cálculo parcial.
+2. Sin esfuerzo estimado: PASÓ. Después de cerrar el Sprint 2, /metricas elige el Sprint 2 (el más reciente):
+   desviación «No disponible», velocidad «2 Story Points», sin error.
+3. Cálculo parcial: PASÓ. En el mismo Sprint 2 se ve «Cálculo parcial: basado en 0 de 1 historias». Y vale 1:
+   cuenta solo la historia que quedó en el Sprint al cerrarlo.
+4. Velocidad cero: PASÓ. El Sprint 3, cerrado sin historias Hecho, muestra «0 Story Points» y desviación
+   «No disponible», sin error.
+5. Elegir otro Sprint: PASÓ. Clic en «Sprint 1» de la lista: la dirección pasa a /metricas?sprint=1, se ven
+   «8 Story Points» y «+20,00 %», y «Sprint 1» queda marcado (aria-current).
+6. Sin Sprints finalizados: PASÓ. En el proyecto «Sin Sprints», GET /metricas = 200 con «Aún no hay Sprints
+   finalizados». Con un Sprint 1 activo en ese proyecto se ven el aviso «El Sprint 1 sigue en curso; sus
+   métricas se calculan al cerrarlo» y «Aún no hay Sprints finalizados».
+7. Sprint en curso: PASÓ. Con el Sprint 4 activo en «Metricas Demo», arriba se lee «El Sprint 4 sigue en curso;
+   sus métricas se calculan al cerrarlo». La lista muestra solo los Sprints 3, 2 y 1, del más reciente al más
+   antiguo.
+
+Lista de quickstart.md (casos de borde)
+8. `sprint` inválido, activo o ajeno: PASÓ. Con «Metricas Demo» elegido, todos responden 200 y eligen el
+   Sprint 3 (el finalizado más reciente):
+   - /metricas?sprint=abc;
+   - ?sprint=4 (el activo);
+   - ?sprint=6 (el finalizado del proyecto «Ajeno»);
+   - ?sprint=999, ?sprint=-1 y ?sprint=01.
+   En ningún caso aparecen «Sprint ajeno» ni «Recién empieza» (el Sprint activo de «Sin Sprints»).
+9. Sin proyecto elegido (ventana privada): PASÓ. GET /metricas = 303 a /contexto/proyecto?volver_a=%2Fmetricas
+   con «Advertencia: Para entrar a esta sección primero elegí un proyecto.». Al elegir «Metricas Demo»
+   vuelve a /metricas.
+10. Sprint Goal con <script>: PASÓ. Se ve como texto: «Sin estimar <script>alert(1)</script>». En el HTML está
+    escapado (&lt;script&gt;…), no hay ninguna etiqueta <script> en la página y no se abrió ningún diálogo.
+11. Entrada en el menú: PASÓ. El menú incluye «Métricas del Sprint» con enlace a /metricas.
+12. Solo lectura y POST: PASÓ.
+    - El contenido de la pantalla no tiene <form> y la página no tiene <script>.
+    - POST /metricas = 405 «Acción no permitida», con Allow: GET, HEAD.
+    - Los conteos de sprints, sprint_metrics, user_stories y effort_logs fueron 6/0/8/3 antes y después: no
+      se modificó nada y no se guardaron métricas.
+13. Sin JavaScript ni conexión a internet: PASÓ. Con JavaScript desactivado la pantalla muestra las métricas, y
+    no se pidió ningún recurso fuera de la aplicación.
+14. Error al consultar: PASÓ.
+    - Con PostgreSQL detenido, GET /metricas = 503 «Servicio no disponible / El servicio no está disponible
+      temporalmente», sin métricas parciales ni texto técnico (sin consultas, rutas, puerto ni usuario).
+    - Al volver a levantar la base, la pantalla responde 200 sin reiniciar la aplicación.
+
+Resultado: 14 de 14 pasaron.

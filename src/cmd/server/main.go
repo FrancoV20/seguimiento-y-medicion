@@ -179,6 +179,14 @@ func run(ctx context.Context, getenv func(string) string, stderr io.Writer) int 
 		_ = database.Close()
 		return fail(err.Error())
 	}
+	// Métricas del Sprint: velocidad y desviación de HU-07 de los Sprints finalizados (HU-25, T019).
+	if err := web.RegisterMetrics(srv, web.NewPostgreSQLMetricsCatalog(database),
+		web.NewHU07MetricsSource(database)); err != nil {
+		_ = ln.Close()
+		_ = sprintStore.Close()
+		_ = database.Close()
+		return fail("no se pudo registrar la sección Métricas del Sprint")
+	}
 
 	if err := srv.Serve(ctx, ln, func() {
 		_ = sprintStore.Close()
