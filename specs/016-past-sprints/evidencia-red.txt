@@ -5,3 +5,20 @@ src\web\postgres_past_sprint_catalog_integration_test.go:35:13: undefined: NewPo
 src\web\postgres_past_sprint_catalog_integration_test.go:50:13: undefined: PastSprintSummary
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
+
+== Lista (T010-T013): falla porque no existen RegisterPastSprints, la vista de la lista ni la ruta /sprints-anteriores ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\past_sprint_handlers_test.go:54:13: undefined: RegisterPastSprints
+src\web\past_sprint_handlers_test.go:120:96: undefined: MsgPastSprintsEmpty
+src\web\past_sprint_handlers_test.go:138:37: undefined: RegisterPastSprints
+src\web\past_sprint_handlers_test.go:139:38: undefined: RegisterPastSprints
+src\web\past_sprint_handlers_test.go:140:38: undefined: RegisterPastSprints
+src\web\past_sprint_view_test.go:17:13: undefined: pastSprintDateText
+src\web\past_sprint_view_test.go:23:11: undefined: buildPastSprintListView
+src\web\past_sprint_view_test.go:27:13: undefined: pastSprintItem
+src\web\past_sprint_view_test.go:45:11: undefined: buildPastSprintListView
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_past_sprints_bdd_test.go:118:16: undefined: web.RegisterPastSprints
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

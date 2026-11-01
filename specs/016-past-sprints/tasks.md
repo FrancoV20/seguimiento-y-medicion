@@ -112,20 +112,20 @@ ejemplo".
 
 ### Pruebas (RED)
 
-- [ ] T010 [P] [E1, E6] Escribir la parte de lista de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
+- [x] T010 [P] [E1, E6] Escribir la parte de lista de `TestPastSprintView` en `src/web/past_sprint_view_test.go`:
   - `pastSprintDateText` → "01/09/2026";
   - `buildPastSprintListView` con los Sprints 2 y 1 de «Alfa» → "Sprint 2", "Gestionar perfiles y reportes", "Del
     01/09/2026 al 14/09/2026", enlace `/sprints-anteriores/{id}`, y después "Sprint 1";
   - con una lista vacía → `Empty` = "Aún no hay Sprints anteriores".
-- [ ] T011 [E1, E2, E6] Escribir el servidor de prueba y las pruebas de la lista en
+- [x] T011 [E1, E2, E6] Escribir el servidor de prueba y las pruebas de la lista en
   `src/web/past_sprint_handlers_test.go`, con el catálogo y HU-07 reales y los datos de T005:
   - `TestHU16_Listado`: con «Alfa» activo, 200; "Sprint 2" aparece antes que "Sprint 1", cada uno con su objetivo y
     sus fechas; "Sprint 3" y "Exportar e informar" no aparecen; nada de «Gamma»;
   - `TestHU16_SinSprintsAnteriores`: con «Beta», "Aún no hay Sprints anteriores";
   - `TestHU16_SinProyecto` (lista): 303 a `/contexto/proyecto?volver_a=%2Fsprints-anteriores`.
-- [ ] T012 [P] [E1, E6] Escribir los escenarios BDD "Listado de Sprints finalizados" y "Sin Sprints finalizados" en
+- [x] T012 [P] [E1, E6] Escribir los escenarios BDD "Listado de Sprints finalizados" y "Sin Sprints finalizados" en
   `test/web_past_sprints_bdd_test.go`, con datos propios.
-- [ ] T013 Ejecutar T010–T012, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
+- [x] T013 Ejecutar T010–T012, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
   sección "Lista".
 
 ### Implementación (GREEN)
