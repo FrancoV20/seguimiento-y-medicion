@@ -130,18 +130,18 @@ ejemplo".
 
 ### Implementación (GREEN)
 
-- [ ] T014 Crear los archivos de la lista:
+- [x] T014 Crear los archivos de la lista:
   - `src/web/past_sprint_view.go`, con todos los textos de la tabla de `data-model.md`, `pastSprintDateText`,
     `pastSprintItem`, `pastSprintListView` y `buildPastSprintListView`;
   - `src/web/past_sprint_handlers.go`, con `RegisterPastSprints(s, catalog, calc)`: argumentos `nil` → error sin
     registrar; `Section{Name: TitlePastSprints, Path: "/sprints-anteriores", RequiresProject: true}`; por ahora,
     `Routes{"GET /sprints-anteriores": …}` con los pasos de la lista de `data-model.md`;
   - la plantilla `src/web/templates/past_sprints.html`, sin formularios ni `<script>`.
-- [ ] T015 Agregar en `src/cmd/server/main.go` el import de `src/metrics` (si no está) y, después del último bloque de
+- [x] T015 Agregar en `src/cmd/server/main.go` el import de `src/metrics` (si no está) y, después del último bloque de
   registro (hoy el de HU-24, `RegisterEffort`), el bloque que llama a `web.RegisterPastSprints(srv,
   web.NewPostgreSQLPastSprintCatalog(database), metrics.NewService(metrics.NewPostgreSQLMetricsStore(database)))`. Si
   falla, cerrar `ln` y `database`, como los otros bloques.
-- [ ] T016 Ejecutar T010–T012 en verde.
+- [x] T016 Ejecutar T010–T012 en verde.
 
 **Punto de control**: el Scrum Master ve la lista de Sprints anteriores del proyecto activo.
 
