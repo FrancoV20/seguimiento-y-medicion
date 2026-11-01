@@ -1,0 +1,125 @@
+﻿== Fundamentos (T005-T021): src/backlog no compila porque faltan StoryStatuses, validateStoryFields, UpdateStoryRequest, BacklogService.UpdateStory, el puerto UpdateStory y los campos de prueba del almacén ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/backlog [github.com/FrancoV20/seguimiento-y-medicion/src/backlog.test]
+src\backlog\update_service_test.go:12:27: undefined: UpdateStoryRequest
+src\backlog\postgres_backlog_store_update_integration_test.go:161:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:182:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:189:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:200:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:212:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:216:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:228:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:239:20: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:253:17: f.store.UpdateStory undefined (type *PostgreSQLBacklogStore has no field or method UpdateStory)
+src\backlog\postgres_backlog_store_update_integration_test.go:253:17: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/backlog [build failed]
+FAIL
+
+== Listado y filtro (T030-T038): src/web no compila (faltan InFinishedSprint, MsgNoStoriesWithStatus y MsgInvalidStatusFilter); los BDD fallan porque la lista sigue ordenada por id descendente y sin filtro ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\backlog_list_handlers_test.go:152:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:153:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:168:78: undefined: MsgInvalidStatusFilter
+src\web\backlog_list_handlers_test.go:169:56: undefined: MsgInvalidStatusFilter
+src\web\backlog_list_handlers_test.go:192:29: undefined: MsgNoStoriesWithStatus
+src\web\backlog_list_handlers_test.go:193:63: undefined: MsgNoStoriesWithStatus
+src\web\postgres_story_catalog_integration_test.go:213:23: row.InFinishedSprint undefined (type StoryRow has no field or method InFinishedSprint)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+--- FAIL: TestWebBacklogBDD_BacklogListAndEmptyState (0.07s)
+    --- FAIL: TestWebBacklogBDD_BacklogListAndEmptyState/Given_un_proyecto_activo_con_historias,_When_abro_Backlog,_Then_veo_solo_sus_historias_ordenadas_por_prioridad (0.04s)
+        web_backlog_bdd_test.go:685: older story "HU22 BDD older 1793562863215145400" should precede newer story "HU22 BDD newer 1793562863215145400"
+--- FAIL: TestWebBacklogEditBDD_ListadoOrdenado (0.04s)
+    --- FAIL: TestWebBacklogEditBDD_ListadoOrdenado/Given_historias_de_distintas_prioridades,_When_abro_el_Product_Backlog,_Then_se_listan_por_prioridad_y_antig├╝edad (0.04s)
+        web_backlog_edit_bdd_test.go:75: orden = [Perfil, Reportes, Pagos, Login]; se esperaba [Pagos, Login, Perfil, Reportes]
+--- FAIL: TestWebBacklogEditBDD_FiltroPorEstado (0.04s)
+    --- FAIL: TestWebBacklogEditBDD_FiltroPorEstado/Given_historias_en_distintos_estados,_When_filtro_por_Pendiente_y_despu├®s_por_Todos,_Then_veo_las_pendientes_y_luego_todas (0.04s)
+        web_backlog_edit_bdd_test.go:87: con Pendiente = [Perfil, Reportes, Pagos, Login]; se esperaba [Login, Perfil]
+        web_backlog_edit_bdd_test.go:91: con Todos = [Perfil, Reportes, Pagos, Login]; se esperaba la lista completa
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	12.169s
+FAIL
+
+== Edición (T045-T054): src/web no compila (faltan StoryEdit y StoryForEdit en el catálogo); los BDD fallan porque /backlog/{id}/editar no existe ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\postgres_story_catalog_edit_integration_test.go:55:22: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:70:22: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:89:20: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:96:20: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+src\web\postgres_story_catalog_edit_integration_test.go:103:23: catalog.StoryForEdit undefined (type *PostgreSQLStoryCatalog has no field or method StoryForEdit)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+--- FAIL: TestWebBacklogEditBDD_EdicionExitosa (0.06s)
+    --- FAIL: TestWebBacklogEditBDD_EdicionExitosa/Given_la_historia_Login,_When_cambio_el_t├¡tulo_y_guardo,_Then_veo_Historia_modificada_correctamente_y_el_t├¡tulo_nuevo (0.06s)
+        web_backlog_edit_bdd_test.go:129: GET /backlog/4206/editar = 404; se esperaba el formulario con ┬½Login┬╗
+--- FAIL: TestWebBacklogEditBDD_QuitarStoryPoints (0.05s)
+    --- FAIL: TestWebBacklogEditBDD_QuitarStoryPoints/Given_Login_con_5_Story_Points,_When_elijo_Sin_estimar_y_guardo,_Then_veo_la_advertencia_de_estimaci├│n (0.05s)
+        web_backlog_edit_bdd_test.go:151: POST = 404; se esperaba 303
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	14.210s
+FAIL
+
+== Validaciones (T062-T066): compila, pero los envíos inválidos responden 500 en vez de 422 (el handler todavía no mapea los errores de formato ni los de HU-02) y con Story Points 'abc' la historia se guarda sin estimar ==
+--- FAIL: TestHU13_TituloODescripcionVacios (0.23s)
+    --- FAIL: TestHU13_TituloODescripcionVacios/titulo (0.12s)
+        backlog_edit_handlers_test.go:400: POST = 500; se esperaba 422
+    --- FAIL: TestHU13_TituloODescripcionVacios/descripcion (0.10s)
+        backlog_edit_handlers_test.go:400: POST = 500; se esperaba 422
+--- FAIL: TestHU13_SinCriterios (0.11s)
+    backlog_edit_handlers_test.go:424: POST = 500; se esperaba 422
+--- FAIL: TestHU13_PrioridadInvalida (0.15s)
+    backlog_edit_handlers_test.go:440: POST = 500; se esperaba 422
+--- FAIL: TestHU13_StoryPointsInvalidos (0.28s)
+    --- FAIL: TestHU13_StoryPointsInvalidos/4 (0.13s)
+        backlog_edit_handlers_test.go:461: POST = 500; se esperaba 422
+    --- FAIL: TestHU13_StoryPointsInvalidos/abc (0.14s)
+        backlog_edit_handlers_test.go:461: POST = 303; se esperaba 422
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	1.073s
+--- FAIL: TestWebBacklogEditBDD_EdicionInvalida (0.07s)
+    --- FAIL: TestWebBacklogEditBDD_EdicionInvalida/Given_la_historia_Login,_When_borro_el_t├¡tulo_y_guardo,_Then_veo_el_mensaje_de_HU-02_y_la_historia_no_cambia (0.07s)
+        web_backlog_edit_bdd_test.go:170: POST = 500; se esperaba 422
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.329s
+FAIL
+
+== Reglas y errores (T070-T077): compila; fallan el envío y la apertura de una historia de un Sprint finalizado (500 y 200 en vez de 409 y 303) y la falla al guardar (página de error genérica en vez del formulario con 'La operación no pudo completarse'). Ya pasan EditarDeshabilitado (T043), HistoriaInexistente, 404AntesQue422 y ErrorAlLeer (búsqueda de la historia de T058) y Rendimiento ==
+=== RUN   TestHU13_EditarDeshabilitadoSprintFinalizado
+--- PASS: TestHU13_EditarDeshabilitadoSprintFinalizado (0.12s)
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/cambio_de_t├¡tulo
+    backlog_edit_handlers_test.go:503: POST = 500; se esperaba 409
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/agregar_criterio
+    backlog_edit_handlers_test.go:515: agregar criterio = 200; se esperaba 409
+=== RUN   TestHU13_EnvioBloqueadoSprintFinalizado/cierre_despu├®s_de_la_lectura
+    backlog_edit_handlers_test.go:524: POST = 500; se esperaba 409 con "La historia pertenece a un Sprint finalizado; no se puede editar"
+--- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado (0.42s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/cambio_de_t├¡tulo (0.14s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/agregar_criterio (0.16s)
+    --- FAIL: TestHU13_EnvioBloqueadoSprintFinalizado/cierre_despu├®s_de_la_lectura (0.12s)
+=== RUN   TestHU13_AbrirEdicionSprintFinalizado
+    backlog_edit_handlers_test.go:534: GET = 200 a ""; se esperaba 303 a /backlog?estado=Hecho
+--- FAIL: TestHU13_AbrirEdicionSprintFinalizado (0.11s)
+=== RUN   TestHU13_HistoriaInexistente
+--- PASS: TestHU13_HistoriaInexistente (0.15s)
+=== RUN   TestHU13_404AntesQue422
+--- PASS: TestHU13_404AntesQue422 (0.13s)
+=== RUN   TestHU13_ErrorAlGuardar
+    backlog_edit_handlers_test.go:583: no aparece ┬½La operaci├│n no pudo completarse┬╗ o los datos enviados
+--- FAIL: TestHU13_ErrorAlGuardar (0.14s)
+=== RUN   TestHU13_ErrorAlLeer
+--- PASS: TestHU13_ErrorAlLeer (0.07s)
+=== RUN   TestHU13_Rendimiento
+--- PASS: TestHU13_Rendimiento (0.50s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	1.928s
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado
+=== RUN   TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea
+    web_backlog_edit_bdd_test.go:203: POST = 500; se esperaba 409 con "La historia pertenece a un Sprint finalizado; no se puede editar"
+--- FAIL: TestWebBacklogEditBDD_SprintFinalizado (0.12s)
+    --- FAIL: TestWebBacklogEditBDD_SprintFinalizado/Given_Pagos_en_un_Sprint_finalizado,_When_miro_el_Backlog_y_env├¡o_un_cambio,_Then_Editar_est├í_deshabilitado_y_el_cambio_se_bloquea (0.12s)
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar
+=== RUN   TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia
+    web_backlog_edit_bdd_test.go:222: se esperaba el mensaje de falla con los datos enviados y sin mensaje de ├®xito
+--- FAIL: TestWebBacklogEditBDD_ErrorAlGuardar (0.08s)
+    --- FAIL: TestWebBacklogEditBDD_ErrorAlGuardar/Given_datos_v├ílidos_y_una_falla_al_guardar,_When_guardo,_Then_veo_La_operaci├│n_no_pudo_completarse_y_la_historia_no_cambia (0.08s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.453s
+FAIL

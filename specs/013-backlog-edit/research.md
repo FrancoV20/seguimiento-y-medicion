@@ -258,3 +258,18 @@
 ## Preguntas abiertas
 
 Ninguna. Las dos dudas se respondieron en Clarifications (decisiones 11 y 12).
+
+## Resultado de T002 (2026-11-01)
+
+Revisado con `git grep -n` en `main` (`e9a4d6d`, después de HU-15, HU-17, HU-10 y HU-16):
+
+- No existen `UpdateStory`, `StoryForEdit`, `StoryEdit`, `StoryStatuses`, `validateStoryFields`, `parseStoryFields`
+  ni `backlogListURL`.
+- `ErrStoryNotFound` y `ErrStoryInFinishedSprint` **ya existen** en `src/backlog/update_estimated_hours.go` (HU-17).
+  HU-13 los reutiliza y no crea `update_errors.go`: el sentido es el mismo y la pantalla muestra su propio texto
+  (`MsgStoryInFinishedSprint`), no el `Error()` del dominio. Se ajustaron `plan.md` y `data-model.md`.
+- El cierre de HU-15 ya está en `main` y bloquea el Sprint `FOR UPDATE` antes que las historias, el mismo orden
+  que usa la edición (Sprint `FOR SHARE`, después la historia).
+- Ajuste de la transacción: si el Sprint leído en el paso 2 está 'Finalizado', el rechazo se decide después del
+  paso 3, cuando ya se confirmó que la asignación no cambió. Así, una historia que el cierre devolvió al Backlog
+  mientras se guardaba no se rechaza por error: se repite el guardado y se edita (caso límite de la spec).

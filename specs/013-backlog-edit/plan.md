@@ -89,7 +89,6 @@ Archivos nuevos:
 
 ```text
 src/backlog/update.go                                   UpdateStoryRequest, UpdateStoryResult
-src/backlog/update_errors.go                            ErrStoryNotFound, ErrStoryInFinishedSprint
 src/backlog/update_service.go                           BacklogService.UpdateStory
 src/backlog/postgres_backlog_store_update.go            PostgreSQLBacklogStore.UpdateStory
 src/backlog/update_service_test.go

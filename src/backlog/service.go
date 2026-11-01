@@ -46,39 +46,14 @@ func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult
 		return nil, ErrProjectNotActive
 	}
 
-	title := strings.TrimSpace(req.Title)
-	if title == "" {
-		return nil, ErrTitleRequired
-	}
-	description := strings.TrimSpace(req.Description)
-	if description == "" {
-		return nil, ErrDescriptionRequired
-	}
-	if !req.Priority.IsValid() {
-		return nil, ErrInvalidPriority
-	}
-	criteria := make([]AcceptanceCriterion, 0, len(req.AcceptanceCriteria))
-	for _, c := range req.AcceptanceCriteria {
-		if c = strings.TrimSpace(c); c != "" {
-			criteria = append(criteria, AcceptanceCriterion{Position: len(criteria) + 1, Content: c})
-		}
-	}
-	if len(criteria) == 0 {
-		return nil, ErrAcceptanceCriteriaRequired
-	}
-
-	if err := ValidateStoryPoints(req.StoryPoints); err != nil {
+	fields, err := validateStoryFields(req.Title, req.Description, req.Priority, req.AcceptanceCriteria, req.StoryPoints)
+	if err != nil {
 		return nil, err
 	}
 	if !validEstimatedHours(req.EstimatedHours) {
 		return nil, ErrInvalidEstimatedHours
 	}
 
-	var storyPoints *int
-	if req.StoryPoints != nil {
-		v := *req.StoryPoints
-		storyPoints = &v
-	}
 	var estimatedHours *float64
 	if req.EstimatedHours != nil {
 		h := *req.EstimatedHours
@@ -87,11 +62,11 @@ func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult
 
 	story := UserStory{
 		ProjectID:          req.ProjectID,
-		Title:              title,
-		Description:        description,
-		Priority:           req.Priority,
-		AcceptanceCriteria: criteria,
-		StoryPoints:        storyPoints,
+		Title:              fields.Title,
+		Description:        fields.Description,
+		Priority:           fields.Priority,
+		AcceptanceCriteria: fields.Criteria,
+		StoryPoints:        fields.StoryPoints,
 		EstimatedHours:     estimatedHours,
 		Status:             StatusPending,
 	}
@@ -106,4 +81,50 @@ func (s *BacklogService) CreateStory(req CreateStoryRequest) (*CreateStoryResult
 		result.Warning = WarnEstimationPending
 	}
 	return result, nil
+}
+
+// storyFields son los datos de una historia ya validados, recortados y con los criterios numerados.
+type storyFields struct {
+	Title       string
+	Description string
+	Priority    Priority
+	Criteria    []AcceptanceCriterion
+	StoryPoints *int
+}
+
+// validateStoryFields es la validación común del alta (HU-02) y de la edición (HU-13): recorta el
+// título, la descripción y los criterios, descarta los criterios vacíos, numera los demás desde 1 y
+// devuelve el primer error en este orden: título, descripción, prioridad, criterios y Story Points.
+func validateStoryFields(title, description string, priority Priority, criteria []string, storyPoints *int) (storyFields, error) {
+	fields := storyFields{
+		Title:       strings.TrimSpace(title),
+		Description: strings.TrimSpace(description),
+		Priority:    priority,
+	}
+	if fields.Title == "" {
+		return storyFields{}, ErrTitleRequired
+	}
+	if fields.Description == "" {
+		return storyFields{}, ErrDescriptionRequired
+	}
+	if !priority.IsValid() {
+		return storyFields{}, ErrInvalidPriority
+	}
+	fields.Criteria = make([]AcceptanceCriterion, 0, len(criteria))
+	for _, c := range criteria {
+		if c = strings.TrimSpace(c); c != "" {
+			fields.Criteria = append(fields.Criteria, AcceptanceCriterion{Position: len(fields.Criteria) + 1, Content: c})
+		}
+	}
+	if len(fields.Criteria) == 0 {
+		return storyFields{}, ErrAcceptanceCriteriaRequired
+	}
+	if err := ValidateStoryPoints(storyPoints); err != nil {
+		return storyFields{}, err
+	}
+	if storyPoints != nil {
+		v := *storyPoints
+		fields.StoryPoints = &v
+	}
+	return fields, nil
 }

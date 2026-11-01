@@ -23,8 +23,19 @@ func (p Priority) IsValid() bool {
 // StoryStatus es el estado de una historia de usuario.
 type StoryStatus string
 
-// StatusPending es el estado inicial de toda historia creada por HU-02.
-const StatusPending StoryStatus = "Pendiente"
+// Estados de una historia. StatusPending es el estado inicial de toda historia creada por HU-02;
+// los demás los asignan HU-04, HU-14 y HU-15. HU-13 los usa para filtrar el Backlog.
+const (
+	StatusPending    StoryStatus = "Pendiente"
+	StatusInSprint   StoryStatus = "En Sprint"
+	StatusInProgress StoryStatus = "En progreso"
+	StatusDone       StoryStatus = "Hecho"
+)
+
+// StoryStatuses devuelve los estados de una historia en el orden del filtro del Backlog (HU-13).
+func StoryStatuses() []StoryStatus {
+	return []StoryStatus{StatusPending, StatusInSprint, StatusInProgress, StatusDone}
+}
 
 // AcceptanceCriterion es un criterio de aceptación de una historia.
 type AcceptanceCriterion struct {

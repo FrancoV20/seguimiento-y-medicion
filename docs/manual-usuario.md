@@ -61,6 +61,46 @@ Además de los mensajes de la creación, al modificar pueden aparecer:
 Si quitás a un integrante que estaba identificado, la próxima vez que navegue se le pide elegir
 otro integrante.
 
+## Product Backlog
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/backlog`, o la sección **Backlog** del
+menú. Arriba está el formulario **Crear historia**; abajo, la lista de historias del proyecto.
+
+### Orden y filtro
+
+La lista se ordena por prioridad (Alta, Media y Baja) y, a igual prioridad, por antigüedad: la más antigua primero.
+Para ver solo las historias de un estado, elegilo en **Estado** (Pendiente, En Sprint, En progreso o Hecho) y
+presioná **Filtrar**; con **Todos** volvés a ver la lista completa. El filtro conserva el orden.
+
+### Editar una historia
+
+1. Presioná **Editar** en la fila de la historia. El formulario se abre con su título, descripción, prioridad,
+   Story Points y criterios de aceptación actuales.
+2. Cambiá lo que necesites. **Agregar criterio** suma un campo y **Quitar** saca uno; ninguno de los dos guarda.
+3. Presioná **Guardar**. Volvés a la lista, con el mismo filtro que tenías, y ves **Historia modificada
+   correctamente**. Si dejaste la historia en **Sin estimar**, el mensaje avisa que falta la estimación de Story
+   Points. **Cancelar** vuelve a la lista sin guardar.
+
+La edición no cambia el estado, las horas estimadas (se cargan en **Estimaciones**) ni el Sprint de la historia.
+Los criterios se reemplazan completos por los del formulario. Si dos personas guardan la misma historia, queda la
+última versión guardada.
+
+Una historia que pertenece a un **Sprint finalizado** no se puede editar: en la lista, **Editar** aparece
+deshabilitado con el motivo **Sprint finalizado**. Las historias de un Sprint activo, en cualquier estado, sí se
+editan.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `El estado no es válido` | La dirección trae un estado que no existe; se muestra la lista completa. |
+| `No hay historias con ese estado` | El proyecto tiene historias, pero ninguna en el estado elegido. |
+| `Aún no hay historias` | El proyecto todavía no tiene historias; podés crear la primera con el formulario. |
+| `el título es obligatorio`, `la descripción es obligatoria`, `agregá al menos un criterio de aceptación`, `la prioridad debe ser Alta, Media o Baja`, `Los Story Points no son un valor válido` | Falta un dato o no es válido; corregilo junto al campo marcado. La historia no cambió. |
+| `La historia pertenece a un Sprint finalizado; no se puede editar` | La historia ya forma parte de un Sprint cerrado y sus datos quedan como se midieron. |
+| Página 404 | La historia no existe o es de otro proyecto. |
+| `La operación no pudo completarse` | Falló el guardado; no se aplicó ningún cambio. Intentá de nuevo. |
+
 ## Registro y trazabilidad de defectos
 
 Elegí primero el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/defectos`. Para
