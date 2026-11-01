@@ -107,6 +107,11 @@ func (hu22BDDFailingBacklogStore) CreateStory(int64, backlog.UserStory) (backlog
 	return backlog.UserStory{}, errors.New("simulated database failure")
 }
 
+// UpdateStory completa el puerto ampliado por HU-13 (T027).
+func (hu22BDDFailingBacklogStore) UpdateStory(context.Context, int64, backlog.UserStory) error {
+	return errors.New("simulated database failure")
+}
+
 func (a *hu22BDDApp) request(t *testing.T, method, path string, values url.Values) (*http.Response, string) {
 	t.Helper()
 

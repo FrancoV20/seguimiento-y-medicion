@@ -30,13 +30,13 @@ Formato: `[ID] [P] [E#] descripción`
     `src/backlog`), `ErrStoryInFinishedSprint`, `StoryStatuses`, `validateStoryFields`, `parseStoryFields` ni
     `backlogListURL`;
   - ajustar `plan.md` si algún nombre cambió.
-- [ ] T003 Coordinar los archivos ajenos que edita HU-13:
+- [x] T003 Coordinar los archivos ajenos que edita HU-13:
   - con quien hizo HU-22: `backlog_handlers.go`, `backlog_form.go`, `backlog_catalog.go`,
     `postgres_story_catalog.go`, `backlog.html`, las tres pruebas del orden y los fakes `hu22FailingBacklogStore`,
     `hu22FailingStoryCatalog` y `hu22BDDFailingBacklogStore`;
   - con quien hizo HU-02: `model.go`, `store.go`, `service.go` y `test_store.go`;
   - con quien tenga HU-15: que su cierre bloquee el Sprint antes que las historias, como dice su `data-model.md`.
-- [ ] T004 Correr `go test -count=1 -p 1 ./...` y confirmar que pasa en verde antes de empezar (línea base, incluidas
+- [x] T004 Correr `go test -count=1 -p 1 ./...` y confirmar que pasa en verde antes de empezar (línea base, incluidas
   las pruebas de HU-02 y HU-22).
 
 ## Fase 2: Fundamentos (dominio y almacenamiento; bloquea todo lo demás)
@@ -100,25 +100,25 @@ Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
   bien.
 - [x] T021 [P] `TestPostgresUpdateStory_AsignacionCambiaDosVeces`: el gancho cambia la asignación en los dos
   intentos. Se devuelve un error que no es de dominio y «Login» no cambia.
-- [ ] T022 Ejecutar T005–T021, confirmar que fallan porque el código no existe y guardar la salida en
+- [x] T022 Ejecutar T005–T021, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt` (sección "Fundamentos").
 
 ### Implementación (GREEN)
 
-- [ ] T023 Agregar a `src/backlog/model.go` `StatusInSprint = "En Sprint"`, `StatusInProgress = "En progreso"` y
+- [x] T023 Agregar a `src/backlog/model.go` `StatusInSprint = "En Sprint"`, `StatusInProgress = "En progreso"` y
   `StatusDone = "Hecho"`, más `StoryStatuses()` con los cuatro estados en el orden de T005.
-- [ ] T024 Crear `UpdateStoryRequest` y `UpdateStoryResult` en `src/backlog/update.go`, y `ErrStoryNotFound` y
+- [x] T024 Crear `UpdateStoryRequest` y `UpdateStoryResult` en `src/backlog/update.go`, y `ErrStoryNotFound` y
   `ErrStoryInFinishedSprint` en `src/backlog/update_errors.go`.
-- [ ] T025 Extraer `validateStoryFields` de `CreateStory` en `src/backlog/service.go`, sin cambiar su
+- [x] T025 Extraer `validateStoryFields` de `CreateStory` en `src/backlog/service.go`, sin cambiar su
   comportamiento: las pruebas de HU-02 siguen en verde.
-- [ ] T026 Implementar `UpdateStory` en `src/backlog/update_service.go`, según los pasos de `data-model.md`.
-- [ ] T027 Ampliar el puerto y todos sus fakes en el mismo commit:
+- [x] T026 Implementar `UpdateStory` en `src/backlog/update_service.go`, según los pasos de `data-model.md`.
+- [x] T027 Ampliar el puerto y todos sus fakes en el mismo commit:
   - sumar `UpdateStory(ctx context.Context, projectID int64, story UserStory) error` a `BacklogStore`
     (`src/backlog/store.go`);
   - sumar a `src/backlog/test_store.go` `UpdateStory`, `UpdateErr`, `FailOnUpdate` y `UpdateCalls`;
   - sumar un `UpdateStory` que devuelve error a `hu22FailingBacklogStore` (`src/web/backlog_handlers_test.go`) y a
     `hu22BDDFailingBacklogStore` (`test/web_backlog_bdd_test.go`).
-- [ ] T028 Implementar `PostgreSQLBacklogStore.UpdateStory` en `src/backlog/postgres_backlog_store_update.go`, con
+- [x] T028 Implementar `PostgreSQLBacklogStore.UpdateStory` en `src/backlog/postgres_backlog_store_update.go`, con
   los pasos de `data-model.md`:
   - Sprint con `FOR SHARE` primero;
   - historia con `FOR NO KEY UPDATE OF us`;
@@ -126,7 +126,7 @@ Todas en `src/backlog/update_service_test.go`, salvo que se indique otra ruta.
   - `DELETE` e `INSERT` de los criterios 1..n.
 
   El campo sin exportar `beforeStoryLock func()` es `nil` en producción.
-- [ ] T029 Ejecutar T005–T021 en verde, junto con las pruebas existentes de `./src/backlog/...`.
+- [x] T029 Ejecutar T005–T021 en verde, junto con las pruebas existentes de `./src/backlog/...`.
 
 **Punto de control**: el dominio y el almacenamiento de la edición funcionan sin tocar la pantalla.
 

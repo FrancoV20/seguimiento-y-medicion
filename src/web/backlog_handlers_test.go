@@ -70,6 +70,11 @@ func (s *hu22FailingBacklogStore) CreateStory(_ int64, _ backlog.UserStory) (bac
 	return backlog.UserStory{}, errors.New("simulated database failure")
 }
 
+// UpdateStory completa el puerto ampliado por HU-13 (T027).
+func (s *hu22FailingBacklogStore) UpdateStory(context.Context, int64, backlog.UserStory) error {
+	return errors.New("simulated database failure")
+}
+
 func (a *hu22BacklogApp) chooseProject(t *testing.T, projectID int64) {
 	t.Helper()
 	resp, _ := a.selectProject(t, a.client, id64(projectID), "/backlog")

@@ -10,6 +10,9 @@ import (
 // PostgreSQLBacklogStore persiste el Product Backlog en PostgreSQL (T010, T020).
 type PostgreSQLBacklogStore struct {
 	db *sql.DB
+	// beforeStoryLock es un gancho de prueba (HU-13, T020): corre entre la lectura del Sprint de la
+	// historia y el bloqueo de la historia. Es nil en producción.
+	beforeStoryLock func()
 }
 
 // OpenPostgreSQL abre una conexión usando la URL de DATABASE_URL.
