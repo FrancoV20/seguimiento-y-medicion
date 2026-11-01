@@ -147,12 +147,12 @@ pasan sin PostgreSQL.
 
 ### Pruebas (RED)
 
-- [ ] T015 [P] [E2, E5, E11] Escribir en `src/web/dashboard_chart_test.go`:
+- [x] T015 [P] [E2, E5, E11] Escribir en `src/web/dashboard_chart_test.go`:
   - `TestDashboardBarHeights` (tabla, alto 120): `[2, 1, 2, 3]` → `[80, 40, 80, 120]`; `[8, 13]` → `[74, 120]`;
     `[0, 0, 0, 0]` → todo 0; `[1, 1000]` → `[1, 120]`; `[]` → `[]`;
   - `TestNewDashboardChart`: posiciones `X` e `Y` de cada barra, `Width` y `Height`, y el `AriaLabel` "Historias por
     estado: Pendiente 2, En Sprint 1, En progreso 2, Hecho 3".
-- [ ] T016 [P] [E1, E4, E5, E6, E7, E8, E9] Escribir `TestDashboardView` en `src/web/dashboard_view_test.go`:
+- [x] T016 [P] [E1, E4, E5, E6, E7, E8, E9] Escribir `TestDashboardView` en `src/web/dashboard_view_test.go`:
   - la desviación con `metricsDeviationText` de HU-25 (T001), dentro de `buildDashboardView`: "20.00" →
     "+20,00 %", "No disponible" sin cambios;
   - `dashboardDecimalText("10.50")` → "10,50";
@@ -166,7 +166,7 @@ pasan sin PostgreSQL.
     - con 12 finalizados → 10 barras (Sprints 3 a 12), `LastTenNotice` y acumulada de los 12;
     - la desviación es la del último finalizado;
     - `PartialWarning` solo si `IsPartial`.
-- [ ] T017 Ejecutar T015 y T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Vista y
+- [x] T017 Ejecutar T015 y T016, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Vista y
   gráficos".
 
 ### Implementación (GREEN)
@@ -190,7 +190,7 @@ los proyectos de los escenarios vacíos y con una falla.
 
 ### Pruebas (RED)
 
-- [ ] T021 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11] Escribir el servidor de prueba y las pruebas de pantalla en
+- [x] T021 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11] Escribir el servidor de prueba y las pruebas de pantalla en
   `src/web/dashboard_handlers_test.go`, con el catálogo, el Tablero, `QualityService` y `NewHU07MetricsSource` reales y
   los datos de T009:
   - `TestHU08_SinDatos` («Vacío»): solo "Aún no hay datos suficientes para calcular métricas", sin `<svg`;
@@ -219,7 +219,7 @@ los proyectos de los escenarios vacíos y con una falla.
     `SprintQuality(...).PointsCompleted` y a `CalculateMetrics(id).Velocity`.
 
   Además se comprueba que abrir el Dashboard no escribe filas en `sprint_metrics`.
-- [ ] T022 [E12] Escribir las pruebas de errores y bordes en `src/web/dashboard_handlers_test.go`, con dobles
+- [x] T022 [E12] Escribir las pruebas de errores y bordes en `src/web/dashboard_handlers_test.go`, con dobles
   que fallan:
   - `TestHU08_ErrorAlLeer`: con el catálogo, el Tablero, el `QualityReader` y la fuente de desviación fallando (uno
     por subtest, y uno con `ClosureValidationError`), se ve la página de error de HU-20a con 500, sin `<svg`, sin
@@ -230,9 +230,9 @@ los proyectos de los escenarios vacíos y con una falla.
     "Pendiente"), y 100 defectos (60 "Abierto" y 40 "Resuelto"), en menos de 500 ms; muestra 10 barras (Sprints 11 a
     20), "Velocidad acumulada: 200 Story Points", "Promedio: 10,00 Story Points por Sprint" y "60 defectos
     abiertos".
-- [ ] T023 [P] [E1, E2, E5, E7] Escribir los escenarios BDD en `test/web_dashboard_bdd_test.go`: "Proyecto sin datos
+- [x] T023 [P] [E1, E2, E5, E7] Escribir los escenarios BDD en `test/web_dashboard_bdd_test.go`: "Proyecto sin datos
   suficientes", "Historias por estado", "Velocidad del equipo" y "Desviación de esfuerzo del último Sprint".
-- [ ] T024 Ejecutar T021–T023, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
+- [x] T024 Ejecutar T021–T023, confirmar que fallan (la ruta no existe) y guardar la salida en `evidencia-red.txt`,
   sección "Pantalla".
 
 ### Implementación (GREEN)
