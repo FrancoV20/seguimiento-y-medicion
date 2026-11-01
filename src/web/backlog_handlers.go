@@ -29,8 +29,10 @@ func RegisterBacklog(s *Server, creator *backlog.BacklogService, catalog StoryCa
 		Path:            backlogPath,
 		RequiresProject: true,
 	}, Routes{
-		"GET /backlog":  http.HandlerFunc(handler.get),
-		"POST /backlog": http.HandlerFunc(handler.post),
+		"GET /backlog":              http.HandlerFunc(handler.get),
+		"POST /backlog":             http.HandlerFunc(handler.post),
+		"GET /backlog/{id}/editar":  http.HandlerFunc(handler.edit),   // HU-13
+		"POST /backlog/{id}/editar": http.HandlerFunc(handler.update), // HU-13
 	})
 }
 
@@ -48,7 +50,14 @@ func (h *backlogHandlers) get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := NewFormView()
-	h.render(w, r, http.StatusOK, active.ProjectID, form, []string{""})
+	// HU-13: filtro por estado; si "estado" viene repetido, cuenta el primero.
+	filter, filterErr := backlogStatusFilter(r.URL.Query().Get(BacklogFieldStatus))
+	data, err := h.pageData(r, active.ProjectID, []string{""}, form, filter, filterErr)
+	if err != nil {
+		h.server.renderer.Fail(w, r, err)
+		return
+	}
+	h.server.renderer.PageStatus(w, r, http.StatusOK, "backlog.html", PageData{Title: "Backlog", Form: form, Data: data})
 }
 
 func (h *backlogHandlers) post(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +97,7 @@ func (h *backlogHandlers) post(w http.ResponseWriter, r *http.Request) {
 			h.render(w, r, http.StatusUnprocessableEntity, active.ProjectID, form.Form, form.Criteria)
 			return
 		}
-		data, readErr := h.pageData(r, active.ProjectID, form.Criteria, form.Form)
+		data, readErr := h.pageData(r, active.ProjectID, form.Criteria, form.Form, "", "")
 		if readErr != nil {
 			h.server.renderer.Fail(w, r, readErr)
 			return
@@ -121,7 +130,7 @@ func (h *backlogHandlers) render(
 	form *FormView,
 	criteria []string,
 ) {
-	data, err := h.pageData(r, projectID, criteria, form)
+	data, err := h.pageData(r, projectID, criteria, form, "", "")
 	if err != nil {
 		h.server.renderer.Fail(w, r, err)
 		return
@@ -138,6 +147,8 @@ func (h *backlogHandlers) pageData(
 	projectID int64,
 	criteria []string,
 	form *FormView,
+	filter string,
+	filterErr string,
 ) (backlogPageData, error) {
 	stories, err := h.catalog.ListStories(r.Context(), projectID)
 	if err != nil {
@@ -146,11 +157,16 @@ func (h *backlogHandlers) pageData(
 
 	rows := make([]backlogStoryView, 0, len(stories))
 	for _, story := range stories {
+		if filter != "" && story.Status != filter {
+			continue
+		}
 		row := backlogStoryView{
-			ID:       story.ID,
-			Title:    story.Title,
-			Priority: story.Priority,
-			Status:   story.Status,
+			ID:               story.ID,
+			Title:            story.Title,
+			Priority:         story.Priority,
+			Status:           story.Status,
+			EditURL:          backlogEditURL(story.ID, filter),
+			InFinishedSprint: story.InFinishedSprint,
 		}
 		row.StoryPoints = "Sin estimar"
 		if story.StoryPoints != nil {
@@ -174,8 +190,17 @@ func (h *backlogHandlers) pageData(
 	if len(fields) == 0 {
 		fields = []backlogCriterionField{{Index: 0}}
 	}
+	noResults := ""
+	if len(stories) > 0 && len(rows) == 0 {
+		noResults = MsgNoStoriesWithStatus
+	}
 	return backlogPageData{
 		Stories:            rows,
+		HasStories:         len(stories) > 0,
+		Filter:             filter,
+		Statuses:           backlogStatusOptions(),
+		FilterError:        filterErr,
+		NoResults:          noResults,
 		Criteria:           fields,
 		Priorities:         backlogPriorities(),
 		StoryPoints:        backlogStoryPointValues(),

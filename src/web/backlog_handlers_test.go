@@ -70,6 +70,11 @@ func (s *hu22FailingBacklogStore) CreateStory(_ int64, _ backlog.UserStory) (bac
 	return backlog.UserStory{}, errors.New("simulated database failure")
 }
 
+// UpdateStory completa el puerto ampliado por HU-13 (T027).
+func (s *hu22FailingBacklogStore) UpdateStory(context.Context, int64, backlog.UserStory) error {
+	return errors.New("simulated database failure")
+}
+
 func (a *hu22BacklogApp) chooseProject(t *testing.T, projectID int64) {
 	t.Helper()
 	resp, _ := a.selectProject(t, a.client, id64(projectID), "/backlog")
@@ -661,7 +666,8 @@ func TestBacklogHandler_PostWithoutValidActiveProjectRedirectsAndDoesNotSave(t *
 	}
 }
 
-func TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst(t *testing.T) {
+// HU-13 (T037): antes "NewestFirst"; con FR-001, a igual prioridad la más antigua va primero.
+func TestBacklogHandler_GetListsActiveProjectStoriesInPriorityOrder(t *testing.T) {
 	app := newHU22BacklogApp(t)
 	app.chooseProject(t, app.fx.projectA)
 
@@ -730,8 +736,8 @@ func TestBacklogHandler_GetListsActiveProjectStoriesNewestFirst(t *testing.T) {
 	if strings.Contains(body, otherTitle) {
 		t.Errorf("Backlog leaked a story from the inactive project: %q", otherTitle)
 	}
-	if strings.Index(body, newestTitle) >= strings.Index(body, oldestTitle) {
-		t.Errorf("Backlog stories are not ordered newest first: %q should precede %q", newestTitle, oldestTitle)
+	if strings.Index(body, oldestTitle) >= strings.Index(body, newestTitle) {
+		t.Errorf("Backlog stories are not ordered oldest first within a priority: %q should precede %q", oldestTitle, newestTitle)
 	}
 }
 
@@ -772,6 +778,11 @@ type hu22FailingStoryCatalog struct {
 
 func (c hu22FailingStoryCatalog) ListStories(context.Context, int64) ([]StoryRow, error) {
 	return nil, c.err
+}
+
+// StoryForEdit completa el catálogo ampliado por HU-13 (T056).
+func (c hu22FailingStoryCatalog) StoryForEdit(context.Context, int64, int64) (StoryEdit, error) {
+	return StoryEdit{}, c.err
 }
 
 func TestBacklogHandler_GetCatalogFailureReturns500WithoutPartialBacklog(t *testing.T) {

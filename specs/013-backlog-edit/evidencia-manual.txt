@@ -1,0 +1,100 @@
+HU-13 — Evidencia de verificación manual (T084)
+Fecha: 2026-11-01
+Realizó: Claude (asistente de IA), a pedido de Alejandro Raúl Ruiz Andreola, que revisó el resultado.
+
+Entorno
+- Código de la rama HU-13 en el commit 2f37ebb. Se comprobó que los 381 archivos de src/, test/ y db/ son idénticos
+  (sin contar finales de línea) a los del notebook de Alejandro.
+- Servidor compilado con `go build ./src/cmd/server` y ejecutado en un entorno Linux aislado (no en la PC de
+  Alejandro), con PostgreSQL 16 y una base nueva con las migraciones 001 a 014 (schema_migrations = 14) y
+  db/seeds/members.sql.
+
+Método
+- Recorrido con Chromium real (Playwright): se completaron y enviaron los formularios de la aplicación como lo haría
+  una persona, y se registró el código HTTP de cada envío.
+- Todos los datos se cargaron desde la aplicación: proyectos «Alfa» y «Beta» en /proyectos; historias en /backlog
+  (con «Agregar criterio» para los dos criterios de «Login»); Sprints en /sprints; Comenzar y Completar en
+  /tablero; el Sprint 1 se cerró con "Cerrar Sprint" en /cierre (HU-15), en lugar del UPDATE en SQL del paso 8
+  de quickstart.md.
+- Envíos que la pantalla no ofrece: los Story Points 4 (11b) se agregaron al selector con las herramientas del
+  navegador; el cambio de «Pagos» (12b) y el POST a «Facturas» (13c) se enviaron con `fetch` desde la misma página.
+- Escenario 15: un trigger temporal hizo fallar solo el guardado del título centinela «FALLA»; se quitó enseguida.
+
+Resultado: 17/17 verificaciones pasaron.
+
+Escenario 1 – Listado ordenado: PASÓ
+  Se crearon desde /backlog «Login» (Media, 5 SP, 4 horas, criterios «Acepta email» y «Rechaza clave vacía»), «Pagos»
+  (Alta), «Reportes» (Baja) y «Perfil» (Media), en ese orden. La lista muestra ['Pagos', 'Login', 'Perfil',
+  'Reportes'].
+
+Escenarios 2a, 2b y 3 – Filtro por estado, volver a Todos y filtro sin resultados: PASÓ
+  Filtro «Pendiente» (/backlog?estado=Pendiente): ['Pagos', 'Login', 'Perfil', 'Reportes'] (las cuatro están
+  Pendiente); «Hecho»: «No hay historias con ese estado», sin error; «Todos»: ['Pagos', 'Login', 'Perfil',
+  'Reportes'].
+
+Escenario 4 – Estado inválido: PASÓ
+  /backlog?estado=Archivada → 200 con «El estado no es válido» junto al filtro y la lista completa.
+
+Escenario 6 – Acceso a la edición: PASÓ
+  «Editar» en «Login» desde la lista filtrada abre /backlog/2/editar?estado=Pendiente con el título, la descripción,
+  Media, 5 SP y los dos criterios en orden; no hay campo de horas estimadas.
+
+Escenarios 8a y 8b – Agregar y quitar criterios: PASÓ
+  «Agregar criterio» muestra un tercer campo y conserva el título escrito «Inicio de sesión»; «Quitar» lo saca y
+  conserva lo escrito; la historia sigue como «Login» en la base hasta guardar.
+
+Escenarios 7a y 7e – Edición del título y vuelta a la lista filtrada: PASÓ
+  Guardar → POST 303 y vuelta a /backlog?estado=Pendiente con «Historia modificada correctamente» una vez; «Inicio de
+  sesión» aparece en la lista filtrada; en la base siguen 5 SP, 4 horas, estado Pendiente y los dos criterios.
+
+Escenarios 7c y 7d – Prioridad y Story Points: PASÓ
+  «Reportes» pasa a Alta con 8 SP: queda segunda, después de «Pagos» (más antigua), en ['Pagos', 'Reportes', 'Inicio
+  de sesión', 'Perfil'].
+
+Escenario 9 – Quitar los Story Points: PASÓ
+  «Perfil» con «Sin estimar»: advertencia «Historia modificada correctamente. Falta completar la estimación de Story
+  Points»; la fila queda «5 Perfil Media Sin estimar Sin estimar Pendiente Editar».
+
+Escenario 10a – Título vacío: PASÓ
+  Título vacío → 422 con «el título es obligatorio» junto al título; se conserva la descripción escrita y el filtro
+  oculto; la historia no cambia.
+
+Escenario 11b – Story Points fuera de la escala: PASÓ
+  Story Points 4 (agregado con las herramientas del navegador) → 422 con «Los Story Points no son un valor válido» y
+  el 4 seleccionado; la historia no cambia.
+
+Escenario 12a – «Editar» deshabilitado (Sprint finalizado): PASÓ
+  Sprint 1 «Cobrar» con «Pagos», que pasó a Hecho en el Tablero y se cerró en Cierre de Sprint: en la lista, «Editar»
+  de «Pagos» está deshabilitado con «Sprint finalizado» y sin enlace.
+
+Escenario 12c – Abrir la edición de una historia de un Sprint finalizado: PASÓ
+  Abrir la dirección de edición de «Pagos» vuelve a /backlog?estado=Hecho con «La historia pertenece a un Sprint
+  finalizado; no se puede editar» una sola vez, sin formulario.
+
+Escenario 12b – Envío bloqueado (Sprint finalizado): PASÓ
+  Enviar igual un cambio de título de «Pagos» (fetch desde la página) → 409 con el mensaje del Sprint finalizado;
+  «Pagos» no cambia.
+
+Regla R6 – Historia Hecho de un Sprint activo: PASÓ
+  «Reportes» en Hecho dentro del Sprint 2 activo se edita: POST 303, queda «Reportes mensuales» y sigue Hecho.
+
+Escenarios 13a, 13b y 13c – Inexistente, no numérico y de otro proyecto: PASÓ
+  /backlog/999999/editar → 404; /backlog/abc/editar → 404; /backlog/1/editar → 404 (la última es «Facturas», de
+  «Beta»); POST a «Facturas» → 404; «Facturas» no cambia.
+
+Escenario 14 – Edición sin proyecto: PASÓ
+  Sin proyecto, /backlog/2/editar lleva a elegir proyecto («Para entrar a esta sección primero elegí un proyecto.»);
+  al elegir «Alfa» vuelve a la edición con los datos.
+
+Escenario 15 – Error al guardar: PASÓ
+  Con un trigger temporal que hace fallar el guardado del título «FALLA»: POST 500 con «La operación no pudo
+  completarse», los datos escritos y sin mensaje de éxito ni detalles internos; la historia y sus criterios no
+  cambian. El trigger se quitó después.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-13 en el commit ________.
+1. El Backlog se lista por prioridad y antigüedad, y el filtro por estado funciona con «Todos»: ______
+2. Editar una historia (título, criterios y Story Points) vuelve a la lista filtrada con el mensaje de éxito: ______
+3. Una historia de un Sprint finalizado tiene «Editar» deshabilitado y su dirección de edición vuelve a la lista: ______
+Observaciones: ______________________________________________________________

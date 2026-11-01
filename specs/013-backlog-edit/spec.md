@@ -2,7 +2,7 @@
 
 **Rama**: `HU-13`
 **Creada**: 2026-10-27
-**Estado**: Borrador
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-02, HU-04, HU-20a, HU-20b, HU-22
 **Orden de implementación**: después de HU-15 (cierre de Sprint) y HU-17 (horas estimadas), que tienen que estar en
@@ -471,22 +471,22 @@ Supuestos:
 
 | Escenario | Requisitos | Éxito | Prueba de handler / BDD | Prueba de dominio / integración |
 |---|---|---|---|---|
-| 1 Listado ordenado | FR-001 | SC-001 | `TestHU13_ListadoOrdenado`, `TestBacklogHandler_GetListsActiveProjectStoriesInPriorityOrder`, BDD "Listado ordenado" | `TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInPriorityOrder`, `TestPostgreSQLStoryCatalog_OrdenPorPrioridadYAntiguedad` |
-| 2a/2b Filtro por estado | FR-002, FR-003 | SC-001, SC-005 | `TestHU13_FiltroPorEstado`, BDD "Filtro por estado" | `TestStoryStatuses` |
+| 1 Listado ordenado | FR-001 | SC-001 | `TestHU13_ListadoOrdenado`, `TestBacklogHandler_GetListsActiveProjectStoriesInPriorityOrder`, `TestWebBacklogEditBDD_ListadoOrdenado`, `TestWebBacklogBDD_BacklogListAndEmptyState` | `TestPostgreSQLStoryCatalogListsOnlyProjectStoriesInPriorityOrder`, `TestPostgreSQLStoryCatalog_OrdenPorPrioridadYAntiguedad` |
+| 2a/2b Filtro por estado | FR-002, FR-003 | SC-001, SC-005 | `TestHU13_FiltroPorEstado`, `TestWebBacklogEditBDD_FiltroPorEstado` | `TestStoryStatuses` |
 | 3 Filtro sin resultados | FR-004 | — | `TestHU13_FiltroSinResultados` | — |
 | 4 Estado inválido | FR-005 | — | `TestHU13_FiltroEstadoInvalido` | — |
 | 5 Backlog vacío | FR-006 | — | `TestHU13_BacklogVacioConFiltro` | — |
 | 6 Acceso a la edición | FR-007, FR-008 | SC-005 | `TestHU13_FormularioConDatosActuales` | `TestPostgresStoryForEdit_ConCriteriosEnOrden`, `TestPostgresStoryForEdit_SinCriterios` |
-| 7a/7b/7c/7d Edición exitosa | FR-010, FR-012, FR-021 | SC-002 | `TestHU13_EdicionExitosa`, `TestHU13_IgnoraHorasEstimadas`, BDD "Edición exitosa" | `TestUpdateStory_DelegaYPropaga`, `TestPostgresUpdateStory_DatosYSinEfectos`, `TestPostgresUpdateStory_HechoEnSprintActivo` |
+| 7a/7b/7c/7d Edición exitosa | FR-010, FR-012, FR-021 | SC-002 | `TestHU13_EdicionExitosa`, `TestHU13_IgnoraHorasEstimadas`, `TestWebBacklogEditBDD_EdicionExitosa` | `TestUpdateStory_DelegaYPropaga`, `TestPostgresUpdateStory_DatosYSinEfectos`, `TestPostgresUpdateStory_HechoEnSprintActivo` |
 | 7e Volver a la lista filtrada | FR-024 | SC-005 | `TestHU13_VuelveALaListaFiltrada` | — |
 | 8a/8b Agregar y quitar criterios | FR-009 | SC-003 | `TestHU13_AgregarYQuitarCriterio` | `TestPostgresUpdateStory_ReemplazaCriterios` |
-| 9 Quitar Story Points | FR-010, FR-011 | SC-002 | `TestHU13_QuitarStoryPoints`, BDD "Quitar los Story Points" | `TestUpdateStory_DelegaYPropaga`, `TestPostgresUpdateStory_SinStoryPoints` |
-| 10a/10b/10c Edición inválida | FR-013, FR-020 | SC-003 | `TestHU13_TituloODescripcionVacios`, `TestHU13_SinCriterios`, BDD "Edición inválida" | `TestValidateStoryFields`, `TestUpdateStory_Validaciones` |
+| 9 Quitar Story Points | FR-010, FR-011 | SC-002 | `TestHU13_QuitarStoryPoints`, `TestWebBacklogEditBDD_QuitarStoryPoints` | `TestUpdateStory_DelegaYPropaga`, `TestPostgresUpdateStory_SinStoryPoints` |
+| 10a/10b/10c Edición inválida | FR-013, FR-020 | SC-003 | `TestHU13_TituloODescripcionVacios`, `TestHU13_SinCriterios`, `TestWebBacklogEditBDD_EdicionInvalida` | `TestValidateStoryFields`, `TestUpdateStory_Validaciones` |
 | 11a/11b Prioridad o Story Points inválidos | FR-013, FR-020 | SC-003 | `TestHU13_PrioridadInvalida`, `TestHU13_StoryPointsInvalidos` | `TestValidateStoryFields`, `TestUpdateStory_Validaciones` |
-| 12a/12b/12c Sprint finalizado | FR-007, FR-014, FR-015 | SC-003, SC-004 | `TestHU13_EditarDeshabilitadoSprintFinalizado`, `TestHU13_EnvioBloqueadoSprintFinalizado`, `TestHU13_AbrirEdicionSprintFinalizado`, BDD "Historia de un Sprint finalizado" | `TestPostgreSQLStoryCatalog_MarcaSprintFinalizado`, `TestPostgresStoryForEdit_SprintFinalizado`, `TestPostgresUpdateStory_SprintFinalizado`, `TestPostgresUpdateStory_EsperaAlCierre` |
+| 12a/12b/12c Sprint finalizado | FR-007, FR-014, FR-015 | SC-003, SC-004 | `TestHU13_EditarDeshabilitadoSprintFinalizado`, `TestHU13_EnvioBloqueadoSprintFinalizado`, `TestHU13_AbrirEdicionSprintFinalizado`, `TestWebBacklogEditBDD_SprintFinalizado` | `TestPostgreSQLStoryCatalog_MarcaSprintFinalizado`, `TestPostgresStoryForEdit_SprintFinalizado`, `TestPostgresUpdateStory_SprintFinalizado`, `TestPostgresUpdateStory_EsperaAlCierre` |
 | 13a/13b/13c Inexistente o de otro proyecto | FR-016 | SC-003 | `TestHU13_HistoriaInexistente`, `TestHU13_404AntesQue422` | `TestPostgresUpdateStory_InexistenteYOtroProyecto`, `TestPostgresStoryForEdit_Inexistente`, `TestPostgresStoryForEdit_OtroProyecto` |
 | 14 Sin proyecto | FR-017 | — | `TestHU13_EdicionSinProyecto` | — |
-| 15 Error al guardar | FR-018, FR-022 | SC-003 | `TestHU13_ErrorAlGuardar`, BDD "Error al guardar" | `TestPostgresUpdateStory_FalloNoDejaCambios` |
+| 15 Error al guardar | FR-018, FR-022 | SC-003 | `TestHU13_ErrorAlGuardar`, `TestWebBacklogEditBDD_ErrorAlGuardar` | `TestPostgresUpdateStory_FalloNoDejaCambios` |
 | (HU-20a) Error al leer | FR-019 | — | `TestHU13_ErrorAlLeer` | — |
 | (HU-20b) Texto escapado | FR-022 | — | `TestHU13_TextoEscapado` | — |
 | (HU-20b) Recarga sin reenviar | FR-010 | SC-002 | `TestHU13_RecargaSinReenviar` | — |

@@ -1,0 +1,36 @@
+﻿ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.670s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	3.931s	coverage: 89.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.323s	coverage: 6.1% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	1.389s	coverage: 87.8% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	1.050s	coverage: 92.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	1.276s	coverage: 85.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	5.656s	coverage: 88.5% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	1.831s	coverage: 87.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	5.100s	coverage: 83.3% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	58.288s	coverage: 89.8% of statements
+ok  	github.com/FrancoV20/seguimiento-y-medicion/test	13.230s	coverage: [no statements]
+
+== Cobertura de la edición del Backlog en src/web (go tool cover -func) ==
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_edit_handlers.go:16:		edit					88.9%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_edit_handlers.go:55:		update					90.7%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_edit_handlers.go:129:		renderEdit				83.3%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:104:			parseBacklogForm			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:110:			parseStoryFields			96.9%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:166:			mapBacklogDomainError			85.7%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:194:			applyAction				90.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:213:			backlogPriorities			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:221:			backlogStoryPointValues			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:225:			invalidBacklogPriority			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:234:			invalidBacklogStoryPoints		100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:250:			backlogStatusFilter			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:264:			backlogListURL				100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:272:			backlogEditURL				100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_form.go:281:			backlogStatusOptions			100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_handlers.go:15:			RegisterBacklog				62.5%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_handlers.go:45:			get					86.7%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_handlers.go:63:			post					89.2%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_handlers.go:125:			render					60.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/backlog_handlers.go:145:			pageData				96.3%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_story_catalog.go:20:		NewPostgreSQLStoryCatalog		100.0%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_story_catalog.go:26:		ListStories				82.6%
+github.com/FrancoV20/seguimiento-y-medicion/src/web/postgres_story_catalog_edit.go:12:		StoryForEdit				85.2%

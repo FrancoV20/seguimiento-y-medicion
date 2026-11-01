@@ -65,6 +65,18 @@
 
 <section aria-labelledby="stories-heading">
   <h2 id="stories-heading">Historias</h2>
+  {{if .Data.HasStories}}
+  <form method="get" action="/backlog" class="backlog-filter">
+    <div class="field{{if .Data.FilterError}} field-invalid{{end}}">
+      <label for="estado">Estado</label>
+      <select id="estado" name="estado"{{if .Data.FilterError}} aria-invalid="true" aria-describedby="estado-error"{{end}}>
+        <option value="Todos"{{if not .Data.Filter}} selected{{end}}>Todos</option>
+        {{range .Data.Statuses}}<option value="{{.}}"{{if eq . $.Data.Filter}} selected{{end}}>{{.}}</option>{{end}}
+      </select>
+      {{with .Data.FilterError}}<p class="field-error" id="estado-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+    </div>
+    <button type="submit">Filtrar</button>
+  </form>
   {{if .Data.Stories}}
   <table>
     <thead>
@@ -75,6 +87,7 @@
         <th scope="col">Story Points</th>
         <th scope="col">Horas estimadas</th>
         <th scope="col">Estado</th>
+        <th scope="col">Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -86,10 +99,21 @@
         <td>{{.StoryPoints}}</td>
         <td>{{.EstimatedHours}}</td>
         <td>{{.Status}}</td>
+        <td>
+          {{if .InFinishedSprint}}
+          <button type="button" disabled aria-describedby="editar-motivo-{{.ID}}">Editar</button>
+          <span class="muted" id="editar-motivo-{{.ID}}">Sprint finalizado</span>
+          {{else}}
+          <a href="{{.EditURL}}">Editar</a>
+          {{end}}
+        </td>
       </tr>
       {{end}}
     </tbody>
   </table>
+  {{else}}
+  <p class="muted" role="status">{{.Data.NoResults}}</p>
+  {{end}}
   {{else}}
   <p>Aún no hay historias</p>
   {{end}}
