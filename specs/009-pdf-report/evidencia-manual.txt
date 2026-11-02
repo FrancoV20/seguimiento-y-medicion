@@ -1,0 +1,65 @@
+HU-09 — Evidencia de verificación manual (T049)
+Fecha: 2026-11-01
+Realizó: Franco Valentin Velazco. Claude (asistente de IA) preparó los datos de demostración y revisó el contenido de
+los PDF descargados (texto extraído y validación de la estructura con qpdf).
+
+Entorno
+- Código de la rama HU-09 en el commit a87bda4 (GREEN Reporte del proyecto).
+- Servidor en la PC de Franco: `go run ./src/cmd/server` con `ADDR=:8081` (el 8080 estaba ocupado por otro
+  programa) y `COOKIE_SECRET` local, contra la base local de Docker (PostgreSQL 16, migraciones al día).
+- Lectores: Foxit PDF Reader 2025.2.1.33197 y Microsoft Edge 156.0.4314.58.
+
+Método
+- Datos: proyectos «Alfa HU-09» y «Beta HU-09» cargados con `_hu09-entregas/datos-demo-hu09.sql`, con los valores de
+  "Datos de ejemplo" de spec.md (Sprints 1 y 2 cerrados como los deja HU-15, Sprint 3 activo, esfuerzo y defectos).
+  Los integrantes se llaman «Ana (demo HU-09)» y «Beto (demo HU-09)» para no mezclarse con datos reales.
+- Recorrido desde el navegador: elegir el proyecto, abrir "Reportes", descargar los PDF y abrir cada uno en los dos
+  lectores.
+- Después se cerró el Sprint 3 desde la pantalla "Cierre de Sprint" (HU-15) y se volvió a exportar.
+
+Escenarios
+1. Lista de Sprints (escenarios 1 y 11): PASÓ. "Sprint 3" (En curso), "Sprint 2" y "Sprint 1" (Finalizado), en ese
+   orden, cada uno con "Exportar PDF", y el botón "Exportar reporte del proyecto".
+2. PDF del Sprint 2 (escenarios 1 a 6): PASÓ. reporte-sprint-2.pdf con «Alfa HU-09», "Sprint 2", el objetivo,
+   "01/09/2026 al 14/09/2026", "Finalizado"; 4 historias con «Reportes» "En progreso – volvió al Backlog" y «Perfil»
+   "Sin estimar"; "3 de 4 historias completadas (75,00 %)"; "18 Story Points planificados y 10 completados"; "28 horas
+   estimadas en total (1 historia sin horas estimadas)"; "24 horas registradas en total" (Ana 17 h, Beto 7 h);
+   "Velocidad: 10 Story Points", "Desviación de esfuerzo: +6,25 %", "Cálculo parcial: basado en 2 de 3 historias"; los
+   2 defectos y "2 defectos detectados y 1 resuelto en este Sprint". Guardado como ejemplo-reporte-sprint.pdf.
+3. PDF del Sprint 1 (escenario 7): PASÓ. "1 de 1 historias completadas (100,00 %)", "Desviación de esfuerzo: 0,00 %"
+   y "No se registraron defectos en este Sprint".
+4. Sprint 3 en curso (escenarios 8 a 10): PASÓ. Advertencia "El Sprint 3 sigue en curso: el reporte puede estar
+   incompleto"; con "Generar igual", reporte-sprint-3.pdf con "Reporte parcial: Sprint en curso", las historias en su
+   estado actual, tres veces "Se calculan al cerrar el Sprint" y "1 defecto detectado hasta el momento".
+   "Cancelar" volvió a "Reportes" sin descargar nada: PASÓ.
+5. PDF del proyecto «Alfa HU-09» (escenarios 14 a 17): PASÓ. Advertencia "El proyecto tiene un Sprint en curso
+   (Sprint 3)…"; con "Generar igual", "Reporte parcial: hay un Sprint en curso", "Estado: En curso", integrantes,
+   historias 1/1/1/4 y "4 de 7 historias completadas (57,14 %)", las filas de los Sprints 1, 2 y 3, "Velocidad
+   acumulada: 13 Story Points", "Promedio: 6,50 Story Points por Sprint", "38 horas estimadas en total (2 historias
+   sin horas estimadas)", "30 horas registradas en total" y "3 defectos registrados: 2 abiertos y 1 resuelto" con los
+   2 abiertos. Guardado como ejemplo-reporte-proyecto.pdf.
+6. Proyecto «Beta HU-09» sin Sprints (escenarios 11 y 18): PASÓ. "Aún no hay Sprints para exportar" y el reporte
+   del proyecto sin advertencia, con "Aún no hay Sprints" y "0 de 0 historias completadas (0,00 %)".
+7. Sprint inexistente (escenario 12): PASÓ. /reportes/sprints/abc/pdf → página 404, sin descarga (registro del
+   servidor: "recurso no encontrado … identificador de Sprint inválido").
+8. Base de datos caída (escenario 13): PASÓ. Con `docker compose stop`, al exportar un Sprint → página "Servicio no
+   disponible" (503), sin descarga (registro del servidor: "la base de datos no está disponible"). Después,
+   `docker compose start`.
+9. Integración con HU-15: PASÓ. Sprint 3 cerrado desde "Cierre de Sprint" y vuelto a exportar → sin advertencia,
+   "Estado: Finalizado", las dos historias con "volvió al Backlog", "0 de 2 historias completadas (0,00 %)",
+   "5 Story Points planificados y 0 completados", "Velocidad: 0 Story Points", "Desviación de esfuerzo: No disponible"
+   y "1 defecto detectado y 0 resueltos en este Sprint". Guardado como ejemplo-reporte-sprint-3-cerrado.pdf.
+10. PDF válidos (FR-018, SC-006): PASÓ. Los 5 PDF se abrieron sin avisos de archivo dañado en Foxit PDF Reader y en
+    Microsoft Edge, con acentos, "ñ" y rayas correctos, columnas sin textos superpuestos y "Página 1 de 1" al pie;
+    qpdf --check no encontró errores de estructura.
+
+Resultado: 10/10 escenarios pasaron.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-09 en el commit ________.
+1. "Reportes" lista los Sprints del proyecto (el activo primero) y el botón del reporte del proyecto: ______
+2. El PDF de un Sprint finalizado se descarga y sus números coinciden con Métricas del Sprint y Calidad y avance: ______
+3. Un Sprint en curso muestra la advertencia; "Cancelar" no descarga nada: ______
+4. El PDF del proyecto coincide con Estado del proyecto y Dashboard (avance, velocidad acumulada y promedio): ______
+5. Con la base detenida, página de error y ningún archivo descargado: ______

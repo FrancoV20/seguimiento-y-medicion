@@ -1,0 +1,11 @@
+{{define "content"}}
+<h1>Reportes</h1>
+{{with .Data}}
+<div class="alert alert-warning" role="alert"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">{{.Message}}</span></div>
+<p>
+  <a href="{{.GenerateURL}}">Generar igual</a>
+  ·
+  <a href="{{.CancelURL}}">Cancelar</a>
+</p>
+{{end}}
+{{end}}

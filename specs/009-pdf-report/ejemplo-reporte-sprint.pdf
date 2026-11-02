@@ -1,0 +1,110 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 3495 >>
+stream
+BT /F2 16 Tf 50 775.89 Td (Reporte del Sprint) Tj ET
+BT /F1 10 Tf 50 761.89 Td (Proyecto: Alfa HU-09) Tj ET
+BT /F1 10 Tf 50 749.39 Td (Sprint 2) Tj ET
+BT /F1 10 Tf 50 736.89 Td (Objetivo: Gestionar perfiles y reportes) Tj ET
+BT /F1 10 Tf 50 724.39 Td (Fechas: 01/09/2026 al 14/09/2026) Tj ET
+BT /F1 10 Tf 50 711.89 Td (Estado: Finalizado) Tj ET
+BT /F1 10 Tf 50 699.39 Td (Generado: 01/11/2026 20:33) Tj ET
+BT /F2 12 Tf 50 674.89 Td (Historias) Tj ET
+0.9 g 50 643.39 495 26.5 re f 0 g
+BT /F2 9 Tf 52 658.89 Td (Historia) Tj ET
+BT /F2 9 Tf 217 658.89 Td (Estado) Tj ET
+BT /F2 9 Tf 352 658.89 Td (Story) Tj ET
+BT /F2 9 Tf 352 647.64 Td (Points) Tj ET
+BT /F2 9 Tf 407 658.89 Td (Horas) Tj ET
+BT /F2 9 Tf 407 647.64 Td (estimadas) Tj ET
+BT /F2 9 Tf 477 658.89 Td (Horas reales) Tj ET
+BT /F1 9 Tf 52 632.39 Td (Login) Tj ET
+BT /F1 9 Tf 217 632.39 Td (Hecho) Tj ET
+BT /F1 9 Tf 352 632.39 Td (5) Tj ET
+BT /F1 9 Tf 407 632.39 Td (10) Tj ET
+BT /F1 9 Tf 477 632.39 Td (11) Tj ET
+0.8 G 0.5 w 50 628.14 m 545 628.14 l S 0 G
+BT /F1 9 Tf 52 617.14 Td (Tablero) Tj ET
+BT /F1 9 Tf 217 617.14 Td (Hecho) Tj ET
+BT /F1 9 Tf 352 617.14 Td (3) Tj ET
+BT /F1 9 Tf 407 617.14 Td (6) Tj ET
+BT /F1 9 Tf 477 617.14 Td (6) Tj ET
+0.8 G 0.5 w 50 612.89 m 545 612.89 l S 0 G
+BT /F1 9 Tf 52 601.89 Td (Perfil) Tj ET
+BT /F1 9 Tf 217 601.89 Td (Hecho) Tj ET
+BT /F1 9 Tf 352 601.89 Td (2) Tj ET
+BT /F1 9 Tf 407 601.89 Td (Sin estimar) Tj ET
+BT /F1 9 Tf 477 601.89 Td (4) Tj ET
+0.8 G 0.5 w 50 597.64 m 545 597.64 l S 0 G
+BT /F1 9 Tf 52 586.64 Td (Reportes) Tj ET
+BT /F1 9 Tf 217 586.64 Td (En progreso – volvió al Backlog) Tj ET
+BT /F1 9 Tf 352 586.64 Td (8) Tj ET
+BT /F1 9 Tf 407 586.64 Td (12) Tj ET
+BT /F1 9 Tf 477 586.64 Td (3) Tj ET
+0.8 G 0.5 w 50 582.39 m 545 582.39 l S 0 G
+BT /F1 10 Tf 50 568.39 Td (3 de 4 historias completadas \(75,00 %\)) Tj ET
+BT /F2 12 Tf 50 543.89 Td (Estimaciones) Tj ET
+BT /F1 10 Tf 50 528.89 Td (18 Story Points planificados y 10 completados) Tj ET
+BT /F1 10 Tf 50 516.39 Td (28 horas estimadas en total \(1 historia sin horas estimadas\)) Tj ET
+BT /F2 12 Tf 50 491.89 Td (Esfuerzo registrado) Tj ET
+BT /F1 10 Tf 50 476.89 Td (24 horas registradas en total) Tj ET
+BT /F1 10 Tf 50 464.39 Td (Ana \(demo HU-09\): 17 h) Tj ET
+BT /F1 10 Tf 50 451.89 Td (Beto \(demo HU-09\): 7 h) Tj ET
+BT /F2 12 Tf 50 427.39 Td (Métricas) Tj ET
+BT /F1 10 Tf 50 412.39 Td (Velocidad: 10 Story Points) Tj ET
+BT /F1 10 Tf 50 399.89 Td (Desviación de esfuerzo: +6,25 %) Tj ET
+BT /F1 10 Tf 50 387.39 Td (Cálculo parcial: basado en 2 de 3 historias) Tj ET
+BT /F2 12 Tf 50 362.89 Td (Defectos) Tj ET
+0.9 g 50 342.64 495 15.25 re f 0 g
+BT /F2 9 Tf 52 346.89 Td (Descripción) Tj ET
+BT /F2 9 Tf 222 346.89 Td (Severidad) Tj ET
+BT /F2 9 Tf 282 346.89 Td (Estado) Tj ET
+BT /F2 9 Tf 342 346.89 Td (Historia) Tj ET
+BT /F2 9 Tf 462 346.89 Td (Resuelto en) Tj ET
+BT /F1 9 Tf 52 331.64 Td (El login no valida la contraseña) Tj ET
+BT /F1 9 Tf 222 331.64 Td (Alta) Tj ET
+BT /F1 9 Tf 282 331.64 Td (Resuelto) Tj ET
+BT /F1 9 Tf 342 331.64 Td (Login) Tj ET
+BT /F1 9 Tf 462 331.64 Td (Sprint 2) Tj ET
+0.8 G 0.5 w 50 327.39 m 545 327.39 l S 0 G
+BT /F1 9 Tf 52 316.39 Td (La foto de perfil no se guarda) Tj ET
+BT /F1 9 Tf 222 316.39 Td (Media) Tj ET
+BT /F1 9 Tf 282 316.39 Td (Abierto) Tj ET
+BT /F1 9 Tf 342 316.39 Td (Perfil) Tj ET
+BT /F1 9 Tf 462 316.39 Td (—) Tj ET
+0.8 G 0.5 w 50 312.14 m 545 312.14 l S 0 G
+BT /F1 10 Tf 50 298.14 Td (2 defectos detectados y 1 resuelto en este Sprint) Tj ET
+BT /F1 9 Tf 269.87 30 Td (Página 1 de 1) Tj ET
+
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000462 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4009
+%%EOF

@@ -23,7 +23,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Confirmar con `git grep -n` los nombres que usa HU-09, ajustar `data-model.md`, `research.md` y las
+- [x] T001 Confirmar con `git grep -n` los nombres que usa HU-09, ajustar `data-model.md`, `research.md` y las
   consultas si alguno cambió, y quitar las marcas "(T001)":
   - de HU-10: `NewQualityService`, `NewPostgreSQLQualityStore`, `(*QualityService).SprintQuality` y los campos
     `StoriesPlanned`, `StoriesCompleted`, `CompletionPercentage`, `PointsPlanned`, `PointsCompleted`,
@@ -51,10 +51,10 @@ Formato: `[ID] [P] [E#] descripción`
 
   **Si HU-08, HU-10 o HU-12 no están en `main`, no seguir y avisar al equipo.** Revisar también "Planificación de
   proyecto.pdf": si contradice la spec, corregirla antes de T002.
-- [ ] T002 Crear la rama `HU-09` desde `main` actualizado, solo si no hay cambios sin commitear:
+- [x] T002 Crear la rama `HU-09` desde `main` actualizado, solo si no hay cambios sin commitear:
   `git switch main; git pull; git switch -c HU-09`.
-- [ ] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
-- [ ] T004 Coordinar con quien tenga HU-08, HU-10, HU-12 y HU-25 el bloque de registro que se suma al final de
+- [x] T003 Línea base: `go test -count=1 -p 1 ./...`, `gofmt -l .` y `go vet ./...` en verde antes de empezar.
+- [x] T004 Coordinar con quien tenga HU-08, HU-10, HU-12 y HU-25 el bloque de registro que se suma al final de
   `src/cmd/server/main.go`.
 
 ## Fase 2: Bloque Generador PDF
@@ -65,7 +65,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] Escribir `TestPDF_Texto` en `src/pdf/winansi_test.go` y `src/pdf/widths_test.go`, con las tablas de
+- [x] T005 [P] Escribir `TestPDF_Texto` en `src/pdf/winansi_test.go` y `src/pdf/widths_test.go`, con las tablas de
   `data-model.md`:
   - `encodeWinAnsi`: "Página", "Año – 5 €", comillas tipográficas y "…", "«Alfa» — ok", tabulación y salto de línea
     como espacio, emoji y "Ω" como "?", UTF-8 inválido como "?";
@@ -73,7 +73,7 @@ Formato: `[ID] [P] [E#] descripción`
   - `textWidth(Regular, 10, "Página")` = 31,13 y `textWidth(Bold, 10, "Página")` = 32,79;
   - `wrapText`: texto que entra (una línea), varias palabras (cada línea ≤ ancho, sin perder palabras), palabra más
     ancha que el ancho (cortada por caracteres) y texto vacío (una línea vacía).
-- [ ] T006 [P] Escribir en `src/pdf/pdftest_test.go` un ayudante que, sin bibliotecas externas, lee la `xref`, verifica
+- [x] T006 [P] Escribir en `src/pdf/pdftest_test.go` un ayudante que, sin bibliotecas externas, lee la `xref`, verifica
   que cada desplazamiento apunta a `N 0 obj`, que `startxref` apunta a `xref`, que cada `/Length` coincide con su flujo,
   y devuelve la cantidad de objetos `/Type /Page` y el contenido de cada página. Con él, en
   `src/pdf/document_test.go`:
@@ -84,19 +84,19 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestPDF_SaltoDePagina`: una tabla de 120 filas (una con un texto de 300 caracteres) pasa a varias páginas, el
     encabezado de la tabla está en cada página con filas, cada página tiene su "Página X de Y" con Y igual a la
     cantidad de páginas, y ninguna línea queda por debajo del margen inferior ni más allá del margen derecho.
-- [ ] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
+- [x] T007 Ejecutar T005 y T006, confirmar que fallan porque el código no existe y guardar la salida en
   `evidencia-red.txt`, sección "Generador PDF".
 
 ### Implementación (GREEN)
 
-- [ ] T008 Crear `src/pdf/winansi.go` (`encodeWinAnsi`, `escapeLiteral`, `Literal`; research.md §3),
+- [x] T008 Crear `src/pdf/winansi.go` (`encodeWinAnsi`, `escapeLiteral`, `Literal`; research.md §3),
   `src/pdf/widths.go` (anchos AFM de Helvetica y Helvetica-Bold en milésimas, `textWidth`, `wrapText`; research.md
   §4) y `src/pdf/extract.go` (`ExtractText`; research.md §19).
-- [ ] T009 Crear `src/pdf/document.go` (`Font`, `Column`, `Document`, `New`, `Text`, `Space`, `Table`, `PageCount`,
+- [x] T009 Crear `src/pdf/document.go` (`Font`, `Column`, `Document`, `New`, `Text`, `Space`, `Table`, `PageCount`,
   `Bytes`, errores) y `src/pdf/writer.go` (serialización de research.md §5: encabezado con línea binaria, objetos 1 a
   4, una página y un flujo por página, `xref` de 20 bytes por entrada, `trailer`, `startxref`, `%%EOF`), con las
   medidas de research.md §6.
-- [ ] T010 Ejecutar T005 y T006 en verde.
+- [x] T010 Ejecutar T005 y T006 en verde.
 
 **Punto de control**: el generador produce PDF válidos; los dos reportes ya pueden usarlo.
 
@@ -108,12 +108,12 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 [P] [E3, E4, E5, E6, E7, E9] Escribir `TestReportTexts` en `src/report/texts_test.go` con las tablas de
+- [x] T011 [P] [E3, E4, E5, E6, E7, E9] Escribir `TestReportTexts` en `src/report/texts_test.go` con las tablas de
   `data-model.md`: `percentText`, `deviationText` ("+6,25 %", "-8,50 %", "0,00 %", "No disponible"), `hoursText` (17,
   2,5, 0,25 y 0), `dateText`, `storyStatusText`, `withoutHoursText` (0, 1 y 2), totales de horas en singular y plural,
   `defectsSummaryText` (2 y 1 → "2 defectos detectados y 1 resuelto en este Sprint"; 1 y 0; 0 y 1; 0 y 0 → "No se
   registraron defectos en este Sprint") y `defectsSoFarText` (0, 1 y 3).
-- [ ] T012 [P] [E1, E2, E3, E5, E9, E13] Escribir en `src/report/service_test.go`, con un almacén, un `MetricsSource`
+- [x] T012 [P] [E1, E2, E3, E5, E9, E13] Escribir en `src/report/service_test.go`, con un almacén, un `MetricsSource`
   y un `QualitySource` de prueba locales y un reloj fijo (28/10/2026 10:30):
   - `TestBuildSprintReport`: con los datos del Sprint 2 de «Alfa», el reporte trae los datos leídos, `Metrics` y
     `Quality` de las fuentes, `Partial` falso y `GeneratedAt` del reloj; con el Sprint 3 activo, `Partial` verdadero
@@ -122,7 +122,7 @@ Formato: `[ID] [P] [E#] descripción`
     `ErrSprintNotFound` del almacén sin cambios; falla del almacén, de HU-07 y de HU-10 envueltas (`errors.Is` con la
     causa); historias o defectos que no coinciden con HU-10 → `ErrInconsistentReport`; dependencias `nil` → error; en
     todos los casos `SprintPDF` devuelve `nil` como bytes.
-- [ ] T013 [P] [E1, E2, E3, E4, E5, E6, E7, E9] Escribir `TestRenderSprintReport` en `src/report/document_test.go`,
+- [x] T013 [P] [E1, E2, E3, E4, E5, E6, E7, E9] Escribir `TestRenderSprintReport` en `src/report/document_test.go`,
   buscando con `pdf.ExtractText`:
   - con el reporte del Sprint 2 de «Alfa», el PDF contiene, en este orden, los textos de "Datos de ejemplo"
     ("Proyecto: Alfa", "Sprint 2", "Objetivo: Gestionar perfiles y reportes", "Fechas: 01/09/2026 al 14/09/2026",
@@ -137,22 +137,22 @@ Formato: `[ID] [P] [E#] descripción`
     detectado hasta el momento", y no contiene "Velocidad:";
   - un Sprint sin historias muestra "No hay historias registradas en este Sprint" y "0 de 0 historias completadas (No
     disponible)".
-- [ ] T014 Ejecutar T011–T013, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Dominio del
+- [x] T014 Ejecutar T011–T013, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Dominio del
   reporte".
 
 ### Implementación (GREEN)
 
-- [ ] T015 Crear `src/report/model.go` (`ErrSprintNotFound`, `ErrProjectNotFound`, `ErrInconsistentReport`,
+- [x] T015 Crear `src/report/model.go` (`ErrSprintNotFound`, `ErrProjectNotFound`, `ErrInconsistentReport`,
   `SprintInfo`, `Story`, `MemberHours`, `Defect`, `Data`, `SprintReport`), `src/report/store.go` (puerto `Store` con
   `LoadSprintReport`; `LoadProjectReport` se agrega en T043) y `src/report/sources.go` (`MetricsSource`,
   `QualitySource`), como en `data-model.md`.
-- [ ] T016 Crear `src/report/texts.go` con la tabla de textos del Sprint y las funciones de formato de
+- [x] T016 Crear `src/report/texts.go` con la tabla de textos del Sprint y las funciones de formato de
   `data-model.md`. Las horas usan `effort.Hours.String()` con coma.
-- [ ] T017 Crear `src/report/service.go` con `NewService` (reloj `nil` = `time.Now`), `Build` (pasos 1 a 6 de
+- [x] T017 Crear `src/report/service.go` con `NewService` (reloj `nil` = `time.Now`), `Build` (pasos 1 a 6 de
   `data-model.md`) y `SprintPDF` (`Build` + `Render`).
-- [ ] T018 Crear `src/report/document.go` con `Render`: las siete partes en el orden de `data-model.md`, con las
+- [x] T018 Crear `src/report/document.go` con `Render`: las siete partes en el orden de `data-model.md`, con las
   columnas de research.md §6 y el pie `fmtFooter`.
-- [ ] T019 Ejecutar T011–T013 en verde.
+- [x] T019 Ejecutar T011–T013 en verde.
 
 **Punto de control**: con datos en memoria se genera el PDF completo de un Sprint finalizado y de uno en curso.
 
@@ -164,7 +164,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T020 Crear los datos de prueba en `src/report/fixtures_test.go` (los usan T021, T022 y T039): integrantes
+- [x] T020 Crear los datos de prueba en `src/report/fixtures_test.go` (los usan T021, T022 y T039): integrantes
   «Ana», «Beto» y «Caro»;
   - «Alfa» (18/08/2026 al 30/11/2026, integrantes Ana y Beto) con los Sprints 1, 2 y 3, las historias, los registros
     de esfuerzo y los defectos de "Datos de ejemplo" de la spec (Sprints 1 y 2 cerrados como los deja HU-15: registro
@@ -178,7 +178,7 @@ Formato: `[ID] [P] [E#] descripción`
     1 hora de Caro (que no está en `project_members` de «Delta») y un defecto "Abierto".
 
   Limpieza en `t.Cleanup`, en el orden del encabezado.
-- [ ] T021 [P] [E2, E3, E4, E6, E9, E12] Escribir en `src/report/postgres_store_integration_test.go`:
+- [x] T021 [P] [E2, E3, E4, E6, E9, E12] Escribir en `src/report/postgres_store_integration_test.go`:
   - `TestPostgresReportStore_Finalizado`: Sprint 2 de «Alfa» → encabezado; 4 historias en orden de creación con
     estado final, Story Points del registro y horas estimadas (1000, 600, `nil`, 1200) y reales (1100, 600, 400,
     300); integrantes Ana 1700 y Beto 700 en ese orden; los 2 defectos con historia y "Resuelto en" 2 y 0. Sprint 1 de
@@ -189,16 +189,16 @@ Formato: `[ID] [P] [E#] descripción`
     horas, Ana 200 y el defecto "El PDF sale en blanco"; las horas de Ana en «Alta» y en el Sprint 2 no cuentan;
   - `TestPostgresReportStore_OtroProyecto`: el Sprint 1 de «Delta» pedido con «Alfa» y el identificador 2147483647 →
     `ErrSprintNotFound`; nada de «Delta» aparece en los datos de los Sprints de «Alfa».
-- [ ] T022 [P] [E2, E5, E6] Escribir `TestReport_CoherenciaConHU07YHU10` en el mismo archivo: con los servicios reales
+- [x] T022 [P] [E2, E5, E6] Escribir `TestReport_CoherenciaConHU07YHU10` en el mismo archivo: con los servicios reales
   de HU-07 y HU-10 y el Sprint 2 de «Alfa», `Build` da velocidad 10 igual a `PointsCompleted`, desviación "6.25",
   aviso "Cálculo parcial: basado en 2 de 3 historias", 4 historias igual a `StoriesPlanned`, "75.00", 18 y 10, y 2
   detectados y 1 resuelto. La prueba borra las filas de `sprint_metrics` que escribe HU-07.
-- [ ] T023 Ejecutar T021 y T022, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
+- [x] T023 Ejecutar T021 y T022, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección
   "Almacenamiento".
 
 ### Implementación (GREEN)
 
-- [ ] T024 Implementar `PostgreSQLStore`, `NewPostgreSQLStore(db *sql.DB)` y `LoadSprintReport` en
+- [x] T024 Implementar `PostgreSQLStore`, `NewPostgreSQLStore(db *sql.DB)` y `LoadSprintReport` en
   `src/report/postgres_store.go`:
   - `BeginTx` con `ReadOnly: true` e `Isolation: sql.LevelRepeatableRead`, y `defer tx.Rollback()`;
   - las consultas de `data-model.md`: encabezado (sin fila → `ErrSprintNotFound`), historias del registro de cierre
@@ -206,7 +206,7 @@ Formato: `[ID] [P] [E#] descripción`
     `ORDER BY m.display_name, m.id`, y defectos con `WHERE d.project_id = $2 AND d.detection_sprint_id = $1`;
   - horas como `ROUND(x * 100)::bigint` en `effort.Hours`;
   - errores envueltos con `%w`.
-- [ ] T025 Ejecutar T021 y T022 en verde.
+- [x] T025 Ejecutar T021 y T022 en verde.
 
 **Punto de control**: `report.Service.SprintPDF` genera el PDF real de un Sprint desde PostgreSQL.
 
@@ -215,22 +215,22 @@ Formato: `[ID] [P] [E#] descripción`
 **Objetivo**: la sección `GET /reportes` y la descarga `GET /reportes/sprints/{id}/pdf`.
 
 **Prueba independiente**: abrir "Reportes" de «Alfa», descargar los PDF de los Sprints 1, 2 y 3 y comprobar los
-valores de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, ajenos y con una falla.
+valogit add srcres de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, ajenos y con una falla.
 
 ### Pruebas (RED)
 
-- [ ] T026 Crear los datos de prueba de la web en `src/web/report_fixtures_test.go` (los usan T028, T029 y T040): los
+- [x] T026 Crear los datos de prueba de la web en `src/web/report_fixtures_test.go` (los usan T028, T029 y T040): los
   mismos «Alfa», «Beta», «Gamma» y «Delta» de T020, y «Largo» (integrante Ana) con su Sprint 1 finalizado
   (research.md §15: 120 historias, una con un título de 300 caracteres, y 50 defectos). Escribir
   `TestPostgresReportCatalog` en `src/web/postgres_report_catalog_integration_test.go`:
   - «Alfa»: Sprint 3 (activo), 2 y 1, en ese orden, con objetivo y `Active`;
   - `ReportSprint` del Sprint 1 de «Delta» con «Alfa» → no encontrado; inexistente → no encontrado;
   - «Beta»: lista vacía.
-- [ ] T027 [P] [E8, E11, E12] Escribir `TestReportView` en `src/web/report_view_test.go`: `reportPDFPath`,
+- [x] T027 [P] [E8, E11, E12] Escribir `TestReportView` en `src/web/report_view_test.go`: `reportPDFPath`,
   `reportConfirmPath`, `reportFileName(2)` = "reporte-sprint-2.pdf", `reportProjectFileName(5)` =
   "reporte-proyecto-5.pdf", `reportConfirmed` ("si" verdadero; "SI", "1", "no", vacío y ausente falsos) y el armado
   de la lista (con `ProjectURL` siempre) y de las dos advertencias.
-- [ ] T028 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12] Escribir el servidor de prueba y las pruebas de
+- [x] T028 [E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12] Escribir el servidor de prueba y las pruebas de
   pantalla en `src/web/report_handlers_test.go`, con el catálogo y `report.Service` reales (HU-07, HU-08, HU-10 y
   HU-12 reales, reloj fijo) y los datos de T026, buscando con `pdf.ExtractText`:
   - `TestHU09_ListaDeSprints`: «Alfa» muestra "Sprint 3", "Sprint 2" y "Sprint 1" en ese orden con objetivo, "En
@@ -258,7 +258,7 @@ valores de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, a
     HTML de HU-20a y sin `%PDF`.
 
   Las pruebas borran las filas de `sprint_metrics` que escribe HU-07.
-- [ ] T029 [E13] Escribir las pruebas de errores y bordes en `src/web/report_handlers_test.go`, con dobles que
+- [x] T029 [E13] Escribir las pruebas de errores y bordes en `src/web/report_handlers_test.go`, con dobles que
   fallan:
   - `TestHU09_ErrorAlGenerar`: catálogo que falla, `ReportGenerator` que falla, `ErrInconsistentReport` y
     `ClosureValidationError` → 500 con la página de error, sin `application/pdf`, sin `%PDF`, sin
@@ -271,30 +271,30 @@ valores de "Datos de ejemplo"; repetir con los proyectos de los casos vacíos, a
     completadas (75,00 %)", "270 Story Points planificados y 180 completados", "480 horas estimadas en total", "360
     horas registradas en total", "Ana: 360 h", "Desviación de esfuerzo: 0,00 %", "50 defectos detectados y 20
     resueltos en este Sprint", más de una página y "Página X de Y" en todas.
-- [ ] T030 [P] [E1, E2, E5, E8, E11] Escribir los escenarios BDD en `test/web_report_bdd_test.go`, con datos propios:
+- [x] T030 [P] [E1, E2, E5, E8, E11] Escribir los escenarios BDD en `test/web_report_bdd_test.go`, con datos propios:
   "Exportación exitosa de un Sprint finalizado", "Historias planificadas y completadas", "Métricas del Sprint",
   "Advertencia al exportar un Sprint en curso" y "Sin Sprints".
-- [ ] T031 Ejecutar T026–T030, confirmar que fallan (las rutas y el catálogo no existen) y guardar la salida en
+- [x] T031 Ejecutar T026–T030, confirmar que fallan (las rutas y el catálogo no existen) y guardar la salida en
   `evidencia-red.txt`, sección "Pantalla y descarga".
 
 ### Implementación (GREEN)
 
-- [ ] T032 Crear `src/web/report_catalog.go` (`ReportSprintOption`, `ReportCatalog`, `ReportGenerator` con
+- [x] T032 Crear `src/web/report_catalog.go` (`ReportSprintOption`, `ReportCatalog`, `ReportGenerator` con
   `SprintPDF`; `ProjectPDF` se agrega en T045) y `src/web/postgres_report_catalog.go` (`PostgreSQLReportCatalog`,
   `NewPostgreSQLReportCatalog`, las dos consultas de `data-model.md`, errores envueltos con `%w`).
-- [ ] T033 Crear `src/web/report_view.go` con los textos de la tabla de `data-model.md`, `reportPDFPath`,
+- [x] T033 Crear `src/web/report_view.go` con los textos de la tabla de `data-model.md`, `reportPDFPath`,
   `reportConfirmPath`, `reportFileName`, `reportProjectFileName`, `reportConfirmed`, `reportListData` (con
   `ProjectURL`) y `reportWarningData`.
-- [ ] T034 Crear `RegisterReports(s, catalog, generator)` en `src/web/report_handlers.go` (si falta un argumento,
+- [x] T034 Crear `RegisterReports(s, catalog, generator)` en `src/web/report_handlers.go` (si falta un argumento,
   error sin registrar; `Section{Name: TitleReports, Path: "/reportes", RequiresProject: true}`; `GET /reportes` y la
   descarga del Sprint con los pasos 1 a 5 de `data-model.md`, sin escribir nada antes de tener el PDF completo) y las
   plantillas `src/web/templates/reports.html` (con el botón "Exportar reporte del proyecto") y
   `src/web/templates/report_warning.html`, sin `<script>` ni formularios.
-- [ ] T035 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
+- [x] T035 Agregar al final de los bloques de registro de `src/cmd/server/main.go` (hoy después del de HU-24, o del
   último que esté en `main`) el bloque de research.md §17, que llama a `web.RegisterReports` con
   `web.NewPostgreSQLReportCatalog(database)` y `report.NewService(...)`. Si falla, cerrar `ln` y `database`, como los
   otros bloques.
-- [ ] T036 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T036 Ejecutar T026–T030 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master descarga el PDF de cualquier Sprint del proyecto activo.
 
@@ -308,7 +308,7 @@ el puerto, el servicio y la advertencia.
 
 ### Pruebas (RED)
 
-- [ ] T037 [P] [E15, E16, E17, E18] Escribir en `src/report/texts_test.go` `TestProjectReportTexts` (`decimalText`,
+- [x] T037 [P] [E15, E16, E17, E18] Escribir en `src/report/texts_test.go` `TestProjectReportTexts` (`decimalText`,
   `projectDefectsText` y `sprintDefectsCell` con las tablas de `data-model.md`, y "Integrantes: Sin integrantes") y en
   `src/report/project_document_test.go` `TestRenderProjectReport`, buscando con `pdf.ExtractText`:
   - con el reporte de «Alfa»: en este orden, "Reporte parcial: hay un Sprint en curso", "Proyecto: Alfa", "Fechas:
@@ -324,7 +324,7 @@ el puerto, el servicio y la advertencia.
     en este proyecto";
   - con un proyecto con solo un Sprint en curso: "Velocidad acumulada: 0 Story Points" y "Promedio: No disponible";
   - con defectos todos resueltos: "No hay defectos abiertos".
-- [ ] T038 [P] [E13, E15, E16, E18] Escribir en `src/report/project_service_test.go`, con el almacén de prueba de T012
+- [x] T038 [P] [E13, E15, E16, E18] Escribir en `src/report/project_service_test.go`, con el almacén de prueba de T012
   extendido con `LoadProjectReport`, las fuentes de prueba de T012, las reglas reales de HU-08 y HU-12 y el reloj
   fijo:
   - `TestBuildProjectReport`: con los datos de «Alfa», `Status` de HU-12 ("En curso"), `Progress` de HU-12 para 4 de
@@ -334,7 +334,7 @@ el puerto, el servicio y la advertencia.
   - `TestProjectReportService_Errores`: `projectID` 0 → `ErrProjectNotFound` sin llamar al almacén;
     `ErrProjectNotFound` del almacén sin cambios; falla del almacén, de HU-07 y de HU-10 envueltas; en todos los casos
     `ProjectPDF` devuelve `nil` como bytes.
-- [ ] T039 [E16, E17, E18] Escribir en `src/report/postgres_store_integration_test.go`, con los datos de T020:
+- [x] T039 [E16, E17, E18] Escribir en `src/report/postgres_store_integration_test.go`, con los datos de T020:
   - `TestPostgresReportStore_Proyecto`: «Alfa» → nombre y fechas, integrantes Ana y Beto, historias 1, 1, 1 y 4,
     Sprints 1, 2 y 3 con su estado, `EstimatedTotal` 3800 y `WithoutEstimate` 2, integrantes Ana 2300 y Beto 700
     (suma 3000), 2 abiertos y 1 resuelto, y los 2 abiertos con historia y Sprint de detección 2 y 3; «Beta» → todo en
@@ -343,7 +343,7 @@ el puerto, el servicio y la advertencia.
   - `TestProjectReport_Coherencia`: con los servicios reales, cada fila de «Alfa» coincide con `SprintQuality` y
     `CalculateMetrics` del mismo Sprint, `Velocity` con `SummarizeVelocity` de esas velocidades, y `Status` y
     `Progress` con las reglas de HU-12. Borra las filas de `sprint_metrics`.
-- [ ] T040 [E11, E13, E14, E15, E16, E17, E18] Escribir en `src/web/report_project_handlers_test.go`, con el servidor
+- [x] T040 [E11, E13, E14, E15, E16, E17, E18] Escribir en `src/web/report_project_handlers_test.go`, con el servidor
   de prueba y los datos de T026:
   - `TestHU09_ProyectoAdvertencia`: «Alfa» sin `confirmar` y con `confirmar=SI` → 200 HTML con "El proyecto tiene un
     Sprint en curso (Sprint 3): el reporte puede estar incompleto", "Generar igual" a
@@ -364,49 +364,49 @@ el puerto, el servicio y la advertencia.
   "Velocidad acumulada: 180 Story Points", "Promedio: 180,00 Story Points por Sprint", "480 horas estimadas en
   total", "360 horas registradas en total", "50 defectos registrados: 30 abiertos y 20 resueltos" y "Página X de Y"
   en todas las páginas.
-- [ ] T041 [E14, E16, E18] Agregar a `test/web_report_bdd_test.go` (después de T030) los escenarios "Advertencia al
+- [x] T041 [E14, E16, E18] Agregar a `test/web_report_bdd_test.go` (después de T030) los escenarios "Advertencia al
   exportar un proyecto con un Sprint en curso", "Avance y Sprints del proyecto" y "Proyecto sin Sprints ni
   historias", con datos propios.
-- [ ] T042 Ejecutar T037–T041, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Reporte del
+- [x] T042 Ejecutar T037–T041, confirmar que fallan y guardar la salida en `evidencia-red.txt`, sección "Reporte del
   proyecto".
 
 ### Implementación (GREEN)
 
-- [ ] T043 Crear `src/report/project_model.go` (`StoryCounts`, `ProjectSprint`, `OpenDefect`, `ProjectData`,
+- [x] T043 Crear `src/report/project_model.go` (`StoryCounts`, `ProjectSprint`, `OpenDefect`, `ProjectData`,
   `ProjectSprintRow`, `ProjectReport`), agregar `LoadProjectReport` al puerto en `src/report/store.go`, sumar a
   `src/report/texts.go` los textos del proyecto de `data-model.md` y crear
   `src/report/project_document.go` con `RenderProject` (columnas de research.md §18).
-- [ ] T044 Crear `src/report/project_service.go` con `BuildProject` (pasos 1 a 6 de `data-model.md`, con las reglas de
+- [x] T044 Crear `src/report/project_service.go` con `BuildProject` (pasos 1 a 6 de `data-model.md`, con las reglas de
   HU-12 y `metrics.SummarizeVelocity` de HU-08) y `ProjectPDF`, e implementar `LoadProjectReport` en
   `src/report/postgres_store.go` con las siete consultas de `data-model.md` en una transacción `ReadOnly` +
   `REPEATABLE READ` (sin fila de proyecto → `ErrProjectNotFound`).
-- [ ] T045 En la web: agregar `ProjectPDF` a `ReportGenerator` en `src/web/report_catalog.go` y a los dobles de T029;
+- [x] T045 En la web: agregar `ProjectPDF` a `ReportGenerator` en `src/web/report_catalog.go` y a los dobles de T029;
   sumar a `src/web/report_handlers.go` la ruta `GET /reportes/proyecto/pdf` con los pasos 1 a 4 de `data-model.md`
   (advertencia con `msgReportProjectActiveWarning`, misma plantilla `report_warning.html`, encabezados con
   `reportProjectFileName`). `main.go` no cambia: `*report.Service` ya cumple la interfaz completa.
-- [ ] T046 Ejecutar T037–T041 en verde y `go test -count=1 -p 1 ./...` completo.
+- [x] T046 Ejecutar T037–T041 en verde y `go test -count=1 -p 1 ./...` completo.
 
 **Punto de control**: el Scrum Master descarga el informe del proyecto en PDF (DoD de la entrega final).
 
 ## Fase 7: Cierre
 
-- [ ] T047 REFACTOR y CI:
+- [x] T047 REFACTOR y CI:
   - revisar duplicación entre los dos reportes (textos, tablas, manejo de la advertencia y de los encabezados) y
     extraer funciones locales sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-03, HU-07, HU-08, HU-10, HU-12 ni HU-25 cambió y que no hay migraciones ni
     dependencias nuevas: `git diff --stat main` lista solo archivos nuevos y `main.go`, y `go.mod` no cambió;
   - `gofmt -l` sobre los archivos creados y `main.go` sin salida, `go vet ./...` limpio y `go test ./... -p 1 -race`
     en verde.
-- [ ] T048 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
+- [x] T048 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/pdf` y en `src/report`.
-- [ ] T049 Verificación manual (`quickstart.md`): con la aplicación en ejecución, armar «Alfa» y «Beta», descargar los
+- [x] T049 Verificación manual (`quickstart.md`): con la aplicación en ejecución, armar «Alfa» y «Beta», descargar los
   PDF de los Sprints 1, 2 y 3 y los del proyecto («Alfa» con advertencia y «Beta» sin ella), y abrir cada uno en dos
   lectores distintos (Edge y Adobe Acrobat Reader): sin avisos de archivo dañado, acentos y "ñ" correctos, columnas
   sin textos superpuestos, saltos de página y "Página X de Y" correctos. Probar también las dos advertencias,
   "Cancelar", el 404 y el 503 con la base detenida. Guardar `specs/009-pdf-report/ejemplo-reporte-sprint.pdf` (Sprint
   2) y `specs/009-pdf-report/ejemplo-reporte-proyecto.pdf` («Alfa») y anotar en `evidencia-pruebas.txt` las versiones
   de los dos lectores.
-- [ ] T050 Cierre de la historia:
+- [ ] T050 Cierre de la historia (queda abierta hasta el merge y el pase de la tarjeta a "Hecho"):
   - actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de
     usuario con la sección "Reportes" (los dos reportes);
   - avisar a HU-08, HU-10, HU-12 y HU-25 que no se tocaron sus archivos, al equipo que `src/pdf` queda disponible y
