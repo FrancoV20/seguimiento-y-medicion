@@ -406,7 +406,7 @@ el puerto, el servicio y la advertencia.
   "Cancelar", el 404 y el 503 con la base detenida. Guardar `specs/009-pdf-report/ejemplo-reporte-sprint.pdf` (Sprint
   2) y `specs/009-pdf-report/ejemplo-reporte-proyecto.pdf` («Alfa») y anotar en `evidencia-pruebas.txt` las versiones
   de los dos lectores.
-- [x] T050 Cierre de la historia:
+- [ ] T050 Cierre de la historia (queda abierta hasta el merge y el pase de la tarjeta a "Hecho"):
   - actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de
     usuario con la sección "Reportes" (los dos reportes);
   - avisar a HU-08, HU-10, HU-12 y HU-25 que no se tocaron sus archivos, al equipo que `src/pdf` queda disponible y

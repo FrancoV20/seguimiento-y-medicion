@@ -2,7 +2,7 @@
 
 **Rama**: `HU-09`
 **Creada**: 2026-10-28 · **Actualizada**: 2026-11-01 (implementación y trazabilidad con las pruebas reales)
-**Estado**: Implementada
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Depende de**: HU-06, HU-07, HU-08, HU-10, HU-12, HU-15, HU-17, HU-20a, HU-20b (verificación manual: HU-03/HU-24 y
 HU-23)
@@ -669,24 +669,24 @@ Comunes:
 
 | Escenario | Requisitos | Éxito | Prueba de pantalla / BDD | Prueba de dominio / integración |
 |---|---|---|---|---|
-| 1 Exportación exitosa | FR-005, FR-008, FR-014 | SC-005 | `TestHU09_ExportarFinalizado`, BDD "Exportación exitosa de un Sprint finalizado" | `TestBuildSprintReport`, `TestRenderSprintReport` |
-| 2 Historias | FR-009, FR-015 | SC-001, SC-002 | `TestHU09_ContenidoDelPDF`, BDD "Historias planificadas y completadas" | `TestBuildSprintReport`, `TestPostgresReportStore_Finalizado` |
+| 1 Exportación exitosa | FR-005, FR-008, FR-014 | SC-005 | `TestHU09_ExportarFinalizado`, `TestHU09BDD_ExportacionExitosaDeUnSprintFinalizado` (BDD "Exportación exitosa de un Sprint finalizado") | `TestBuildSprintReport`, `TestRenderSprintReport` |
+| 2 Historias | FR-009, FR-015 | SC-001, SC-002 | `TestHU09_ContenidoDelPDF`, `TestHU09BDD_HistoriasPlanificadasYCompletadas` (BDD "Historias planificadas y completadas") | `TestBuildSprintReport`, `TestPostgresReportStore_Finalizado` |
 | 3 Estimaciones | FR-009, FR-010 | SC-001 | `TestHU09_ContenidoDelPDF` | `TestBuildSprintReport`, `TestReportTexts` |
 | 4 Esfuerzo | FR-011 | SC-001 | `TestHU09_ContenidoDelPDF` | `TestPostgresReportStore_Finalizado`, `TestReportTexts` |
-| 5 Métricas | FR-012, FR-015 | SC-001, SC-002 | `TestHU09_ContenidoDelPDF`, BDD "Métricas del Sprint" | `TestBuildSprintReport`, `TestReport_CoherenciaConHU07YHU10` |
+| 5 Métricas | FR-012, FR-015 | SC-001, SC-002 | `TestHU09_ContenidoDelPDF`, `TestHU09BDD_MetricasDelSprint` (BDD "Métricas del Sprint") | `TestBuildSprintReport`, `TestReport_CoherenciaConHU07YHU10` |
 | 6 Defectos | FR-013, FR-015 | SC-001, SC-002 | `TestHU09_ContenidoDelPDF` | `TestPostgresReportStore_Finalizado`, `TestReportTexts` |
 | 7 Sin defectos | FR-013 | SC-001 | `TestHU09_SinDefectos` | `TestReportTexts` |
-| 8 Advertencia | FR-006 | — | `TestHU09_AdvertenciaSprintEnCurso`, BDD "Advertencia al exportar un Sprint en curso" | — |
+| 8 Advertencia | FR-006 | — | `TestHU09_AdvertenciaSprintEnCurso`, `TestHU09BDD_AdvertenciaAlExportarUnSprintEnCurso` (BDD "Advertencia al exportar un Sprint en curso") | — |
 | 9 Generar igual | FR-007, FR-009, FR-010, FR-012, FR-013 | SC-001 | `TestHU09_GenerarIgual` | `TestBuildSprintReport`, `TestPostgresReportStore_EnCurso` |
 | 10 Cancelar | FR-007 | — | `TestHU09_AdvertenciaSprintEnCurso` | — |
-| 11 Sin Sprints | FR-002, FR-003, FR-023 | — | `TestHU09_ListaDeSprints`, BDD "Sin Sprints" | `TestPostgresReportCatalog` |
+| 11 Sin Sprints | FR-002, FR-003, FR-023 | — | `TestHU09_ListaDeSprints`, `TestHU09BDD_SinSprints` (BDD "Sin Sprints") | `TestPostgresReportCatalog` |
 | 12 Inexistente o ajeno | FR-004, FR-016 | SC-003 | `TestHU09_SprintInexistenteOAjeno` | `TestPostgresReportCatalog`, `TestPostgresReportStore_OtroProyecto` |
 | 13 Error al generar | FR-017, FR-021 | SC-004 | `TestHU09_ErrorAlGenerar`, `TestHU09_ProyectoErrores` | `TestReportService_Errores`, `TestProjectReportService_Errores` |
-| 14 Advertencia del proyecto | FR-024 | — | `TestHU09_ProyectoAdvertencia`, BDD "Advertencia al exportar un proyecto con un Sprint en curso" | — |
+| 14 Advertencia del proyecto | FR-024 | — | `TestHU09_ProyectoAdvertencia`, `TestHU09BDD_AdvertenciaAlExportarUnProyectoConUnSprintEnCurso` (BDD "Advertencia al exportar un proyecto con un Sprint en curso") | — |
 | 15 Encabezado del proyecto | FR-022, FR-024, FR-025 | SC-005 | `TestHU09_ProyectoContenido` | `TestBuildProjectReport`, `TestRenderProjectReport` |
-| 16 Avance y Sprints | FR-026, FR-027, FR-030 | SC-001, SC-002 | `TestHU09_ProyectoContenido`, BDD "Avance y Sprints del proyecto" | `TestBuildProjectReport`, `TestPostgresReportStore_Proyecto`, `TestProjectReport_Coherencia` |
+| 16 Avance y Sprints | FR-026, FR-027, FR-030 | SC-001, SC-002 | `TestHU09_ProyectoContenido`, `TestHU09BDD_AvanceYSprintsDelProyecto` (BDD "Avance y Sprints del proyecto") | `TestBuildProjectReport`, `TestPostgresReportStore_Proyecto`, `TestProjectReport_Coherencia` |
 | 17 Esfuerzo y defectos | FR-028, FR-029 | SC-001 | `TestHU09_ProyectoContenido` | `TestPostgresReportStore_Proyecto`, `TestProjectReportTexts` |
-| 18 Proyecto sin Sprints ni historias | FR-023, FR-024, FR-026, FR-027, FR-028, FR-029 | SC-001 | `TestHU09_ProyectoSinSprints`, BDD "Proyecto sin Sprints ni historias" | `TestPostgresReportStore_Proyecto`, `TestRenderProjectReport` |
+| 18 Proyecto sin Sprints ni historias | FR-023, FR-024, FR-026, FR-027, FR-028, FR-029 | SC-001 | `TestHU09_ProyectoSinSprints`, `TestHU09BDD_ProyectoSinSprintsNiHistorias` (BDD "Proyecto sin Sprints ni historias") | `TestPostgresReportStore_Proyecto`, `TestRenderProjectReport` |
 | PDF válido | FR-014, FR-018 | SC-006 | Verificación manual (T049) | `TestPDF_Estructura`, `TestPDF_Texto`, `TestPDF_Anchos`, `TestPDF_CorteDeLineas`, `TestPDF_SaltoDePagina` |
 | (Caso límite) Resueltos detectados antes | FR-013 | SC-001 | `TestHU09_ResueltosDetectadosAntes` | `TestPostgresReportStore_Finalizado`, `TestReportTexts` |
 | (Caso límite) Sprint sin registro de cierre | FR-009, FR-010 | SC-001 | `TestHU09_SprintSinRegistroDeCierre` | `TestPostgresReportStore_Finalizado`, `TestRenderSprintReport` |

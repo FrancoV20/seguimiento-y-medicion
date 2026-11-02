@@ -23,13 +23,8 @@ definir), así que las pruebas de T005 y T006 no compilan.
 
 ## Dominio del reporte (T011-T014)
 
-go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
-En línea: 1 Carácter: 1
-+ go test -count=1 -p 1 -v ./src/report/ 2>&1 | Out-File -Append -Encod ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+PS> go test -count=1 -p 1 -v ./src/report/
+# github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
 src\report\service_test.go:35:20: undefined: Data
 src\report\service_test.go:54:20: undefined: Data
 src\report\service_test.go:82:20: undefined: Data
@@ -46,13 +41,8 @@ FAIL
 
 ## Almacenamiento (T020-T023)
 
-go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
-En línea: 1 Carácter: 1
-+ go test -count=1 -p 1 -v ./src/report/ 2>&1 | Out-File -Append -Encod ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+PS> go test -count=1 -p 1 -v ./src/report/
+# github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
 src\report\postgres_store_integration_test.go:15:34: undefined: PostgreSQLStore
 src\report\postgres_store_integration_test.go:43:11: undefined: NewPostgreSQLStore
 src\report\postgres_store_integration_test.go:111:24: undefined: NewPostgreSQLStore
@@ -63,13 +53,8 @@ FAIL
 
 ## Pantalla y descarga (T026-T031)
 
-go : # github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
-En línea: 1 Carácter: 1
-+ go test -count=1 -p 1 -v ./src/web/ ./test/ 2>&1 | Out-File -Append - ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (# github.com/Fr...n/src/web.test]:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+PS> go test -count=1 -p 1 -v ./src/web/ ./test/
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
 src\web\report_handlers_test.go:27:17: undefined: ReportCatalog
 src\web\report_handlers_test.go:28:17: undefined: ReportGenerator
 src\web\report_handlers_test.go:33:34: undefined: ReportCatalog
@@ -90,13 +75,8 @@ FAIL
 
 ## Reporte del proyecto (T037-T042)
 
-go : # github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
-En línea: 1 Carácter: 1
-+ go test -count=1 -p 1 -v ./src/report/ ./src/web/ ./test/ 2>&1 | Out- ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (# github.com/Fr...rc/report.test]:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
+PS> go test -count=1 -p 1 -v ./src/report/ ./src/web/ ./test/
+# github.com/FrancoV20/seguimiento-y-medicion/src/report [github.com/FrancoV20/seguimiento-y-medicion/src/report.test]
 src\report\service_test.go:103:15: undefined: ProjectData
 src\report\service_test.go:113:64: undefined: ProjectData
 src\report\project_document_test.go:12:40: undefined: ProjectReport

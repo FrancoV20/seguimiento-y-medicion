@@ -4335,3 +4335,5 @@ ok  	github.com/FrancoV20/seguimiento-y-medicion/src/web	129.076s
 --- PASS: TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission (0.25s)
 PASS
 ok  	github.com/FrancoV20/seguimiento-y-medicion/test	33.793s
+
+Verificación manual (T049): los PDF se abrieron sin avisos en Foxit PDF Reader 2025.2.1.33197 y en Microsoft Edge 156.0.4314.58 (detalle en evidencia-manual.txt).
