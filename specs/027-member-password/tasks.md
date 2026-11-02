@@ -147,14 +147,14 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T021 Implementar `src/cmd/set-password/main.go` según `data-model.md`:
+- [x] T021 Implementar `src/cmd/set-password/main.go` según `data-model.md`:
   - `main`, `run(ctx, args, stdin, stdout, getenv)` y `setPassword(ctx, store, memberID, stdin, stdout)`;
   - `flag.NewFlagSet` con `ContinueOnError` y salida descartada;
   - `web.LoadConfig` y `sql.Open("pgx", …)` con `PingContext`;
   - las líneas se leen con `bufio.Reader` y se les quita solo `\n` y `\r` finales;
   - validación con `auth.ValidateNewPassword`, `auth.HashPassword` y `SetPasswordHash`;
   - los textos fijos y los códigos 0, 1 y 2.
-- [ ] T022 Ejecutar T019 en verde.
+- [x] T022 Ejecutar T019 en verde.
 
 ## Fase 5: Bloque D – Pantalla "Identificarme" y "Salir" (escenarios 1 a 9 y 12) 🎯 MVP
 
