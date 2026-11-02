@@ -1,0 +1,34 @@
+Evidencia del ciclo Red de MEJORA-01, Escenario 7 (Inicio)
+
+================================================================================
+Sección Inicio — 2026-11-02 12:40 (UTC-3) — rama Mejora-01 en df56e3f
+Comando: go test -count=1 -p 1 -v -run 'TestHome|TestWebHomeBDD' ./src/web/ ./test/
+Falla esperada: homeGroups no existe y home.html todavía es la versión anterior.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/home_test.go:31:30: undefined: homeGroup
+src/web/home_test.go:46:12: undefined: homeGroups
+src/web/home_test.go:80:13: undefined: homeGroups
+src/web/home_test.go:89:12: undefined: homeGroups
+src/web/home_test.go:101:15: undefined: homeGroups
+src/web/home_test.go:104:15: undefined: homeGroups
+src/web/home_test.go:112:20: undefined: homeGroups
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+=== RUN   TestWebHomeBDD_InicioConSeccionesDiferenciadas
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Bienvenido a Software Metrics &amp; Estimation"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Scrum · SDD · BDD · TDD"
+    web_home_bdd_test.go:50: el Inicio debía mostrar ">Crear un proyecto</a>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Cómo se trabaja"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Trabajo diario"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Cierre y métricas"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Planificar</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Ejecutar</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Medir</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "UTN FRSR · Ingeniería y Calidad de Software · 2026"
+    web_home_bdd_test.go:65: la sección href="/proyectos" debía estar en su grupo, pero el grupo no se ve
+    web_home_bdd_test.go:65: la sección href="/tablero" debía estar en su grupo, pero el grupo no se ve
+    web_home_bdd_test.go:65: la sección href="/metricas" debía estar en su grupo, pero el grupo no se ve
+--- FAIL: TestWebHomeBDD_InicioConSeccionesDiferenciadas (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.008s
+FAIL
