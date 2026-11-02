@@ -206,7 +206,7 @@ func TestHU27_IdentificacionCorrecta(t *testing.T) {
 		t.Errorf("Location = %q; se esperaba /planning-poker", resp.Header.Get("Location"))
 	}
 	_, pagina := a.pedir(t, c, http.MethodGet, "/planning-poker", nil)
-	if !strings.Contains(pagina, "Te identificaste como Ana") || !strings.Contains(pagina, "Integrante: <strong>Ana</strong>") {
+	if !strings.Contains(pagina, "Te identificaste como Ana") || !strings.Contains(pagina, "Integrante: <strong>Ana (Integrante)</strong>") { // HU-28: "Nombre (Rol)"
 		t.Error("no se ve el mensaje o el nombre de Ana en la estructura común")
 	}
 }
@@ -307,7 +307,7 @@ func TestHU27_Salir(t *testing.T) {
 	esperarEstado(t, resp, http.StatusSeeOther)
 	// Entonces veo "Cerraste tu identificación" y mi nombre deja de verse
 	_, inicio := a.pedir(t, c, http.MethodGet, resp.Header.Get("Location"), nil)
-	if !strings.Contains(inicio, "Cerraste tu identificación") || strings.Contains(inicio, "Integrante: <strong>Ana</strong>") {
+	if !strings.Contains(inicio, "Cerraste tu identificación") || strings.Contains(inicio, "Integrante: <strong>Ana (") { // HU-28: "Nombre (Rol)"
 		t.Error("se esperaba el mensaje y sin el nombre de Ana")
 	}
 	// y, si intento votar, se me pide identificarme con contraseña

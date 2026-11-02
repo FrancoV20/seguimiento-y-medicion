@@ -150,7 +150,7 @@ func TestMemberPassword_Correcta(t *testing.T) {
 		t.Errorf("cookie del integrante = %q; se esperaba la firmada de Ana", v)
 	}
 	_, body := a.get(t, c, "/con-integrante")
-	if !strings.Contains(body, IdentifiedMessage("Ana")) || !strings.Contains(body, "Integrante: <strong>Ana</strong>") {
+	if !strings.Contains(body, IdentifiedMessage("Ana")) || !strings.Contains(body, "Integrante: <strong>Ana (Integrante)</strong>") { // HU-28: "Nombre (Rol)"
 		t.Error("no se ve «Te identificaste como Ana» ni el nombre en la estructura común")
 	}
 }

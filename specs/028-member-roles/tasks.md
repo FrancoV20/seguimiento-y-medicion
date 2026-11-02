@@ -97,7 +97,7 @@ estructura común muestra "Nombre (Rol)".
 
 ### Implementación (GREEN)
 
-- [ ] T016 Agregar el rol al contexto.
+- [x] T016 Agregar el rol al contexto.
   - Sumar `MemberRole role.Role` y `HasScrumMaster bool` a `ResolvedContext` (`src/web/context.go`) y a
     `ActiveContext` (`src/web/render.go`).
   - Ampliar `resolveContextQuery` y su `Scan` en `src/web/postgres_context_store.go` (`pm.role` con
@@ -105,7 +105,7 @@ estructura común muestra "Nombre (Rol)".
   - En `src/web/context_middleware.go`, copiar `HasScrumMaster` cuando el proyecto existe y `MemberRole` cuando
     completa al integrante; un valor que `ParseRole` no reconoce queda como `RoleMember`.
   - En `src/web/templates/layout.html`, mostrar `{{.MemberName}} ({{.MemberRole}})`.
-- [ ] T017 Ejecutar T013–T014 en verde, junto con las pruebas de contexto de HU-20b, HU-26 y HU-27
+- [x] T017 Ejecutar T013–T014 en verde, junto con las pruebas de contexto de HU-20b, HU-26 y HU-27
   (`go test -count=1 -p 1 -run "Contexto|Context|Integrante|HU20|HU26|HU27" ./src/web/... ./test/...`).
 
 ## Fase 4: Bloque C – Envoltorio y rutas (escenarios 2 a 10 y 12) 🎯 MVP
