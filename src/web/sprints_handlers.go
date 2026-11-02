@@ -37,10 +37,11 @@ func RegisterSprints(server *Server, catalog SprintCatalog, actions SprintAction
 		Path:            "/sprints",
 		RequiresProject: true,
 	}, Routes{
+		// HU-28: crear Sprint y agregar o quitar historias son acciones del Scrum Master.
 		"GET /sprints":                   http.HandlerFunc(h.get),
-		"POST /sprints":                  http.HandlerFunc(h.create),
-		"POST /sprints/historias":        http.HandlerFunc(h.assignStories),
-		"POST /sprints/historias/quitar": http.HandlerFunc(h.removeStory),
+		"POST /sprints":                  server.RequireScrumMaster(http.HandlerFunc(h.create)),
+		"POST /sprints/historias":        server.RequireScrumMaster(http.HandlerFunc(h.assignStories)),
+		"POST /sprints/historias/quitar": server.RequireScrumMaster(http.HandlerFunc(h.removeStory)),
 	})
 }
 

@@ -165,19 +165,19 @@ fallan hasta el Bloque E.
 
 ### Implementación (GREEN)
 
-- [ ] T022 Implementar `src/web/scrum_master.go` con la tabla de pasos de `data-model.md`:
+- [x] T022 Implementar `src/web/scrum_master.go` con la tabla de pasos de `data-model.md`:
   - los textos `TitleScrumMasterOnly`, `MsgScrumMasterOnly` y `MsgNoScrumMaster`;
   - `(*Server).RequireScrumMaster`, con `RenderError(…, http.StatusForbidden, …)` y `volver_a` =
     `"/" + firstSegment(r.URL.Path)`;
   - `(*Server).RequireScrumMasterOfPathProject`, con `parseID(r.PathValue("id"))` comparado con `ProjectID`.
-- [ ] T023 Envolver las rutas donde se registran, sin cambiar los handlers por dentro:
+- [x] T023 Envolver las rutas donde se registran, sin cambiar los handlers por dentro:
   - `src/web/sprints_handlers.go`: las 3 rutas POST;
   - `src/web/poker_handlers.go`: `abrir`, y `cerrar`, `nueva-ronda` y `estimacion` si están;
   - `src/web/projects_handlers.go`: `POST /proyectos/{id}/modificar` con `RequireScrumMasterOfPathProject`, si está;
   - `src/web/close_handlers.go`: `POST /cierre`, si está.
 
   Las rutas libres no se tocan.
-- [ ] T024 Ejecutar T018–T020 en verde
+- [x] T024 Ejecutar T018–T020 en verde
   (`go test -count=1 -p 1 -run "ScrumMaster|HU28" ./src/web/... ./test/...`).
 
 **Punto de control**: las acciones quedan reservadas. Las pruebas existentes de esas acciones quedan en rojo hasta el
