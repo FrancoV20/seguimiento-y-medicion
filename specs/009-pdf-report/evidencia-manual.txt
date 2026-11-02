@@ -7,7 +7,7 @@ Entorno
 - Código de la rama HU-09 en el commit a87bda4 (GREEN Reporte del proyecto).
 - Servidor en la PC de Franco: `go run ./src/cmd/server` con `ADDR=:8081` (el 8080 estaba ocupado por otro
   programa) y `COOKIE_SECRET` local, contra la base local de Docker (PostgreSQL 16, migraciones al día).
-- Lectores: Foxit PDF Reader <2025.2.1.33197> y Microsoft Edge <156.0.4314.58>.
+- Lectores: Foxit PDF Reader 2025.2.1.33197 y Microsoft Edge 156.0.4314.58.
 
 Método
 - Datos: proyectos «Alfa HU-09» y «Beta HU-09» cargados con `_hu09-entregas/datos-demo-hu09.sql`, con los valores de
@@ -31,14 +31,14 @@ Escenarios
 4. Sprint 3 en curso (escenarios 8 a 10): PASÓ. Advertencia "El Sprint 3 sigue en curso: el reporte puede estar
    incompleto"; con "Generar igual", reporte-sprint-3.pdf con "Reporte parcial: Sprint en curso", las historias en su
    estado actual, tres veces "Se calculan al cerrar el Sprint" y "1 defecto detectado hasta el momento".
-   "Cancelar" vuelve a "Reportes" sin descargar: (si “Cancelar” volvió a Reportes sin descargar)
+   "Cancelar" volvió a "Reportes" sin descargar nada: PASÓ.
 5. PDF del proyecto «Alfa HU-09» (escenarios 14 a 17): PASÓ. Advertencia "El proyecto tiene un Sprint en curso
    (Sprint 3)…"; con "Generar igual", "Reporte parcial: hay un Sprint en curso", "Estado: En curso", integrantes,
    historias 1/1/1/4 y "4 de 7 historias completadas (57,14 %)", las filas de los Sprints 1, 2 y 3, "Velocidad
    acumulada: 13 Story Points", "Promedio: 6,50 Story Points por Sprint", "38 horas estimadas en total (2 historias
    sin horas estimadas)", "30 horas registradas en total" y "3 defectos registrados: 2 abiertos y 1 resuelto" con los
    2 abiertos. Guardado como ejemplo-reporte-proyecto.pdf.
-6. Proyecto «Beta HU-09» sin Sprints (escenarios 11 y 18): (Completado) "Aún no hay Sprints para exportar" y el reporte
+6. Proyecto «Beta HU-09» sin Sprints (escenarios 11 y 18): PASÓ. "Aún no hay Sprints para exportar" y el reporte
    del proyecto sin advertencia, con "Aún no hay Sprints" y "0 de 0 historias completadas (0,00 %)".
 7. Sprint inexistente (escenario 12): PASÓ. /reportes/sprints/abc/pdf → página 404, sin descarga (registro del
    servidor: "recurso no encontrado … identificador de Sprint inválido").
@@ -53,7 +53,7 @@ Escenarios
     Microsoft Edge, con acentos, "ñ" y rayas correctos, columnas sin textos superpuestos y "Página 1 de 1" al pie;
     qpdf --check no encontró errores de estructura.
 
-Resultado: escenarios verificados con la aplicación en ejecución; completar 4 ("Cancelar") y 6 («Beta HU-09»).
+Resultado: 10/10 escenarios pasaron.
 
 Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
 Realizó: ______________________ (integrante que aprueba el PR)
