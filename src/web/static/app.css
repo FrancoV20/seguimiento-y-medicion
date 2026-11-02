@@ -131,8 +131,108 @@ strong { font-weight: 600; }
 
 .app-main { max-width: var(--content-width); margin: var(--space-6) auto; padding: 0 var(--space-5); }
 
-.home-sections { padding-left: var(--space-5); }
-.home-sections a { color: var(--accent); }
+/* ---------- Inicio (MEJORA-01, Escenario 7) ---------- */
+.home-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  margin: 0 0 var(--space-6);
+  padding: var(--space-6) var(--space-6);
+  background:
+    radial-gradient(120% 140% at 0% 0%, rgba(37, 211, 102, .16) 0%, rgba(37, 211, 102, 0) 55%),
+    linear-gradient(135deg, #20352a 0%, var(--surface) 60%, #1f2a24 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(37, 211, 102, .08), 0 10px 30px rgba(0, 0, 0, .35);
+}
+.home-hero-text { flex: 1 1 26rem; min-width: 0; }
+.home-hero h1 { margin: var(--space-3) 0 var(--space-3); font-size: 2rem; letter-spacing: -.01em; }
+.home-hero p { max-width: 38rem; color: var(--muted); margin: 0; }
+.home-hero .home-badge {
+  display: inline-block;
+  padding: .15rem .65rem;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  color: var(--accent);
+  background: rgba(37, 211, 102, .08);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.home-hero-actions { display: flex; flex-direction: column; gap: var(--space-3); flex: 0 0 15rem; }
+.home-hero-actions .button { width: 100%; padding: .7rem 1rem; }
+
+.home-block { margin: 0 0 var(--space-6); }
+.home-block > h2 { margin: 0 0 var(--space-4); font-size: 1.35rem; }
+
+.home-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-steps li {
+  margin: 0;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--divider);
+  border-radius: 10px;
+}
+.home-steps h3 { margin: var(--space-3) 0 var(--space-1); font-size: 1rem; }
+.home-steps p { margin: 0; font-size: .88rem; color: var(--muted); }
+.home-step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+
+.home-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: var(--space-4); align-items: start; }
+.home-group {
+  padding: var(--space-4);
+  background: linear-gradient(180deg, rgba(37, 211, 102, .05) 0%, rgba(37, 211, 102, 0) 40%), var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.home-group h3 { margin: 0; font-size: 1.1rem; }
+.home-group-subtitle { margin: 0 0 var(--space-3); font-size: .85rem; color: var(--muted); }
+.home-links { margin: 0; padding: 0; list-style: none; }
+.home-links li { margin: 0 0 var(--space-2); }
+.home-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: .65rem .8rem;
+  color: var(--text);
+  text-decoration: none;
+  background: var(--surface-alt);
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+}
+.home-link:hover { border-color: var(--border-strong); background: var(--accent-soft); color: var(--text); }
+.home-icon { flex: 0 0 auto; color: var(--muted); }
+.home-link:hover .home-icon { color: var(--accent); }
+.home-link-text { display: flex; flex-direction: column; min-width: 0; }
+.home-link-name { font-weight: 600; color: var(--accent); }
+.home-link-description { font-size: .82rem; color: var(--muted); }
+
+.home-footer { margin: var(--space-6) 0 0; text-align: center; font-size: .85rem; color: var(--muted); }
+
+/* Botón secundario: contorno verde sobre fondo oscuro. */
+.button.button-secondary { color: var(--accent); background: transparent; border-color: var(--border-strong); }
+.button.button-secondary:hover { color: var(--accent-hover); background: var(--accent-soft); border-color: var(--accent-hover); }
 
 /* ---------- Mensajes (HU-20b): siempre con etiqueta de texto además del color ---------- */
 .alert {
@@ -404,8 +504,15 @@ td > a:only-child:hover { background: var(--accent-soft); color: var(--accent-ho
 .dashboard-chart rect { fill: var(--chart-1); }
 .dashboard-chart text { fill: var(--chart-text); font-family: var(--font); }
 
+@media (max-width: 960px) {
+  .home-steps { grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+}
+
 /* ---------- Pantallas angostas (Escenario 5: 400 px sin desplazamiento horizontal) ---------- */
 @media (max-width: 640px) {
+  .home-hero { padding: var(--space-5) var(--space-4); }
+  .home-hero h1 { font-size: 1.5rem; }
+  .home-hero-actions { flex: 1 1 100%; }
   .app-header { padding: var(--space-3) var(--space-4); }
   .app-nav a { padding: .3rem .55rem; font-size: .9rem; }
   .app-context-links { display: block; margin: var(--space-1) 0 0; white-space: normal; }

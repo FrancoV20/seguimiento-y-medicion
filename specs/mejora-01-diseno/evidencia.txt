@@ -17,7 +17,8 @@ Qué cambió
 - src/web/design_test.go (nuevo): protege las reglas del diseño común (tokens, gráficos, sin recursos
   externos, alertas con etiqueta y tablas en pantalla angosta). Con las plantillas anteriores falla en
   dashboard.html y metrics.html; con las nuevas pasa.
-- layout.html no se modificó.
+- src/web/templates/home.html, src/web/home.go y render.go (función homeGroups): nueva pantalla de
+  Inicio (Escenario 7). layout.html no se modificó.
 
 Escenarios de la Issue
 1. Diseño común: PASÓ. Recorridas las 22 pantallas a 1280 px y a 400 px (lista abajo): misma
@@ -44,6 +45,14 @@ Escenarios de la Issue
    cortada). Los campos dentro de una celda (Estimaciones) son chicos y van al lado de su botón.
 6. Gráficos del Dashboard: PASÓ. Las barras usan var(--chart-1) y los textos var(--chart-text) desde
    app.css, que tiene prioridad sobre el color fijo del SVG; el gráfico se adapta al ancho disponible.
+
+7. Inicio (ampliación pedida el 02/11, especificada en inicio.md): PASÓ. Bienvenida con degradé y la
+   etiqueta "Scrum · SDD · BDD · TDD", accesos "Elegir proyecto" (o "Cambiar proyecto") y "Crear un
+   proyecto", "Cómo se trabaja" con 5 pasos, secciones agrupadas en Planificar, Ejecutar y Medir (con
+   ícono, nombre y descripción) y el pie de la materia. Ciclo TDD: evidencia-red.txt (Red) y luego
+   TestHome*, TestHomeGroups* y TestWebHomeBDD_InicioConSeccionesDiferenciadas en verde. Los íconos SVG
+   están en la plantilla, así el código no marca HTML como seguro (TestEscape_NingunCodigoMarcaDatosComoSeguros).
+   A 1280 y 400 px, sin desplazamiento horizontal.
 
 Pantallas recorridas (datos cargados desde la interfaz: proyecto, 6 historias, Sprint 1 cerrado,
 Sprint 2 activo, horas estimadas y reales, 2 defectos y una ronda de Planning Poker)

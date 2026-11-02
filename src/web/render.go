@@ -80,9 +80,10 @@ func NewRenderer(registry *Registry, logger *slog.Logger) *Renderer {
 }
 
 var templateFuncs = template.FuncMap{
-	"appName":   func() string { return AppName },
-	"noProject": func() string { return MsgNoProjectSelected },
-	"backHome":  func() string { return LinkBackHome },
+	"appName":    func() string { return AppName },
+	"noProject":  func() string { return MsgNoProjectSelected },
+	"backHome":   func() string { return LinkBackHome },
+	"homeGroups": homeGroups, // MEJORA-01: secciones del Inicio agrupadas
 }
 
 // page devuelve layout.html + la plantilla pedida, parseadas una sola vez.
