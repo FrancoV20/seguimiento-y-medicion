@@ -29,7 +29,7 @@ Formato: `[ID] [P] [E#] descripción`
   5. **Migración**: la mayor en `db/migrations`. Fijar `<NNN>` = mayor + 1 y reemplazarlo en `data-model.md` y
      `plan.md`.
 - [x] T002 Crear la rama `HU-28` desde `main` actualizado, solo si no hay cambios sin commitear.
-- [ ] T003 Avisar al equipo qué archivos se tocan:
+- [x] T003 Avisar al equipo qué archivos se tocan:
   - `context.go`, `render.go`, `postgres_context_store.go`, `context_middleware.go`, `layout.html`;
   - `sprints_handlers.go`, `poker_handlers.go`, `projects_handlers.go` y `close_handlers.go`;
   - las pruebas de T001.
@@ -64,15 +64,15 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T009 Implementar `src/role/role.go`: `Role`, `RoleScrumMaster = "Scrum Master"`, `RoleMember = "Integrante"`,
+- [x] T009 Implementar `src/role/role.go`: `Role`, `RoleScrumMaster = "Scrum Master"`, `RoleMember = "Integrante"`,
   `ErrInvalidRole`, `ParseRole` (`TrimSpace` y coincidencia exacta) y `CanManage`.
-- [ ] T010 Crear `db/migrations/<NNN>_add_project_member_role.up.sql`
+- [x] T010 Crear `db/migrations/<NNN>_add_project_member_role.up.sql`
   (`ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'Integrante' CHECK (role IN ('Scrum Master', 'Integrante'))`) y
   `.down.sql` (`DROP COLUMN IF EXISTS role`). Aplicarla en la base local.
-- [ ] T011 Implementar `src/role/store.go` (`Store`, `ErrProjectNotFound`, `ErrMemberNotInProject`) y
+- [x] T011 Implementar `src/role/store.go` (`Store`, `ErrProjectNotFound`, `ErrMemberNotInProject`) y
   `src/role/postgres_store.go` (`NewPostgreSQLStore`, `ProjectName` y `SetMemberRole` con `UPDATE … FROM members …
   RETURNING display_name`). Un identificador fuera de 1..2147483647 → el error que corresponde, sin consultar.
-- [ ] T012 Ejecutar T005–T007 en verde.
+- [x] T012 Ejecutar T005–T007 en verde.
 
 ## Fase 3: Bloque B – Contexto con rol (escenario 1)
 
