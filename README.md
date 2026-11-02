@@ -135,6 +135,26 @@ Todos deben seguir este orden desde la raíz del repositorio:
   servidor; la contraseña se ve en la consola al escribirla en el comando; no hay cambio ni
   recuperación de contraseña desde la web.
 
+  **Roles del proyecto (HU-28)**: cada integrante es "Scrum Master" o "Integrante" en cada
+  proyecto. Solo el Scrum Master puede crear Sprints, agregar o quitar sus historias, cerrar el
+  Sprint, modificar el proyecto y, en Planning Poker, abrir y cerrar rondas, abrir una nueva ronda
+  y registrar la estimación acordada. Votar, mover historias en el Tablero y registrar esfuerzo
+  siguen abiertos a cualquier integrante identificado. La migración 016 agrega
+  `project_members.role` y deja a todos como "Integrante", así que **después de migrar hay que
+  asignar al menos un Scrum Master por proyecto**:
+
+  ```powershell
+  go run ./src/cmd/set-role -proyecto 1 -integrante 1 -rol "Scrum Master"
+  ```
+
+  Los números son el `id` del proyecto en `projects` y del integrante en `members`. El rol se
+  escribe exactamente "Scrum Master" o "Integrante" (`-rol "Integrante"` le saca el rol de Scrum
+  Master). El comando responde, por ejemplo, `Beto ahora es Scrum Master de «Alfa»`, y el cambio
+  vale desde la siguiente solicitud, sin volver a identificarse. Un proyecto puede tener más de un
+  Scrum Master; si no tiene ninguno, sus acciones de planificación muestran "Este proyecto no
+  tiene Scrum Master asignado". Los botones siguen visibles para todos: el control lo hace el
+  servidor.
+
 5. Aplicar las migraciones pendientes en orden numérico. Revisen el `quickstart.md` de su
   historia: allí figuran `DATABASE_URL`, el comando exacto y las migraciones previas requeridas.
 
@@ -308,4 +328,4 @@ migrate -path db/migrations -database $env:DATABASE_URL up
 $env:ADDR = ":8081"
 go run ./src/cmd/server
 # En web
-http://localhost:8081
+http://localhost:8081

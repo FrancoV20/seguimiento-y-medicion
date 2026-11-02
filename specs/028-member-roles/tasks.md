@@ -248,7 +248,7 @@ cambian.
   - que `<NNN>` sigue siendo la mayor migración + 1 (si no, renombrar los dos archivos y la prueba de T006);
   - que no entraron rutas POST nuevas que deban protegerse ni pruebas nuevas que se identifiquen para esas acciones;
   - que los nombres de las pruebas coinciden con la trazabilidad de `spec.md`.
-- [ ] T034 [P] Cierre técnico:
+- [x] T034 [P] Cierre técnico:
   - `gofmt -l` sin salida en los archivos nuevos, sin `gofmt -w` en los existentes (CRLF); `go vet ./...` limpio;
     `go test ./... -p 1 -race` en verde; pipeline de GitHub Actions en verde;
   - guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
