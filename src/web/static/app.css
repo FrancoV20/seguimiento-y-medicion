@@ -5,25 +5,29 @@
 
 /* ---------- Tokens del diseño ---------- */
 :root {
-  /* Colores. Todo texto sobre su fondo cumple contraste AA (4,5:1 o más). */
-  --bg: #f4f6f9;
-  --surface: #ffffff;
-  --surface-alt: #f8fafc;
-  --text: #1c2430;
-  --muted: #556274;
-  --border: #d5dbe3;
-  --border-strong: #b7c0cc;
-  --accent: #1f4fb4;
-  --accent-hover: #183f91;
-  --accent-soft: #e8eefb;
-  --on-accent: #ffffff;
-  --danger: #b42318;
-  --success-bg: #e9f6ec; --success-border: #2e7d32; --success-text: #1b5e20;
-  --error-bg: #fdecea;   --error-border: #c62828;   --error-text: #7f1d1d;
-  --warning-bg: #fff6e0; --warning-border: #a86100; --warning-text: #5d3a00;
-  --chart-1: #1f4fb4;
-  --chart-text: #1c2430;
-  --focus: #1f4fb4;
+  /* Tema oscuro gris carbón (no negro puro) con detalles en verde. Todo texto sobre su fondo
+     cumple contraste AA (4,5:1 o más). color-scheme hace que los controles nativos (listas
+     desplegables, calendario de fechas, barras de desplazamiento) también se vean oscuros. */
+  color-scheme: dark;
+  --bg: #1b1d21;
+  --surface: #24272c;
+  --surface-alt: #2c3036;
+  --text: #e8eaed;
+  --muted: #a9b0ba;
+  --border: #25a35a;
+  --border-strong: #25d366;
+  --divider: #35503f;
+  --accent: #25d366;
+  --accent-hover: #4be083;
+  --accent-soft: #1e3a2a;
+  --on-accent: #0b1f13;
+  --danger: #ff7a70;
+  --success-bg: #163222; --success-border: #25d366; --success-text: #b8f5cf;
+  --error-bg: #3a1c1c;   --error-border: #ff6b6b;   --error-text: #ffd2cf;
+  --warning-bg: #3a2f14; --warning-border: #f0b429; --warning-text: #ffe7a8;
+  --chart-1: #25d366;
+  --chart-text: #e8eaed;
+  --focus: #4be083;
 
   /* Tipografía del sistema operativo: no se descarga ninguna fuente. */
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -39,8 +43,8 @@
   --space-6: 2rem;
   --radius: 8px;
   --radius-sm: 6px;
-  --shadow: 0 1px 2px rgba(16, 24, 40, .06);
-  --content-width: 1080px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, .35);
+  --content-width: 1120px;
 }
 
 /* ---------- Base ---------- */
@@ -161,15 +165,15 @@ input[type="text"], input[type="date"], input[type="number"], input[type="passwo
 input[type="email"], input[type="search"], input:not([type]), select, textarea {
   font: inherit;
   color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: .45rem .6rem;
+  padding: .5rem .7rem;
   max-width: 100%;
 }
 textarea { width: 100%; max-width: 32rem; min-height: 5rem; resize: vertical; }
 select { padding-right: 1.75rem; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); outline: 3px solid var(--accent-soft); outline-offset: 0; }
+input:focus, select:focus, textarea:focus { border-color: var(--border-strong); outline: 3px solid var(--accent-soft); outline-offset: 0; }
 input:disabled, select:disabled, textarea:disabled { background: var(--surface-alt); color: var(--muted); cursor: not-allowed; }
 
 input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); width: 1rem; height: 1rem; vertical-align: -.15em; }
@@ -223,7 +227,7 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .button:ho
 button:disabled, input[type="submit"]:disabled, input[type="button"]:disabled {
   color: var(--muted);
   background: var(--surface-alt);
-  border-color: var(--border);
+  border-color: var(--divider);
   cursor: not-allowed;
 }
 /* Acciones secundarias de los formularios (quitar o agregar un criterio). */
@@ -233,27 +237,62 @@ button[value^="quitar"], button[value^="agregar"] {
   border-color: var(--border-strong);
 }
 button[value^="quitar"]:hover, button[value^="agregar"]:hover { background: var(--accent-soft); color: var(--accent-hover); }
-td button, td .button { padding: .3rem .65rem; font-size: .9rem; }
+td button, td .button { padding: .4rem .8rem; font-size: .9rem; }
 
 /* ---------- Tablas ---------- */
 table {
   width: 100%;
-  margin: 0 0 var(--space-4);
+  margin: var(--space-2) 0 var(--space-5);
   border-collapse: separate;
   border-spacing: 0;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  overflow: hidden;
 }
-caption { padding: 0 0 var(--space-2); text-align: left; font-weight: 600; color: var(--muted); caption-side: top; }
-th, td { padding: .55rem .75rem; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--border); }
-thead th { background: var(--surface-alt); font-size: .9rem; color: var(--muted); font-weight: 600; }
+caption { padding: 0 0 var(--space-3); text-align: left; font-weight: 600; color: var(--muted); caption-side: top; }
+/* Celdas con aire: más alto y más separación entre columnas, para que los datos no queden pegados. */
+th, td {
+  padding: .9rem 1.1rem;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--divider);
+}
+thead th {
+  padding-top: .8rem;
+  padding-bottom: .8rem;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+thead th:first-child { border-top-left-radius: var(--radius); }
+thead th:last-child { border-top-right-radius: var(--radius); }
+/* Tablas con muchas columnas (Defectos, Estimaciones): espaciado algo más compacto. */
+table:has(th:nth-child(7)) th, table:has(th:nth-child(7)) td { padding-left: .8rem; padding-right: .8rem; }
 tbody th { font-weight: 600; }
 tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
-tbody tr:hover { background: var(--surface-alt); }
+tbody tr:nth-child(even) { background: rgba(255, 255, 255, .02); }
+tbody tr:hover { background: var(--accent-soft); }
 td form { margin: 0; }
+/* Un campo dentro de una celda (Estimaciones) es chico y va en la misma línea que su botón. */
+td .field { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0; }
+td .field input, td input[type="text"], td input[type="number"] { width: 7rem; max-width: 7rem; }
+td .field .field-error { flex-basis: 100%; white-space: normal; }
+td .field > * + * { margin-left: 0; }
+/* Varias cosas en una misma celda (botón, motivo, campo) se separan entre sí. */
+td > * + * { margin-left: var(--space-3); }
+td .muted, td .unavailable-reason { font-size: .9rem; }
+/* La última columna suele tener las acciones (botón y motivo): no se corta en dos líneas. */
+td:last-child:not(:only-child) { white-space: nowrap; }
+/* Si una tabla igual no entra en el ancho del contenido, se desplaza dentro de su recuadro. */
+@media (min-width: 641px) {
+  table:has(th:nth-child(7)) { display: block; overflow-x: auto; }
+}
 
 /* ---------- Listas de definiciones (números de una pantalla) ---------- */
 dl {

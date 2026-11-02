@@ -1,8 +1,10 @@
 MEJORA-01 — Diseño visual consistente (Issue #63)
-Fecha: 2026-11-01. Rama: Mejora-01, sobre main en 04f1f0c (después de HU-09).
+Fecha: 2026-11-01 (tema oscuro y tablas: 2026-11-02). Rama: Mejora-01, sobre main en 04f1f0c (después de HU-09).
 
 Qué cambió
-- src/web/static/app.css: sistema de diseño único.
+- src/web/static/app.css: sistema de diseño único, con tema oscuro gris carbón (#1b1d21, no negro puro)
+  y bordes, enlaces, botones y foco en el verde de WhatsApp (#25d366; bordes en #25a35a).
+  color-scheme: dark hace que los controles nativos (listas, calendario) también se vean oscuros.
   - Tokens en :root: colores, tipografía del sistema operativo, espaciado, bordes y sombra.
   - Estilos por elemento, para que todas las pantallas (y las nuevas) queden iguales sin agregar clases:
     títulos, enlaces, tablas, formularios (campos, select, textarea, fieldset), botones (principal,
@@ -21,21 +23,25 @@ Escenarios de la Issue
 1. Diseño común: PASÓ. Recorridas las 22 pantallas a 1280 px y a 400 px (lista abajo): misma
    tipografía, colores, menú, tablas, formularios y botones. Las acciones sueltas de una tabla
    (Editar, Modificar) se ven como botón secundario, igual que el botón deshabilitado que las reemplaza.
-2. Sin cambios de comportamiento: PASÓ. go test -count=1 -p 1 ./... da ok en los 13 paquetes; no se
+2. Sin cambios de comportamiento: PASÓ. go test -count=1 -p 1 ./... da ok en los 15 paquetes (con HU-27 integrada); no se
    modificó ninguna prueba existente (solo se agregó design_test.go).
 3. Sin internet: PASÓ. app.css no usa @import, url(), @font-face ni direcciones http(s); la fuente es
    la del sistema operativo y no hay JavaScript. Lo verifican TestStatic_SirveLosEstilosLocales,
    TestEscenarioWeb_SinRecursosExternos y TestDesign_SinRecursosExternos.
 4. Mensajes accesibles: PASÓ. Todas las alertas tienen etiqueta de texto (TestDesign_AlertasConEtiqueta).
-   Contraste WCAG medido (mínimo AA 4,5:1 para texto y 3:1 para las barras del gráfico):
-     texto/fondo 14,43 · texto/superficie 15,62 · secundario/fondo 5,73 · secundario/superficie 6,20
-     encabezado de tabla 5,93 · enlace 7,41 · menú activo 6,37 · botón 7,41 · botón deshabilitado 5,93
-     éxito 7,07 · error 8,76 · advertencia 9,42 · error de campo 10,02 · título de error 6,57
-     barras del gráfico 7,41
+   Contraste WCAG del tema oscuro, medido (mínimo AA 4,5:1 para texto y 3:1 para bordes y barras):
+     texto/fondo 14,00 · texto/superficie 12,43 · texto/fila resaltada 10,29 · secundario/fondo 7,72
+     secundario/superficie 6,85 · encabezado de tabla 6,07 · enlace verde 7,55 · menú activo 6,25
+     botón (texto oscuro sobre verde) 8,68 · botón deshabilitado 6,07 · éxito 11,23 · error 11,28
+     advertencia 10,80 · título de error 5,90 · error de campo 10,97 · borde verde 4,61 · barras 7,55
 5. Pantalla chica: PASÓ. A 400 px de ancho ninguna pantalla tiene desplazamiento horizontal de la
    página (medido con scrollWidth − clientWidth = 0 en las 22). Antes del cambio desbordaban
    Backlog (214 px), Editar historia (214 px), Estimaciones (98 px), Proyectos (54 px) y Defectos
    (334 px). Las tablas anchas ahora se desplazan dentro de su propio recuadro.
+   Tablas: más espacio en las celdas (.9rem × 1,1rem), encabezados en mayúsculas pequeñas, filas
+   alternadas y resaltadas al pasar el mouse. Las de 7 o más columnas usan un espaciado algo más
+   compacto y, si igual no entran, se desplazan dentro de su recuadro (a 1280 px ninguna tabla queda
+   cortada). Los campos dentro de una celda (Estimaciones) son chicos y van al lado de su botón.
 6. Gráficos del Dashboard: PASÓ. Las barras usan var(--chart-1) y los textos var(--chart-text) desde
    app.css, que tiene prioridad sobre el color fijo del SVG; el gráfico se adapta al ancho disponible.
 
