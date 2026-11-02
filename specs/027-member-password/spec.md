@@ -2,7 +2,7 @@
 
 **Rama**: `HU-27`
 **Creada**: 2026-10-28
-**Estado**: Propuesta (pendiente de aceptación del equipo)
+**Estado**: Implementada (pendiente de revisión en el Pull Request)
 **Constitución**: v1.1.0
 **Prioridad**: Baja – Could Have (trabajo futuro si no llega; el equipo la integra al final) | **Valor**: 60 |
 **Estimación**: 5 Story Points (sugerida)

@@ -79,7 +79,10 @@ func (m *pokerMundo) rondaAbierta(t *testing.T) int64 {
 	return m.id(t, `SELECT id FROM poker_rounds WHERE story_id = $1 AND status = 'Abierta'`, m.login)
 }
 
-type pokerBDDApp struct{ servidor *httptest.Server }
+type pokerBDDApp struct {
+	servidor *httptest.Server
+	db       *sql.DB // HU-27: para configurar la contraseña de quien se identifica
+}
 
 func (m *pokerMundo) laAplicacion(t *testing.T) *pokerBDDApp {
 	t.Helper()
@@ -89,7 +92,7 @@ func (m *pokerMundo) laAplicacion(t *testing.T) *pokerBDDApp {
 	if err := web.RegisterPlanningPoker(srv, poker.NewService(poker.NewPostgreSQLStore(m.db)), web.NewPostgreSQLPokerCatalog(m.db)); err != nil {
 		t.Fatalf("no se pudo registrar Planning Poker: %v", err)
 	}
-	app := &pokerBDDApp{servidor: httptest.NewServer(srv.Handler())}
+	app := &pokerBDDApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
 	return app
 }
@@ -101,7 +104,7 @@ func (a *pokerBDDApp) navegador(t *testing.T, proyecto, integrante int64) *http.
 	c := &http.Client{Jar: jar}
 	a.enviar(t, c, "/contexto/proyecto", url.Values{"proyecto_id": {strconv.FormatInt(proyecto, 10)}})
 	if integrante != 0 {
-		a.enviar(t, c, "/contexto/integrante", url.Values{"integrante_id": {strconv.FormatInt(integrante, 10)}})
+		a.enviar(t, c, "/contexto/integrante", identificacionDePrueba(t, a.db, integrante))
 	}
 	return c
 }
@@ -302,8 +305,9 @@ func TestBDD_HU05a_SinIdentificarme(t *testing.T) {
 		t.Fatalf("se esperaba la pantalla de identificación, se obtuvo %s", resp.Request.URL)
 	}
 	pokerDebeContener(t, cuerpo, web.MsgMemberRequired)
+	configurarClave(t, m.db, m.ana, claveDePrueba) // HU-27: la identificación pide contraseña
 	resp, _ = app.enviar(t, c, "/contexto/integrante", url.Values{
-		"integrante_id": {strconv.FormatInt(m.ana, 10)}, "volver_a": {resp.Request.URL.Query().Get("volver_a")},
+		"integrante_id": {strconv.FormatInt(m.ana, 10)}, "contrasena": {claveDePrueba}, "volver_a": {resp.Request.URL.Query().Get("volver_a")},
 	})
 	if resp.Request.URL.Path != "/planning-poker" {
 		t.Errorf("se esperaba volver a /planning-poker, se obtuvo %s", resp.Request.URL)

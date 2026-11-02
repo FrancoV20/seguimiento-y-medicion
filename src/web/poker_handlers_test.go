@@ -89,7 +89,7 @@ func (a *pokerApp) as(t *testing.T, project, member int64) *http.Client {
 	c := &http.Client{Jar: jar, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 	a.post(t, c, pathSelectProject, url.Values{"proyecto_id": {strconv.FormatInt(project, 10)}})
 	if member != 0 {
-		a.post(t, c, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(member, 10)}})
+		a.post(t, c, pathSelectMember, loginAs(t, a.fx.db, member))
 	}
 	return c
 }
@@ -425,7 +425,9 @@ func TestHU05a_SinIdentificarme(t *testing.T) {
 	if n := a.count(t, `SELECT COUNT(*) FROM poker_votes WHERE round_id = $1`, open); n != 0 {
 		t.Errorf("no debía registrarse ningún voto, hay %d", n)
 	}
-	resp, _ = a.post(t, c, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(a.fx.ana, 10)}, "volver_a": {"/planning-poker"}})
+	login := loginAs(t, a.fx.db, a.fx.ana)
+	login.Set("volver_a", "/planning-poker")
+	resp, _ = a.post(t, c, pathSelectMember, login)
 	if loc := resp.Header.Get("Location"); loc != "/planning-poker" {
 		t.Errorf("al identificarse se esperaba volver a /planning-poker, se obtuvo %q", loc)
 	}

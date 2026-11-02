@@ -14,7 +14,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Hacer `git pull` de `main` y reconfirmar los "Datos a reconfirmar en T001" de `research.md`. Anotar el
+- [x] T001 Hacer `git pull` de `main` y reconfirmar los "Datos a reconfirmar en T001" de `research.md`. Anotar el
   resultado en `research.md` ("Resultado de T001"):
   - la mayor migración en `db/migrations`; fijar `<NNN>` = mayor + 1 y reemplazarlo en `data-model.md` y `plan.md`;
   - la lista de pruebas que se identifican por `/contexto/integrante`
@@ -24,14 +24,14 @@ Formato: `[ID] [P] [E#] descripción`
   - las pruebas que buscan que no haya `<form` o `type="password"` en una página;
   - que `go doc crypto/pbkdf2.Key` siga disponible con la versión de `go.mod`. Si no lo está, **detenerse y avisar**
     antes de seguir.
-- [ ] T002 Crear la rama `HU-27` desde `main` actualizado, solo si no hay cambios sin commitear.
-- [ ] T003 Avisar al equipo que HU-27 se integra al final y que toca:
+- [x] T002 Crear la rama `HU-27` desde `main` actualizado, solo si no hay cambios sin commitear.
+- [x] T003 Avisar al equipo que HU-27 se integra al final y que toca:
   - de HU-20a: `layout.html` y `app.css`;
   - de HU-20b: `context_store.go`, `postgres_context_store.go`, `context_handlers.go` y `select_member.html`;
   - las 8 pruebas de T001 y los 2 dobles de HU-23.
 
   Pedir que nadie los edite mientras dure la rama.
-- [ ] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
+- [x] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
 
 ## Fase 2: Bloque A – Dominio de contraseñas y bloqueo (`src/auth`)
 
@@ -41,7 +41,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E1, E9, E11, E12] Escribir las pruebas de contraseñas en `src/auth/password_test.go`. Las tablas
+- [x] T005 [P] [E1, E9, E11, E12] Escribir las pruebas de contraseñas en `src/auth/password_test.go`. Las tablas
   están en `data-model.md`.
   - `TestHashPassword_FormatoYSalDistinta`: dos valores de "ana-clave-2026" son distintos; los dos tienen 4 partes,
     esquema `pbkdf2-sha256`, sal de 16 bytes y hash de 32, y verifican; ninguno contiene la contraseña.
@@ -54,28 +54,28 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestValidateNewPassword`: la tabla de largo (8 y 128 sí; 7 y 129 no; "ñandú-12" cuenta 8 runas; los espacios
     cuentan), "no coinciden", y que el largo se informa antes que la coincidencia. Cada error tiene el texto exacto
     del Issue.
-- [ ] T006 [P] [E5] Escribir las pruebas del bloqueo, con reloj simulado, en `src/auth/lockout_test.go`.
+- [x] T006 [P] [E5] Escribir las pruebas del bloqueo, con reloj simulado, en `src/auth/lockout_test.go`.
   - `TestLockout_CincoFallosBloqueanUnMinuto`: 4 fallos, no bloqueado; el 5.º bloquea; a los 59 s del 5.º sigue; a
     los 60 s, libre; un fallo nuevo no bloquea (el contador volvió a cero).
   - `TestLockout_AciertoReiniciaElContador`: 4 fallos, un acierto y 4 fallos: no bloqueado.
   - `TestLockout_PorIntegrante`: con Ana bloqueada, Beto está libre.
   - `TestLockout_UsoConcurrente`: goroutines que llaman a `Locked`, `RecordFailure` y `RecordSuccess` sobre varios
     integrantes, sin carreras con `-race`.
-- [ ] T007 Ejecutar T005–T006, confirmar que fallan porque el paquete no existe y guardar la salida en
+- [x] T007 Ejecutar T005–T006, confirmar que fallan porque el paquete no existe y guardar la salida en
   `evidencia-red.txt` (sección "Dominio").
 
 ### Implementación (GREEN)
 
-- [ ] T008 Implementar `src/auth/password.go` según `data-model.md`:
+- [x] T008 Implementar `src/auth/password.go` según `data-model.md`:
   - constantes, `HashPassword`, `HashPasswordIterations` (iteraciones < 1 → error) y `VerifyPassword`;
   - `VerifyPassword` usa `subtle.ConstantTimeCompare`, base64 `RawStdEncoding`, iteraciones del valor guardado de 1
     a 10.000.000 y `ErrMalformedHash`;
   - `ValidateNewPassword` (largo en runas con `utf8.RuneCountInString`, sin recortar);
   - los errores con el texto exacto.
-- [ ] T009 Implementar `src/auth/lockout.go`: `Lockout` con `sync.Mutex`, `NewLockout(now)` (`nil` → `time.Now`),
+- [x] T009 Implementar `src/auth/lockout.go`: `Lockout` con `sync.Mutex`, `NewLockout(now)` (`nil` → `time.Now`),
   `Locked` (borra la entrada vencida), `RecordFailure` (al 5.º, `lockedUntil = now + LockDuration`) y `RecordSuccess`
   (borra la entrada).
-- [ ] T010 Ejecutar `go test -count=1 -race ./src/auth/...`: T005–T006 en verde.
+- [x] T010 Ejecutar `go test -count=1 -race ./src/auth/...`: T005–T006 en verde.
 
 **Punto de control**: las reglas funcionan solas, sin tocar otras historias.
 
@@ -87,38 +87,38 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 [P] [E9] `TestMigracion_PasswordHash_UpYDown` en `db/member_password_migration_integration_test.go`, sobre
+- [x] T011 [P] [E9] `TestMigracion_PasswordHash_UpYDown` en `db/member_password_migration_integration_test.go`, sobre
   una base descartable con el mismo patrón que `TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable`:
   - aplica las `up` hasta `<NNN>` y comprueba la columna (`data_type = 'text'`, `is_nullable = 'YES'`, filas previas
     en `NULL`);
   - aplica `<NNN>…down.sql` y comprueba que no está;
   - vuelve a aplicar la `up` sin error.
-- [ ] T012 [P] [E6, E12] Pruebas de `MemberCredential` en `src/web/postgres_context_store_integration_test.go`, con
+- [x] T012 [P] [E6, E12] Pruebas de `MemberCredential` en `src/web/postgres_context_store_integration_test.go`, con
   «Alfa» (Ana con valor guardado, Caro sin valor) y «Beta» (Dani):
   - `TestPostgreSQLContextStore_MemberCredential`: los casos de la tabla de `data-model.md`, incluidos 0 y 2147483648
     sin consultar;
   - `TestPostgreSQLContextStore_MemberCredentialBaseCaida`: base cerrada → `KindUnavailable`.
-- [ ] T013 [P] [E10] `TestPostgreSQLPasswordStore` en `src/auth/postgres_password_store_integration_test.go`:
+- [x] T013 [P] [E10] `TestPostgreSQLPasswordStore` en `src/auth/postgres_password_store_integration_test.go`:
   - `MemberName` de Caro → "Caro"; de un integrante inexistente → `ErrMemberNotFound`;
   - `SetPasswordHash` guarda el valor y un integrante inexistente da `ErrMemberNotFound`;
   - base cerrada → error, distinto de `ErrMemberNotFound`.
-- [ ] T014 Ejecutar T011–T013, confirmar que fallan (falta la migración, el método y el adaptador) y guardar la salida
+- [x] T014 Ejecutar T011–T013, confirmar que fallan (falta la migración, el método y el adaptador) y guardar la salida
   en `evidencia-red.txt` (sección "Almacenamiento").
 
 ### Implementación (GREEN)
 
-- [ ] T015 Crear `db/migrations/<NNN>_add_member_password.up.sql`
+- [x] T015 Crear `db/migrations/<NNN>_add_member_password.up.sql`
   (`ALTER TABLE members ADD COLUMN password_hash TEXT NULL;`) y `.down.sql`
   (`ALTER TABLE members DROP COLUMN IF EXISTS password_hash;`). Aplicarla a la base local con `migrate … up`.
-- [ ] T016 Agregar `MemberCredential` (tipo y método) a `ContextStore` en `src/web/context_store.go` e implementarlo
+- [x] T016 Agregar `MemberCredential` (tipo y método) a `ContextStore` en `src/web/context_store.go` e implementarlo
   en `src/web/postgres_context_store.go`:
   - la consulta de `data-model.md`, `validID` en los dos identificadores, `NULL` → `""` y errores con `Unavailable`;
   - en el mismo paso, sumar el método a los dobles `sprintHandlerContextStore` (`src/web/sprints_handlers_test.go`) y
     `sprintBDDContextStore` (`test/web_sprints_bdd_test.go`) para que compilen.
-- [ ] T017 Implementar `src/auth/password_store.go` (`PasswordStore`, `ErrMemberNotFound`) y
+- [x] T017 Implementar `src/auth/password_store.go` (`PasswordStore`, `ErrMemberNotFound`) y
   `src/auth/postgres_password_store.go` (`NewPostgreSQLPasswordStore`, `MemberName` y `SetPasswordHash` con las
   consultas de `data-model.md`; un identificador fuera de 1..2147483647 → `ErrMemberNotFound` sin consultar).
-- [ ] T018 Ejecutar T011–T013 en verde y `go vet ./...` (todo compila).
+- [x] T018 Ejecutar T011–T013 en verde y `go vet ./...` (todo compila).
 
 ## Fase 4: Bloque C – Comando `set-password` (escenarios 10 y 11)
 
@@ -128,7 +128,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T019 [E10, E11] Escribir `src/cmd/set-password/main_test.go`:
+- [x] T019 [E10, E11] Escribir `src/cmd/set-password/main_test.go`:
   - `TestSetPassword_Configura`: con un doble de `auth.PasswordStore` y "caro-clave-2026\r\ncaro-clave-2026\n" →
     código 0, "Contraseña configurada para Caro", un valor guardado que verifica, y la contraseña no aparece en la
     salida;
@@ -142,19 +142,19 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestRun_ConfiguraContrasena` (integración; se omite sin `DATABASE_URL`): crea a Caro, corre `run` con
     "caro-clave-2026" dos veces y comprueba en la base que `password_hash` empieza con `pbkdf2-sha256$600000$` y
     verifica.
-- [ ] T020 Ejecutar T019, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
+- [x] T020 Ejecutar T019, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
   (sección "Comando").
 
 ### Implementación (GREEN)
 
-- [ ] T021 Implementar `src/cmd/set-password/main.go` según `data-model.md`:
+- [x] T021 Implementar `src/cmd/set-password/main.go` según `data-model.md`:
   - `main`, `run(ctx, args, stdin, stdout, getenv)` y `setPassword(ctx, store, memberID, stdin, stdout)`;
   - `flag.NewFlagSet` con `ContinueOnError` y salida descartada;
   - `web.LoadConfig` y `sql.Open("pgx", …)` con `PingContext`;
   - las líneas se leen con `bufio.Reader` y se les quita solo `\n` y `\r` finales;
   - validación con `auth.ValidateNewPassword`, `auth.HashPassword` y `SetPasswordHash`;
   - los textos fijos y los códigos 0, 1 y 2.
-- [ ] T022 Ejecutar T019 en verde.
+- [x] T022 Ejecutar T019 en verde.
 
 ## Fase 5: Bloque D – Pantalla "Identificarme" y "Salir" (escenarios 1 a 9 y 12) 🎯 MVP
 
@@ -165,7 +165,7 @@ identificación fallan hasta el Bloque E.
 
 ### Pruebas (RED)
 
-- [ ] T023 [P] [E1–E5, E7, E9, E12] Escribir las pruebas de handler.
+- [x] T023 [P] [E1–E5, E7, E9, E12] Escribir las pruebas de handler.
   - Primero, `src/web/member_password_helpers_test.go`: `testMemberPassword`, `setTestPassword(t, db, memberID)`
     (guarda `HashPasswordIterations(testMemberPassword, 1000)`) y `memberLoginValues(id)` (`integrante_id` y
     `contrasena`).
@@ -187,7 +187,7 @@ identificación fallan hasta el Bloque E.
   - `TestMemberPassword_ErrorDeLectura`: un doble que falla en `MemberCredential` da 503 sin detalles internos (lista
     de `TestContexto_ErroresNoExponenDetallesInternos`), sin cookie y sin contar; un valor guardado mal formado da
     500.
-- [ ] T024 [P] [E1–E10, E12] Escribir las pruebas BDD.
+- [x] T024 [P] [E1–E10, E12] Escribir las pruebas BDD.
   - Primero, `test/member_password_helpers_test.go`: `claveDePrueba`, `configurarClave(t, db, id, clave)` y
     `formIdentificacion(id, clave)`.
   - Después, `test/web_member_password_bdd_test.go`, con los datos del Issue y un comentario Dado/Cuando/Entonces por
@@ -203,12 +203,12 @@ identificación fallan hasta el Bloque E.
     - `TestHU27_ConfigurarContrasena`: Caro guardada con `auth.HashPassword("caro-clave-2026")` mediante
       `auth.NewPostgreSQLPasswordStore`, como lo hace el comando, y después se identifica;
     - `TestHU27_ErrorAlVerificar`: store envuelto que falla en `MemberCredential`.
-- [ ] T025 Ejecutar T023–T024, confirmar que fallan por la razón esperada (hoy se identifica sin contraseña y no
+- [x] T025 Ejecutar T023–T024, confirmar que fallan por la razón esperada (hoy se identifica sin contraseña y no
   existe "Salir") y guardar la salida en `evidencia-red.txt` (sección "Pantalla").
 
 ### Implementación (GREEN)
 
-- [ ] T026 Crear los textos y adaptar los handlers.
+- [x] T026 Crear los textos y adaptar los handlers.
   - `src/web/member_password_messages.go`: la tabla de textos de `data-model.md`.
   - En `src/web/context_handlers.go`:
     - `RegisterContextWithLockout(s, store, lockout)`; `RegisterContext` delega con `auth.NewLockout(nil)`;
@@ -218,14 +218,14 @@ identificación fallan hasta el Bloque E.
       tocar la cookie previa;
     - el acierto con `RecordSuccess`, `setContextCookie`, `SetFlash(FlashSuccess, IdentifiedMessage(nombre))` y 303.
   - No cambiar `ResolveContext`, el middleware ni `RequireContext`.
-- [ ] T027 Editar las plantillas y el estilo:
+- [x] T027 Editar las plantillas y el estilo:
   - `src/web/templates/select_member.html`: nueva introducción y campo
     `<input type="password" id="contrasena" name="contrasena" autocomplete="current-password">` sin `value`, con su
     error;
   - `src/web/templates/layout.html`: `<p class="app-context">` → `<div class="app-context">` y el formulario "Salir"
     junto al nombre, solo con `.MemberName`;
   - `src/web/static/app.css`: `.app-context form { display: inline; }`.
-- [ ] T028 Ejecutar T023–T024 en verde (`go test -count=1 -p 1 -run "MemberPassword|HU27" ./src/web/... ./test/...`).
+- [x] T028 Ejecutar T023–T024 en verde (`go test -count=1 -p 1 -run "MemberPassword|HU27" ./src/web/... ./test/...`).
 
 **Punto de control**: la identificación pide contraseña. Las pruebas existentes de identificación quedan en rojo
 hasta el Bloque E; no subir la rama en este estado.
@@ -237,26 +237,26 @@ contraseña" de HU-20b.
 
 **Prueba independiente**: `go test -count=1 -p 1 ./...` completo.
 
-- [ ] T029 Ejecutar `go test -count=1 -p 1 ./...` después del Bloque D. Confirmar que fallan exactamente las pruebas de
+- [x] T029 Ejecutar `go test -count=1 -p 1 ./...` después del Bloque D. Confirmar que fallan exactamente las pruebas de
   los archivos de T001 (identificación sin contraseña y las dos que esperan que no haya `type="password"`) y guardar
   la salida en `evidencia-red.txt` (sección "Pruebas existentes"). Si falla otra, anotarla y revisarla antes de
   seguir.
-- [ ] T030 [P] Actualizar las pruebas de `src/web`: `context_member_test.go`, `effort_handlers_test.go`,
+- [x] T030 [P] Actualizar las pruebas de `src/web`: `context_member_test.go`, `effort_handlers_test.go`,
   `poker_handlers_test.go` y `poker_view_test.go` (más las que agregue T001).
   - Configurar con `setTestPassword` la contraseña de los integrantes que se identifican.
   - Enviar `memberLoginValues` en lugar de solo `integrante_id`.
   - En `TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo`, la expectativa "no hay `type="password"`" pasa a
     "hay `type="password"` con `autocomplete="current-password"`".
   - Las demás expectativas no cambian.
-- [ ] T031 [P] Actualizar las pruebas de `test/`: `context_bdd_test.go` (`elegirIntegrante` y la expectativa "sin
+- [x] T031 [P] Actualizar las pruebas de `test/`: `context_bdd_test.go` (`elegirIntegrante` y la expectativa "sin
   contraseña" de la línea 505), `web_effort_bdd_test.go` (`dadoQueTrabajoEn` y la línea 298),
   `web_poker_bdd_test.go` y `web_signed_cookies_bdd_test.go`. Usar `configurarClave` y `formIdentificacion`; las demás
   expectativas no cambian.
-- [ ] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
+- [x] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
 
 ## Fase 7: Cierre
 
-- [ ] T033 Revisión de seguridad.
+- [x] T033 Revisión de seguridad.
   - Con `git grep -n -i "contrasena\|password" src test`, comprobar que la contraseña:
     - no se registra con `slog`;
     - no entra en `FormView.Values`;
@@ -267,22 +267,34 @@ contraseña" de HU-20b.
     - la plantilla no tiene `value` en el campo;
     - `POST /contexto/salir` pasa por el `CrossOriginGuard`.
   - Anotar el resultado en esta tarea.
-- [ ] T034 [P] Formatear con `gofmt` solo los archivos nuevos, sin `gofmt -w` sobre archivos existentes (CRLF);
+
+  Resultado (2026-11-01):
+  - la contraseña no se registra: `context_handlers.go`, `src/auth` y el comando no llaman a `slog`, y los errores
+    que llegan al registro (`ErrMalformedHash` o la falla de la base) no la incluyen;
+  - no entra en `FormView.Values`: `selectMember` la lee con `PostFormValue` y los rechazos usan un `FormView`
+    nuevo, solo con el error del campo;
+  - ningún mensaje ni error la incluye, y el comando nunca imprime lo que lee (`TestSetPassword_Configura`);
+  - la comparación usa `subtle.ConstantTimeCompare` (`src/auth/password.go`);
+  - el campo de `select_member.html` no tiene `value`;
+  - `POST /contexto/salir` pasa por el `CrossOriginGuard` global (`main.go`, línea 58);
+  - `TestMemberPassword_NuncaMuestraLaContrasena` y `TestHU27_ContrasenaProtegida` lo comprueban en las
+    respuestas, las cabeceras, la base y el registro del servidor.
+- [x] T034 [P] Formatear con `gofmt` solo los archivos nuevos, sin `gofmt -w` sobre archivos existentes (CRLF);
   `go vet ./...` limpio; `go test ./... -p 1 -race` en verde; pipeline de GitHub Actions en verde.
-- [ ] T035 [P] Documentar en `README.md`, junto a la migración:
+- [x] T035 [P] Documentar en `README.md`, junto a la migración:
   - configurar contraseñas con `go run ./src/cmd/set-password -integrante N` después de migrar (nota 7);
   - las limitaciones: bloqueo en memoria, contraseña visible al escribirla en el comando y sin cambio ni
     recuperación por web.
 
   En `docs/hu-20b-deuda-tecnica.md`, marcar la decisión 1 ("Sin contraseña") como resuelta por HU-27.
-- [ ] T036 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
+- [x] T036 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
   (`go test -count=1 -p 1 -cover ./...`).
-- [ ] T037 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el tiempo de
+- [x] T037 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el tiempo de
   identificación menor a 1 segundo (SC-004).
-- [ ] T038 Antes del PR, hacer `git pull` de `main` y reconfirmar que `<NNN>` sigue siendo la mayor migración + 1 (si
+- [x] T038 Antes del PR, hacer `git pull` de `main` y reconfirmar que `<NNN>` sigue siendo la mayor migración + 1 (si
   otra historia lo tomó, renombrar los dos archivos y la prueba de T011). Reconfirmar también que los nombres de las
   pruebas coinciden con la trazabilidad de `spec.md`.
-- [ ] T039 Abrir el Pull Request desde `HU-27` citando HU-27, con:
+- [x] T039 Abrir el Pull Request desde `HU-27` citando HU-27, con:
   - las evidencias y la lista de archivos de otras historias que se editan (`plan.md`);
   - el aviso para la demo (migrar y configurar las contraseñas).
 

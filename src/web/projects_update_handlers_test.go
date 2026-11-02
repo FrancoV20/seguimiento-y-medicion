@@ -420,7 +420,7 @@ func TestHU11_IdentificadoQuitado(t *testing.T) {
 	a := newHU11Server(t)
 	beto := a.client()
 	a.post(t, beto, pathSelectProject, url.Values{"proyecto_id": {strconv.FormatInt(a.fx.alfa, 10)}})
-	resp, _ := a.post(t, beto, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(a.fx.beto, 10)}})
+	resp, _ := a.post(t, beto, pathSelectMember, loginAs(t, a.fx.db, a.fx.beto))
 	assertStatus(t, resp, http.StatusSeeOther)
 
 	resp, _ = a.post(t, a.client(), a.editPath(), a.form(a.fx.alfaName, "2026-03-01", "2026-06-30", a.fx.ana))

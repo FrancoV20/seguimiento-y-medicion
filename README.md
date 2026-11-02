@@ -120,6 +120,21 @@ Todos deben seguir este orden desde la raíz del repositorio:
 
   No subas tu clave al repositorio.
 
+  **Contraseñas de los integrantes (HU-27)**: para identificarse hace falta una contraseña.
+  Después de migrar (la migración 015 agrega `members.password_hash`), el Scrum Master configura
+  la de cada integrante con el comando, que pide la contraseña dos veces (de 8 a 128 caracteres):
+
+  ```powershell
+  go run ./src/cmd/set-password -integrante 1
+  ```
+
+  El número es el `id` del integrante en `members`. Sin contraseña configurada, ese integrante
+  no puede identificarse. Volver a correr el comando reemplaza la contraseña.
+
+  Limitaciones conocidas: el bloqueo por 5 intentos fallidos vive en memoria y se reinicia con el
+  servidor; la contraseña se ve en la consola al escribirla en el comando; no hay cambio ni
+  recuperación de contraseña desde la web.
+
 5. Aplicar las migraciones pendientes en orden numérico. Revisen el `quickstart.md` de su
   historia: allí figuran `DATABASE_URL`, el comando exacto y las migraciones previas requeridas.
 

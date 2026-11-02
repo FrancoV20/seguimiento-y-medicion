@@ -193,7 +193,7 @@ func (a *esfApp) dadoQueTrabajoEn(t *testing.T, proyecto, integrante int64) *htt
 	c := a.navegador()
 	a.enviar(t, c, "/contexto/proyecto", url.Values{"proyecto_id": {strconv.FormatInt(proyecto, 10)}})
 	if integrante != 0 {
-		a.enviar(t, c, "/contexto/integrante", url.Values{"integrante_id": {strconv.FormatInt(integrante, 10)}})
+		a.enviar(t, c, "/contexto/integrante", identificacionDePrueba(t, a.mundo.db, integrante))
 	}
 	return c
 }
@@ -294,9 +294,10 @@ func TestEscenarioEsfuerzo_SinIntegranteIdentificado(t *testing.T) {
 	}
 	esfDebeContener(t, cuerpo, web.MsgMemberRequired)
 
-	// And al identificarme vuelvo a la pantalla
+	// And al identificarme (con mi contraseña, HU-27) vuelvo a la pantalla
+	configurarClave(t, m.db, m.ana, claveDePrueba)
 	resp, cuerpo = app.enviar(t, c, "/contexto/integrante", url.Values{
-		"integrante_id": {esfID(m.ana)}, "volver_a": {resp.Request.URL.Query().Get("volver_a")},
+		"integrante_id": {esfID(m.ana)}, "contrasena": {claveDePrueba}, "volver_a": {resp.Request.URL.Query().Get("volver_a")},
 	})
 	if resp.Request.URL.Path != "/esfuerzo" {
 		t.Fatalf("después de identificarme se esperaba volver a /esfuerzo, se obtuvo %s", resp.Request.URL)

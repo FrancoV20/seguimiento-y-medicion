@@ -57,6 +57,11 @@ func (s sprintHandlerContextStore) ResolveContext(_ context.Context, projectID, 
 	return ResolvedContext{ProjectExists: exists, ProjectName: name}, nil
 }
 
+// MemberCredential completa el ContextStore ampliado por HU-27 (T016).
+func (s sprintHandlerContextStore) MemberCredential(context.Context, int64, int64) (MemberCredential, error) {
+	return MemberCredential{}, nil
+}
+
 type sprintHandlerCatalog struct {
 	active       map[int64]*SprintView
 	options      map[int64][]StoryOption

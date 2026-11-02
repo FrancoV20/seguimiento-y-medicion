@@ -2,10 +2,16 @@
 <h1>Identificarme</h1>
 {{with .Data}}
 {{if .Members}}
-<p>Proyecto: <strong>{{.ProjectName}}</strong>. Elegí tu nombre entre los integrantes del proyecto. No hace falta contraseña: tus acciones (cargar esfuerzo, votar) quedan a tu nombre hasta que lo cambies.</p>
+<p>Proyecto: <strong>{{.ProjectName}}</strong>. Elegí tu nombre e ingresá tu contraseña. Tus acciones (cargar esfuerzo, votar) quedan a tu nombre hasta que salgas.</p>
 <form method="post" action="/contexto/integrante">
   <input type="hidden" name="volver_a" value="{{.ReturnTo}}">
   {{template "member_picker" .}}
+  {{- $err := ""}}{{with $.Form}}{{$err = index .Errors "contrasena"}}{{end}}
+  <div class="field{{if $err}} field-invalid{{end}}">
+    <label for="contrasena">Contraseña</label>
+    <input type="password" id="contrasena" name="contrasena" autocomplete="current-password"{{if $err}} aria-invalid="true" aria-describedby="contrasena-error"{{end}}>
+    {{- with $err}}<p class="field-error" id="contrasena-error"><span class="field-error-label">Error:</span> {{.}}</p>{{end}}
+  </div>
   <button type="submit">Identificarme</button>
 </form>
 {{else}}

@@ -1,0 +1,86 @@
+HU-27 — Evidencia de verificación manual (T037)
+Fecha: 2026-11-02
+Realizó: Claude (asistente de IA), a pedido de Alejandro Raúl Ruiz Andreola, que revisó el resultado.
+
+Entorno
+- Código de la rama HU-27 en el commit 75923d8. Se comprobó que los 450 archivos de src/, test/ y db/ son idénticos
+  (sin contar finales de línea) a los de la PC de Alejandro.
+- Servidor y comando compilados con `go build ./src/cmd/server` y `go build ./src/cmd/set-password`, ejecutados en
+  un entorno Linux aislado (no en la PC de Alejandro), con PostgreSQL 16 y una base nueva con las migraciones 001 a
+  015 (schema_migrations = 15) y db/seeds/members.sql. El bloqueo usó el reloj real.
+
+Método
+- Recorrido con Chromium real (Playwright): se completaron y enviaron los formularios como lo haría una persona, y
+  se registró el código HTTP y el tiempo de cada envío. Cada escenario usó un navegador nuevo.
+- Datos: Ana, Beto, Caro y Dani se cargaron en la tabla members con SQL, porque la aplicación no tiene pantalla para
+  crear integrantes; «Alfa» y «Beta» se crearon en /proyectos. Las contraseñas se configuraron con el comando
+  set-password, alimentando la entrada estándar, como lo haría el Scrum Master.
+- Escenario 2: después se hizo una identificación correcta de Ana para que su fallo no contara en el escenario 5.
+- Escenario 6: el envío de Dani se hizo cambiando el valor de un radio con las herramientas del navegador.
+- Escenario 12: el valor mal formado se cargó a mano en la base y después se detuvo PostgreSQL con `pg_ctl stop`.
+
+Resultado: 12/12 escenarios pasaron.
+
+Preparación: PASÓ
+  Preparación: integrantes Ana, Beto, Caro y Dani cargados en la tabla members (no hay pantalla para crearlos);
+  proyectos «Alfa» (Ana, Beto, Caro) y «Beta» (Dani) creados en /proyectos; contraseñas de Ana, Beto y Dani
+  configuradas con el comando set-password (código 0 y «Contraseña configurada para …»); Caro sin contraseña.
+
+Escenario 1 – Identificación correcta (y SC-004): PASÓ
+  Con «Alfa» elegido, /planning-poker pide identificarse; Ana con «ana-clave-2026» → POST 303 en 185 ms (600.000
+  iteraciones; SC-004 < 1 s), vuelve a /planning-poker con «Te identificaste como Ana» y «Integrante: Ana» en el
+  encabezado.
+
+Escenario 2 – Contraseña incorrecta: PASÓ
+  Ana con «otra-clave» → 401 con «Integrante o contraseña incorrectos»; Ana sigue elegida, el campo de contraseña está
+  vacío y no queda identificada.
+
+Escenario 3 – Contraseña vacía: PASÓ
+  Beto sin contraseña → 422 con «Ingresá tu contraseña» junto al campo; no queda identificado.
+
+Escenario 4 – Integrante sin contraseña: PASÓ
+  Caro (sin contraseña) con cualquier contraseña → 422 con «Caro todavía no tiene contraseña configurada. Pedile al
+  Scrum Master que la configure».
+
+Escenario 5 – Demasiados intentos fallidos: PASÓ
+  5 intentos con «otra-clave» → [401, 401, 401, 401, 401]; con la contraseña correcta enseguida → 429 con «Demasiados
+  intentos fallidos. Esperá un minuto y volvé a intentar» y sin identificación; esperando 61 s reales → 303 e
+  identificada.
+
+Escenario 6 – Integrante de otro proyecto: PASÓ
+  Con «Alfa» elegido, se envía la identificación de Dani (de «Beta», cambiando el valor del radio con las herramientas
+  del navegador) con «dani-clave-2026» → vuelve al selector con «El integrante elegido no pertenece al proyecto. Elegí
+  uno de la lista.» y sin identificación.
+
+Escenario 7 – Salir: PASÓ
+  Identificada como Ana, «Salir» del encabezado → «Cerraste tu identificación» y el nombre deja de verse; /esfuerzo y
+  /planning-poker llevan a «Identificarme», que pide la contraseña.
+
+Escenario 8 – Cambio de proyecto: PASÓ
+  Identificada como Ana en «Alfa», cambiar a «Beta» y volver a «Alfa» limpia la identificación; volver a identificarse
+  sin contraseña → 422 (hay que ingresarla).
+
+Escenario 9 – Contraseña protegida: PASÓ
+  Beto pasa a tener la misma contraseña que Ana («ana-clave-2026», con el comando): en la base los dos valores son
+  distintos y empiezan con «pbkdf2-sha256$600000$»; ninguna contraseña aparece en la base, en las 15 páginas de
+  respuesta revisadas ni en el registro del servidor.
+
+Escenario 10 – Configurar una contraseña: PASÓ
+  `set-password -integrante 8` con «caro-clave-2026» dos veces → código 0 y «Contraseña configurada para Caro» (sin
+  mostrar la contraseña); Caro se identifica → POST 303.
+
+Escenario 11 – Contraseña inválida al configurar: PASÓ
+  Con «corta12» → código 1 y «La contraseña debe tener al menos 8 caracteres»; con dos distintas → código 1 y «Las
+  contraseñas no coinciden»; la contraseña de Caro no cambió.
+
+Escenario 12 – Error al verificar: PASÓ
+  Con un valor guardado mal formado (cargado a mano en la base) para Beto → 500 con «Error inesperado», sin detalles;
+  con PostgreSQL detenido → 503 «Servicio no disponible», sin detalles y sin cookie de integrante.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-27 en el commit ________.
+1. Después de migrar, `go run ./src/cmd/set-password -integrante N` configura una contraseña: ______
+2. "Identificarme" pide la contraseña: correcta identifica; incorrecta muestra el mensaje y deja el campo vacío: ______
+3. "Salir" cierra la identificación y Planning Poker o Esfuerzo vuelven a pedirla: ______
+Observaciones: ______________________________________________________________
