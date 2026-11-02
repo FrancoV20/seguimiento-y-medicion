@@ -58,3 +58,329 @@ FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 test\web_member_password_bdd_test.go:120:6: undefined: web.RegisterContextWithLockout
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
 FAIL
+
+== Pruebas existentes (T029): con la identificación con contraseña, fallan solo las pruebas de otras historias que se identifican enviando únicamente integrante_id (12 archivos de research.md, Resultado de T001) y las dos que esperaban que no hubiera type="password" ==
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.635s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/auth	0.338s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	2.189s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.134s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password	0.579s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.847s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.539s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.731s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/pdf	0.454s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	4.208s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	1.236s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/report	1.267s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	3.813s
+--- FAIL: TestCloseHandler_RechazaCargaDeEsfuerzoDespuesDelCierre (0.11s)
+    close_handlers_test.go:845: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestSeccion_RequiereIntegranteGuiaPorProyectoEIdentificacionYVuelve (0.04s)
+    context_guard_test.go:105: se esperaba 303 a /con-integrante, se obtuvo 422 a ""
+--- FAIL: TestSeccion_EnvioSinIdentificarseNoEjecutaLaAccionYVuelveAlOrigen (0.05s)
+    context_guard_test.go:142: identificada, la acci├│n deb├¡a ejecutarse una vez (estado 303, ejecuciones 0)
+--- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio (0.06s)
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio///otro.com (0.01s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/https://otro.com (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/\\otro.com (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//\otro.com (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//no-existe (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio//contexto/proyecto (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/javascript:alert(1) (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+    --- FAIL: TestDestinoDeRegreso_ExternoOMalformadoVaAlInicio/backlog (0.00s)
+        context_guard_test.go:162: al identificarse: se esperaba 303 a /, se obtuvo 422 a ""
+--- FAIL: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo (0.04s)
+    --- FAIL: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_A (0.01s)
+        context_member_test.go:70: la identificaci├│n no lleva contrase├▒a
+    --- FAIL: TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo/proyecto_B (0.00s)
+        context_member_test.go:70: la identificaci├│n no lleva contrase├▒a
+--- FAIL: TestIntegrante_ElegirMiNombreLoUsaEnMisAccionesYSeVeEnLaEstructuraComun (0.04s)
+    context_member_test.go:85: se esperaba 303 a /libre, se obtuvo 422 a ""
+--- FAIL: TestIntegrante_CambiarDeNombreReemplazaLaIdentificacion (0.04s)
+    context_member_test.go:112: la identificaci├│n deb├¡a pasar a Beto, se obtuvo "datos:proyecto=420;integrante=0"
+--- FAIL: TestEffort_CargaExitosa_RegistraAlIntegranteIdentificadoYMuestraAcumulado (0.07s)
+    effort_handlers_test.go:180: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_FechaDeHoyPorDefectoYHorasConComaOPunto (0.07s)
+    effort_handlers_test.go:214: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_SelectorYListaSoloDelSprintActivoDelProyecto (0.07s)
+    effort_handlers_test.go:230: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_SinSprintActivo (0.07s)
+    effort_handlers_test.go:248: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_SinIntegranteIdentificado (0.07s)
+    effort_handlers_test.go:291: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_VariosErroresJuntosConLosMensajesDeHU03 (0.07s)
+    effort_handlers_test.go:305: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_HorasYFechaInvalidas (0.07s)
+    effort_handlers_test.go:326: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_HistoriaNoDisponible (0.07s)
+    effort_handlers_test.go:358: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_FallaDeGuardado (0.07s)
+    effort_handlers_test.go:395: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_SprintCerradoEntreAbrirYEnviar (0.07s)
+    effort_handlers_test.go:419: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_HistorialDeLaHistoriaYTiempoDeRespuesta (0.06s)
+    effort_handlers_test.go:470: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_HistoriaSinRegistros (0.07s)
+    effort_handlers_test.go:492: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_HistoriaInvalidaEnLaDireccionSeIgnora (0.06s)
+    effort_handlers_test.go:502: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_ActividadConScriptSeMuestraComoTexto (0.07s)
+    effort_handlers_test.go:516: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_FallaAlLeerElHistorial (0.06s)
+    effort_handlers_test.go:552: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_SinProyectoActivoValido (0.07s)
+    --- FAIL: TestEffort_SinProyectoActivoValido/proyecto_eliminado (0.01s)
+        effort_handlers_test.go:603: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_FallaAlLeerLasHistorias (0.07s)
+    effort_handlers_test.go:623: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_EnvioDeOtroOrigenSeRechaza (0.08s)
+    effort_handlers_test.go:643: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_NoSePuedeCargarEnHistoriasDeOtroProyecto (0.07s)
+    effort_handlers_test.go:666: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestEffort_EnvioDemasiadoGrandeNoRegistra (0.07s)
+    effort_handlers_test.go:681: identificarse: se esperaba 303, se obtuvo 422
+--- FAIL: TestHU05b_BotonCerrarRonda (0.10s)
+    poker_close_handlers_test.go:41: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_CerrarRonda (0.09s)
+    poker_close_handlers_test.go:71: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05b_CerrarSinTodosLosVotos (0.10s)
+    poker_close_handlers_test.go:99: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05b_RondaSinVotos (0.10s)
+    poker_close_handlers_test.go:116: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU05b_VotarEnRondaCerrada (0.09s)
+    poker_close_handlers_test.go:132: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05b_CerrarDosVeces (0.09s)
+    poker_close_handlers_test.go:148: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05b_RondaInexistente (0.10s)
+    poker_close_handlers_test.go:168: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU05b_ErrorAlCerrar (0.10s)
+    poker_close_handlers_test.go:203: se esperaba 500, se obtuvo 303
+--- FAIL: TestHU05b_RecargaSinReenviar (0.10s)
+    poker_close_handlers_test.go:228: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU18_AccionesSoloEnLaUltimaRonda (0.08s)
+    poker_consensus_handlers_test.go:28: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU18_NuevaRonda (0.08s)
+    poker_consensus_handlers_test.go:55: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU18_VotosOcultosEnLaNuevaRonda (0.09s)
+    poker_consensus_handlers_test.go:82: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_RegistrarEstimacion (0.09s)
+    poker_consensus_handlers_test.go:100: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_ConsensoDirecto (0.08s)
+    poker_consensus_handlers_test.go:123: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU18_RecordatorioDeDivergencia (0.09s)
+    poker_consensus_handlers_test.go:137: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU18_ValorFueraDeSerie (0.08s)
+    poker_consensus_handlers_test.go:160: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU18_RondaSinCerrar (0.08s)
+    poker_consensus_handlers_test.go:181: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU18_NuevaRondaConRondaAbierta (0.08s)
+    poker_consensus_handlers_test.go:194: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU18_RondaQueNoEsLaUltima (0.08s)
+    poker_consensus_handlers_test.go:207: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU18_SprintFinalizado (0.08s)
+    poker_consensus_handlers_test.go:220: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU18_RondaInexistente (0.08s)
+    poker_consensus_handlers_test.go:256: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU18_ErrorAlGuardar (0.08s)
+    poker_consensus_handlers_test.go:276: se esperaba 500, se obtuvo 303
+--- FAIL: TestHU18_RecargaSinReenviar (0.08s)
+    poker_consensus_handlers_test.go:319: el primer GET deb├¡a mostrar el mensaje de la ronda abierta
+    poker_consensus_handlers_test.go:327: recargar no deb├¡a repetir las acciones: ┬½Pagos┬╗ 0 SP, ┬½Login┬╗ 1 rondas
+--- FAIL: TestHU18_TituloEscapado (0.08s)
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Estimaci├│n registrada: ┬½&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;┬╗ queda con 3 Story Points"
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Ronda 2 abierta para la historia ┬½&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;┬╗"
+--- FAIL: TestHU18_Rendimiento (0.79s)
+    poker_consensus_handlers_test.go:386: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05a_AbrirRonda (0.05s)
+    poker_handlers_test.go:178: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05a_HistoriaConRondaAbierta (0.05s)
+    poker_handlers_test.go:205: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU05a_HistoriaYaTuvoRonda (0.04s)
+    poker_handlers_test.go:219: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU05a_SelectorTodasLasHistorias (0.05s)
+    poker_handlers_test.go:247: el selector no contiene <option value="2560">Login Poker 1793587658044367800 (Pendiente)</option>
+    poker_handlers_test.go:247: el selector no contiene <option value="2561">Pagos Poker 1793587658044367800 (Hecho)</option>
+    poker_handlers_test.go:250: el selector no contiene <option value="2560">Login Poker 1793587658044367800 (Pendiente)</option>
+    poker_handlers_test.go:250: el selector no contiene <option value="2561">Pagos Poker 1793587658044367800 (Hecho)</option>
+--- FAIL: TestHU05a_VotoRegistrado (0.04s)
+    poker_handlers_test.go:260: no hay ronda abierta para la historia 2563: sql: no rows in result set
+--- FAIL: TestHU05a_VotoActualizado (0.05s)
+    poker_handlers_test.go:287: no hay ronda abierta para la historia 2566: sql: no rows in result set
+--- FAIL: TestHU05a_ValorFueraDeSerie (0.05s)
+    poker_handlers_test.go:314: no hay ronda abierta para la historia 2569: sql: no rows in result set
+--- FAIL: TestHU05a_VotoSinValor (0.06s)
+    poker_handlers_test.go:331: no hay ronda abierta para la historia 2572: sql: no rows in result set
+--- FAIL: TestHU05a_RondaCerrada (0.06s)
+    poker_handlers_test.go:348: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU05a_RondaInexistente (0.05s)
+    poker_handlers_test.go:360: no hay ronda abierta para la historia 2578: sql: no rows in result set
+--- FAIL: TestHU05a_HistoriaInexistente (0.05s)
+    poker_handlers_test.go:380: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU05a_ErrorAlGuardar (0.05s)
+    poker_handlers_test.go:400: se esperaba 500, se obtuvo 303
+--- FAIL: TestHU05a_SinIdentificarme (0.05s)
+    poker_handlers_test.go:430: al identificarse se esperaba volver a /planning-poker, se obtuvo ""
+--- FAIL: TestHU05b_AlertaDeDivergencia (0.10s)
+    poker_reveal_view_test.go:40: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_SinDivergenciaEnElLimite (0.10s)
+    poker_reveal_view_test.go:57: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_VotosParaTodos (0.10s)
+    poker_reveal_view_test.go:78: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_VotoAbiertoNuncaSeRevela (0.09s)
+    poker_reveal_view_test.go:95: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_SinRondasCerradas (0.10s)
+    poker_reveal_view_test.go:116: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_RondaCerradaSinVotos (0.09s)
+    poker_reveal_view_test.go:132: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05b_TextosEscapados (0.10s)
+    poker_reveal_view_test.go:156: se esperaba volver a /planning-poker, se obtuvo "/contexto/integrante?volver_a=%2Fplanning-poker"
+--- FAIL: TestHU05b_Rendimiento (0.87s)
+    poker_reveal_view_test.go:197: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU05a_VotosAjenosOcultos (0.05s)
+    poker_view_test.go:28: no hay ronda abierta para la historia 2736: sql: no rows in result set
+--- FAIL: TestHU05a_CambioDeIdentificacion (0.05s)
+    poker_view_test.go:59: no hay ronda abierta para la historia 2739: sql: no rows in result set
+--- FAIL: TestHU05a_PantallaVacia (0.05s)
+    poker_view_test.go:84: proyecto sin historias: falta ┬½A├║n no hay historias┬╗
+    poker_view_test.go:84: proyecto sin historias: falta ┬½No hay rondas abiertas┬╗
+    poker_view_test.go:93: proyecto con historias y sin rondas: deb├¡an verse el selector y ┬½No hay rondas abiertas┬╗
+--- FAIL: TestHU05a_TituloEscapado (0.05s)
+    poker_view_test.go:119: el t├¡tulo escapado deb├¡a verse en el selector, la ronda y el mensaje; apareci├│ 0 veces
+    poker_view_test.go:122: el nombre escapado deb├¡a verse en la lista de participantes
+--- FAIL: TestHU05a_ErrorAlLeer (0.09s)
+    --- FAIL: TestHU05a_ErrorAlLeer/falla_inesperada (0.04s)
+        poker_view_test.go:147: se esperaba 500, se obtuvo 303
+    --- FAIL: TestHU05a_ErrorAlLeer/base_sin_respuesta (0.05s)
+        poker_view_test.go:147: se esperaba 503, se obtuvo 303
+--- FAIL: TestHU05a_RecargaSinReenviar (0.05s)
+    poker_view_test.go:166: el primer GET deb├¡a mostrar ┬½Voto registrado┬╗
+    poker_view_test.go:172: recargar no deb├¡a registrar votos: hay 0
+--- FAIL: TestHU05a_Rendimiento (0.26s)
+    poker_view_test.go:200: se esperaba 200, se obtuvo 303
+--- FAIL: TestHU11_IdentificadoQuitado (0.05s)
+    projects_update_handlers_test.go:424: se esperaba 303, se obtuvo 422
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	45.634s
+--- FAIL: TestEscenarioIntegrante_Identificacion (0.04s)
+    context_bdd_test.go:506: la identificaci├│n no lleva contrase├▒a
+    context_bdd_test.go:510: se esperaba 303 a /datos, se obtuvo 422 a ""
+--- FAIL: TestEscenarioIntegrante_AccionSinIdentificarse (0.04s)
+    context_bdd_test.go:549: se esperaba volver a /con-integrante, se obtuvo 422 a ""
+--- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora (0.05s)
+    --- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora///otro.com (0.01s)
+        context_bdd_test.go:721: al identificarme: se esperaba ir a /, se obtuvo ""
+    --- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/https://otro.com (0.00s)
+        context_bdd_test.go:721: al identificarme: se esperaba ir a /, se obtuvo ""
+    --- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/\\otro.com (0.00s)
+        context_bdd_test.go:721: al identificarme: se esperaba ir a /, se obtuvo ""
+    --- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora//no-existe (0.00s)
+        context_bdd_test.go:721: al identificarme: se esperaba ir a /, se obtuvo ""
+    --- FAIL: TestEscenarioSeccion_DestinoDeRegresoInvalidoSeIgnora/javascript:alert(1) (0.00s)
+        context_bdd_test.go:721: al identificarme: se esperaba ir a /, se obtuvo ""
+--- FAIL: TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza (0.07s)
+    web_close_bdd_test.go:574: elegir integrante: se esperaba 303 a /esfuerzo, se obtuvo 422 a ""
+--- FAIL: TestEscenarioEsfuerzo_CargaExitosa (0.07s)
+    web_effort_bdd_test.go:236: la pantalla deb├¡a mostrar "name=\"fecha\" value=\"2026-10-20\""
+    web_effort_bdd_test.go:241: se esperaba volver a la pantalla de la historia, se obtuvo 200 http://127.0.0.1:28336/contexto/integrante?volver_a=%2Fesfuerzo
+--- FAIL: TestEscenarioEsfuerzo_SoloHistoriasDelSprintActivo (0.06s)
+    web_effort_bdd_test.go:261: la pantalla deb├¡a mostrar "<option value=\"8841\""
+    web_effort_bdd_test.go:261: la pantalla deb├¡a mostrar "<option value=\"8842\""
+--- FAIL: TestEscenarioEsfuerzo_SinSprintActivo (0.07s)
+    web_effort_bdd_test.go:276: la pantalla deb├¡a mostrar "No hay un Sprint activo"
+--- FAIL: TestEscenarioEsfuerzo_SinIntegranteIdentificado (0.07s)
+    web_effort_bdd_test.go:302: despu├®s de identificarme se esperaba volver a /esfuerzo, se obtuvo http://127.0.0.1:28345/contexto/integrante
+--- FAIL: TestEscenarioEsfuerzo_ErroresJuntos (0.07s)
+    web_effort_bdd_test.go:323: se esperaba 422, se obtuvo 200
+--- FAIL: TestEscenarioEsfuerzo_HistoriaNoDisponible (0.06s)
+    web_effort_bdd_test.go:349: se esperaba 422, se obtuvo 200
+--- FAIL: TestEscenarioEsfuerzo_FallaDeAlmacenamiento (0.06s)
+    web_effort_bdd_test.go:373: se esperaba 500, se obtuvo 200
+--- FAIL: TestEscenarioEsfuerzo_HistorialDeLaHistoria (0.06s)
+    web_effort_bdd_test.go:393: la pantalla deb├¡a mostrar "<td>16/10/2026</td>"
+    web_effort_bdd_test.go:393: la pantalla deb├¡a mostrar "<td>15/10/2026</td>"
+    web_effort_bdd_test.go:393: la pantalla deb├¡a mostrar "Total: <strong>6,5</strong>"
+--- FAIL: TestEscenarioEsfuerzo_HistoriaSinRegistros (0.06s)
+    web_effort_bdd_test.go:410: la pantalla deb├¡a mostrar "Todav├¡a no hay horas registradas en esta historia"
+    web_effort_bdd_test.go:410: la pantalla deb├¡a mostrar "Total: <strong>0</strong>"
+--- FAIL: TestBDD_HU05a_AbrirRonda (0.04s)
+    web_poker_bdd_test.go:156: se esperaba volver a la pantalla, se obtuvo http://127.0.0.1:28496/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05a_HistoriaConRondaAbierta (0.04s)
+    web_poker_bdd_test.go:179: se esperaba 409, se obtuvo 200
+--- FAIL: TestBDD_HU05a_VotoOculto (0.04s)
+    web_poker_bdd_test.go:207: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_CambioDeVoto (0.04s)
+    web_poker_bdd_test.go:225: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_VotosOcultos (0.05s)
+    web_poker_bdd_test.go:246: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_RondaCerrada (0.05s)
+    web_poker_bdd_test.go:280: se esperaba 409, se obtuvo 200
+--- FAIL: TestBDD_HU05a_SinIdentificarme (0.05s)
+    web_poker_bdd_test.go:309: se esperaba volver a /planning-poker, se obtuvo http://127.0.0.1:28514/contexto/integrante
+--- FAIL: TestBDD_HU05a_PantallaVacia (0.04s)
+    web_poker_bdd_test.go:323: la pantalla deb├¡a mostrar "A├║n no hay historias"
+    web_poker_bdd_test.go:323: la pantalla deb├¡a mostrar "No hay rondas abiertas"
+--- FAIL: TestBDD_HU18_NuevaRondaTrasDivergencia (0.09s)
+    web_poker_consensus_bdd_test.go:273: la pantalla deb├¡a mostrar "Ronda 2 abierta para la historia ┬½Login┬╗"
+    web_poker_consensus_bdd_test.go:274: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_VotosOcultosEnLaNuevaRonda (0.09s)
+    web_poker_consensus_bdd_test.go:294: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_RegistrarEstimacionAcordada (0.09s)
+    web_poker_consensus_bdd_test.go:314: ┬½Login┬╗ no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_ConsensoDirecto (0.09s)
+    web_poker_consensus_bdd_test.go:342: la pantalla deb├¡a mostrar "Estimaci├│n registrada: ┬½Pagos┬╗ queda con 5 Story Points"
+    web_poker_consensus_bdd_test.go:344: ┬½Pagos┬╗ deb├¡a quedar con 5 Story Points y una sola ronda: 0 SP, 1 rondas
+--- FAIL: TestBDD_HU18_RegistrarDespuesDeDebatir (0.09s)
+    web_poker_consensus_bdd_test.go:359: ┬½Login┬╗ deb├¡a mostrar "Advertencia:"
+    web_poker_consensus_bdd_test.go:359: ┬½Login┬╗ deb├¡a mostrar "La ├║ltima ronda tuvo divergencia: registr├í el valor que acordaron despu├®s de debatir"
+    web_poker_consensus_bdd_test.go:363: ┬½Login┬╗ deb├¡a quedar con 5 Story Points, tiene 0
+--- FAIL: TestBDD_HU18_ValorFueraDeLaSerie (0.09s)
+    web_poker_consensus_bdd_test.go:377: se esperaba 422, se obtuvo 200 (http://127.0.0.1:28536/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU18_RondaSinCerrar (0.09s)
+    web_poker_consensus_bdd_test.go:395: se esperaba 409, se obtuvo 200 (http://127.0.0.1:28540/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU18_NuevaRondaConRondaAbierta (0.12s)
+    web_poker_consensus_bdd_test.go:412: se esperaba 409, se obtuvo 200 (http://127.0.0.1:28543/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU18_RondaQueYaNoEsLaUltima (0.10s)
+    web_poker_consensus_bdd_test.go:429: se esperaba 409, se obtuvo 200 (http://127.0.0.1:28546/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU18_HistoriaDeUnSprintFinalizado (0.09s)
+    web_poker_consensus_bdd_test.go:447: se esperaba 409, se obtuvo 200 (http://127.0.0.1:28549/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU18_RondaInexistente (0.09s)
+    web_poker_consensus_bdd_test.go:469: se esperaba 404, se obtuvo 200 (http://127.0.0.1:28552/contexto/integrante?volver_a=%2Fplanning-poker)
+--- FAIL: TestBDD_HU05b_RevelacionDeVotos (0.08s)
+    web_poker_reveal_bdd_test.go:225: se esperaba volver a Planning Poker, se obtuvo http://127.0.0.1:28556/contexto/integrante?volver_a=%2Fplanning-poker (200)
+--- FAIL: TestBDD_HU05b_AlertaDeDivergencia (0.09s)
+    web_poker_reveal_bdd_test.go:252: no se pudo cerrar ┬½Login┬╗: 200 http://127.0.0.1:28560/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_SinDivergenciaEnElLimite (0.09s)
+    web_poker_reveal_bdd_test.go:266: no se pudo cerrar ┬½Pagos┬╗: 200 http://127.0.0.1:28563/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_DivergenciaDeTresNiveles (0.08s)
+    web_poker_reveal_bdd_test.go:282: no se pudo cerrar ┬½Reportes┬╗: 200 http://127.0.0.1:28566/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_CerrarSinQueTodosVoten (0.08s)
+    web_poker_reveal_bdd_test.go:296: no se pudo cerrar ┬½Perfil┬╗: 200 http://127.0.0.1:28569/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_RondaSinVotos (0.08s)
+    web_poker_reveal_bdd_test.go:323: se esperaba 409, se obtuvo 200
+--- FAIL: TestBDD_HU05b_VotosParaTodos (0.08s)
+    web_poker_reveal_bdd_test.go:336: no se pudo cerrar ┬½Login┬╗: 200 http://127.0.0.1:28575/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_VotarEnRondaCerrada (0.08s)
+    web_poker_reveal_bdd_test.go:355: no se pudo cerrar ┬½Login┬╗: 200 http://127.0.0.1:28578/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_CerrarDosVeces (0.08s)
+    web_poker_reveal_bdd_test.go:376: no se pudo cerrar ┬½Login┬╗: 200 http://127.0.0.1:28581/contexto/integrante?volver_a=%2Fplanning-poker
+--- FAIL: TestBDD_HU05b_RondaInexistente (0.09s)
+    web_poker_reveal_bdd_test.go:406: ronda 2147483647: se esperaba 404, se obtuvo 200
+    web_poker_reveal_bdd_test.go:408: ronda 2147483647 deb├¡a mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:406: ronda 568: se esperaba 404, se obtuvo 200
+    web_poker_reveal_bdd_test.go:408: ronda 568 deb├¡a mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:406: ronda 569: se esperaba 404, se obtuvo 200
+    web_poker_reveal_bdd_test.go:408: ronda 569 deb├¡a mostrar "La ronda no existe"
+--- FAIL: TestHU26_ContextoValidoSeConserva (0.04s)
+    web_signed_cookies_bdd_test.go:138: se esperaba el contexto completo, se obtuvo 303 "<a href=\"/contexto/integrante?volver_a=%2Faccion-hu26\">See Other</a>.\n\n"
+--- FAIL: TestHU26_CookieProyectoModificada (0.04s)
+    web_signed_cookies_bdd_test.go:154: se esperaba borrar las cookies de proyecto e integrante
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	11.542s
+FAIL

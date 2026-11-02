@@ -237,7 +237,7 @@ contraseña" de HU-20b.
 
 **Prueba independiente**: `go test -count=1 -p 1 ./...` completo.
 
-- [ ] T029 Ejecutar `go test -count=1 -p 1 ./...` después del Bloque D. Confirmar que fallan exactamente las pruebas de
+- [x] T029 Ejecutar `go test -count=1 -p 1 ./...` después del Bloque D. Confirmar que fallan exactamente las pruebas de
   los archivos de T001 (identificación sin contraseña y las dos que esperan que no haya `type="password"`) y guardar
   la salida en `evidencia-red.txt` (sección "Pruebas existentes"). Si falla otra, anotarla y revisarla antes de
   seguir.
