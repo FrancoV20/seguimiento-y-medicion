@@ -54,6 +54,8 @@ func newPokerApp(t *testing.T, opts ...pokerOption) *pokerApp {
 	}
 	a := &pokerApp{ts: httptest.NewServer(srv.Handler()), fx: fx}
 	t.Cleanup(a.ts.Close)
+	// HU-28: conducir las rondas es del Scrum Master; Ana lo es en el proyecto A.
+	setTestScrumMaster(t, db, fx.projectA, fx.ana)
 	return a
 }
 

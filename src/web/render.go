@@ -11,15 +11,19 @@ import (
 	"net/http"
 	"path"
 	"sync"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 )
 
 // ActiveContext es el proyecto e integrante activos. HU-20a define el tipo para
 // que el layout compile; HU-20b lo completa desde un middleware (T008).
 type ActiveContext struct {
-	ProjectID   int64
-	ProjectName string
-	MemberID    int64
-	MemberName  string
+	ProjectID      int64
+	ProjectName    string
+	MemberID       int64
+	MemberName     string
+	MemberRole     role.Role // HU-28: rol del integrante identificado
+	HasScrumMaster bool      // HU-28: el proyecto activo tiene al menos un Scrum Master
 }
 
 // MenuItem es una entrada del menú ya resuelta para una página.

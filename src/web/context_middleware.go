@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 )
 
 // contextMiddleware resuelve el contexto de trabajo en cada solicitud (HU-20b): lee las cookies,
@@ -50,7 +52,7 @@ func contextMiddleware(store ContextStore, rd *Renderer) func(http.Handler) http
 				return
 			}
 
-			ac := &ActiveContext{ProjectID: projectID, ProjectName: resolved.ProjectName}
+			ac := &ActiveContext{ProjectID: projectID, ProjectName: resolved.ProjectName, HasScrumMaster: resolved.HasScrumMaster}
 			switch {
 			case !memberPresent:
 				// sin integrante identificado
@@ -61,10 +63,21 @@ func contextMiddleware(store ContextStore, rd *Renderer) func(http.Handler) http
 				ctx = withPendingFlash(ctx, &Flash{Kind: FlashWarning, Text: MsgMemberGone})
 			default:
 				ac.MemberID, ac.MemberName = memberID, resolved.MemberName
+				ac.MemberRole = memberRoleOrDefault(resolved.MemberRole) // HU-28
 			}
 			next.ServeHTTP(w, r.WithContext(WithActiveContext(ctx, ac)))
 		})
 	}
+}
+
+// memberRoleOrDefault devuelve el rol leído; un valor que ParseRole no reconoce (la base lo
+// impide con su CHECK) se trata como "Integrante" (HU-28).
+func memberRoleOrDefault(r role.Role) role.Role {
+	parsed, err := role.ParseRole(string(r))
+	if err != nil {
+		return role.RoleMember
+	}
+	return parsed
 }
 
 // RequireContext protege una sección según RequiresProject y RequiresMember (HU-20b, T052).

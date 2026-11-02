@@ -94,6 +94,8 @@ func (m *pokerMundo) laAplicacion(t *testing.T) *pokerBDDApp {
 	}
 	app := &pokerBDDApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
+	// HU-28: abrir la ronda es del Scrum Master; Ana lo es en el proyecto.
+	configurarScrumMaster(t, m.db, m.proyecto, m.ana)
 	return app
 }
 

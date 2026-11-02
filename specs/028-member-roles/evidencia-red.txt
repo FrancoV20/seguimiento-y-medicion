@@ -1,0 +1,952 @@
+== Dominio y migración (T005-T007): src/role no compila porque el paquete no existe (faltan Role, RoleScrumMaster, RoleMember, ErrInvalidRole, ParseRole, CanManage, Store, NewPostgreSQLStore, ErrProjectNotFound y ErrMemberNotInProject); db falla porque no existe la migración 016 ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-015 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "TestParseRole|TestCanManage|TestPostgreSQLStore|TestMigracion_ProjectMemberRole_UpYDown" ./src/role/... ./db/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/role [github.com/FrancoV20/seguimiento-y-medicion/src/role.test]
+src/role/postgres_store_integration_test.go:126:12: undefined: Store
+src/role/postgres_store_integration_test.go:126:20: undefined: NewPostgreSQLStore
+src/role/postgres_store_integration_test.go:133:61: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:141:57: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:155:56: undefined: RoleMember
+src/role/postgres_store_integration_test.go:167:54: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:168:23: undefined: ErrMemberNotInProject
+src/role/postgres_store_integration_test.go:183:11: undefined: NewPostgreSQLStore
+src/role/postgres_store_integration_test.go:184:76: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:184:114: undefined: ErrMemberNotInProject
+src/role/postgres_store_integration_test.go:187:56: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:188:19: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:188:57: undefined: ErrMemberNotInProject
+src/role/role_test.go:13:8: undefined: Role
+src/role/role_test.go:15:20: undefined: RoleScrumMaster
+src/role/role_test.go:16:23: undefined: RoleScrumMaster
+src/role/role_test.go:17:18: undefined: RoleMember
+src/role/role_test.go:18:22: undefined: RoleMember
+src/role/role_test.go:21:15: undefined: ParseRole
+src/role/role_test.go:28:15: undefined: ParseRole
+src/role/role_test.go:29:22: undefined: ErrInvalidRole
+src/role/role_test.go:40:8: undefined: Role
+src/role/role_test.go:43:4: undefined: RoleScrumMaster
+src/role/role_test.go:44:4: undefined: RoleMember
+src/role/role_test.go:49:13: undefined: CanManage
+src/role/role_test.go:53:5: undefined: RoleScrumMaster
+src/role/role_test.go:53:42: undefined: RoleMember
+src/role/role_test.go:54:92: undefined: RoleScrumMaster
+src/role/role_test.go:54:109: undefined: RoleMember
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/role [build failed]
+--- FAIL: TestMigracion_ProjectMemberRole_UpYDown (0.13s)
+    member_role_migration_integration_test.go:106: no existe la migración 016
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/db	0.132s
+FAIL
+
+== Contexto con rol (T013-T014): src/web no compila porque ResolvedContext no tiene MemberRole ni HasScrumMaster ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "TestPostgreSQLContextStore_ResolveContext|TestContexto_RolEnLaEstructuraComun" ./src/web/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/member_role_context_test.go:24:6: rc.MemberRole undefined (type ResolvedContext has no field or method MemberRole)
+src/web/postgres_context_store_integration_test.go:163:5: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:204:49: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:204:83: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:206:50: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:206:79: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:208:4: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:210:51: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:212:27: unknown field HasScrumMaster in struct literal of type ResolvedContext
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con solo los dos campos agregados a ResolvedContext, sin cambiar la consulta, el middleware ni layout.html, las pruebas fallan porque la consulta no lee pm.role ni el EXISTS y la estructura común no muestra el rol. "sin integrante" pasa, como corresponde. --
+$ go test -count=1 -p 1 -run "TestPostgreSQLContextStore_ResolveContext|TestContexto_RolEnLaEstructuraComun" ./src/web/...
+--- FAIL: TestContexto_RolEnLaEstructuraComun (0.08s)
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/Ana,_Scrum_Master (0.03s)
+        member_role_context_test.go:41: se esperaba "Integrante: <strong>Ana 1793593443453198462 (Scrum Master)</strong>" en la estructura común (estado 200)
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/Beto,_Integrante (0.02s)
+        member_role_context_test.go:56: se esperaba "Integrante: <strong>Beto 1793593443485431694 (Integrante)</strong>" en la estructura común
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/rol_no_reconocido_se_muestra_como_Integrante (0.02s)
+        member_role_context_test.go:87: un rol no reconocido debía mostrarse como "Integrante: <strong>Beto 1793593443519083805 (Integrante)</strong>"
+--- FAIL: TestPostgreSQLContextStore_ResolveContext (0.01s)
+    --- FAIL: TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_válidos (0.00s)
+        postgres_context_store_integration_test.go:183: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443535705543 MemberBelongs:true MemberName:Ana 1793593443535705543 MemberRole:Integrante HasScrumMaster:false}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443535705543 MemberBelongs:true MemberName:Ana 1793593443535705543 MemberRole: HasScrumMaster:false}
+--- FAIL: TestPostgreSQLContextStore_ResolveContextConRol (0.02s)
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_Ana (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Ana 1793593443548810036 MemberRole:Scrum Master HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Ana 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_Beto (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Beto 1793593443548810036 MemberRole:Integrante HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Beto 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_sin_integrante (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Beta»,_su_integrante (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto B 1793593443548810036 MemberBelongs:true MemberName:Carla 1793593443548810036 MemberRole:Integrante HasScrumMaster:false}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto B 1793593443548810036 MemberBelongs:true MemberName:Carla 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_integrante_de_«Beta»_(no_pertenece) (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:false}
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.137s
+FAIL
+
+== Envoltorio y rutas (T018-T020): src/web y test no compilan porque no existen RequireScrumMaster, RequireScrumMasterOfPathProject ni los textos TitleScrumMasterOnly, MsgScrumMasterOnly, MsgNoScrumMaster y MsgScrumMasterOtherProject ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "ScrumMaster|HU28" ./src/web/... ./test/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/scrum_master_routes_test.go:251:74: undefined: MsgScrumMasterOnly
+src/web/scrum_master_routes_test.go:252:74: undefined: MsgScrumMasterOnly
+src/web/scrum_master_routes_test.go:261:74: undefined: MsgNoScrumMaster
+src/web/scrum_master_routes_test.go:262:95: undefined: MsgNoScrumMaster
+src/web/scrum_master_routes_test.go:271:73: undefined: TitleScrumMasterOnly
+src/web/scrum_master_routes_test.go:297:73: undefined: TitleScrumMasterOnly
+src/web/scrum_master_routes_test.go:309:65: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:68:29: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:69:71: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:89:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:99:33: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:107:30: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:108:29: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:113:29: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:114:29: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:120:30: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:121:29: undefined: MsgNoScrumMaster
+src/web/scrum_master_test.go:122:41: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:140:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:157:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:176:27: srv.RequireScrumMasterOfPathProject undefined (type *Server has no field or method RequireScrumMasterOfPathProject)
+src/web/scrum_master_test.go:185:31: undefined: MsgScrumMasterOtherProject
+src/web/scrum_master_test.go:195:57: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:197:64: undefined: MsgNoScrumMaster
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test/web_member_roles_bdd_test.go:329:53: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:349:52: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:351:55: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:353:53: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:386:55: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:403:55: undefined: web.MsgScrumMasterOtherProject
+test/web_member_roles_bdd_test.go:417:65: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:419:67: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:434:58: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:436:70: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:510:64: undefined: web.MsgNoScrumMaster
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con los cuatro textos definidos y un RequireScrumMaster/RequireScrumMasterOfPathProject que deja pasar todo (como hoy), fallan porque un Integrante, un proyecto sin Scrum Master, un envío sin identificarse y un {id} de otro proyecto todavía llegan a la acción y cambian los datos. Pasan, como corresponde: TestRequireScrumMaster_ScrumMasterPasa, TestScrumMasterRoutes_AccionesLibres, TestHU28_RolVisible (Bloque B), TestHU28_ScrumMasterCierraSprint, TestHU28_IntegranteVotaYTrabaja y TestHU28_ErrorAlVerificarRol (el 503 ya lo da el middleware de HU-20b; la prueba confirma que la lectura del rol sigue ese camino). --
+$ go test -count=1 -p 1 -v -run "ScrumMaster|HU28" ./src/web/... ./test/...
+    scrum_master_routes_test.go:252: Beto: estado 422; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 422; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 3 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 3 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 409; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 409; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 500; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 500; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 422; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 422; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+--- FAIL: TestScrumMasterRoutes_Protegidas (0.08s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-11_modificar_proyecto (0.01s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_crear_Sprint (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_agregar_historias (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_quitar_historia (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-15_cerrar_Sprint (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-05a_abrir_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-05b_cerrar_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-18_nueva_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-18_estimación_acordada (0.00s)
+--- PASS: TestScrumMasterRoutes_AccionesLibres (0.03s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-05a_votar (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-14_cambiar_estado_en_el_Tablero (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-24_registrar_esfuerzo (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-21_crear_proyecto (0.00s)
+--- PASS: TestRequireScrumMaster_ScrumMasterPasa (0.00s)
+    scrum_master_test.go:108: estado = 204; se esperaba 403
+    scrum_master_test.go:108: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:108: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:108: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:114: estado = 204; se esperaba 403
+    scrum_master_test.go:114: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:114: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:114: la acción se llamó 2 veces; en un rechazo no debía llamarse
+--- FAIL: TestRequireScrumMaster_IntegranteRechazado (0.00s)
+    scrum_master_test.go:121: estado = 204; se esperaba 403
+    scrum_master_test.go:121: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_test.go:121: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:121: la acción se llamó 1 veces; en un rechazo no debía llamarse
+--- FAIL: TestRequireScrumMaster_SinScrumMaster (0.00s)
+    scrum_master_test.go:142: POST /cierre sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fcierre"
+    scrum_master_test.go:145: POST /cierre sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /cierre sin identificarse llamó a la acción
+    scrum_master_test.go:142: POST /sprints/historias/quitar sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fsprints"
+    scrum_master_test.go:145: POST /sprints/historias/quitar sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /sprints/historias/quitar sin identificarse llamó a la acción
+    scrum_master_test.go:142: POST /planning-poker/estimacion sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fplanning-poker"
+    scrum_master_test.go:145: POST /planning-poker/estimacion sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /planning-poker/estimacion sin identificarse llamó a la acción
+--- FAIL: TestRequireScrumMaster_SinIdentificacion (0.00s)
+    scrum_master_test.go:159: POST /cierre sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:162: sin proyecto: se esperaba el mensaje de HU-20b para elegir proyecto
+    scrum_master_test.go:165: sin proyecto se llamó a la acción
+    scrum_master_test.go:159: POST /cierre sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:162: sin proyecto: se esperaba el mensaje de HU-20b para elegir proyecto
+    scrum_master_test.go:165: sin proyecto se llamó a la acción
+--- FAIL: TestRequireScrumMaster_SinProyecto (0.00s)
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:195: estado = 204; se esperaba 403
+    scrum_master_test.go:195: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:195: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:195: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:197: estado = 204; se esperaba 403
+    scrum_master_test.go:197: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_test.go:197: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:197: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:204: sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:210: sin identificarse = 204 a ""; se esperaba 303 a identificarse
+    scrum_master_test.go:213: sin proyecto o sin identificarse se llamó a la acción
+--- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/otro_proyecto,_inválido_o_inexistente (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/el_proyecto_activo_sigue_las_reglas_normales (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/primero_el_proyecto_y_la_identificación (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.116s
+--- PASS: TestHU28_RolVisible (0.04s)
+--- PASS: TestHU28_ScrumMasterCierraSprint (0.04s)
+    web_member_roles_bdd_test.go:329: cerrar el Sprint: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:331: Sprint 2 = "Finalizado"; se esperaba que siguiera Activo
+    web_member_roles_bdd_test.go:334: «Login» dejó de estar en el Sprint 2
+--- FAIL: TestHU28_IntegranteNoCierraSprint (0.04s)
+    web_member_roles_bdd_test.go:349: crear un Sprint: estado 409; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:351: agregar «Perfil»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:353: quitar «Login»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:361: «Perfil» quedó asignada a un Sprint
+    web_member_roles_bdd_test.go:364: «Login» dejó de estar en el Sprint 2
+--- FAIL: TestHU28_IntegranteNoPlanificaSprint (0.04s)
+    web_member_roles_bdd_test.go:386: modificar «Alfa»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:388: nombre de «Alfa» = "Alfa renombrado"; no debía cambiar
+--- FAIL: TestHU28_IntegranteNoModificaProyecto (0.04s)
+    web_member_roles_bdd_test.go:403: modificar «Beta»: estado 303; se esperaba 403 con "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    web_member_roles_bdd_test.go:405: nombre de «Beta» = "Beta renombrado"; no debía cambiar
+--- FAIL: TestHU28_ModificarOtroProyecto (0.05s)
+    web_member_roles_bdd_test.go:417: abrir la ronda de «Perfil»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:419: cerrar la ronda 1 de «Login»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:422: ronda 1 de «Login» = "Cerrada"; se esperaba que siguiera Abierta
+    web_member_roles_bdd_test.go:425: se abrió una ronda para «Perfil»
+    web_member_roles_bdd_test.go:431: Ana no pudo cerrar la ronda 1: 409
+--- FAIL: TestHU28_IntegranteNoConducePoker (0.06s)
+--- PASS: TestHU28_IntegranteVotaYTrabaja (0.05s)
+    web_member_roles_bdd_test.go:490: cerrar sin identificarse = 303 a "/cierre"; se esperaba 303 a Identificarme con volver_a=/cierre
+    web_member_roles_bdd_test.go:494: Sprint 2 = "Finalizado"; se esperaba que siguiera Activo
+--- FAIL: TestHU28_SinIdentificarse (0.04s)
+    web_member_roles_bdd_test.go:510: crear un Sprint en «Beta»: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    web_member_roles_bdd_test.go:512: «Beta» tiene 1 Sprints; no debía crearse ninguno
+    web_member_roles_bdd_test.go:515: «Reportes» = "En Sprint"; se esperaba que siguiera Pendiente
+--- FAIL: TestHU28_ProyectoSinScrumMaster (0.05s)
+    web_member_roles_bdd_test.go:526: antes de asignar el rol, Beto debía recibir 403 al cerrar; obtuvo 303
+--- FAIL: TestHU28_AsignarRol (0.05s)
+--- PASS: TestHU28_ErrorAlVerificarRol (0.05s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.556s
+FAIL
+
+== Comando (T025): src/cmd/set-role no compila porque el comando no existe (faltan run y assignRole) ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e ./src/cmd/set-role/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role [github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role.test]
+src/cmd/set-role/main_test.go:100:12: undefined: assignRole
+src/cmd/set-role/main_test.go:138:12: undefined: assignRole
+src/cmd/set-role/main_test.go:191:15: undefined: run
+src/cmd/set-role/main_test.go:205:15: undefined: run
+src/cmd/set-role/main_test.go:217:14: undefined: run
+src/cmd/set-role/main_test.go:227:14: undefined: run
+src/cmd/set-role/main_test.go:285:10: undefined: run
+src/cmd/set-role/main_test.go:295:13: undefined: run
+src/cmd/set-role/main_test.go:307:13: undefined: run
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con run y assignRole que no hacen nada y devuelven 0, las cuatro pruebas fallan (no hay mensajes, códigos ni cambios en la base). --
+$ go test -count=1 -p 1 -v ./src/cmd/set-role/...
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Beto ahora es Scrum Master de «Alfa»"
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Ana ahora es Integrante de «Alfa»"
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Ana ahora es Scrum Master de «Alfa»"
+--- FAIL: TestAssignRole_AsignaScrumMaster (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Beto_pasa_a_Scrum_Master (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Ana_pasa_a_Integrante (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Ana_ya_era_Scrum_Master (0.00s)
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El proyecto no existe"
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El integrante no pertenece al proyecto"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El integrante no pertenece al proyecto"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "No se pudo acceder a la base de datos"
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "No se pudo acceder a la base de datos"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+--- FAIL: TestAssignRole_Rechazos (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/proyecto_inexistente (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/integrante_de_otro_proyecto (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/integrante_inexistente (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/falla_al_leer_el_proyecto (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/falla_al_guardar (0.00s)
+    main_test.go:192: []: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "11"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "abc" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "0" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "-1" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "2147483648" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "x" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "0" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "2147483648" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "11" "-rol" "Scrum Master" "sobra"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-otro" "1"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:206: -rol "Product Owner": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "scrum master": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "SM": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "   ": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:219: código 0, salida ""; se esperaba 1 y el mensaje de LoadConfig
+    main_test.go:230: código 0, salida ""; se esperaba 1 y el mensaje sin la dirección
+--- FAIL: TestRun_UsoYEntorno (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/opciones_faltantes_o_números_inválidos (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/rol_no_válido,_sin_conectarse (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/sin_DATABASE_URL (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/base_inalcanzable (0.00s)
+    main_test.go:287: código 0, salida ""; se esperaba 0 y «Beto ahora es Scrum Master de «Alfa»»
+--- FAIL: TestRun_AsignaRol (0.02s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role	0.029s
+FAIL
+
+== Pruebas existentes (T029): con el envoltorio aplicado, fallan solo pruebas de las acciones reservadas, por 403 o por la redirección a identificarse/elegir proyecto ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+Resumen: 14 paquetes ok; fallan src/web y test con 126 pruebas de primer nivel.
+Por archivo (pruebas que fallan):
+        8 src/web/close_handlers_test.go
+        8 src/web/poker_close_handlers_test.go
+       14 src/web/poker_consensus_handlers_test.go
+       10 src/web/poker_handlers_test.go
+        1 src/web/poker_reveal_view_test.go
+        3 src/web/poker_view_test.go
+       18 src/web/projects_update_handlers_test.go
+       15 src/web/sprints_handlers_test.go
+        9 test/web_close_bdd_test.go
+        5 test/web_poker_bdd_test.go
+       11 test/web_poker_consensus_bdd_test.go
+       10 test/web_poker_reveal_bdd_test.go
+        6 test/web_project_update_bdd_test.go
+        8 test/web_sprints_bdd_test.go
+Motivo: 403 "Esta acción la puede hacer solo el Scrum Master del proyecto" (las de Planning Poker, que ya se identificaban como un Integrante), 303 a /contexto/integrante?volver_a=... (Sprints y Cierre, que no se identificaban) o 303 a /contexto/proyecto?volver_a=%2Fproyectos (HU-11, que no elegía proyecto activo). Los demás mensajes son consecuencia de eso (por ejemplo, "sql: no rows" porque la ronda no se llegó a abrir).
+Fuera de la lista de T001: src/web/poker_reveal_view_test.go (TestHU05b_TextosEscapados, HU-05b): cierra una ronda con el ayudante closeRound de poker_close_handlers_test.go y recibe 403. Es una prueba de una acción reservada que el git grep de T001 no encontró porque no nombra la ruta.
+$ go test -count=1 -p 1 ./...
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.575s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/auth	0.224s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.257s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.012s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password	0.534s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role	0.054s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.419s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.293s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.277s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/pdf	0.005s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	1.959s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.410s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/report	0.459s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/role	0.026s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.783s
+--- FAIL: TestCloseHandler_CierreExitosoSoloCierraElProyectoActivoYConsumeFlashUnaVez (0.03s)
+    close_handlers_test.go:176: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:186: primer GET /cierre no contiene el flash esperado "Sprint 1 cerrado correctamente. Historias devueltas al Backlog: 2"
+    close_handlers_test.go:201: estado del Sprint cerrado = "Activo"; se esperaba "Finalizado"
+--- FAIL: TestCloseHandler_RecargaDespuesDelCierreNoRepiteOperacionNiMensaje (0.04s)
+    close_handlers_test.go:230: el primer GET debía mostrar "Sprint 1 cerrado correctamente. Historias devueltas al Backlog: 1"; status=200
+--- FAIL: TestCloseHandler_HistoriasHechoConservadasYDevueltasDisponiblesEnBacklog (0.03s)
+    close_handlers_test.go:363: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:393: historia incompleta 642: estado="En progreso" sprint={222 true} asignaciones=1; se esperaba Pendiente sin asignación
+    close_handlers_test.go:393: historia incompleta 643: estado="En Sprint" sprint={222 true} asignaciones=1; se esperaba Pendiente sin asignación
+    close_handlers_test.go:428: historia devuelta 642: Backlog status="En progreso" disponible=false; se esperaba Pendiente y disponible
+    close_handlers_test.go:428: historia devuelta 643: Backlog status="En Sprint" disponible=false; se esperaba Pendiente y disponible
+--- FAIL: TestCloseHandler_SprintSinHistoriasHechoCierraYHU07CalculaVelocidadCero (0.03s)
+    close_handlers_test.go:448: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:457: estado del Sprint = "Activo"; se esperaba "Finalizado"
+    close_handlers_test.go:461: HU-07 CalculateMetrics() devolvió error: sprint is not finished: 223
+--- FAIL: TestCloseHandler_SprintFinalizadoRechazadoSinCerrarElSprintActivo (0.02s)
+    close_handlers_test.go:623: POST /cierre para Sprint finalizado = 303; se esperaba 409
+    close_handlers_test.go:626: la respuesta debía mostrar "El Sprint ya está cerrado"
+--- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza (0.03s)
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/texto (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="abc" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/decimal (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="1.5" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/exponente (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="1e2" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/negativo (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="-1" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/vacío (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/inexistente (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="9223372036854775807" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/sprint_de_otro_proyecto (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="230" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+--- FAIL: TestCloseHandler_RechazaCierrePorBloqueoHU07 (0.03s)
+    close_handlers_test.go:718: POST /cierre con datos inválidos para HU-07 = 303; se esperaba 409
+    close_handlers_test.go:723: la respuesta no identifica el dato que debe corregirse "Historia 651: Story Points inválidos"
+    close_handlers_test.go:723: la respuesta no identifica el dato que debe corregirse "Historia 652: Story Points inválidos"
+--- FAIL: TestCloseHandler_FallaDeAlmacenamientoNoAplicaCambiosParciales (0.03s)
+    close_handlers_test.go:784: POST /cierre ante falla de almacenamiento = 303; se esperaba 500
+    close_handlers_test.go:787: la respuesta debía mostrar "La operación no pudo completarse"
+--- FAIL: TestHU05b_CerrarRonda (0.06s)
+    poker_close_handlers_test.go:71: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_CerrarSinTodosLosVotos (0.06s)
+    poker_close_handlers_test.go:99: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_RondaSinVotos (0.06s)
+    poker_close_handlers_test.go:116: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05b_VotarEnRondaCerrada (0.05s)
+    poker_close_handlers_test.go:132: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_CerrarDosVeces (0.05s)
+    poker_close_handlers_test.go:148: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_RondaInexistente (0.06s)
+    poker_close_handlers_test.go:168: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU05b_ErrorAlCerrar (0.06s)
+    poker_close_handlers_test.go:203: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU05b_RecargaSinReenviar (0.05s)
+    poker_close_handlers_test.go:228: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_NuevaRonda (0.04s)
+    poker_consensus_handlers_test.go:55: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_VotosOcultosEnLaNuevaRonda (0.05s)
+    poker_consensus_handlers_test.go:82: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_RegistrarEstimacion (0.05s)
+    poker_consensus_handlers_test.go:100: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_ConsensoDirecto (0.04s)
+    poker_consensus_handlers_test.go:123: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_RecordatorioDeDivergencia (0.04s)
+    poker_consensus_handlers_test.go:148: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_ValorFueraDeSerie (0.05s)
+    poker_consensus_handlers_test.go:160: se esperaba 422, se obtuvo 403
+--- FAIL: TestHU18_RondaSinCerrar (0.06s)
+    poker_consensus_handlers_test.go:181: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_NuevaRondaConRondaAbierta (0.04s)
+    poker_consensus_handlers_test.go:194: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_RondaQueNoEsLaUltima (0.04s)
+    poker_consensus_handlers_test.go:207: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_SprintFinalizado (0.05s)
+    poker_consensus_handlers_test.go:236: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_RondaInexistente (0.05s)
+    poker_consensus_handlers_test.go:256: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU18_ErrorAlGuardar (0.05s)
+    poker_consensus_handlers_test.go:276: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU18_RecargaSinReenviar (0.07s)
+    poker_consensus_handlers_test.go:319: el primer GET debía mostrar el mensaje de la ronda abierta
+    poker_consensus_handlers_test.go:327: recargar no debía repetir las acciones: «Pagos» 0 SP, «Login» 1 rondas
+--- FAIL: TestHU18_TituloEscapado (0.09s)
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Estimación registrada: «&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;» queda con 3 Story Points"
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Ronda 2 abierta para la historia «&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;»"
+--- FAIL: TestHU05a_AbrirRonda (0.03s)
+    poker_handlers_test.go:178: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05a_HistoriaConRondaAbierta (0.03s)
+    poker_handlers_test.go:205: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05a_HistoriaYaTuvoRonda (0.03s)
+    poker_handlers_test.go:219: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05a_VotoRegistrado (0.02s)
+    poker_handlers_test.go:260: no hay ronda abierta para la historia 2563: sql: no rows in result set
+--- FAIL: TestHU05a_VotoActualizado (0.03s)
+    poker_handlers_test.go:287: no hay ronda abierta para la historia 2566: sql: no rows in result set
+--- FAIL: TestHU05a_ValorFueraDeSerie (0.03s)
+    poker_handlers_test.go:314: no hay ronda abierta para la historia 2569: sql: no rows in result set
+--- FAIL: TestHU05a_VotoSinValor (0.03s)
+    poker_handlers_test.go:331: no hay ronda abierta para la historia 2572: sql: no rows in result set
+--- FAIL: TestHU05a_RondaInexistente (0.03s)
+    poker_handlers_test.go:360: no hay ronda abierta para la historia 2578: sql: no rows in result set
+--- FAIL: TestHU05a_HistoriaInexistente (0.03s)
+    poker_handlers_test.go:380: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU05a_ErrorAlGuardar (0.04s)
+    poker_handlers_test.go:400: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU05b_TextosEscapados (0.06s)
+    poker_reveal_view_test.go:156: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05a_VotosAjenosOcultos (0.02s)
+    poker_view_test.go:26: no hay ronda abierta para la historia 2736: sql: no rows in result set
+--- FAIL: TestHU05a_CambioDeIdentificacion (0.02s)
+    poker_view_test.go:57: no hay ronda abierta para la historia 2739: sql: no rows in result set
+--- FAIL: TestHU05a_TituloEscapado (0.03s)
+    poker_view_test.go:117: el título escapado debía verse en el selector, la ronda y el mensaje; apareció 1 veces
+    poker_view_test.go:120: el nombre escapado debía verse en la lista de participantes
+--- FAIL: TestHU11_ModificacionExitosa (0.02s)
+    projects_update_handlers_test.go:225: se esperaba volver a /proyectos, se obtuvo "/contexto/proyecto?volver_a=%2Fproyectos"
+--- FAIL: TestHU11_RecargaSinReenviar (0.03s)
+    projects_update_handlers_test.go:241: la página no contiene "Proyecto modificado exitosamente"
+--- FAIL: TestHU11_NombreEnEstructuraComun (0.03s)
+    projects_update_handlers_test.go:267: la página no contiene "Proyecto: <strong>Alfa 2 1793595187540321594</strong>"
+--- FAIL: TestHU11_NombreVacio (0.02s)
+    projects_update_handlers_test.go:276: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_FechasInvalidas (0.02s)
+    projects_update_handlers_test.go:290: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_FechaFaltanteOFormato (0.02s)
+    projects_update_handlers_test.go:308: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_NombreEscapado (0.02s)
+    projects_update_handlers_test.go:323: la página no contiene "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;"
+    projects_update_handlers_test.go:323: la página no contiene "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;"
+--- FAIL: TestHU11_AgregarIntegrante (0.03s)
+    projects_update_handlers_test.go:354: la página no contiene "Carla HU11 1793595187678672310"
+    projects_update_handlers_test.go:359: Carla debía poder cargar esfuerzo en «Alfa»: false, <nil>
+--- FAIL: TestHU11_QuitarSinHoras (0.03s)
+    projects_update_handlers_test.go:373: la página no debía contener "Beto HU11 1793595187710195243"
+--- FAIL: TestHU11_QuitarUltimo (0.04s)
+    projects_update_handlers_test.go:387: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_QuitarConHoras (0.03s)
+    projects_update_handlers_test.go:398: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU11_IntegranteInvalido (0.02s)
+    projects_update_handlers_test.go:412: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_IdentificadoQuitado (0.03s)
+    projects_update_handlers_test.go:430: la página no contiene "Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro."
+    projects_update_handlers_test.go:438: se esperaba borrar la cookie del integrante
+--- FAIL: TestHU11_SprintQuedaFuera (0.02s)
+    projects_update_handlers_test.go:454: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU11_ProyectoInexistente (0.03s)
+    projects_update_handlers_test.go:496: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_404AntesQue422 (0.02s)
+    projects_update_handlers_test.go:504: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_ProyectoBorradoAlGuardar (0.02s)
+    projects_update_handlers_test.go:513: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_ErrorAlGuardar (0.03s)
+    projects_update_handlers_test.go:528: se esperaba 500, se obtuvo 303
+--- FAIL: TestSprintsHandler_CreateSprintSuccess_UsesSelectedProject (0.00s)
+    sprints_handlers_test.go:313: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_CreateSprintWithoutStoriesShowsWarning (0.00s)
+    sprints_handlers_test.go:355: se esperaba 303 a /sprints, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_ActiveSprintBlocksFormAndPost (0.00s)
+    sprints_handlers_test.go:391: POST con Sprint activo: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:394: falta el conflicto con el número del Sprint activo: 
+--- FAIL: TestSprintsHandler_PostRedirectGetDoesNotCreateDuplicateOrRepeatFlash (0.00s)
+    sprints_handlers_test.go:517: la primera vista debía mostrar el mensaje de éxito: <!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sprints · Software Metrics &amp; Estimation</title>
+        <link rel="stylesheet" href="/static/app.css">
+        </head>
+        <body>
+        <header class="app-header">
+          <a class="app-title" href="/">Software Metrics &amp; Estimation</a>
+          <nav class="app-nav" aria-label="Menú principal">
+            <ul>
+              <li><a href="/">Inicio</a></li>
+              <li><a href="/sprints" class="active" aria-current="page">Sprints</a></li>
+            </ul>
+          </nav>
+            <div class="app-context">Proyecto: <strong>Proyecto PRG</strong>
+            <span class="app-context-links"><a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">Identificarme</a></span>
+          </div>
+        </header>
+        <main class="app-main">
+        <div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">Para esta acción primero tenés que identificarte como integrante del proyecto.</span></div>
+        <h1>Sprints</h1>
+        <div>Para esta acción primero tenés que identificarte como integrante del proyecto.</div>
+        <div>No hay un Sprint activo</div>
+        
+        <div data-story-id="51" data-available="true"><input type="checkbox" name="historia" value="51"><span>Historia 51 del proyecto 505</span><span></span></div>
+        <form>CREATE_FORM_MARKER
+        <span id="goal-value"></span><span id="objetivo-error"></span>
+        <span id="start-value"></span><span id="fecha_inicio-error"></span>
+        <span id="end-value"></span><span id="fecha_fin-error"></span>
+        <span id="story-value"></span><span id="story-error"></span></form>
+        <pre>&amp;{Active:{ID:0 Number:0 Label: Goal: StartDate:0001-01-01 00:00:00 &#43;0000 UTC EndDate:0001-01-01 00:00:00 &#43;0000 UTC Stories:[]} HasActive:false StoryOptions:[{StoryOption:{ID:51 Title:Historia 51 del proyecto 505 Priority:Media StoryPoints:&lt;nil&gt; Status:Pendiente AssignedSprintNumber:0 Available:true UnavailableReason:} Selected:false}] Notice:No hay un Sprint activo BacklogEmpty:false}</pre>
+        </main>
+        </body>
+        </html>
+    sprints_handlers_test.go:524: recargar no debe crear otro Sprint; llamadas=0
+--- FAIL: TestSprintsHandler_AssignStoriesRouteContract (0.00s)
+    sprints_handlers_test.go:546: se esperaba 303 a /sprints para agregar historias; status=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_StoryTakenWhileFillingFormPreservesValues (0.00s)
+    sprints_handlers_test.go:601: se esperaba 409 para una historia que dejó de estar disponible, se obtuvo 303
+    sprints_handlers_test.go:604: el motivo exacto debía aparecer en el error de la lista de historias: 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "71": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "Planificar entrega": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "2026-11-01": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "2026-11-14": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "name=\"historia\" value=\"71\" checked": 
+--- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/empty_Goal (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el Sprint Goal es obligatorio": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "objetivo-error": 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-14" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/Goal_with_whitespace_only (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el Sprint Goal es obligatorio": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "objetivo-error": 
+        sprints_handlers_test.go:659: no se conservó " \t " en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-14" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_before_start (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el período del Sprint no es válido": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:659: no se conservó "Sprint válido" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-10-31" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_equals_start (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el período del Sprint no es válido": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:659: no se conservó "Sprint válido" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+--- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_start (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "Falta la fecha de inicio": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_inicio-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-14": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_end (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "Falta la fecha de fin": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-01": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/malformed_start (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "La fecha no tiene un formato válido": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_inicio-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "01/11/2026": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-14": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+--- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/non_numeric_ID (0.00s)
+        sprints_handlers_test.go:747: se esperaba 422 para non numeric ID, se obtuvo 303
+        sprints_handlers_test.go:750: se esperaba un error seguro junto al campo de historias: 
+    --- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/story_from_another_project (0.00s)
+        sprints_handlers_test.go:747: se esperaba 422 para story from another project, se obtuvo 303
+        sprints_handlers_test.go:750: se esperaba un error seguro junto al campo de historias: 
+--- FAIL: TestSprintsHandler_StoreFailureShowsGenericErrorAndPreservesForm (0.00s)
+    sprints_handlers_test.go:779: se esperaba 500, se obtuvo 303: 
+    sprints_handlers_test.go:782: falta el mensaje genérico "La operación no pudo completarse": 
+    sprints_handlers_test.go:786: no se conservó "Conservar tras fallo": 
+    sprints_handlers_test.go:786: no se conservó "2026-11-01": 
+    sprints_handlers_test.go:786: no se conservó "2026-11-14": 
+    sprints_handlers_test.go:786: no se conservó "name=\"historia\" value=\"101\" checked": 
+--- FAIL: TestSprintsHandler_AssignStoriesPersistsAllAndShowsFlash (0.03s)
+    sprints_handlers_test.go:1038: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_AssignStoriesWithoutSelectionShowsMessageAndDoesNotMutate (0.03s)
+    sprints_handlers_test.go:1062: sin selección se esperaba 422, se obtuvo 303
+    sprints_handlers_test.go:1065: falta el mensaje exacto "Elija al menos una historia": 
+--- FAIL: TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically (0.03s)
+    sprints_handlers_test.go:1088: una historia ajena debía rechazarse con 409 o 422, se obtuvo 303
+    sprints_handlers_test.go:1091: la respuesta debía identificar la historia no disponible con el mensaje de HU-04: 
+--- FAIL: TestSprintsHandler_RemoveStoryReturnsItToBacklog (0.02s)
+    sprints_handlers_test.go:1114: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories (0.04s)
+    sprints_handlers_test.go:1193: quitar historia 8735: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8735 debía informar "Ya está en progreso": 
+    sprints_handlers_test.go:1193: quitar historia 8736: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8736 debía informar "Ya está hecha": 
+    sprints_handlers_test.go:1193: quitar historia 8738: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8738 debía informar "Tiene horas registradas": 
+    sprints_handlers_test.go:1193: quitar historia 8737: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8737 debía informar "la historia no está disponible para asignación": 
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	22.689s
+--- FAIL: TestCloseBDD_CierreExitoso (0.02s)
+    web_close_bdd_test.go:299: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_HistoriasCompletadasConservadas (0.02s)
+    web_close_bdd_test.go:332: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_DatosDelSprintCongeladosTrasReasignar (0.02s)
+    web_close_bdd_test.go:374: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero (0.03s)
+    web_close_bdd_test.go:401: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo (0.02s)
+    web_close_bdd_test.go:426: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_SprintYaCerradoSeRechaza (0.02s)
+    web_close_bdd_test.go:456: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_CierreBloqueadoPorValidacionHU07 (0.03s)
+    web_close_bdd_test.go:493: cierre bloqueado por HU-07 = 303; se esperaba 409
+    web_close_bdd_test.go:497: la respuesta debía identificar el dato inválido "Historia 8807: Story Points inválidos"
+--- FAIL: TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico (0.02s)
+    web_close_bdd_test.go:530: falla interna al cerrar = 303; se esperaba 500
+    web_close_bdd_test.go:533: la respuesta debía mostrar "La operación no pudo completarse"
+--- FAIL: TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza (0.02s)
+    web_close_bdd_test.go:558: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestBDD_HU05a_AbrirRonda (0.02s)
+    web_poker_bdd_test.go:159: se esperaba volver a la pantalla, se obtuvo http://127.0.0.1:44431/planning-poker/abrir
+--- FAIL: TestBDD_HU05a_HistoriaConRondaAbierta (0.02s)
+    web_poker_bdd_test.go:182: se esperaba 409, se obtuvo 403
+--- FAIL: TestBDD_HU05a_VotoOculto (0.02s)
+    web_poker_bdd_test.go:210: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_CambioDeVoto (0.03s)
+    web_poker_bdd_test.go:228: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_VotosOcultos (0.03s)
+    web_poker_bdd_test.go:249: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU18_NuevaRondaTrasDivergencia (0.04s)
+    web_poker_consensus_bdd_test.go:276: la pantalla debía mostrar "Ronda 2 abierta para la historia «Login»"
+    web_poker_consensus_bdd_test.go:277: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_VotosOcultosEnLaNuevaRonda (0.04s)
+    web_poker_consensus_bdd_test.go:297: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_RegistrarEstimacionAcordada (0.04s)
+    web_poker_consensus_bdd_test.go:317: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_ConsensoDirecto (0.04s)
+    web_poker_consensus_bdd_test.go:345: la pantalla debía mostrar "Estimación registrada: «Pagos» queda con 5 Story Points"
+    web_poker_consensus_bdd_test.go:347: «Pagos» debía quedar con 5 Story Points y una sola ronda: 0 SP, 1 rondas
+--- FAIL: TestBDD_HU18_RegistrarDespuesDeDebatir (0.05s)
+    web_poker_consensus_bdd_test.go:366: «Login» debía quedar con 5 Story Points, tiene 0
+--- FAIL: TestBDD_HU18_ValorFueraDeLaSerie (0.04s)
+    web_poker_consensus_bdd_test.go:380: se esperaba 422, se obtuvo 403 (http://127.0.0.1:33653/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaSinCerrar (0.04s)
+    web_poker_consensus_bdd_test.go:398: se esperaba 409, se obtuvo 403 (http://127.0.0.1:40067/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_NuevaRondaConRondaAbierta (0.04s)
+    web_poker_consensus_bdd_test.go:415: se esperaba 409, se obtuvo 403 (http://127.0.0.1:37333/planning-poker/nueva-ronda)
+--- FAIL: TestBDD_HU18_RondaQueYaNoEsLaUltima (0.04s)
+    web_poker_consensus_bdd_test.go:432: se esperaba 409, se obtuvo 403 (http://127.0.0.1:44003/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_HistoriaDeUnSprintFinalizado (0.05s)
+    web_poker_consensus_bdd_test.go:450: se esperaba 409, se obtuvo 403 (http://127.0.0.1:42467/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaInexistente (0.04s)
+    web_poker_consensus_bdd_test.go:472: se esperaba 404, se obtuvo 403 (http://127.0.0.1:37441/planning-poker/nueva-ronda)
+--- FAIL: TestBDD_HU05b_RevelacionDeVotos (0.04s)
+    web_poker_reveal_bdd_test.go:228: se esperaba volver a Planning Poker, se obtuvo http://127.0.0.1:41231/planning-poker/cerrar (403)
+--- FAIL: TestBDD_HU05b_AlertaDeDivergencia (0.03s)
+    web_poker_reveal_bdd_test.go:255: no se pudo cerrar «Login»: 403 http://127.0.0.1:36249/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_SinDivergenciaEnElLimite (0.03s)
+    web_poker_reveal_bdd_test.go:269: no se pudo cerrar «Pagos»: 403 http://127.0.0.1:42751/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_DivergenciaDeTresNiveles (0.04s)
+    web_poker_reveal_bdd_test.go:285: no se pudo cerrar «Reportes»: 403 http://127.0.0.1:41607/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarSinQueTodosVoten (0.04s)
+    web_poker_reveal_bdd_test.go:299: no se pudo cerrar «Perfil»: 403 http://127.0.0.1:39117/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_RondaSinVotos (0.05s)
+    web_poker_reveal_bdd_test.go:326: se esperaba 409, se obtuvo 403
+--- FAIL: TestBDD_HU05b_VotosParaTodos (0.06s)
+    web_poker_reveal_bdd_test.go:339: no se pudo cerrar «Login»: 403 http://127.0.0.1:45089/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_VotarEnRondaCerrada (0.05s)
+    web_poker_reveal_bdd_test.go:358: no se pudo cerrar «Login»: 403 http://127.0.0.1:38119/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarDosVeces (0.03s)
+    web_poker_reveal_bdd_test.go:379: no se pudo cerrar «Login»: 403 http://127.0.0.1:46463/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_RondaInexistente (0.04s)
+    web_poker_reveal_bdd_test.go:409: ronda 2147483647: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 2147483647 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:409: ronda 580: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 580 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:409: ronda 581: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 581 debía mostrar "La ronda no existe"
+--- FAIL: TestEscenarioModificarProyecto_ModificacionExitosa (0.03s)
+    web_project_update_bdd_test.go:191: se esperaba volver a la lista, se obtuvo http://127.0.0.1:44015/contexto/proyecto?volver_a=%2Fproyectos
+--- FAIL: TestEscenarioModificarProyecto_NombreVisibleEnEstructuraComun (0.04s)
+    web_project_update_bdd_test.go:210: la pantalla debía mostrar "Proyecto: <strong>Alfa visible 1793595198223342765</strong>"
+--- FAIL: TestEscenarioModificarProyecto_AgregarIntegrante (0.03s)
+    web_project_update_bdd_test.go:226: la pantalla debía mostrar "Carla BDD11 1793595198262589910"
+    web_project_update_bdd_test.go:233: Carla debía poder cargar esfuerzo: {Entry:<nil> AccumulatedHours:0 SuccessMessage: ValidationErrors:[{Field:member Err:Se debe especificar el integrante responsable}] StorageError:<nil>}
+--- FAIL: TestEscenarioModificarProyecto_QuitarIntegranteConHoras (0.02s)
+    web_project_update_bdd_test.go:257: se esperaba 409, se obtuvo 200
+--- FAIL: TestEscenarioModificarProyecto_FechasQueDejanSprintsFuera (0.02s)
+    web_project_update_bdd_test.go:278: se esperaba 409, se obtuvo 200
+--- FAIL: TestEscenarioModificarProyecto_ErrorAlGuardar (0.02s)
+    web_project_update_bdd_test.go:299: se esperaba 500, se obtuvo 200
+--- FAIL: TestWebSprintsBDD_CreateWithSelectedStories (0.00s)
+    web_sprints_bdd_test.go:219: se esperaba redirección 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_CreateWithoutStoriesShowsWarning (0.00s)
+    web_sprints_bdd_test.go:253: falta la advertencia de Sprint vacío "Sprint creado correctamente. Todavía no tiene historias asignadas": <!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sprints · Software Metrics &amp; Estimation</title>
+        <link rel="stylesheet" href="/static/app.css">
+        </head>
+        <body>
+        <header class="app-header">
+          <a class="app-title" href="/">Software Metrics &amp; Estimation</a>
+          <nav class="app-nav" aria-label="Menú principal">
+            <ul>
+              <li><a href="/">Inicio</a></li>
+              <li><a href="/sprints" class="active" aria-current="page">Sprints</a></li>
+            </ul>
+          </nav>
+            <div class="app-context">Proyecto: <strong>Proyecto vacío</strong>
+            <span class="app-context-links"><a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">Identificarme</a></span>
+          </div>
+        </header>
+        <main class="app-main">
+        <div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">Para esta acción primero tenés que identificarte como integrante del proyecto.</span></div>
+        
+        <section class="sprints-page" aria-labelledby="sprints-title">
+          <h1 id="sprints-title">Sprints</h1>
+        
+          
+          <p class="sprint-notice">No hay un Sprint activo</p>
+          
+        
+          
+          <form method="post" action="/sprints">
+            <div class="field">
+          <label for="objetivo">Sprint Goal</label>
+          <input type="text" id="objetivo" name="objetivo" value="">
+          
+        </div>
+            <div class="field">
+          <label for="fecha_inicio">Fecha de inicio</label>
+          <input type="date" id="fecha_inicio" name="fecha_inicio" value="">
+          
+        </div>
+            <div class="field">
+          <label for="fecha_fin">Fecha de fin</label>
+          <input type="date" id="fecha_fin" name="fecha_fin" value="">
+          
+        </div>
+        
+            <fieldset class="picker-list">
+              <legend>Historias del Backlog</legend>
+              
+              <p>El Backlog no tiene historias.</p>
+              
+              
+            </fieldset>
+        
+            <button type="submit">Crear Sprint</button>
+          </form>
+          
+        </section>
+        
+        </main>
+        </body>
+        </html>
+    web_sprints_bdd_test.go:256: se esperaba un Sprint activo sin historias: <nil>
+--- FAIL: TestWebSprintsBDD_ExistingActiveSprintBlocksAnother (0.00s)
+    web_sprints_bdd_test.go:283: POST debía responder 409 con el conflicto del Sprint 4; status=303 body=
+--- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors (0.01s)
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar (0.00s)
+        web_sprints_bdd_test.go:317: se esperaba 409, se obtuvo 303
+        web_sprints_bdd_test.go:321: el motivo exacto debía mostrarse junto al campo de historias: 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "Planificar historias disponibles": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "2026-11-01": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "2026-11-14": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "name=\"historia\" value=\"71\" checked": 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vacío (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el Sprint Goal es obligatorio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "objetivo-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el Sprint Goal es obligatorio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "objetivo-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor " \t ": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el período del Sprint no es válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-10-31": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el período del Sprint no es válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "Falta la fecha de inicio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_inicio-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "Falta la fecha de fin": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inválido (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "La fecha no tiene un formato válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_inicio-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "01/11/2026": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado (0.00s)
+        web_sprints_bdd_test.go:410: se esperaba 500, se obtuvo 303
+        web_sprints_bdd_test.go:413: se esperaba solo el error genérico, se obtuvo: 
+        web_sprints_bdd_test.go:416: los datos deben conservarse y el Sprint no debe quedar creado
+--- FAIL: TestWebSprintsBDD_AddAvailableStory (0.03s)
+    web_sprints_bdd_test.go:641: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_AddWithoutSelection (0.03s)
+    web_sprints_bdd_test.go:662: se esperaba 422 sin selección, se obtuvo 303
+    web_sprints_bdd_test.go:667: falta el mensaje "Elija al menos una historia": 
+--- FAIL: TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog (0.03s)
+    web_sprints_bdd_test.go:685: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission (0.04s)
+    web_sprints_bdd_test.go:721: el POST directo debía rechazarse con 409 y el motivo: status=303 body=
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	6.312s
+FAIL
+EXIT 1
+

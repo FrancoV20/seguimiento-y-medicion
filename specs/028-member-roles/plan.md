@@ -106,8 +106,8 @@ src/role/role_test.go
 src/role/store.go                             Store, ErrProjectNotFound, ErrMemberNotInProject
 src/role/postgres_store.go                    PostgreSQLStore
 src/role/postgres_store_integration_test.go
-db/migrations/<NNN>_add_project_member_role.up.sql
-db/migrations/<NNN>_add_project_member_role.down.sql
+db/migrations/016_add_project_member_role.up.sql
+db/migrations/016_add_project_member_role.down.sql
 db/member_role_migration_integration_test.go
 src/web/scrum_master.go                       textos, RequireScrumMaster, RequireScrumMasterOfPathProject
 src/web/scrum_master_test.go                  envoltorio con contexto armado a mano

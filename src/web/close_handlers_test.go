@@ -146,6 +146,11 @@ func closeHandlerSelectProject(t *testing.T, app *closeHandlerFixture, client *h
 		t.Errorf("seleccionar el proyecto activo: se esperaba 303 a /cierre, se obtuvo %d a %q",
 			resp.StatusCode, resp.Header.Get("Location"))
 	}
+	// HU-28: cerrar el Sprint es del Scrum Master; se identifica un Scrum Master del proyecto.
+	scrumMaster := addTestScrumMaster(t, app.db, projectID, fmt.Sprintf("SM HU15 %d", time.Now().UnixNano()))
+	if login, _ := app.selectMember(t, client, id64(scrumMaster), "/cierre"); login.StatusCode != http.StatusSeeOther {
+		t.Errorf("identificarse como Scrum Master: se esperaba 303, se obtuvo %d", login.StatusCode)
+	}
 }
 
 func closeHandlerPost(t *testing.T, app *closeHandlerFixture, client *http.Client, sprintID int64) (*http.Response, string) {

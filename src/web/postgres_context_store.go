@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 )
 
 // PostgreSQLContextStore implementa ContextStore contra PostgreSQL (HU-20b, T010).
@@ -74,8 +76,12 @@ func (s *PostgreSQLContextStore) ListMembers(ctx context.Context, projectID int6
 // resolveContextQuery valida proyecto e integrante en una sola consulta.
 // Sin filas: el proyecto no existe. display_name nulo: el proyecto existe pero el
 // integrante no pertenece a él (con $2 = 0 nunca coincide, porque SERIAL empieza en 1).
+// HU-28: suma el rol del integrante y si el proyecto tiene algún Scrum Master (el EXISTS filtra
+// por project_id, primera columna de la PK).
 const resolveContextQuery = `
-	SELECT p.name, m.display_name
+	SELECT p.name, m.display_name, pm.role,
+	       EXISTS (SELECT 1 FROM project_members sm
+	               WHERE sm.project_id = p.id AND sm.role = 'Scrum Master')
 	FROM projects p
 	LEFT JOIN project_members pm ON pm.project_id = p.id AND pm.member_id = $2
 	LEFT JOIN members m ON m.id = pm.member_id
@@ -92,8 +98,10 @@ func (s *PostgreSQLContextStore) ResolveContext(ctx context.Context, projectID, 
 	}
 
 	var projectName string
-	var memberName sql.NullString
-	err := s.db.QueryRowContext(ctx, resolveContextQuery, projectID, memberID).Scan(&projectName, &memberName)
+	var memberName, memberRole sql.NullString
+	var hasScrumMaster bool
+	err := s.db.QueryRowContext(ctx, resolveContextQuery, projectID, memberID).
+		Scan(&projectName, &memberName, &memberRole, &hasScrumMaster)
 	if errors.Is(err, sql.ErrNoRows) {
 		return ResolvedContext{}, nil
 	}
@@ -101,10 +109,11 @@ func (s *PostgreSQLContextStore) ResolveContext(ctx context.Context, projectID, 
 		return ResolvedContext{}, Unavailable(err)
 	}
 
-	rc := ResolvedContext{ProjectExists: true, ProjectName: projectName}
+	rc := ResolvedContext{ProjectExists: true, ProjectName: projectName, HasScrumMaster: hasScrumMaster}
 	if memberName.Valid {
 		rc.MemberBelongs = true
 		rc.MemberName = memberName.String
+		rc.MemberRole = role.Role(memberRole.String)
 	}
 	return rc, nil
 }

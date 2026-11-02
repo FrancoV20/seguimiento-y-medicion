@@ -30,8 +30,9 @@ func RegisterProjects(s *Server, service *project.ProjectService, catalog Projec
 		"GET /proyectos":  http.HandlerFunc(handlers.get),
 		"POST /proyectos": http.HandlerFunc(handlers.post),
 		// HU-11: modificación de un proyecto (la sección no admite un segundo registro).
+		// HU-28: solo el Scrum Master del proyecto activo guarda la modificación.
 		"GET /proyectos/{id}/modificar":  http.HandlerFunc(handlers.edit),
-		"POST /proyectos/{id}/modificar": http.HandlerFunc(handlers.update),
+		"POST /proyectos/{id}/modificar": s.RequireScrumMasterOfPathProject(http.HandlerFunc(handlers.update)),
 	})
 }
 

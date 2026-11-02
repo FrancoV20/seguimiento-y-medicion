@@ -192,6 +192,16 @@ func (a *cierreBDDApp) elegirProyecto(t *testing.T) *http.Client {
 		t.Fatalf("elegir proyecto: se esperaba 303 a /cierre, se obtuvo %d a %q",
 			response.StatusCode, response.Header.Get("Location"))
 	}
+	// HU-28: cerrar el Sprint es del Scrum Master; el integrante del proyecto lo es.
+	configurarScrumMaster(t, a.db, a.proyectoA, a.integranteA)
+	response, err = client.PostForm(a.httpServer.URL+"/contexto/integrante", formIdentificacion(idTexto(a.integranteA), claveDePrueba))
+	if err != nil {
+		t.Fatalf("no se pudo identificar al Scrum Master: %v", err)
+	}
+	_ = formCuerpo(t, response)
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("identificarse como Scrum Master: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
 	return client
 }
 
