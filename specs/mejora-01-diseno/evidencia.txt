@@ -1,5 +1,7 @@
 MEJORA-01 — Diseño visual consistente (Issue #63)
 Fecha: 2026-11-01 (tema oscuro y tablas: 2026-11-02). Rama: Mejora-01, sobre main en 04f1f0c (después de HU-09).
+Realizó: Claude (asistente de IA), a pedido de Juan Ignacio Sanchez, que revisó el resultado y corrió las
+pruebas en su PC (Go 1.27.1).
 
 Qué cambió
 - src/web/static/app.css: sistema de diseño único, con tema oscuro gris carbón (#1b1d21, no negro puro)
@@ -19,6 +21,8 @@ Qué cambió
   dashboard.html y metrics.html; con las nuevas pasa.
 - src/web/templates/home.html, src/web/home.go y render.go (función homeGroups): nueva pantalla de
   Inicio (Escenario 7). layout.html no se modificó.
+
+Ciclo Red: evidencia-red.txt, sección "Diseño común" (Escenarios 1 a 6) y sección "Inicio" (Escenario 7).
 
 Escenarios de la Issue
 1. Diseño común: PASÓ. Recorridas las 22 pantallas a 1280 px y a 400 px (lista abajo): misma
@@ -65,3 +69,13 @@ Sprint 2 activo, horas estimadas y reales, 2 defectos y una ronda de Planning Po
 Entorno de verificación: entorno de Claude con PostgreSQL 16 y Go 1.24 (no se pudo descargar 1.27.1),
 con un reemplazo local de CrossOriginGuard solo para compilar. Navegador Chromium headless.
 Las capturas "antes" y "después" se adjuntan al PR.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama Mejora-01 en el commit ________.
+1. Inicio: bienvenida, "Cómo se trabaja" y secciones agrupadas en Planificar, Ejecutar y Medir: ______
+2. Backlog, Estimaciones y Defectos: tablas con espacio, sin columnas cortadas a 1280 px: ______
+3. Una pantalla a 400 px de ancho (achicando la ventana): sin desplazamiento horizontal de la página: ______
+4. Un mensaje de éxito, error o advertencia: se lee con su etiqueta ("Éxito:", "Error:", "Advertencia:"): ______
+5. Dashboard: las barras de los gráficos usan el verde del diseño: ______
+6. Sin internet (desconectando la red): estilos y pantallas cargan igual: ______
