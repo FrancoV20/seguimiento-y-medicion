@@ -289,12 +289,12 @@ contraseña" de HU-20b.
   En `docs/hu-20b-deuda-tecnica.md`, marcar la decisión 1 ("Sin contraseña") como resuelta por HU-27.
 - [x] T036 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
   (`go test -count=1 -p 1 -cover ./...`).
-- [ ] T037 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el tiempo de
+- [x] T037 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el tiempo de
   identificación menor a 1 segundo (SC-004).
 - [x] T038 Antes del PR, hacer `git pull` de `main` y reconfirmar que `<NNN>` sigue siendo la mayor migración + 1 (si
   otra historia lo tomó, renombrar los dos archivos y la prueba de T011). Reconfirmar también que los nombres de las
   pruebas coinciden con la trazabilidad de `spec.md`.
-- [ ] T039 Abrir el Pull Request desde `HU-27` citando HU-27, con:
+- [x] T039 Abrir el Pull Request desde `HU-27` citando HU-27, con:
   - las evidencias y la lista de archivos de otras historias que se editan (`plan.md`);
   - el aviso para la demo (migrar y configurar las contraseñas).
 
