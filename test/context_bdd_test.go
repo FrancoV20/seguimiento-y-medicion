@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -434,7 +435,13 @@ func (a *seleccionApp) integranteEn(t *testing.T, proyecto int64, etiqueta strin
 
 func (a *seleccionApp) elegirIntegrante(t *testing.T, c *http.Client, id, volverA string) (*http.Response, string) {
 	t.Helper()
-	resp, err := c.PostForm(a.servidor.URL+"/contexto/integrante", url.Values{"integrante_id": {id}, "volver_a": {volverA}})
+	// HU-27: la identificación pide contraseña.
+	if n, err := strconv.ParseInt(id, 10, 64); err == nil && n > 0 && n <= math.MaxInt32 {
+		configurarClave(t, a.db, n, claveDePrueba)
+	}
+	login := formIdentificacion(id, claveDePrueba)
+	login.Set("volver_a", volverA)
+	resp, err := c.PostForm(a.servidor.URL+"/contexto/integrante", login)
 	if err != nil {
 		t.Fatalf("POST /contexto/integrante: %v", err)
 	}
@@ -502,8 +509,8 @@ func TestEscenarioIntegrante_Identificacion(t *testing.T) {
 	if strings.Contains(selector, nombreCarla) {
 		t.Errorf("el selector no debe mostrar integrantes de otro proyecto")
 	}
-	if strings.Contains(selector, `type="password"`) {
-		t.Errorf("la identificación no lleva contraseña")
+	if !strings.Contains(selector, `type="password"`) { // HU-27: la identificación pide contraseña
+		t.Errorf("la identificación debe pedir la contraseña")
 	}
 	// el sistema usa mi nombre en mis acciones hasta que lo cambie
 	if resp.StatusCode != http.StatusSeeOther || resp.Header.Get("Location") != "/datos" {

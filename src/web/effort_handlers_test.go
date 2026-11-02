@@ -75,7 +75,7 @@ func (a *effortApp) login(t *testing.T, project, member int64) *http.Client {
 		t.Fatalf("elegir proyecto: se esperaba 303, se obtuvo %d", resp.StatusCode)
 	}
 	if member != 0 {
-		resp, _ = a.postTo(t, c, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(member, 10)}})
+		resp, _ = a.postTo(t, c, pathSelectMember, loginAs(t, a.fx.db, member))
 		if resp.StatusCode != http.StatusSeeOther || !strings.HasPrefix(resp.Header.Get("Location"), "/") {
 			t.Fatalf("identificarse: se esperaba 303, se obtuvo %d", resp.StatusCode)
 		}
@@ -285,9 +285,9 @@ func TestEffort_SinIntegranteIdentificado(t *testing.T) {
 		t.Errorf("no debía registrarse nada: antes %d, después %d", before, after)
 	}
 
-	resp, _ = a.postTo(t, c, pathSelectMember, url.Values{
-		"integrante_id": {strconv.FormatInt(a.fx.ana, 10)}, "volver_a": {pathEffort},
-	})
+	login := loginAs(t, a.fx.db, a.fx.ana)
+	login.Set("volver_a", pathEffort)
+	resp, _ = a.postTo(t, c, pathSelectMember, login)
 	assertStatus(t, resp, http.StatusSeeOther)
 	if loc := resp.Header.Get("Location"); loc != pathEffort {
 		t.Fatalf("después de identificarse se esperaba volver a %s, se obtuvo %q", pathEffort, loc)

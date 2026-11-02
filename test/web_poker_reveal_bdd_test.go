@@ -130,7 +130,10 @@ func (m *revelacionMundo) limpiar() {
 	_, _ = m.db.Exec(`DELETE FROM members WHERE id IN ($1, $2, $3, $4)`, m.ana, m.beto, m.caro, m.dani)
 }
 
-type revelacionApp struct{ servidor *httptest.Server }
+type revelacionApp struct {
+	servidor *httptest.Server
+	db       *sql.DB // HU-27: para configurar la contraseña de quien se identifica
+}
 
 func (m *revelacionMundo) laAplicacion(t *testing.T) *revelacionApp {
 	t.Helper()
@@ -140,7 +143,7 @@ func (m *revelacionMundo) laAplicacion(t *testing.T) *revelacionApp {
 	if err := web.RegisterPlanningPoker(srv, poker.NewService(poker.NewPostgreSQLStore(m.db)), web.NewPostgreSQLPokerCatalog(m.db)); err != nil {
 		t.Fatalf("no se pudo registrar Planning Poker: %v", err)
 	}
-	app := &revelacionApp{servidor: httptest.NewServer(srv.Handler())}
+	app := &revelacionApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
 	return app
 }
@@ -152,7 +155,7 @@ func (a *revelacionApp) navegador(t *testing.T, proyecto, integrante int64) *htt
 	c := &http.Client{Jar: jar}
 	a.enviar(t, c, "/contexto/proyecto", url.Values{"proyecto_id": {strconv.FormatInt(proyecto, 10)}})
 	if integrante != 0 {
-		a.enviar(t, c, "/contexto/integrante", url.Values{"integrante_id": {strconv.FormatInt(integrante, 10)}})
+		a.enviar(t, c, "/contexto/integrante", identificacionDePrueba(t, a.db, integrante))
 	}
 	return c
 }

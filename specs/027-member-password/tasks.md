@@ -241,18 +241,18 @@ contraseña" de HU-20b.
   los archivos de T001 (identificación sin contraseña y las dos que esperan que no haya `type="password"`) y guardar
   la salida en `evidencia-red.txt` (sección "Pruebas existentes"). Si falla otra, anotarla y revisarla antes de
   seguir.
-- [ ] T030 [P] Actualizar las pruebas de `src/web`: `context_member_test.go`, `effort_handlers_test.go`,
+- [x] T030 [P] Actualizar las pruebas de `src/web`: `context_member_test.go`, `effort_handlers_test.go`,
   `poker_handlers_test.go` y `poker_view_test.go` (más las que agregue T001).
   - Configurar con `setTestPassword` la contraseña de los integrantes que se identifican.
   - Enviar `memberLoginValues` en lugar de solo `integrante_id`.
   - En `TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo`, la expectativa "no hay `type="password"`" pasa a
     "hay `type="password"` con `autocomplete="current-password"`".
   - Las demás expectativas no cambian.
-- [ ] T031 [P] Actualizar las pruebas de `test/`: `context_bdd_test.go` (`elegirIntegrante` y la expectativa "sin
+- [x] T031 [P] Actualizar las pruebas de `test/`: `context_bdd_test.go` (`elegirIntegrante` y la expectativa "sin
   contraseña" de la línea 505), `web_effort_bdd_test.go` (`dadoQueTrabajoEn` y la línea 298),
   `web_poker_bdd_test.go` y `web_signed_cookies_bdd_test.go`. Usar `configurarClave` y `formIdentificacion`; las demás
   expectativas no cambian.
-- [ ] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
+- [x] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
 
 ## Fase 7: Cierre
 

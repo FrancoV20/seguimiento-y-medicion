@@ -172,7 +172,10 @@ func (m *consensoMundo) limpiar() {
 	_, _ = m.db.Exec(`DELETE FROM members WHERE id IN ($1, $2, $3, $4)`, m.ana, m.beto, m.caro, m.dani)
 }
 
-type consensoApp struct{ servidor *httptest.Server }
+type consensoApp struct {
+	servidor *httptest.Server
+	db       *sql.DB // HU-27: para configurar la contraseña de quien se identifica
+}
 
 func (m *consensoMundo) laAplicacion(t *testing.T) *consensoApp {
 	t.Helper()
@@ -185,7 +188,7 @@ func (m *consensoMundo) laAplicacion(t *testing.T) *consensoApp {
 	if err := web.RegisterBacklog(srv, backlog.NewBacklogService(backlog.NewPostgreSQLBacklogStore(m.db)), web.NewPostgreSQLStoryCatalog(m.db)); err != nil {
 		t.Fatalf("no se pudo registrar el Backlog: %v", err)
 	}
-	app := &consensoApp{servidor: httptest.NewServer(srv.Handler())}
+	app := &consensoApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
 	return app
 }
@@ -197,7 +200,7 @@ func (a *consensoApp) navegador(t *testing.T, proyecto, integrante int64) *http.
 	c := &http.Client{Jar: jar}
 	a.enviar(t, c, "/contexto/proyecto", url.Values{"proyecto_id": {strconv.FormatInt(proyecto, 10)}})
 	if integrante != 0 {
-		a.enviar(t, c, "/contexto/integrante", url.Values{"integrante_id": {strconv.FormatInt(integrante, 10)}})
+		a.enviar(t, c, "/contexto/integrante", identificacionDePrueba(t, a.db, integrante))
 	}
 	return c
 }
