@@ -222,7 +222,7 @@ cambian.
 
 **Prueba independiente**: `go test -count=1 -p 1 ./...` completo.
 
-- [ ] T029 Ejecutar `go test -count=1 -p 1 ./...` después de los Bloques C y D. Confirmar que fallan solo las pruebas de
+- [x] T029 Ejecutar `go test -count=1 -p 1 ./...` después de los Bloques C y D. Confirmar que fallan solo las pruebas de
   los archivos de T001, con 403 o redirección a identificarse. Guardar la salida en `evidencia-red.txt` (sección
   "Pruebas existentes"). Si falla otra, anotarla y revisarla antes de seguir.
 - [ ] T030 [P] Actualizar las pruebas de `src/web`:

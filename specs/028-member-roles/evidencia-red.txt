@@ -364,3 +364,589 @@ FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role	0.029s
 FAIL
 
+== Pruebas existentes (T029): con el envoltorio aplicado, fallan solo pruebas de las acciones reservadas, por 403 o por la redirección a identificarse/elegir proyecto ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+Resumen: 14 paquetes ok; fallan src/web y test con 126 pruebas de primer nivel.
+Por archivo (pruebas que fallan):
+        8 src/web/close_handlers_test.go
+        8 src/web/poker_close_handlers_test.go
+       14 src/web/poker_consensus_handlers_test.go
+       10 src/web/poker_handlers_test.go
+        1 src/web/poker_reveal_view_test.go
+        3 src/web/poker_view_test.go
+       18 src/web/projects_update_handlers_test.go
+       15 src/web/sprints_handlers_test.go
+        9 test/web_close_bdd_test.go
+        5 test/web_poker_bdd_test.go
+       11 test/web_poker_consensus_bdd_test.go
+       10 test/web_poker_reveal_bdd_test.go
+        6 test/web_project_update_bdd_test.go
+        8 test/web_sprints_bdd_test.go
+Motivo: 403 "Esta acción la puede hacer solo el Scrum Master del proyecto" (las de Planning Poker, que ya se identificaban como un Integrante), 303 a /contexto/integrante?volver_a=... (Sprints y Cierre, que no se identificaban) o 303 a /contexto/proyecto?volver_a=%2Fproyectos (HU-11, que no elegía proyecto activo). Los demás mensajes son consecuencia de eso (por ejemplo, "sql: no rows" porque la ronda no se llegó a abrir).
+Fuera de la lista de T001: src/web/poker_reveal_view_test.go (TestHU05b_TextosEscapados, HU-05b): cierra una ronda con el ayudante closeRound de poker_close_handlers_test.go y recibe 403. Es una prueba de una acción reservada que el git grep de T001 no encontró porque no nombra la ruta.
+$ go test -count=1 -p 1 ./...
+ok  	github.com/FrancoV20/seguimiento-y-medicion/db	0.575s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/auth	0.224s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/backlog	1.257s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/server	0.012s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password	0.534s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role	0.054s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/defect	0.419s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/effort	0.293s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/metrics	0.277s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/pdf	0.005s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/poker	1.959s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/project	0.410s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/report	0.459s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/role	0.026s
+ok  	github.com/FrancoV20/seguimiento-y-medicion/src/sprint	1.783s
+--- FAIL: TestCloseHandler_CierreExitosoSoloCierraElProyectoActivoYConsumeFlashUnaVez (0.03s)
+    close_handlers_test.go:176: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:186: primer GET /cierre no contiene el flash esperado "Sprint 1 cerrado correctamente. Historias devueltas al Backlog: 2"
+    close_handlers_test.go:201: estado del Sprint cerrado = "Activo"; se esperaba "Finalizado"
+--- FAIL: TestCloseHandler_RecargaDespuesDelCierreNoRepiteOperacionNiMensaje (0.04s)
+    close_handlers_test.go:230: el primer GET debía mostrar "Sprint 1 cerrado correctamente. Historias devueltas al Backlog: 1"; status=200
+--- FAIL: TestCloseHandler_HistoriasHechoConservadasYDevueltasDisponiblesEnBacklog (0.03s)
+    close_handlers_test.go:363: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:393: historia incompleta 642: estado="En progreso" sprint={222 true} asignaciones=1; se esperaba Pendiente sin asignación
+    close_handlers_test.go:393: historia incompleta 643: estado="En Sprint" sprint={222 true} asignaciones=1; se esperaba Pendiente sin asignación
+    close_handlers_test.go:428: historia devuelta 642: Backlog status="En progreso" disponible=false; se esperaba Pendiente y disponible
+    close_handlers_test.go:428: historia devuelta 643: Backlog status="En Sprint" disponible=false; se esperaba Pendiente y disponible
+--- FAIL: TestCloseHandler_SprintSinHistoriasHechoCierraYHU07CalculaVelocidadCero (0.03s)
+    close_handlers_test.go:448: POST /cierre = 303 a "/contexto/integrante?volver_a=%2Fcierre"; se esperaba 303 a /cierre
+    close_handlers_test.go:457: estado del Sprint = "Activo"; se esperaba "Finalizado"
+    close_handlers_test.go:461: HU-07 CalculateMetrics() devolvió error: sprint is not finished: 223
+--- FAIL: TestCloseHandler_SprintFinalizadoRechazadoSinCerrarElSprintActivo (0.02s)
+    close_handlers_test.go:623: POST /cierre para Sprint finalizado = 303; se esperaba 409
+    close_handlers_test.go:626: la respuesta debía mostrar "El Sprint ya está cerrado"
+--- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza (0.03s)
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/texto (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="abc" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/decimal (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="1.5" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/exponente (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="1e2" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/negativo (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="-1" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/vacío (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/inexistente (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="9223372036854775807" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+    --- FAIL: TestCloseHandler_SprintIDInvalidoInexistenteODeOtroProyectoSeRechaza/sprint_de_otro_proyecto (0.00s)
+        close_handlers_test.go:678: POST /cierre con sprint_id="230" = 303; se esperaba 422
+        close_handlers_test.go:681: la respuesta debía mostrar "El Sprint no existe"
+--- FAIL: TestCloseHandler_RechazaCierrePorBloqueoHU07 (0.03s)
+    close_handlers_test.go:718: POST /cierre con datos inválidos para HU-07 = 303; se esperaba 409
+    close_handlers_test.go:723: la respuesta no identifica el dato que debe corregirse "Historia 651: Story Points inválidos"
+    close_handlers_test.go:723: la respuesta no identifica el dato que debe corregirse "Historia 652: Story Points inválidos"
+--- FAIL: TestCloseHandler_FallaDeAlmacenamientoNoAplicaCambiosParciales (0.03s)
+    close_handlers_test.go:784: POST /cierre ante falla de almacenamiento = 303; se esperaba 500
+    close_handlers_test.go:787: la respuesta debía mostrar "La operación no pudo completarse"
+--- FAIL: TestHU05b_CerrarRonda (0.06s)
+    poker_close_handlers_test.go:71: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_CerrarSinTodosLosVotos (0.06s)
+    poker_close_handlers_test.go:99: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_RondaSinVotos (0.06s)
+    poker_close_handlers_test.go:116: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05b_VotarEnRondaCerrada (0.05s)
+    poker_close_handlers_test.go:132: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_CerrarDosVeces (0.05s)
+    poker_close_handlers_test.go:148: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05b_RondaInexistente (0.06s)
+    poker_close_handlers_test.go:168: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU05b_ErrorAlCerrar (0.06s)
+    poker_close_handlers_test.go:203: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU05b_RecargaSinReenviar (0.05s)
+    poker_close_handlers_test.go:228: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_NuevaRonda (0.04s)
+    poker_consensus_handlers_test.go:55: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_VotosOcultosEnLaNuevaRonda (0.05s)
+    poker_consensus_handlers_test.go:82: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_RegistrarEstimacion (0.05s)
+    poker_consensus_handlers_test.go:100: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestHU18_ConsensoDirecto (0.04s)
+    poker_consensus_handlers_test.go:123: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_RecordatorioDeDivergencia (0.04s)
+    poker_consensus_handlers_test.go:148: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU18_ValorFueraDeSerie (0.05s)
+    poker_consensus_handlers_test.go:160: se esperaba 422, se obtuvo 403
+--- FAIL: TestHU18_RondaSinCerrar (0.06s)
+    poker_consensus_handlers_test.go:181: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_NuevaRondaConRondaAbierta (0.04s)
+    poker_consensus_handlers_test.go:194: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_RondaQueNoEsLaUltima (0.04s)
+    poker_consensus_handlers_test.go:207: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_SprintFinalizado (0.05s)
+    poker_consensus_handlers_test.go:236: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU18_RondaInexistente (0.05s)
+    poker_consensus_handlers_test.go:256: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU18_ErrorAlGuardar (0.05s)
+    poker_consensus_handlers_test.go:276: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU18_RecargaSinReenviar (0.07s)
+    poker_consensus_handlers_test.go:319: el primer GET debía mostrar el mensaje de la ronda abierta
+    poker_consensus_handlers_test.go:327: recargar no debía repetir las acciones: «Pagos» 0 SP, «Login» 1 rondas
+--- FAIL: TestHU18_TituloEscapado (0.09s)
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Estimación registrada: «&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;» queda con 3 Story Points"
+    poker_consensus_handlers_test.go:352: faltaba el mensaje escapado "Ronda 2 abierta para la historia «&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;»"
+--- FAIL: TestHU05a_AbrirRonda (0.03s)
+    poker_handlers_test.go:178: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05a_HistoriaConRondaAbierta (0.03s)
+    poker_handlers_test.go:205: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05a_HistoriaYaTuvoRonda (0.03s)
+    poker_handlers_test.go:219: se esperaba 409, se obtuvo 403
+--- FAIL: TestHU05a_VotoRegistrado (0.02s)
+    poker_handlers_test.go:260: no hay ronda abierta para la historia 2563: sql: no rows in result set
+--- FAIL: TestHU05a_VotoActualizado (0.03s)
+    poker_handlers_test.go:287: no hay ronda abierta para la historia 2566: sql: no rows in result set
+--- FAIL: TestHU05a_ValorFueraDeSerie (0.03s)
+    poker_handlers_test.go:314: no hay ronda abierta para la historia 2569: sql: no rows in result set
+--- FAIL: TestHU05a_VotoSinValor (0.03s)
+    poker_handlers_test.go:331: no hay ronda abierta para la historia 2572: sql: no rows in result set
+--- FAIL: TestHU05a_RondaInexistente (0.03s)
+    poker_handlers_test.go:360: no hay ronda abierta para la historia 2578: sql: no rows in result set
+--- FAIL: TestHU05a_HistoriaInexistente (0.03s)
+    poker_handlers_test.go:380: se esperaba 404, se obtuvo 403
+--- FAIL: TestHU05a_ErrorAlGuardar (0.04s)
+    poker_handlers_test.go:400: se esperaba 500, se obtuvo 403
+--- FAIL: TestHU05b_TextosEscapados (0.06s)
+    poker_reveal_view_test.go:156: se esperaba 303, se obtuvo 403
+--- FAIL: TestHU05a_VotosAjenosOcultos (0.02s)
+    poker_view_test.go:26: no hay ronda abierta para la historia 2736: sql: no rows in result set
+--- FAIL: TestHU05a_CambioDeIdentificacion (0.02s)
+    poker_view_test.go:57: no hay ronda abierta para la historia 2739: sql: no rows in result set
+--- FAIL: TestHU05a_TituloEscapado (0.03s)
+    poker_view_test.go:117: el título escapado debía verse en el selector, la ronda y el mensaje; apareció 1 veces
+    poker_view_test.go:120: el nombre escapado debía verse en la lista de participantes
+--- FAIL: TestHU11_ModificacionExitosa (0.02s)
+    projects_update_handlers_test.go:225: se esperaba volver a /proyectos, se obtuvo "/contexto/proyecto?volver_a=%2Fproyectos"
+--- FAIL: TestHU11_RecargaSinReenviar (0.03s)
+    projects_update_handlers_test.go:241: la página no contiene "Proyecto modificado exitosamente"
+--- FAIL: TestHU11_NombreEnEstructuraComun (0.03s)
+    projects_update_handlers_test.go:267: la página no contiene "Proyecto: <strong>Alfa 2 1793595187540321594</strong>"
+--- FAIL: TestHU11_NombreVacio (0.02s)
+    projects_update_handlers_test.go:276: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_FechasInvalidas (0.02s)
+    projects_update_handlers_test.go:290: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_FechaFaltanteOFormato (0.02s)
+    projects_update_handlers_test.go:308: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_NombreEscapado (0.02s)
+    projects_update_handlers_test.go:323: la página no contiene "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;"
+    projects_update_handlers_test.go:323: la página no contiene "&lt;script&gt;alert(&#34;x&#34;)&lt;/script&gt;"
+--- FAIL: TestHU11_AgregarIntegrante (0.03s)
+    projects_update_handlers_test.go:354: la página no contiene "Carla HU11 1793595187678672310"
+    projects_update_handlers_test.go:359: Carla debía poder cargar esfuerzo en «Alfa»: false, <nil>
+--- FAIL: TestHU11_QuitarSinHoras (0.03s)
+    projects_update_handlers_test.go:373: la página no debía contener "Beto HU11 1793595187710195243"
+--- FAIL: TestHU11_QuitarUltimo (0.04s)
+    projects_update_handlers_test.go:387: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_QuitarConHoras (0.03s)
+    projects_update_handlers_test.go:398: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU11_IntegranteInvalido (0.02s)
+    projects_update_handlers_test.go:412: se esperaba 422, se obtuvo 303
+--- FAIL: TestHU11_IdentificadoQuitado (0.03s)
+    projects_update_handlers_test.go:430: la página no contiene "Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro."
+    projects_update_handlers_test.go:438: se esperaba borrar la cookie del integrante
+--- FAIL: TestHU11_SprintQuedaFuera (0.02s)
+    projects_update_handlers_test.go:454: se esperaba 409, se obtuvo 303
+--- FAIL: TestHU11_ProyectoInexistente (0.03s)
+    projects_update_handlers_test.go:496: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_404AntesQue422 (0.02s)
+    projects_update_handlers_test.go:504: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_ProyectoBorradoAlGuardar (0.02s)
+    projects_update_handlers_test.go:513: se esperaba 404, se obtuvo 303
+--- FAIL: TestHU11_ErrorAlGuardar (0.03s)
+    projects_update_handlers_test.go:528: se esperaba 500, se obtuvo 303
+--- FAIL: TestSprintsHandler_CreateSprintSuccess_UsesSelectedProject (0.00s)
+    sprints_handlers_test.go:313: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_CreateSprintWithoutStoriesShowsWarning (0.00s)
+    sprints_handlers_test.go:355: se esperaba 303 a /sprints, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_ActiveSprintBlocksFormAndPost (0.00s)
+    sprints_handlers_test.go:391: POST con Sprint activo: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:394: falta el conflicto con el número del Sprint activo: 
+--- FAIL: TestSprintsHandler_PostRedirectGetDoesNotCreateDuplicateOrRepeatFlash (0.00s)
+    sprints_handlers_test.go:517: la primera vista debía mostrar el mensaje de éxito: <!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sprints · Software Metrics &amp; Estimation</title>
+        <link rel="stylesheet" href="/static/app.css">
+        </head>
+        <body>
+        <header class="app-header">
+          <a class="app-title" href="/">Software Metrics &amp; Estimation</a>
+          <nav class="app-nav" aria-label="Menú principal">
+            <ul>
+              <li><a href="/">Inicio</a></li>
+              <li><a href="/sprints" class="active" aria-current="page">Sprints</a></li>
+            </ul>
+          </nav>
+            <div class="app-context">Proyecto: <strong>Proyecto PRG</strong>
+            <span class="app-context-links"><a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">Identificarme</a></span>
+          </div>
+        </header>
+        <main class="app-main">
+        <div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">Para esta acción primero tenés que identificarte como integrante del proyecto.</span></div>
+        <h1>Sprints</h1>
+        <div>Para esta acción primero tenés que identificarte como integrante del proyecto.</div>
+        <div>No hay un Sprint activo</div>
+        
+        <div data-story-id="51" data-available="true"><input type="checkbox" name="historia" value="51"><span>Historia 51 del proyecto 505</span><span></span></div>
+        <form>CREATE_FORM_MARKER
+        <span id="goal-value"></span><span id="objetivo-error"></span>
+        <span id="start-value"></span><span id="fecha_inicio-error"></span>
+        <span id="end-value"></span><span id="fecha_fin-error"></span>
+        <span id="story-value"></span><span id="story-error"></span></form>
+        <pre>&amp;{Active:{ID:0 Number:0 Label: Goal: StartDate:0001-01-01 00:00:00 &#43;0000 UTC EndDate:0001-01-01 00:00:00 &#43;0000 UTC Stories:[]} HasActive:false StoryOptions:[{StoryOption:{ID:51 Title:Historia 51 del proyecto 505 Priority:Media StoryPoints:&lt;nil&gt; Status:Pendiente AssignedSprintNumber:0 Available:true UnavailableReason:} Selected:false}] Notice:No hay un Sprint activo BacklogEmpty:false}</pre>
+        </main>
+        </body>
+        </html>
+    sprints_handlers_test.go:524: recargar no debe crear otro Sprint; llamadas=0
+--- FAIL: TestSprintsHandler_AssignStoriesRouteContract (0.00s)
+    sprints_handlers_test.go:546: se esperaba 303 a /sprints para agregar historias; status=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_StoryTakenWhileFillingFormPreservesValues (0.00s)
+    sprints_handlers_test.go:601: se esperaba 409 para una historia que dejó de estar disponible, se obtuvo 303
+    sprints_handlers_test.go:604: el motivo exacto debía aparecer en el error de la lista de historias: 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "71": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "Planificar entrega": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "2026-11-01": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "2026-11-14": 
+    sprints_handlers_test.go:608: la respuesta debía informar/conservar "name=\"historia\" value=\"71\" checked": 
+--- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/empty_Goal (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el Sprint Goal es obligatorio": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "objetivo-error": 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-14" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/Goal_with_whitespace_only (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el Sprint Goal es obligatorio": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "objetivo-error": 
+        sprints_handlers_test.go:659: no se conservó " \t " en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-14" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_before_start (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el período del Sprint no es válido": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:659: no se conservó "Sprint válido" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-10-31" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+    --- FAIL: TestSprintsHandler_RejectsEmptyGoalAndInvalidPeriods/end_equals_start (0.00s)
+        sprints_handlers_test.go:649: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:652: falta el error de campo "el período del Sprint no es válido": 
+        sprints_handlers_test.go:655: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:659: no se conservó "Sprint válido" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "2026-11-01" en el formulario: 
+        sprints_handlers_test.go:659: no se conservó "name=\"historia\" value=\"81\" checked" en el formulario: 
+--- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_start (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "Falta la fecha de inicio": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_inicio-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-14": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/missing_end (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "Falta la fecha de fin": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_fin-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-01": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+    --- FAIL: TestSprintsHandler_RejectsMissingOrMalformedDates/malformed_start (0.00s)
+        sprints_handlers_test.go:699: se esperaba 422, se obtuvo 303: 
+        sprints_handlers_test.go:702: falta el mensaje "La fecha no tiene un formato válido": 
+        sprints_handlers_test.go:705: el mensaje debía estar asociado al campo "fecha_inicio-error": 
+        sprints_handlers_test.go:709: no se conservó "Conservar formulario": 
+        sprints_handlers_test.go:709: no se conservó "01/11/2026": 
+        sprints_handlers_test.go:709: no se conservó "2026-11-14": 
+        sprints_handlers_test.go:709: no se conservó "name=\"historia\" value=\"91\" checked": 
+--- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs (0.00s)
+    --- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/non_numeric_ID (0.00s)
+        sprints_handlers_test.go:747: se esperaba 422 para non numeric ID, se obtuvo 303
+        sprints_handlers_test.go:750: se esperaba un error seguro junto al campo de historias: 
+    --- FAIL: TestSprintsHandler_RejectsNonNumericOrForeignStoryIDs/story_from_another_project (0.00s)
+        sprints_handlers_test.go:747: se esperaba 422 para story from another project, se obtuvo 303
+        sprints_handlers_test.go:750: se esperaba un error seguro junto al campo de historias: 
+--- FAIL: TestSprintsHandler_StoreFailureShowsGenericErrorAndPreservesForm (0.00s)
+    sprints_handlers_test.go:779: se esperaba 500, se obtuvo 303: 
+    sprints_handlers_test.go:782: falta el mensaje genérico "La operación no pudo completarse": 
+    sprints_handlers_test.go:786: no se conservó "Conservar tras fallo": 
+    sprints_handlers_test.go:786: no se conservó "2026-11-01": 
+    sprints_handlers_test.go:786: no se conservó "2026-11-14": 
+    sprints_handlers_test.go:786: no se conservó "name=\"historia\" value=\"101\" checked": 
+--- FAIL: TestSprintsHandler_AssignStoriesPersistsAllAndShowsFlash (0.03s)
+    sprints_handlers_test.go:1038: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_AssignStoriesWithoutSelectionShowsMessageAndDoesNotMutate (0.03s)
+    sprints_handlers_test.go:1062: sin selección se esperaba 422, se obtuvo 303
+    sprints_handlers_test.go:1065: falta el mensaje exacto "Elija al menos una historia": 
+--- FAIL: TestSprintsHandler_AssignStoriesRejectsUnavailableOrForeignStoryAtomically (0.03s)
+    sprints_handlers_test.go:1088: una historia ajena debía rechazarse con 409 o 422, se obtuvo 303
+    sprints_handlers_test.go:1091: la respuesta debía identificar la historia no disponible con el mensaje de HU-04: 
+--- FAIL: TestSprintsHandler_RemoveStoryReturnsItToBacklog (0.02s)
+    sprints_handlers_test.go:1114: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestSprintsHandler_RemoveStoryDisablesAndRejectsNonRemovableStories (0.04s)
+    sprints_handlers_test.go:1193: quitar historia 8735: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8735 debía informar "Ya está en progreso": 
+    sprints_handlers_test.go:1193: quitar historia 8736: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8736 debía informar "Ya está hecha": 
+    sprints_handlers_test.go:1193: quitar historia 8738: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8738 debía informar "Tiene horas registradas": 
+    sprints_handlers_test.go:1193: quitar historia 8737: se esperaba 409, se obtuvo 303
+    sprints_handlers_test.go:1196: quitar historia 8737 debía informar "la historia no está disponible para asignación": 
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	22.689s
+--- FAIL: TestCloseBDD_CierreExitoso (0.02s)
+    web_close_bdd_test.go:299: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_HistoriasCompletadasConservadas (0.02s)
+    web_close_bdd_test.go:332: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_DatosDelSprintCongeladosTrasReasignar (0.02s)
+    web_close_bdd_test.go:374: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_SprintSinHistoriasCompletadasYVelocidadCero (0.03s)
+    web_close_bdd_test.go:401: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_HistoriasDevueltasDisponiblesParaUnSprintNuevo (0.02s)
+    web_close_bdd_test.go:426: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_SprintYaCerradoSeRechaza (0.02s)
+    web_close_bdd_test.go:456: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestCloseBDD_CierreBloqueadoPorValidacionHU07 (0.03s)
+    web_close_bdd_test.go:493: cierre bloqueado por HU-07 = 303; se esperaba 409
+    web_close_bdd_test.go:497: la respuesta debía identificar el dato inválido "Historia 8807: Story Points inválidos"
+--- FAIL: TestCloseBDD_FallaInternaAlCerrarMuestraMensajeGenerico (0.02s)
+    web_close_bdd_test.go:530: falla interna al cerrar = 303; se esperaba 500
+    web_close_bdd_test.go:533: la respuesta debía mostrar "La operación no pudo completarse"
+--- FAIL: TestCloseBDD_CargaDeEsfuerzoPosteriorAlCierreSeRechaza (0.02s)
+    web_close_bdd_test.go:558: POST /cierre: se esperaba 303 a /cierre, se obtuvo 303 a "/contexto/integrante?volver_a=%2Fcierre"
+--- FAIL: TestBDD_HU05a_AbrirRonda (0.02s)
+    web_poker_bdd_test.go:159: se esperaba volver a la pantalla, se obtuvo http://127.0.0.1:44431/planning-poker/abrir
+--- FAIL: TestBDD_HU05a_HistoriaConRondaAbierta (0.02s)
+    web_poker_bdd_test.go:182: se esperaba 409, se obtuvo 403
+--- FAIL: TestBDD_HU05a_VotoOculto (0.02s)
+    web_poker_bdd_test.go:210: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_CambioDeVoto (0.03s)
+    web_poker_bdd_test.go:228: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU05a_VotosOcultos (0.03s)
+    web_poker_bdd_test.go:249: no se pudo preparar el escenario: sql: no rows in result set
+--- FAIL: TestBDD_HU18_NuevaRondaTrasDivergencia (0.04s)
+    web_poker_consensus_bdd_test.go:276: la pantalla debía mostrar "Ronda 2 abierta para la historia «Login»"
+    web_poker_consensus_bdd_test.go:277: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_VotosOcultosEnLaNuevaRonda (0.04s)
+    web_poker_consensus_bdd_test.go:297: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_RegistrarEstimacionAcordada (0.04s)
+    web_poker_consensus_bdd_test.go:317: «Login» no tiene la ronda 2: sql: no rows in result set
+--- FAIL: TestBDD_HU18_ConsensoDirecto (0.04s)
+    web_poker_consensus_bdd_test.go:345: la pantalla debía mostrar "Estimación registrada: «Pagos» queda con 5 Story Points"
+    web_poker_consensus_bdd_test.go:347: «Pagos» debía quedar con 5 Story Points y una sola ronda: 0 SP, 1 rondas
+--- FAIL: TestBDD_HU18_RegistrarDespuesDeDebatir (0.05s)
+    web_poker_consensus_bdd_test.go:366: «Login» debía quedar con 5 Story Points, tiene 0
+--- FAIL: TestBDD_HU18_ValorFueraDeLaSerie (0.04s)
+    web_poker_consensus_bdd_test.go:380: se esperaba 422, se obtuvo 403 (http://127.0.0.1:33653/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaSinCerrar (0.04s)
+    web_poker_consensus_bdd_test.go:398: se esperaba 409, se obtuvo 403 (http://127.0.0.1:40067/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_NuevaRondaConRondaAbierta (0.04s)
+    web_poker_consensus_bdd_test.go:415: se esperaba 409, se obtuvo 403 (http://127.0.0.1:37333/planning-poker/nueva-ronda)
+--- FAIL: TestBDD_HU18_RondaQueYaNoEsLaUltima (0.04s)
+    web_poker_consensus_bdd_test.go:432: se esperaba 409, se obtuvo 403 (http://127.0.0.1:44003/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_HistoriaDeUnSprintFinalizado (0.05s)
+    web_poker_consensus_bdd_test.go:450: se esperaba 409, se obtuvo 403 (http://127.0.0.1:42467/planning-poker/estimacion)
+--- FAIL: TestBDD_HU18_RondaInexistente (0.04s)
+    web_poker_consensus_bdd_test.go:472: se esperaba 404, se obtuvo 403 (http://127.0.0.1:37441/planning-poker/nueva-ronda)
+--- FAIL: TestBDD_HU05b_RevelacionDeVotos (0.04s)
+    web_poker_reveal_bdd_test.go:228: se esperaba volver a Planning Poker, se obtuvo http://127.0.0.1:41231/planning-poker/cerrar (403)
+--- FAIL: TestBDD_HU05b_AlertaDeDivergencia (0.03s)
+    web_poker_reveal_bdd_test.go:255: no se pudo cerrar «Login»: 403 http://127.0.0.1:36249/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_SinDivergenciaEnElLimite (0.03s)
+    web_poker_reveal_bdd_test.go:269: no se pudo cerrar «Pagos»: 403 http://127.0.0.1:42751/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_DivergenciaDeTresNiveles (0.04s)
+    web_poker_reveal_bdd_test.go:285: no se pudo cerrar «Reportes»: 403 http://127.0.0.1:41607/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarSinQueTodosVoten (0.04s)
+    web_poker_reveal_bdd_test.go:299: no se pudo cerrar «Perfil»: 403 http://127.0.0.1:39117/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_RondaSinVotos (0.05s)
+    web_poker_reveal_bdd_test.go:326: se esperaba 409, se obtuvo 403
+--- FAIL: TestBDD_HU05b_VotosParaTodos (0.06s)
+    web_poker_reveal_bdd_test.go:339: no se pudo cerrar «Login»: 403 http://127.0.0.1:45089/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_VotarEnRondaCerrada (0.05s)
+    web_poker_reveal_bdd_test.go:358: no se pudo cerrar «Login»: 403 http://127.0.0.1:38119/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_CerrarDosVeces (0.03s)
+    web_poker_reveal_bdd_test.go:379: no se pudo cerrar «Login»: 403 http://127.0.0.1:46463/planning-poker/cerrar
+--- FAIL: TestBDD_HU05b_RondaInexistente (0.04s)
+    web_poker_reveal_bdd_test.go:409: ronda 2147483647: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 2147483647 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:409: ronda 580: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 580 debía mostrar "La ronda no existe"
+    web_poker_reveal_bdd_test.go:409: ronda 581: se esperaba 404, se obtuvo 403
+    web_poker_reveal_bdd_test.go:411: ronda 581 debía mostrar "La ronda no existe"
+--- FAIL: TestEscenarioModificarProyecto_ModificacionExitosa (0.03s)
+    web_project_update_bdd_test.go:191: se esperaba volver a la lista, se obtuvo http://127.0.0.1:44015/contexto/proyecto?volver_a=%2Fproyectos
+--- FAIL: TestEscenarioModificarProyecto_NombreVisibleEnEstructuraComun (0.04s)
+    web_project_update_bdd_test.go:210: la pantalla debía mostrar "Proyecto: <strong>Alfa visible 1793595198223342765</strong>"
+--- FAIL: TestEscenarioModificarProyecto_AgregarIntegrante (0.03s)
+    web_project_update_bdd_test.go:226: la pantalla debía mostrar "Carla BDD11 1793595198262589910"
+    web_project_update_bdd_test.go:233: Carla debía poder cargar esfuerzo: {Entry:<nil> AccumulatedHours:0 SuccessMessage: ValidationErrors:[{Field:member Err:Se debe especificar el integrante responsable}] StorageError:<nil>}
+--- FAIL: TestEscenarioModificarProyecto_QuitarIntegranteConHoras (0.02s)
+    web_project_update_bdd_test.go:257: se esperaba 409, se obtuvo 200
+--- FAIL: TestEscenarioModificarProyecto_FechasQueDejanSprintsFuera (0.02s)
+    web_project_update_bdd_test.go:278: se esperaba 409, se obtuvo 200
+--- FAIL: TestEscenarioModificarProyecto_ErrorAlGuardar (0.02s)
+    web_project_update_bdd_test.go:299: se esperaba 500, se obtuvo 200
+--- FAIL: TestWebSprintsBDD_CreateWithSelectedStories (0.00s)
+    web_sprints_bdd_test.go:219: se esperaba redirección 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_CreateWithoutStoriesShowsWarning (0.00s)
+    web_sprints_bdd_test.go:253: falta la advertencia de Sprint vacío "Sprint creado correctamente. Todavía no tiene historias asignadas": <!DOCTYPE html>
+        <html lang="es">
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Sprints · Software Metrics &amp; Estimation</title>
+        <link rel="stylesheet" href="/static/app.css">
+        </head>
+        <body>
+        <header class="app-header">
+          <a class="app-title" href="/">Software Metrics &amp; Estimation</a>
+          <nav class="app-nav" aria-label="Menú principal">
+            <ul>
+              <li><a href="/">Inicio</a></li>
+              <li><a href="/sprints" class="active" aria-current="page">Sprints</a></li>
+            </ul>
+          </nav>
+            <div class="app-context">Proyecto: <strong>Proyecto vacío</strong>
+            <span class="app-context-links"><a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">Identificarme</a></span>
+          </div>
+        </header>
+        <main class="app-main">
+        <div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">Para esta acción primero tenés que identificarte como integrante del proyecto.</span></div>
+        
+        <section class="sprints-page" aria-labelledby="sprints-title">
+          <h1 id="sprints-title">Sprints</h1>
+        
+          
+          <p class="sprint-notice">No hay un Sprint activo</p>
+          
+        
+          
+          <form method="post" action="/sprints">
+            <div class="field">
+          <label for="objetivo">Sprint Goal</label>
+          <input type="text" id="objetivo" name="objetivo" value="">
+          
+        </div>
+            <div class="field">
+          <label for="fecha_inicio">Fecha de inicio</label>
+          <input type="date" id="fecha_inicio" name="fecha_inicio" value="">
+          
+        </div>
+            <div class="field">
+          <label for="fecha_fin">Fecha de fin</label>
+          <input type="date" id="fecha_fin" name="fecha_fin" value="">
+          
+        </div>
+        
+            <fieldset class="picker-list">
+              <legend>Historias del Backlog</legend>
+              
+              <p>El Backlog no tiene historias.</p>
+              
+              
+            </fieldset>
+        
+            <button type="submit">Crear Sprint</button>
+          </form>
+          
+        </section>
+        
+        </main>
+        </body>
+        </html>
+    web_sprints_bdd_test.go:256: se esperaba un Sprint activo sin historias: <nil>
+--- FAIL: TestWebSprintsBDD_ExistingActiveSprintBlocksAnother (0.00s)
+    web_sprints_bdd_test.go:283: POST debía responder 409 con el conflicto del Sprint 4; status=303 body=
+--- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors (0.01s)
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/historia_no_disponible_en_la_lista_y_al_guardar (0.00s)
+        web_sprints_bdd_test.go:317: se esperaba 409, se obtuvo 303
+        web_sprints_bdd_test.go:321: el motivo exacto debía mostrarse junto al campo de historias: 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "Planificar historias disponibles": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "2026-11-01": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "2026-11-14": 
+        web_sprints_bdd_test.go:325: la respuesta debía mostrar/conservar "name=\"historia\" value=\"71\" checked": 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_vacío (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el Sprint Goal es obligatorio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "objetivo-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/Goal_con_espacios (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el Sprint Goal es obligatorio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "objetivo-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor " \t ": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_anterior (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el período del Sprint no es válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-10-31": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/fecha_de_fin_igual (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "el período del Sprint no es válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_inicio (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "Falta la fecha de inicio": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_inicio-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falta_fecha_de_fin (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "Falta la fecha de fin": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_fin-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-01": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/formato_de_fecha_inválido (0.00s)
+        web_sprints_bdd_test.go:367: se esperaba 422, se obtuvo 303: 
+        web_sprints_bdd_test.go:372: falta el mensaje "La fecha no tiene un formato válido": 
+        web_sprints_bdd_test.go:376: el mensaje debía renderizarse exactamente junto al campo "fecha_inicio-error": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "Sprint válido": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "01/11/2026": 
+        web_sprints_bdd_test.go:380: no se conservó el valor "2026-11-14": 
+        web_sprints_bdd_test.go:384: la casilla marcada debía conservarse tras el rechazo: 
+    --- FAIL: TestWebSprintsBDD_UnavailableStoryAndValidationErrors/falla_el_guardado (0.00s)
+        web_sprints_bdd_test.go:410: se esperaba 500, se obtuvo 303
+        web_sprints_bdd_test.go:413: se esperaba solo el error genérico, se obtuvo: 
+        web_sprints_bdd_test.go:416: los datos deben conservarse y el Sprint no debe quedar creado
+--- FAIL: TestWebSprintsBDD_AddAvailableStory (0.03s)
+    web_sprints_bdd_test.go:641: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_AddWithoutSelection (0.03s)
+    web_sprints_bdd_test.go:662: se esperaba 422 sin selección, se obtuvo 303
+    web_sprints_bdd_test.go:667: falta el mensaje "Elija al menos una historia": 
+--- FAIL: TestWebSprintsBDD_RemoveStoryAndReturnItToBacklog (0.03s)
+    web_sprints_bdd_test.go:685: se esperaba 303 a /sprints; estado=303 location="/contexto/integrante?volver_a=%2Fsprints"
+--- FAIL: TestWebSprintsBDD_CannotRemoveStoryAndRejectsDirectSubmission (0.04s)
+    web_sprints_bdd_test.go:721: el POST directo debía rechazarse con 409 y el motivo: status=303 body=
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	6.312s
+FAIL
+EXIT 1
+
