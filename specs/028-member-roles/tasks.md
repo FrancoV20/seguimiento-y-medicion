@@ -255,9 +255,12 @@ cambian.
     (`go test -count=1 -p 1 -cover ./...`);
   - agregar al `README.md` el comando `set-role` y el paso "después de migrar, asignar al menos un Scrum Master por
     proyecto".
-- [ ] T035 Verificar a mano los 13 escenarios (`quickstart.md`). Abrir el Pull Request desde `HU-28` citando HU-28, con
-  las evidencias, la lista de archivos de otras historias que se editan (`plan.md`) y el aviso para la demo. Pedir la
-  revisión de otro integrante, mergear con "Create a merge commit" y pasar la tarjeta a "Hecho".
+- [ ] T035 Cierre de la historia:
+  - [x] verificar a mano los 13 escenarios (`quickstart.md`) y registrar el resultado en `evidencia-manual.txt`, con
+    "Realizó:" y el "Recorrido del revisor";
+  - [x] abrir el Pull Request desde `HU-28` citando HU-28, con las evidencias, la lista de archivos de otras historias
+    que se editan (`plan.md`) y el aviso para la demo;
+  - [ ] pedir la revisión de otro integrante, mergear con "Create a merge commit" y pasar la tarjeta a "Hecho".
 
 ## Dependencias y orden de ejecución
 

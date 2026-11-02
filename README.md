@@ -328,4 +328,4 @@ migrate -path db/migrations -database $env:DATABASE_URL up
 $env:ADDR = ":8081"
 go run ./src/cmd/server
 # En web
-http://localhost:8081
+http://localhost:8081

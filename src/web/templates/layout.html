@@ -42,4 +42,4 @@
   <legend>Proyectos</legend>
   {{range .Projects}}<div class="picker-item"><label><input type="radio" name="proyecto_id" value="{{.ID}}"{{if eq .ID $.ActiveID}} checked{{end}}> {{.Name}}</label></div>
   {{end}}
-</fieldset>{{end}}
+</fieldset>{{end}}
