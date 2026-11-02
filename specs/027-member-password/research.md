@@ -251,3 +251,31 @@ Los que embeben la interfaz (`sinProyectos`, `listaFija`) siguen compilando.
 ## Preguntas abiertas
 
 Ninguna.
+
+## Resultado de T001 (2026-11-01)
+
+Reconfirmado sobre `main` en `04f1f0c` (después del merge de HU-09, #69):
+
+- **Migración**: la mayor es `014_sprint_story_results`; HU-27 toma **015** (`015_add_member_password`). Se
+  reemplazó `<NNN>` en `plan.md` y `data-model.md`. T038 lo vuelve a confirmar antes del PR.
+- **Pruebas que se identifican por `/contexto/integrante`**: hoy son **16 archivos**, no 8, porque después de
+  escribir la spec se integraron HU-11, HU-15, HU-18 y otras. De esos 16, **12** envían `integrante_id` y se
+  actualizan en el Bloque E:
+  - `src/web`: `context_member_test.go` (su auxiliar `selectMember` también lo usa `context_guard_test.go`),
+    `effort_handlers_test.go`, `poker_handlers_test.go` (su auxiliar `as` también lo usan
+    `poker_close_handlers_test.go` y `poker_consensus_handlers_test.go`), `poker_view_test.go` y
+    `projects_update_handlers_test.go`;
+  - `test/`: `context_bdd_test.go`, `web_close_bdd_test.go`, `web_effort_bdd_test.go`, `web_poker_bdd_test.go`,
+    `web_poker_consensus_bdd_test.go`, `web_poker_reveal_bdd_test.go` y `web_signed_cookies_bdd_test.go`.
+
+  Los otros 4 (`context_guard_test.go`, `poker_close_handlers_test.go`, `poker_consensus_handlers_test.go` y
+  `web_project_update_bdd_test.go`) solo nombran la ruta o usan esos auxiliares, y no cambian.
+- **Dobles que implementan `ContextStore` completo**: 2, `sprintHandlerContextStore`
+  (`src/web/sprints_handlers_test.go`) y `sprintBDDContextStore` (`test/web_sprints_bdd_test.go`).
+- **Pruebas que buscan que no haya `type="password"`**: 2, `TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo`
+  (`context_member_test.go`) y el escenario de `context_bdd_test.go`; las dos pasan a exigir el campo. Las que
+  buscan que no haya `<form` (HU-10, HU-12, HU-16, HU-09) no se identifican, así que el botón "Salir" del
+  encabezado no las afecta.
+- **`crypto/pbkdf2`**: disponible (`go doc crypto/pbkdf2.Key`), con la versión de `go.mod` (1.27.1).
+- Nadie más cambió `context_handlers.go`, `context_store.go`, `postgres_context_store.go`, `select_member.html` ni
+  `layout.html` desde HU-26.

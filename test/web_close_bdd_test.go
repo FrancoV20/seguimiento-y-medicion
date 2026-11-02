@@ -197,10 +197,9 @@ func (a *cierreBDDApp) elegirProyecto(t *testing.T) *http.Client {
 
 func (a *cierreBDDApp) elegirIntegrante(t *testing.T, client *http.Client) {
 	t.Helper()
-	response, err := client.PostForm(a.httpServer.URL+"/contexto/integrante", url.Values{
-		"integrante_id": {idTexto(a.integranteA)},
-		"volver_a":      {"/esfuerzo"},
-	})
+	login := identificacionDePrueba(t, a.db, a.integranteA)
+	login.Set("volver_a", "/esfuerzo")
+	response, err := client.PostForm(a.httpServer.URL+"/contexto/integrante", login)
 	if err != nil {
 		t.Fatalf("no se pudo elegir el integrante: %v", err)
 	}

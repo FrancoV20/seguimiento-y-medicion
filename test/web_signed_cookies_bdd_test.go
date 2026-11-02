@@ -68,7 +68,7 @@ func (a *firmaApp) identificado(t *testing.T) *http.Client {
 	t.Helper()
 	c := formNavegador(false)
 	a.enviar(t, c, "/contexto/proyecto", url.Values{"proyecto_id": {idTexto(a.proyectoA)}})
-	a.enviar(t, c, "/contexto/integrante", url.Values{"integrante_id": {idTexto(a.integranteA)}})
+	a.enviar(t, c, "/contexto/integrante", identificacionDePrueba(t, a.db, a.integranteA))
 	return c
 }
 

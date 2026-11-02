@@ -16,13 +16,13 @@
       {{- end}}
     </ul>
   </nav>
-    <p class="app-context">
-    {{- with .Context}}{{if .ProjectName}}Proyecto: <strong>{{.ProjectName}}</strong>{{else}}{{noProject}}{{end}}{{if .MemberName}} · Integrante: <strong>{{.MemberName}}</strong>{{end}}
+    <div class="app-context">
+    {{- with .Context}}{{if .ProjectName}}Proyecto: <strong>{{.ProjectName}}</strong>{{else}}{{noProject}}{{end}}{{if .MemberName}} · Integrante: <strong>{{.MemberName}}</strong> <form method="post" action="/contexto/salir" class="logout-form"><button type="submit">Salir</button></form>{{end}}
     {{- else}}{{noProject}}{{end}}
     <span class="app-context-links">
       {{- with .Context}}{{if .ProjectName}}<a href="/contexto/proyecto">Cambiar proyecto</a> · <a href="/contexto/integrante">{{if .MemberName}}Cambiar integrante{{else}}Identificarme{{end}}</a>{{else}}<a href="/contexto/proyecto">Elegir proyecto</a>{{end}}{{else}}<a href="/contexto/proyecto">Elegir proyecto</a>{{end -}}
     </span>
-  </p>
+  </div>
 </header>
 <main class="app-main">
 {{with .Flash}}{{template "alert" .}}{{end}}

@@ -3,6 +3,7 @@
 ## Decisiones de alcance
 1. **Sin contraseña.** Identificarse es elegir un nombre entre los integrantes del proyecto. No es un mecanismo de seguridad (Assumptions de spec.md).
    Estado: decisión del equipo (2026-10-21): se difiere. Se termina el Sprint 2 sin contraseña y se corrige después como historia nueva.
+   **Resuelta por HU-27** (2026-11-01): identificarse pide la contraseña del integrante (PBKDF2-SHA256), con bloqueo por intentos fallidos y "Salir".
 2. **Sin roles.** No se distingue Scrum Master de Product Builder porque HU-01 no guarda el rol. Distinguirlos exige una migración (columna de rol en `project_members`) y escenarios de permisos en HU-02, HU-04, HU-05, HU-15 y otras.
    Estado: decisión del equipo (2026-10-21): se difiere. Se termina el Sprint 2 sin roles y se corrige después como historia nueva.
 3. **Cookies sin firmar.** Se validan contra la base en cada solicitud, así que una cookie manipulada no da acceso a nada que no esté ya abierto. La cookie `flash` solo acepta tres tipos y hasta 300 caracteres, y se muestra siempre escapada: falsificarla solo produce un mensaje falso. Si se exige autenticación real: firmar con HMAC y agregar `SESSION_SECRET` a la configuración.

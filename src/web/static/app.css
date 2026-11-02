@@ -111,6 +111,16 @@ strong { font-weight: 600; }
 
 .app-context { margin: 0; font-size: .9rem; color: var(--muted); }
 .app-context strong { color: var(--text); }
+/* HU-27: el botón "Salir" del encabezado va en la misma línea que el integrante, como acción secundaria. */
+.app-context form { display: inline; margin: 0 0 0 var(--space-2); }
+.app-context form button {
+  padding: .15rem .55rem;
+  font-size: .85rem;
+  color: var(--accent);
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+.app-context form button:hover { background: var(--accent-soft); color: var(--accent-hover); }
 .app-context-links { margin-left: var(--space-3); font-size: .9em; white-space: nowrap; }
 .app-context-links a { color: inherit; text-decoration: underline; }
 .app-context-links a:hover { color: var(--accent); }

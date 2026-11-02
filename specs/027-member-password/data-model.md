@@ -2,7 +2,7 @@
 
 ## Cambio de esquema
 
-Migración nueva `db/migrations/<NNN>_add_member_password.up.sql` y `.down.sql`. `<NNN>` es la mayor versión en `main`
+Migración nueva `db/migrations/015_add_member_password.up.sql` y `.down.sql`. El número (015) es la mayor versión en `main`
 más 1, con tres dígitos: hoy 012; con HU-06 y HU-15 integradas, 014. Lo fija T001 y lo reconfirma T038.
 
 ```sql

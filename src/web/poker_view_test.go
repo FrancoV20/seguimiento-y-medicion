@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -62,7 +60,7 @@ func TestHU05a_CambioDeIdentificacion(t *testing.T) {
 	a.vote(t, beto, round, "3")
 
 	// El mismo navegador de Beto se identifica como Ana.
-	a.post(t, beto, pathSelectMember, url.Values{"integrante_id": {strconv.FormatInt(a.fx.ana, 10)}})
+	a.post(t, beto, pathSelectMember, loginAs(t, a.fx.db, a.fx.ana))
 	a.get(t, beto, "/planning-poker")
 	_, body := a.get(t, beto, "/planning-poker")
 	if !strings.Contains(participantRow(t, body, a.fx.ana), "Tu voto: 13") || strings.Contains(body, "Tu voto: 3") {

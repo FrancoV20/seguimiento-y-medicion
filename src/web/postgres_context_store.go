@@ -108,3 +108,29 @@ func (s *PostgreSQLContextStore) ResolveContext(ctx context.Context, projectID, 
 	}
 	return rc, nil
 }
+
+// memberCredentialQuery lee el nombre y la contraseña guardada de un integrante del proyecto.
+const memberCredentialQuery = `
+	SELECT m.display_name, m.password_hash
+	FROM project_members pm
+	JOIN members m ON m.id = pm.member_id
+	WHERE pm.project_id = $1 AND pm.member_id = $2`
+
+// MemberCredential devuelve el integrante del proyecto con su contraseña guardada (HU-27). Si no
+// pertenece al proyecto (o un identificador está fuera de rango) devuelve el valor vacío, sin
+// error; una falla de la base es Unavailable.
+func (s *PostgreSQLContextStore) MemberCredential(ctx context.Context, projectID, memberID int64) (MemberCredential, error) {
+	if !validID(projectID) || !validID(memberID) {
+		return MemberCredential{}, nil
+	}
+	var name string
+	var hash sql.NullString
+	err := s.db.QueryRowContext(ctx, memberCredentialQuery, projectID, memberID).Scan(&name, &hash)
+	if errors.Is(err, sql.ErrNoRows) {
+		return MemberCredential{}, nil
+	}
+	if err != nil {
+		return MemberCredential{}, Unavailable(err)
+	}
+	return MemberCredential{Belongs: true, Name: name, PasswordHash: hash.String}, nil
+}

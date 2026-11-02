@@ -3,7 +3,6 @@ package web
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 	"testing"
@@ -15,7 +14,13 @@ import (
 
 func (a *ctxApp) selectMember(t *testing.T, c *http.Client, id, volverA string) (*http.Response, string) {
 	t.Helper()
-	return a.post(t, c, "/contexto/integrante", url.Values{"integrante_id": {id}, "volver_a": {volverA}})
+	// HU-27: la identificación pide contraseña.
+	if n, err := strconv.ParseInt(id, 10, 64); err == nil && validID(n) {
+		setTestPassword(t, a.db, n)
+	}
+	values := memberLoginValues(id)
+	values.Set("volver_a", volverA)
+	return a.post(t, c, "/contexto/integrante", values)
 }
 
 func datosEsperados(project, member int64) string {
@@ -66,7 +71,7 @@ func TestIntegrante_SelectorMuestraSoloLosDelProyectoActivo(t *testing.T) {
 					t.Errorf("no debe aparecer el integrante %q de otro proyecto", nombre)
 				}
 			}
-			if strings.Contains(body, `type="password"`) {
+			if !strings.Contains(body, `type="password"`) || !strings.Contains(body, `autocomplete="current-password"`) { // HU-27
 				t.Errorf("la identificación no lleva contraseña")
 			}
 		})

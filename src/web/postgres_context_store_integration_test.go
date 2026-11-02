@@ -7,6 +7,8 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/auth"
 )
 
 // T009: PostgreSQLContextStore contra PostgreSQL real.
@@ -211,5 +213,93 @@ func TestPostgreSQLContextStore_ResolveContext_MenosDe50ms(t *testing.T) {
 	}
 	if avg := time.Since(start) / runs; avg >= 50*time.Millisecond {
 		t.Errorf("SC-012: el promedio fue %v, debía ser menor a 50 ms", avg)
+	}
+}
+
+// HU-27, T012: MemberCredential con «Alfa» (Ana con contraseña, Caro sin) y «Beta» (Dani).
+type credentialFixture struct {
+	alfa, beta      int64
+	ana, caro, dani int64
+	anaHash         string
+}
+
+func newCredentialFixture(t *testing.T, db *sql.DB) *credentialFixture {
+	t.Helper()
+	ctx := context.Background()
+	f := &credentialFixture{}
+	t.Cleanup(func() {
+		for _, p := range []int64{f.alfa, f.beta} {
+			_, _ = db.Exec(`DELETE FROM project_members WHERE project_id = $1`, p)
+			_, _ = db.Exec(`DELETE FROM projects WHERE id = $1`, p)
+		}
+		for _, m := range []int64{f.ana, f.caro, f.dani} {
+			_, _ = db.Exec(`DELETE FROM members WHERE id = $1`, m)
+		}
+	})
+	insert := func(query string, args ...any) int64 {
+		t.Helper()
+		var id int64
+		if err := db.QueryRowContext(ctx, query, args...).Scan(&id); err != nil {
+			t.Fatalf("no se pudo insertar el dato de prueba: %v", err)
+		}
+		return id
+	}
+	stamp := time.Now().UnixNano()
+	project := func(name string) int64 {
+		return insert(`INSERT INTO projects (name, start_date, end_date) VALUES ($1, DATE '2026-01-01', DATE '2026-12-31') RETURNING id`,
+			fmt.Sprintf("%s %d", name, stamp))
+	}
+	member := func(name string, hash any) int64 {
+		return insert(`INSERT INTO members (display_name, password_hash) VALUES ($1, $2) RETURNING id`, name, hash)
+	}
+	var err error
+	if f.anaHash, err = auth.HashPasswordIterations("ana-clave-2026", 1000); err != nil {
+		t.Fatal(err)
+	}
+	f.alfa, f.beta = project("HU27 Alfa"), project("HU27 Beta")
+	f.ana, f.caro, f.dani = member("Ana", f.anaHash), member("Caro", nil), member("Dani", nil)
+	for _, link := range [][2]int64{{f.alfa, f.ana}, {f.alfa, f.caro}, {f.beta, f.dani}} {
+		if _, err := db.ExecContext(ctx, `INSERT INTO project_members (project_id, member_id) VALUES ($1, $2)`, link[0], link[1]); err != nil {
+			t.Fatalf("no se pudo vincular el integrante: %v", err)
+		}
+	}
+	return f
+}
+
+func TestPostgreSQLContextStore_MemberCredential(t *testing.T) {
+	db := openContextTestDB(t)
+	f := newCredentialFixture(t, db)
+	store := NewPostgreSQLContextStore(db)
+	cases := []struct {
+		name              string
+		projectID, member int64
+		want              MemberCredential
+	}{
+		{"«Alfa», Ana", f.alfa, f.ana, MemberCredential{Belongs: true, Name: "Ana", PasswordHash: f.anaHash}},
+		{"«Alfa», Caro", f.alfa, f.caro, MemberCredential{Belongs: true, Name: "Caro"}},
+		{"«Alfa», Dani (de «Beta»)", f.alfa, f.dani, MemberCredential{}},
+		{"«Alfa», 0", f.alfa, 0, MemberCredential{}},
+		{"«Alfa», 2147483648", f.alfa, 2147483648, MemberCredential{}},
+		{"proyecto inexistente, Ana", 2147483647, f.ana, MemberCredential{}},
+	}
+	for _, tc := range cases {
+		got, err := store.MemberCredential(context.Background(), tc.projectID, tc.member)
+		if err != nil || got != tc.want {
+			t.Errorf("%s: MemberCredential = %+v, %v; se esperaba %+v", tc.name, got, err, tc.want)
+		}
+	}
+}
+
+func TestPostgreSQLContextStore_MemberCredentialBaseCaida(t *testing.T) {
+	db := openContextTestDB(t)
+	f := newCredentialFixture(t, db)
+	closed, err := sql.Open("pgx", os.Getenv(EnvDatabaseURL))
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = closed.Close()
+	_, err = NewPostgreSQLContextStore(closed).MemberCredential(context.Background(), f.alfa, f.ana)
+	if KindOf(err) != KindUnavailable {
+		t.Errorf("con la base cerrada: error %v (tipo %v); se esperaba KindUnavailable", err, KindOf(err))
 	}
 }
