@@ -47,6 +47,7 @@ body {
 .error-page a { color: var(--accent); }
 
 .app-context strong { color: var(--text); }
+.app-context form { display: inline; }
 .home-sections { padding-left: 1.25rem; }
 .home-sections a { color: var(--accent); }
 .muted { color: var(--muted); }

@@ -208,7 +208,7 @@ identificación fallan hasta el Bloque E.
 
 ### Implementación (GREEN)
 
-- [ ] T026 Crear los textos y adaptar los handlers.
+- [x] T026 Crear los textos y adaptar los handlers.
   - `src/web/member_password_messages.go`: la tabla de textos de `data-model.md`.
   - En `src/web/context_handlers.go`:
     - `RegisterContextWithLockout(s, store, lockout)`; `RegisterContext` delega con `auth.NewLockout(nil)`;
@@ -218,14 +218,14 @@ identificación fallan hasta el Bloque E.
       tocar la cookie previa;
     - el acierto con `RecordSuccess`, `setContextCookie`, `SetFlash(FlashSuccess, IdentifiedMessage(nombre))` y 303.
   - No cambiar `ResolveContext`, el middleware ni `RequireContext`.
-- [ ] T027 Editar las plantillas y el estilo:
+- [x] T027 Editar las plantillas y el estilo:
   - `src/web/templates/select_member.html`: nueva introducción y campo
     `<input type="password" id="contrasena" name="contrasena" autocomplete="current-password">` sin `value`, con su
     error;
   - `src/web/templates/layout.html`: `<p class="app-context">` → `<div class="app-context">` y el formulario "Salir"
     junto al nombre, solo con `.MemberName`;
   - `src/web/static/app.css`: `.app-context form { display: inline; }`.
-- [ ] T028 Ejecutar T023–T024 en verde (`go test -count=1 -p 1 -run "MemberPassword|HU27" ./src/web/... ./test/...`).
+- [x] T028 Ejecutar T023–T024 en verde (`go test -count=1 -p 1 -run "MemberPassword|HU27" ./src/web/... ./test/...`).
 
 **Punto de control**: la identificación pide contraseña. Las pruebas existentes de identificación quedan en rojo
 hasta el Bloque E; no subir la rama en este estado.
