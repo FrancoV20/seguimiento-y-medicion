@@ -1,0 +1,15 @@
+.git
+.github
+.vscode
+docs
+specs
+features
+test
+*.md
+*.txt
+*.out
+*.log
+*-cover
+docker-compose*.yml
+.env
+.env.*
