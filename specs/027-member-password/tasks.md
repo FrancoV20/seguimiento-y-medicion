@@ -107,18 +107,18 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T015 Crear `db/migrations/<NNN>_add_member_password.up.sql`
+- [x] T015 Crear `db/migrations/<NNN>_add_member_password.up.sql`
   (`ALTER TABLE members ADD COLUMN password_hash TEXT NULL;`) y `.down.sql`
   (`ALTER TABLE members DROP COLUMN IF EXISTS password_hash;`). Aplicarla a la base local con `migrate … up`.
-- [ ] T016 Agregar `MemberCredential` (tipo y método) a `ContextStore` en `src/web/context_store.go` e implementarlo
+- [x] T016 Agregar `MemberCredential` (tipo y método) a `ContextStore` en `src/web/context_store.go` e implementarlo
   en `src/web/postgres_context_store.go`:
   - la consulta de `data-model.md`, `validID` en los dos identificadores, `NULL` → `""` y errores con `Unavailable`;
   - en el mismo paso, sumar el método a los dobles `sprintHandlerContextStore` (`src/web/sprints_handlers_test.go`) y
     `sprintBDDContextStore` (`test/web_sprints_bdd_test.go`) para que compilen.
-- [ ] T017 Implementar `src/auth/password_store.go` (`PasswordStore`, `ErrMemberNotFound`) y
+- [x] T017 Implementar `src/auth/password_store.go` (`PasswordStore`, `ErrMemberNotFound`) y
   `src/auth/postgres_password_store.go` (`NewPostgreSQLPasswordStore`, `MemberName` y `SetPasswordHash` con las
   consultas de `data-model.md`; un identificador fuera de 1..2147483647 → `ErrMemberNotFound` sin consultar).
-- [ ] T018 Ejecutar T011–T013 en verde y `go vet ./...` (todo compila).
+- [x] T018 Ejecutar T011–T013 en verde y `go vet ./...` (todo compila).
 
 ## Fase 4: Bloque C – Comando `set-password` (escenarios 10 y 11)
 

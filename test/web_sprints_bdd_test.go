@@ -39,6 +39,11 @@ func (s sprintBDDContextStore) ResolveContext(_ context.Context, projectID, _ in
 	return web.ResolvedContext{ProjectExists: exists, ProjectName: name}, nil
 }
 
+// MemberCredential completa el ContextStore ampliado por HU-27 (T016).
+func (s sprintBDDContextStore) MemberCredential(context.Context, int64, int64) (web.MemberCredential, error) {
+	return web.MemberCredential{}, nil
+}
+
 type sprintBDDCatalog struct {
 	active  map[int64]*web.SprintView
 	options map[int64][]web.StoryOption
