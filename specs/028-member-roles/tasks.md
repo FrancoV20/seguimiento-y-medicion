@@ -83,16 +83,16 @@ estructura común muestra "Nombre (Rol)".
 
 ### Pruebas (RED)
 
-- [ ] T013 [P] [E1, E9] `TestPostgreSQLContextStore_ResolveContextConRol` en
+- [x] T013 [P] [E1, E9] `TestPostgreSQLContextStore_ResolveContextConRol` en
   `src/web/postgres_context_store_integration_test.go`: los 5 casos de la tabla de `data-model.md` (`MemberRole` y
   `HasScrumMaster`). `TestPostgreSQLContextStore_ResolveContext_MenosDe50ms` sigue sin cambios y en verde (SC-006).
-- [ ] T014 [P] [E1] Crear `src/web/member_role_helpers_test.go` con `setTestScrumMaster(t, db, projectID, memberID)`
+- [x] T014 [P] [E1] Crear `src/web/member_role_helpers_test.go` con `setTestScrumMaster(t, db, projectID, memberID)`
   (`setTestPassword` de HU-27 más `UPDATE project_members SET role = 'Scrum Master'`). Escribir
   `TestContexto_RolEnLaEstructuraComun` en `src/web/member_role_context_test.go`, con `httptest` y `cookiejar`:
   - identificada Ana (Scrum Master), una página muestra "Ana (Scrum Master)";
   - identificado Beto, "Beto (Integrante)";
   - sin integrante, no aparece "(" junto a "Integrante:".
-- [ ] T015 Ejecutar T013–T014, confirmar que fallan (faltan los campos y la columna en la consulta) y guardar la salida
+- [x] T015 Ejecutar T013–T014, confirmar que fallan (faltan los campos y la columna en la consulta) y guardar la salida
   en `evidencia-red.txt` (sección "Contexto con rol").
 
 ### Implementación (GREEN)

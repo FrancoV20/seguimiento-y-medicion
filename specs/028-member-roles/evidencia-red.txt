@@ -38,3 +38,46 @@ FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/db	0.132s
 FAIL
 
+== Contexto con rol (T013-T014): src/web no compila porque ResolvedContext no tiene MemberRole ni HasScrumMaster ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "TestPostgreSQLContextStore_ResolveContext|TestContexto_RolEnLaEstructuraComun" ./src/web/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/member_role_context_test.go:24:6: rc.MemberRole undefined (type ResolvedContext has no field or method MemberRole)
+src/web/postgres_context_store_integration_test.go:163:5: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:204:49: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:204:83: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:206:50: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:206:79: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:208:4: unknown field HasScrumMaster in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:210:51: unknown field MemberRole in struct literal of type ResolvedContext
+src/web/postgres_context_store_integration_test.go:212:27: unknown field HasScrumMaster in struct literal of type ResolvedContext
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con solo los dos campos agregados a ResolvedContext, sin cambiar la consulta, el middleware ni layout.html, las pruebas fallan porque la consulta no lee pm.role ni el EXISTS y la estructura común no muestra el rol. "sin integrante" pasa, como corresponde. --
+$ go test -count=1 -p 1 -run "TestPostgreSQLContextStore_ResolveContext|TestContexto_RolEnLaEstructuraComun" ./src/web/...
+--- FAIL: TestContexto_RolEnLaEstructuraComun (0.08s)
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/Ana,_Scrum_Master (0.03s)
+        member_role_context_test.go:41: se esperaba "Integrante: <strong>Ana 1793593443453198462 (Scrum Master)</strong>" en la estructura común (estado 200)
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/Beto,_Integrante (0.02s)
+        member_role_context_test.go:56: se esperaba "Integrante: <strong>Beto 1793593443485431694 (Integrante)</strong>" en la estructura común
+    --- FAIL: TestContexto_RolEnLaEstructuraComun/rol_no_reconocido_se_muestra_como_Integrante (0.02s)
+        member_role_context_test.go:87: un rol no reconocido debía mostrarse como "Integrante: <strong>Beto 1793593443519083805 (Integrante)</strong>"
+--- FAIL: TestPostgreSQLContextStore_ResolveContext (0.01s)
+    --- FAIL: TestPostgreSQLContextStore_ResolveContext/proyecto_e_integrante_válidos (0.00s)
+        postgres_context_store_integration_test.go:183: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443535705543 MemberBelongs:true MemberName:Ana 1793593443535705543 MemberRole:Integrante HasScrumMaster:false}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443535705543 MemberBelongs:true MemberName:Ana 1793593443535705543 MemberRole: HasScrumMaster:false}
+--- FAIL: TestPostgreSQLContextStore_ResolveContextConRol (0.02s)
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_Ana (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Ana 1793593443548810036 MemberRole:Scrum Master HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Ana 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_Beto (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Beto 1793593443548810036 MemberRole:Integrante HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:true MemberName:Beto 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_sin_integrante (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Beta»,_su_integrante (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto B 1793593443548810036 MemberBelongs:true MemberName:Carla 1793593443548810036 MemberRole:Integrante HasScrumMaster:false}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto B 1793593443548810036 MemberBelongs:true MemberName:Carla 1793593443548810036 MemberRole: HasScrumMaster:false}
+    --- FAIL: TestPostgreSQLContextStore_ResolveContextConRol/«Alfa»,_integrante_de_«Beta»_(no_pertenece) (0.00s)
+        postgres_context_store_integration_test.go:221: se esperaba {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:true}, se obtuvo {ProjectExists:true ProjectName:HU20b Proyecto A 1793593443548810036 MemberBelongs:false MemberName: MemberRole: HasScrumMaster:false}
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.137s
+FAIL
+
