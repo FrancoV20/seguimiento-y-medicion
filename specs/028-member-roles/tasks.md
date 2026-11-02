@@ -191,7 +191,7 @@ Bloque E; no subir la rama entre T024 y T032.
 
 ### Pruebas (RED)
 
-- [ ] T025 [E10, E11] Escribir `src/cmd/set-role/main_test.go`:
+- [x] T025 [E10, E11] Escribir `src/cmd/set-role/main_test.go`:
   - `TestAssignRole_AsignaScrumMaster`: con un doble de `role.Store`, "Beto ahora es Scrum Master de «Alfa»" y código
     0; también "Ana ahora es Integrante de «Alfa»";
   - `TestAssignRole_Rechazos`: proyecto inexistente → "El proyecto no existe"; integrante de otro proyecto →
@@ -202,7 +202,7 @@ Bloque E; no subir la rama entre T024 y T032.
     - `-rol "Product Owner"` → "El rol no es válido" y código 1, sin conectarse;
     - sin `DATABASE_URL` → el mensaje de `LoadConfig` y código 1;
   - `TestRun_AsignaRol` (integración; se omite sin `DATABASE_URL`): Beto en «Alfa» pasa a 'Scrum Master' en la base.
-- [ ] T026 Ejecutar T025, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
+- [x] T026 Ejecutar T025, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
   (sección "Comando").
 
 ### Implementación (GREEN)

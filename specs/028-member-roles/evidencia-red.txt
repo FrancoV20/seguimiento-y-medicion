@@ -294,3 +294,73 @@ FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.556s
 FAIL
 
+== Comando (T025): src/cmd/set-role no compila porque el comando no existe (faltan run y assignRole) ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e ./src/cmd/set-role/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role [github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role.test]
+src/cmd/set-role/main_test.go:100:12: undefined: assignRole
+src/cmd/set-role/main_test.go:138:12: undefined: assignRole
+src/cmd/set-role/main_test.go:191:15: undefined: run
+src/cmd/set-role/main_test.go:205:15: undefined: run
+src/cmd/set-role/main_test.go:217:14: undefined: run
+src/cmd/set-role/main_test.go:227:14: undefined: run
+src/cmd/set-role/main_test.go:285:10: undefined: run
+src/cmd/set-role/main_test.go:295:13: undefined: run
+src/cmd/set-role/main_test.go:307:13: undefined: run
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con run y assignRole que no hacen nada y devuelven 0, las cuatro pruebas fallan (no hay mensajes, códigos ni cambios en la base). --
+$ go test -count=1 -p 1 -v ./src/cmd/set-role/...
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Beto ahora es Scrum Master de «Alfa»"
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Ana ahora es Integrante de «Alfa»"
+    main_test.go:102: código 0, salida ""; se esperaba 0 y "Ana ahora es Scrum Master de «Alfa»"
+--- FAIL: TestAssignRole_AsignaScrumMaster (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Beto_pasa_a_Scrum_Master (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Ana_pasa_a_Integrante (0.00s)
+    --- FAIL: TestAssignRole_AsignaScrumMaster/Ana_ya_era_Scrum_Master (0.00s)
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El proyecto no existe"
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El integrante no pertenece al proyecto"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "El integrante no pertenece al proyecto"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "No se pudo acceder a la base de datos"
+    main_test.go:140: código 0, salida ""; se esperaba 1 y solo "No se pudo acceder a la base de datos"
+    main_test.go:143: SetMemberRole se llamó 0 veces; se esperaban 1
+--- FAIL: TestAssignRole_Rechazos (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/proyecto_inexistente (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/integrante_de_otro_proyecto (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/integrante_inexistente (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/falla_al_leer_el_proyecto (0.00s)
+    --- FAIL: TestAssignRole_Rechazos/falla_al_guardar (0.00s)
+    main_test.go:192: []: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "11"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "abc" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "0" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "-1" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "2147483648" "-integrante" "11" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "x" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "0" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "2147483648" "-rol" "Scrum Master"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-proyecto" "1" "-integrante" "11" "-rol" "Scrum Master" "sobra"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:192: ["-otro" "1"]: código 0, salida ""; se esperaba 2 y el uso
+    main_test.go:206: -rol "Product Owner": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "scrum master": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "SM": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:206: -rol "   ": código 0, salida ""; se esperaba 1 y «El rol no es válido»
+    main_test.go:219: código 0, salida ""; se esperaba 1 y el mensaje de LoadConfig
+    main_test.go:230: código 0, salida ""; se esperaba 1 y el mensaje sin la dirección
+--- FAIL: TestRun_UsoYEntorno (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/opciones_faltantes_o_números_inválidos (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/rol_no_válido,_sin_conectarse (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/sin_DATABASE_URL (0.00s)
+    --- FAIL: TestRun_UsoYEntorno/base_inalcanzable (0.00s)
+    main_test.go:287: código 0, salida ""; se esperaba 0 y «Beto ahora es Scrum Master de «Alfa»»
+--- FAIL: TestRun_AsignaRol (0.02s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-role	0.029s
+FAIL
+
