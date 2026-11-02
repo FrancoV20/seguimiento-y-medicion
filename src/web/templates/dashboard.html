@@ -60,7 +60,7 @@
   <p>{{.TotalVelocity}}</p>
   <p>{{.AverageVelocity}}</p>
   <p>{{.Deviation}}</p>
-  {{if .PartialWarning}}<div class="alert alert-warning" role="status">{{.PartialWarning}}</div>{{end}}
+  {{if .PartialWarning}}<div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">{{.PartialWarning}}</span></div>{{end}}
   {{else}}
   <p class="muted">{{.NoDataMessage}}</p>
   {{end}}
