@@ -190,6 +190,8 @@ func (m *consensoMundo) laAplicacion(t *testing.T) *consensoApp {
 	}
 	app := &consensoApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
+	// HU-28: conducir las rondas es del Scrum Master; Ana lo es en «Alfa».
+	configurarScrumMaster(t, m.db, m.alfa, m.ana)
 	return app
 }
 

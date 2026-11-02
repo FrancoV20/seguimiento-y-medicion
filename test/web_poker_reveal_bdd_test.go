@@ -145,6 +145,8 @@ func (m *revelacionMundo) laAplicacion(t *testing.T) *revelacionApp {
 	}
 	app := &revelacionApp{servidor: httptest.NewServer(srv.Handler()), db: m.db}
 	t.Cleanup(app.servidor.Close)
+	// HU-28: cerrar la ronda es del Scrum Master; Ana lo es en «Alfa».
+	configurarScrumMaster(t, m.db, m.alfa, m.ana)
 	return app
 }
 

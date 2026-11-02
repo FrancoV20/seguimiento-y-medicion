@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/backlog"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 )
 
@@ -52,9 +53,17 @@ func (s sprintHandlerContextStore) ListMembers(context.Context, int64) ([]Member
 	return nil, nil
 }
 
-func (s sprintHandlerContextStore) ResolveContext(_ context.Context, projectID, _ int64) (ResolvedContext, error) {
+// sprintHandlerScrumMasterID es el integrante de prueba que el doble resuelve como Scrum Master
+// de cualquier proyecto (HU-28): las acciones de Sprints están reservadas al Scrum Master.
+const sprintHandlerScrumMasterID = 900
+
+func (s sprintHandlerContextStore) ResolveContext(_ context.Context, projectID, memberID int64) (ResolvedContext, error) {
 	name, exists := s.projects[projectID]
-	return ResolvedContext{ProjectExists: exists, ProjectName: name}, nil
+	rc := ResolvedContext{ProjectExists: exists, ProjectName: name, HasScrumMaster: exists}
+	if exists && memberID == sprintHandlerScrumMasterID {
+		rc.MemberBelongs, rc.MemberName, rc.MemberRole = true, "Scrum Master de prueba", role.RoleScrumMaster
+	}
+	return rc, nil
 }
 
 // MemberCredential completa el ContextStore ampliado por HU-27 (T016).
@@ -236,6 +245,14 @@ func (a *sprintHandlerTestApp) selectProject(t *testing.T, projectID int64) {
 	if response.StatusCode != http.StatusSeeOther {
 		t.Fatalf("seleccionar proyecto: se esperaba 303, se obtuvo %d", response.StatusCode)
 	}
+	// HU-28: se identifica como el Scrum Master de prueba con su cookie firmada (el doble no pide
+	// contraseña).
+	u, err := url.Parse(a.server.URL)
+	if err != nil {
+		t.Fatalf("no se pudo analizar la URL de prueba: %v", err)
+	}
+	a.client.Jar.SetCookies(u, []*http.Cookie{{Name: CookieMember,
+		Value: SignedContextValue(CookieMember, sprintHandlerScrumMasterID), Path: "/"}})
 }
 
 func (a *sprintHandlerTestApp) get(t *testing.T) (*http.Response, string) {
@@ -980,6 +997,16 @@ func newSprintAssignmentDBFixture(t *testing.T, withOtherProject bool) *sprintAs
 	response.Body.Close()
 	if response.StatusCode != http.StatusSeeOther {
 		t.Fatalf("seleccionar proyecto: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
+	// HU-28: se identifica como Scrum Master del proyecto, con la contraseña de prueba de HU-27.
+	scrumMaster := addTestScrumMaster(t, db, fixture.projectID, fmt.Sprintf("SM HU23 %d", stamp))
+	response, err = fixture.client.PostForm(ts.URL+pathSelectMember, memberLoginValues(strconv.FormatInt(scrumMaster, 10)))
+	if err != nil {
+		t.Fatalf("no se pudo identificar al Scrum Master de prueba: %v", err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("identificarse: se esperaba 303, se obtuvo %d", response.StatusCode)
 	}
 	return fixture
 }

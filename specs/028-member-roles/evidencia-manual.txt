@@ -1,0 +1,74 @@
+HU-28 — Evidencia de verificación manual (T035)
+Fecha: 2026-11-02
+Realizó: Claude (asistente de IA), a pedido de Giuliana Bettiol, que corrió los comandos (`set-password`, `set-role` y
+`docker compose stop`/`start`) y revisó el resultado. HU-28 es de Adriel Alonso.
+
+Entorno
+- Código de la rama HU-28 en el commit b8a388e, en la PC de Giuliana (Go 1.27.1, Windows).
+- Servidor con `go run ./src/cmd/server` en `ADDR=:8082`, contra una base nueva `hu28_verif` en el contenedor de
+  Docker del proyecto (PostgreSQL 16), con las migraciones 001 a 016. La base de trabajo de siempre no se tocó.
+- Integrantes cargados por SQL en la base nueva: Ana (1), Beto (2), Caro (3) y Dani (4). Sus contraseñas de prueba se
+  configuraron con `go run ./src/cmd/set-password` (HU-27).
+
+Método
+- Recorrido desde el navegador de la aplicación, con la sesión de cada integrante identificado en `/contexto/integrante`
+  con su contraseña. Se registró el código HTTP de cada envío.
+- Datos cargados desde la aplicación: «Alfa» (id 1: Ana, Beto y Caro) y «Beta» (id 2: Dani) en /proyectos; «Login» y
+  «Perfil» en el Backlog de «Alfa» y «Reportes» en el de «Beta».
+- "Cerrar Sprint" (escenarios 3, 2 y 10) se probó haciendo clic en el botón de /cierre. Los demás envíos que la
+  pantalla ofrece, o que no ofrece porque falta un Sprint o una ronda en el estado justo, se hicieron con `fetch`
+  desde la misma página y con la sesión del integrante, con los nombres de campo de los formularios.
+- Los Sprints quedaron con los números 1 y 2: el Sprint 1 cumple el papel del "Sprint 2 en curso" de quickstart.md
+  en los escenarios 3, 4, 8 y 10, y el Sprint 2 se usó para el escenario 2.
+- Antes del paso 4 de quickstart.md (ningún Scrum Master): Ana (Integrante) intentó crear un Sprint en «Alfa» →
+  403 "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles".
+- Roles antes de asignar (consulta del paso 2): los cuatro como "Integrante".
+
+Escenarios
+1. Rol visible: PASÓ. `set-role -proyecto 1 -integrante 1 -rol "Scrum Master"` → "Ana ahora es Scrum Master de
+   «Alfa»". Sin volver a identificarse, la estructura común pasó de "Integrante: Ana (Integrante)" a "Integrante: Ana
+   (Scrum Master)"; Beto, Caro y Dani se ven como "(Integrante)".
+2. El Scrum Master cierra el Sprint: PASÓ. Ana creó el Sprint 2 con «Perfil» y lo cerró con "Cerrar Sprint": "Sprint
+   2 cerrado correctamente. Historias devueltas al Backlog: 1"; aparece en Sprints anteriores.
+3. Un integrante no puede cerrar el Sprint: PASÓ. Beto, clic en "Cerrar Sprint" → 403 "Acción reservada al Scrum
+   Master" / "Esta acción la puede hacer solo el Scrum Master del proyecto"; el Sprint 1 siguió activo.
+4. Un integrante no puede crear Sprints ni asignar historias: PASÓ. Beto: crear un Sprint, agregar «Perfil» y quitar
+   «Login» → 403 con el mismo mensaje cada uno; el Sprint 1 siguió solo con «Login».
+5. Un integrante no puede modificar el proyecto: PASÓ. Caro: guardar «Alfa» como «Alfa modificado» → 403 con el
+   mismo mensaje; la lista de proyectos sigue mostrando «Alfa» con 3 integrantes.
+6. Un integrante no puede conducir el Planning Poker: PASÓ. Con la ronda 1 de «Login» abierta por Ana, Beto: cerrar la
+   ronda y abrir una ronda de «Perfil» → 403. Con la ronda cerrada por Ana, Beto: "Nueva ronda" y "Registrar
+   estimación" (5) → 403. La ronda 1 siguió cerrada sin ronda 2 y «Login» conservó sus 3 Story Points.
+7. Un integrante sí puede votar y trabajar: PASÓ. Beto: votar 5 en la ronda 1 de «Login» → "Voto registrado"; mover
+   «Login» a En progreso en el Tablero → "La historia pasó a En progreso"; registrar 3 h de esfuerzo → "Esfuerzo
+   registrado correctamente".
+8. Acción de Scrum Master sin identificarse: PASÓ. "Salir" → "Cerraste tu identificación"; el envío a /cierre
+   redirige a `/contexto/integrante?volver_a=%2Fcierre` con "Para esta acción primero tenés que identificarte como
+   integrante del proyecto"; el Sprint 1 siguió activo.
+9. Proyecto sin Scrum Master: PASÓ. Dani en «Beta»: crear un Sprint → 403 "Este proyecto no tiene Scrum Master
+   asignado. Pedí que se configure con el comando de roles"; «Beta» sigue sin Sprint activo.
+10. Asignar el rol: PASÓ. Con Beto identificado como Integrante, `set-role -proyecto 1 -integrante 2 -rol "Scrum
+    Master"` → "Beto ahora es Scrum Master de «Alfa»". Sin volver a identificarse, Beto cerró el Sprint 1 con "Cerrar
+    Sprint": "Sprint 1 cerrado correctamente. Historias devueltas al Backlog: 1".
+11. Rol inválido al asignar: PASÓ. `-proyecto 1 -integrante 2 -rol "Product Owner"` → "El rol no es válido";
+    `-proyecto 1 -integrante 4` (Dani, que es de «Beta») → "El integrante no pertenece al proyecto"; `-proyecto
+    999999` → "El proyecto no existe"; los tres terminan con `exit status 1` y la consulta de roles no cambió.
+12. Error al verificar el rol: PASÓ. Con `docker compose stop`, el envío de "Crear Sprint" como Ana → 503 "Servicio no
+    disponible" / "El servicio no está disponible temporalmente", sin detalles. Con `docker compose start`, Sprints
+    muestra "No hay un Sprint activo" y Sprints anteriores solo los Sprints 1 y 2: no se creó nada.
+13. Modificar un proyecto que no es el activo: PASÓ. Ana, Scrum Master de «Alfa» con «Alfa» activo, guardar «Beta»
+    (`/proyectos/2/modificar`) → 403 "Para modificar este proyecto, elegilo como proyecto activo e identificate como
+    su Scrum Master"; lo mismo con `/proyectos/999999/modificar`. «Beta» no cambió.
+
+Resultado: 13/13 escenarios pasaron.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama HU-28 en el commit ________.
+1. Después de migrar, todos figuran como "Integrante" y nadie puede crear un Sprint ("no tiene Scrum Master"): ______
+2. `set-role` da el rol a un integrante y la estructura común muestra "Nombre (Scrum Master)" sin reidentificarse: ______
+3. Un integrante recibe 403 al cerrar el Sprint, crear un Sprint, agregar o quitar historias y modificar el proyecto: ______
+4. Un integrante recibe 403 al abrir, cerrar o empezar una ronda y al registrar la estimación: ______
+5. Un integrante sí puede votar, mover historias en el Tablero y registrar esfuerzo: ______
+6. El Scrum Master de un proyecto no puede modificar otro proyecto desde el activo: ______
+7. `set-role` con rol, integrante o proyecto inválidos informa el motivo y no cambia nada: ______

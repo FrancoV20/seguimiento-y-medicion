@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 )
 
 // Cookies de contexto (HU-20b, T007).
@@ -34,10 +36,12 @@ type MemberSummary struct {
 
 // ResolvedContext es el resultado de validar las cookies contra la base.
 type ResolvedContext struct {
-	ProjectExists bool
-	ProjectName   string
-	MemberBelongs bool
-	MemberName    string
+	ProjectExists  bool
+	ProjectName    string
+	MemberBelongs  bool
+	MemberName     string
+	MemberRole     role.Role // HU-28: rol del integrante en el proyecto; vacío si no pertenece
+	HasScrumMaster bool      // HU-28: el proyecto tiene al menos un Scrum Master
 }
 
 // readIDCookie lee un identificador de una cookie de contexto firmada. Devuelve present=true si la

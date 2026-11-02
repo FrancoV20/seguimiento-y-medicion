@@ -68,13 +68,14 @@ func RegisterPlanningPoker(s *Server, actions PokerActions, catalog PokerCatalog
 	return s.Register(
 		Section{Name: TitlePoker, Path: pathPoker, RequiresProject: true, RequiresMember: true},
 		Routes{
+			// HU-28: conducir las rondas es del Scrum Master; votar sigue libre.
 			"GET " + pathPoker:              http.HandlerFunc(h.show),
-			"POST " + pathPoker + "/abrir":  http.HandlerFunc(h.open),
+			"POST " + pathPoker + "/abrir":  s.RequireScrumMaster(http.HandlerFunc(h.open)),
 			"POST " + pathPoker + "/votar":  http.HandlerFunc(h.vote),
-			"POST " + pathPoker + "/cerrar": http.HandlerFunc(h.close),
+			"POST " + pathPoker + "/cerrar": s.RequireScrumMaster(http.HandlerFunc(h.close)),
 			// HU-18
-			"POST " + pathPoker + "/nueva-ronda": http.HandlerFunc(h.nextRound),
-			"POST " + pathPoker + "/estimacion":  http.HandlerFunc(h.agree),
+			"POST " + pathPoker + "/nueva-ronda": s.RequireScrumMaster(http.HandlerFunc(h.nextRound)),
+			"POST " + pathPoker + "/estimacion":  s.RequireScrumMaster(http.HandlerFunc(h.agree)),
 		},
 	)
 }

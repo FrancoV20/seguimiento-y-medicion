@@ -31,8 +31,9 @@ func RegisterClose(server *Server, service *sprint.CloseSprintService, catalog B
 	return server.Register(
 		Section{Name: "Cierre de Sprint", Path: closePath, RequiresProject: true},
 		Routes{
+			// HU-28: cerrar el Sprint es del Scrum Master.
 			"GET " + closePath:  http.HandlerFunc(handler.get),
-			"POST " + closePath: http.HandlerFunc(handler.post),
+			"POST " + closePath: server.RequireScrumMaster(http.HandlerFunc(handler.post)),
 		},
 	)
 }

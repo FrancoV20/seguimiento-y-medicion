@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/FrancoV20/seguimiento-y-medicion/src/auth"
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 )
 
 // T009: PostgreSQLContextStore contra PostgreSQL real.
@@ -158,7 +159,8 @@ func TestPostgreSQLContextStore_ResolveContext(t *testing.T) {
 		want                ResolvedContext
 	}{
 		{"proyecto e integrante válidos", fx.projectA, fx.ana,
-			ResolvedContext{ProjectExists: true, ProjectName: fx.nameA, MemberBelongs: true, MemberName: fx.anaName}},
+			ResolvedContext{ProjectExists: true, ProjectName: fx.nameA, MemberBelongs: true, MemberName: fx.anaName,
+				MemberRole: role.RoleMember}}, // HU-28: todo integrante tiene rol, por defecto "Integrante"
 		{"sin integrante", fx.projectA, 0,
 			ResolvedContext{ProjectExists: true, ProjectName: fx.nameA}},
 		{"integrante de otro proyecto", fx.projectA, fx.carla,
@@ -170,6 +172,44 @@ func TestPostgreSQLContextStore_ResolveContext(t *testing.T) {
 		{"proyecto inexistente", MaxID, fx.ana, ResolvedContext{}},
 		{"proyecto negativo", -1, fx.ana, ResolvedContext{}},
 		{"proyecto fuera de rango", 99999999999, fx.ana, ResolvedContext{}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := store.ResolveContext(context.Background(), tc.projectID, tc.memberID)
+			if err != nil {
+				t.Fatalf("no debía haber error, se obtuvo: %v", err)
+			}
+			if got != tc.want {
+				t.Errorf("se esperaba %+v, se obtuvo %+v", tc.want, got)
+			}
+		})
+	}
+}
+
+// HU-28, T013: ResolveContext suma el rol del integrante identificado y si el proyecto tiene algún
+// Scrum Master, en la misma consulta (escenarios 1 y 9). «Alfa» = proyecto A (Ana Scrum Master,
+// Beto Integrante); «Beta» = proyecto B (Carla, sin Scrum Master).
+func TestPostgreSQLContextStore_ResolveContextConRol(t *testing.T) {
+	db := openContextTestDB(t)
+	fx := newContextFixture(t, db)
+	setTestScrumMaster(t, db, fx.projectA, fx.ana)
+	store := NewPostgreSQLContextStore(db)
+
+	cases := []struct {
+		name                string
+		projectID, memberID int64
+		want                ResolvedContext
+	}{
+		{"«Alfa», Ana", fx.projectA, fx.ana, ResolvedContext{ProjectExists: true, ProjectName: fx.nameA,
+			MemberBelongs: true, MemberName: fx.anaName, MemberRole: role.RoleScrumMaster, HasScrumMaster: true}},
+		{"«Alfa», Beto", fx.projectA, fx.beto, ResolvedContext{ProjectExists: true, ProjectName: fx.nameA,
+			MemberBelongs: true, MemberName: fx.betoName, MemberRole: role.RoleMember, HasScrumMaster: true}},
+		{"«Alfa», sin integrante", fx.projectA, 0, ResolvedContext{ProjectExists: true, ProjectName: fx.nameA,
+			HasScrumMaster: true}},
+		{"«Beta», su integrante", fx.projectB, fx.carla, ResolvedContext{ProjectExists: true, ProjectName: fx.nameB,
+			MemberBelongs: true, MemberName: fx.carlaName, MemberRole: role.RoleMember}},
+		{"«Alfa», integrante de «Beta» (no pertenece)", fx.projectA, fx.carla, ResolvedContext{ProjectExists: true,
+			ProjectName: fx.nameA, HasScrumMaster: true}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
