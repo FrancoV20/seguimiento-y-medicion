@@ -1,0 +1,81 @@
+MEJORA-01 — Diseño visual consistente (Issue #63)
+Fecha: 2026-11-01 (tema oscuro y tablas: 2026-11-02). Rama: Mejora-01, sobre main en 04f1f0c (después de HU-09).
+Realizó: Claude (asistente de IA), a pedido de Juan Ignacio Sanchez, que revisó el resultado y corrió las
+pruebas en su PC (Go 1.27.1).
+
+Qué cambió
+- src/web/static/app.css: sistema de diseño único, con tema oscuro gris carbón (#1b1d21, no negro puro)
+  y bordes, enlaces, botones y foco en el verde de WhatsApp (#25d366; bordes en #25a35a).
+  color-scheme: dark hace que los controles nativos (listas, calendario) también se vean oscuros.
+  - Tokens en :root: colores, tipografía del sistema operativo, espaciado, bordes y sombra.
+  - Estilos por elemento, para que todas las pantallas (y las nuevas) queden iguales sin agregar clases:
+    títulos, enlaces, tablas, formularios (campos, select, textarea, fieldset), botones (principal,
+    secundario y deshabilitado), listas de definiciones, bloques/tarjetas, Tablero, Planning Poker,
+    listas de Sprints y gráficos del Dashboard.
+  - Sección @media (max-width: 640px) para pantallas angostas.
+- src/web/templates/dashboard.html y metrics.html: la alerta "Cálculo parcial" no tenía etiqueta de texto.
+  Se agregó "Advertencia:" con el mismo marcado que el resto de los mensajes (Escenario 4). Es el único
+  cambio en plantillas; el texto del mensaje no cambió y las pruebas de HU-08 y HU-25 siguen igual.
+- src/web/design_test.go (nuevo): protege las reglas del diseño común (tokens, gráficos, sin recursos
+  externos, alertas con etiqueta y tablas en pantalla angosta). Con las plantillas anteriores falla en
+  dashboard.html y metrics.html; con las nuevas pasa.
+- src/web/templates/home.html, src/web/home.go y render.go (función homeGroups): nueva pantalla de
+  Inicio (Escenario 7). layout.html no se modificó.
+
+Ciclo Red: evidencia-red.txt, sección "Diseño común" (Escenarios 1 a 6) y sección "Inicio" (Escenario 7).
+
+Escenarios de la Issue
+1. Diseño común: PASÓ. Recorridas las 22 pantallas a 1280 px y a 400 px (lista abajo): misma
+   tipografía, colores, menú, tablas, formularios y botones. Las acciones sueltas de una tabla
+   (Editar, Modificar) se ven como botón secundario, igual que el botón deshabilitado que las reemplaza.
+2. Sin cambios de comportamiento: PASÓ. go test -count=1 -p 1 ./... da ok en los 17 paquetes (con HU-27 y HU-28 integradas); no se
+   modificó ninguna prueba existente (solo se agregó design_test.go).
+3. Sin internet: PASÓ. app.css no usa @import, url(), @font-face ni direcciones http(s); la fuente es
+   la del sistema operativo y no hay JavaScript. Lo verifican TestStatic_SirveLosEstilosLocales,
+   TestEscenarioWeb_SinRecursosExternos y TestDesign_SinRecursosExternos.
+4. Mensajes accesibles: PASÓ. Todas las alertas tienen etiqueta de texto (TestDesign_AlertasConEtiqueta).
+   Contraste WCAG del tema oscuro, medido (mínimo AA 4,5:1 para texto y 3:1 para bordes y barras):
+     texto/fondo 14,00 · texto/superficie 12,43 · texto/fila resaltada 10,29 · secundario/fondo 7,72
+     secundario/superficie 6,85 · encabezado de tabla 6,07 · enlace verde 7,55 · menú activo 6,25
+     botón (texto oscuro sobre verde) 8,68 · botón deshabilitado 6,07 · éxito 11,23 · error 11,28
+     advertencia 10,80 · título de error 5,90 · error de campo 10,97 · borde verde 4,61 · barras 7,55
+5. Pantalla chica: PASÓ. A 400 px de ancho ninguna pantalla tiene desplazamiento horizontal de la
+   página (medido con scrollWidth − clientWidth = 0 en las 22). Antes del cambio desbordaban
+   Backlog (214 px), Editar historia (214 px), Estimaciones (98 px), Proyectos (54 px) y Defectos
+   (334 px). Las tablas anchas ahora se desplazan dentro de su propio recuadro.
+   Tablas: más espacio en las celdas (.9rem × 1,1rem), encabezados en mayúsculas pequeñas, filas
+   alternadas y resaltadas al pasar el mouse. Las de 7 o más columnas usan un espaciado algo más
+   compacto y, si igual no entran, se desplazan dentro de su recuadro (a 1280 px ninguna tabla queda
+   cortada). Los campos dentro de una celda (Estimaciones) son chicos y van al lado de su botón.
+6. Gráficos del Dashboard: PASÓ. Las barras usan var(--chart-1) y los textos var(--chart-text) desde
+   app.css, que tiene prioridad sobre el color fijo del SVG; el gráfico se adapta al ancho disponible.
+
+7. Inicio (ampliación pedida el 02/11, especificada en inicio.md): PASÓ. Bienvenida con degradé y la
+   etiqueta "Scrum · SDD · BDD · TDD", accesos "Elegir proyecto" (o "Cambiar proyecto") y "Crear un
+   proyecto", "Cómo se trabaja" con 5 pasos, secciones agrupadas en Planificar, Ejecutar y Medir (con
+   ícono, nombre y descripción) y el pie de la materia. Ciclo TDD: evidencia-red.txt (Red) y luego
+   TestHome*, TestHomeGroups* y TestWebHomeBDD_InicioConSeccionesDiferenciadas en verde. Los íconos SVG
+   están en la plantilla, así el código no marca HTML como seguro (TestEscape_NingunCodigoMarcaDatosComoSeguros).
+   A 1280 y 400 px, sin desplazamiento horizontal.
+
+Pantallas recorridas (datos cargados desde la interfaz: proyecto, 6 historias, Sprint 1 cerrado,
+Sprint 2 activo, horas estimadas y reales, 2 defectos y una ronda de Planning Poker)
+  Inicio, Backlog, Editar historia, Estimaciones, Proyectos, Modificar proyecto, Tablero,
+  Planning Poker, Registro de esfuerzo, Calidad y avance, Defectos, Sprints, Estado del proyecto,
+  Cierre de Sprint, Métricas del Sprint, Sprints anteriores, Detalle de un Sprint anterior,
+  Dashboard, Reportes, Elegir proyecto, Identificarme, página de error 404 y página 403 de
+  "Acción reservada al Scrum Master" (HU-28), con el rol del integrante en el encabezado.
+
+Entorno de verificación: entorno de Claude con PostgreSQL 16 y Go 1.24 (no se pudo descargar 1.27.1),
+con un reemplazo local de CrossOriginGuard solo para compilar. Navegador Chromium headless.
+Las capturas "antes" y "después" se adjuntan al PR.
+
+Recorrido del revisor (DoD: verificación manual con la aplicación en ejecución)
+Realizó: ______________________ (integrante que aprueba el PR)
+Fecha: ____/____/2026, en su PC con la rama Mejora-01 en el commit ________.
+1. Inicio: bienvenida, "Cómo se trabaja" y secciones agrupadas en Planificar, Ejecutar y Medir: ______
+2. Backlog, Estimaciones y Defectos: tablas con espacio, sin columnas cortadas a 1280 px: ______
+3. Una pantalla a 400 px de ancho (achicando la ventana): sin desplazamiento horizontal de la página: ______
+4. Un mensaje de éxito, error o advertencia: se lee con su etiqueta ("Éxito:", "Error:", "Advertencia:"): ______
+5. Dashboard: las barras de los gráficos usan el verde del diseño: ______
+6. Sin internet (desconectando la red): estilos y pantallas cargan igual: ______

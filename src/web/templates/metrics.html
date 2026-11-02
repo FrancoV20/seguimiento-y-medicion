@@ -18,7 +18,7 @@
   <h2 id="metricas-sprint-titulo">{{.SelectedLabel}}</h2>
   <p>{{.SelectedGoal}}</p>
   <p class="muted">{{.SelectedDates}}</p>
-  {{if .PartialAlert}}<div class="alert alert-warning" role="status">{{.PartialAlert}}</div>{{end}}
+  {{if .PartialAlert}}<div class="alert alert-warning" role="status"><strong class="alert-label">Advertencia:</strong> <span class="alert-text">{{.PartialAlert}}</span></div>{{end}}
   <dl class="metrics-values">
     <dt>Velocidad</dt>
     <dd>{{.VelocityText}}</dd>

@@ -1,0 +1,63 @@
+Evidencia del ciclo Red de MEJORA-01: secciones Diseño común (Escenarios 1 a 6) e Inicio (Escenario 7)
+
+================================================================================
+Sección Diseño común (Escenarios 1 a 6) — 2026-11-02 13:50 (UTC-3) — reconstruida después del cambio
+Comando: go test -count=1 -v -run 'TestDesign' ./src/web/
+Árbol: rama Mejora-01 en 8ec0c52 con app.css, dashboard.html y metrics.html tal como estaban en 04f1f0c
+(main antes de la mejora). Falla esperada: faltan los tokens del diseño, la regla de las barras del
+Dashboard, la sección @media (max-width: 640px) y la etiqueta de las alertas "Cálculo parcial".
+Nota: design_test.go se escribió junto con el CSS (82e3a51), así que esta salida se generó después;
+reproduce el estado anterior para dejar constancia del Red de los escenarios 1 a 6.
+TestDesign_SinRecursosExternos pasa también antes: el CSS anterior tampoco usaba recursos externos
+(Escenario 3 es una prueba de regresión, no una funcionalidad nueva).
+================================================================================
+=== RUN   TestDesign_TokensComunesYGraficos
+    design_test.go:27: app.css debe definir el token "--font:" en :root
+    design_test.go:27: app.css debe definir el token "--chart-1:" en :root
+    design_test.go:31: las barras del Dashboard deben usar el color del diseño (var(--chart-1))
+--- FAIL: TestDesign_TokensComunesYGraficos (0.00s)
+=== RUN   TestDesign_SinRecursosExternos
+--- PASS: TestDesign_SinRecursosExternos (0.00s)
+=== RUN   TestDesign_AlertasConEtiqueta
+    design_test.go:58: templates/dashboard.html: alerta sin etiqueta de texto (alert-label): <div class="alert alert-warning" role="status">{{.PartialWarning}}</div>
+    design_test.go:58: templates/metrics.html: alerta sin etiqueta de texto (alert-label): <div class="alert alert-warning" role="status">{{.PartialAlert}}</div>
+--- FAIL: TestDesign_AlertasConEtiqueta (0.00s)
+=== RUN   TestDesign_PantallaAngosta
+    design_test.go:73: app.css debe tener la sección @media (max-width: 640px)
+--- FAIL: TestDesign_PantallaAngosta (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.008s
+FAIL
+
+================================================================================
+Sección Inicio — 2026-11-02 12:40 (UTC-3) — rama Mejora-01 en df56e3f
+Comando: go test -count=1 -p 1 -v -run 'TestHome|TestWebHomeBDD' ./src/web/ ./test/
+Falla esperada: homeGroups no existe y home.html todavía es la versión anterior.
+================================================================================
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/home_test.go:31:30: undefined: homeGroup
+src/web/home_test.go:46:12: undefined: homeGroups
+src/web/home_test.go:80:13: undefined: homeGroups
+src/web/home_test.go:89:12: undefined: homeGroups
+src/web/home_test.go:101:15: undefined: homeGroups
+src/web/home_test.go:104:15: undefined: homeGroups
+src/web/home_test.go:112:20: undefined: homeGroups
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+=== RUN   TestWebHomeBDD_InicioConSeccionesDiferenciadas
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Bienvenido a Software Metrics &amp; Estimation"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Scrum · SDD · BDD · TDD"
+    web_home_bdd_test.go:50: el Inicio debía mostrar ">Crear un proyecto</a>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Cómo se trabaja"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Trabajo diario"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "Cierre y métricas"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Planificar</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Ejecutar</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "<h3>Medir</h3>"
+    web_home_bdd_test.go:50: el Inicio debía mostrar "UTN FRSR · Ingeniería y Calidad de Software · 2026"
+    web_home_bdd_test.go:65: la sección href="/proyectos" debía estar en su grupo, pero el grupo no se ve
+    web_home_bdd_test.go:65: la sección href="/tablero" debía estar en su grupo, pero el grupo no se ve
+    web_home_bdd_test.go:65: la sección href="/metricas" debía estar en su grupo, pero el grupo no se ve
+--- FAIL: TestWebHomeBDD_InicioConSeccionesDiferenciadas (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.008s
+FAIL
