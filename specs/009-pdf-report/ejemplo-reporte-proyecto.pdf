@@ -1,0 +1,122 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 4031 >>
+stream
+BT /F2 16 Tf 50 775.89 Td (Reporte del proyecto) Tj ET
+BT /F2 12 Tf 50 759.89 Td (Reporte parcial: hay un Sprint en curso) Tj ET
+BT /F1 10 Tf 50 746.89 Td (Proyecto: Alfa HU-09) Tj ET
+BT /F1 10 Tf 50 734.39 Td (Fechas: 18/08/2026 al 30/11/2026) Tj ET
+BT /F1 10 Tf 50 721.89 Td (Estado: En curso) Tj ET
+BT /F1 10 Tf 50 709.39 Td (Integrantes: Ana \(demo HU-09\), Beto \(demo HU-09\)) Tj ET
+BT /F1 10 Tf 50 696.89 Td (Generado: 01/11/2026 20:34) Tj ET
+BT /F2 12 Tf 50 672.39 Td (Avance) Tj ET
+0.9 g 50 652.14 230 15.25 re f 0 g
+BT /F2 9 Tf 52 656.39 Td (Estado) Tj ET
+BT /F2 9 Tf 202 656.39 Td (Historias) Tj ET
+BT /F1 9 Tf 52 641.14 Td (Pendiente) Tj ET
+BT /F1 9 Tf 202 641.14 Td (1) Tj ET
+0.8 G 0.5 w 50 636.89 m 545 636.89 l S 0 G
+BT /F1 9 Tf 52 625.89 Td (En Sprint) Tj ET
+BT /F1 9 Tf 202 625.89 Td (1) Tj ET
+0.8 G 0.5 w 50 621.64 m 545 621.64 l S 0 G
+BT /F1 9 Tf 52 610.64 Td (En progreso) Tj ET
+BT /F1 9 Tf 202 610.64 Td (1) Tj ET
+0.8 G 0.5 w 50 606.39 m 545 606.39 l S 0 G
+BT /F1 9 Tf 52 595.39 Td (Hecho) Tj ET
+BT /F1 9 Tf 202 595.39 Td (4) Tj ET
+0.8 G 0.5 w 50 591.14 m 545 591.14 l S 0 G
+BT /F1 10 Tf 50 577.14 Td (4 de 7 historias completadas \(57,14 %\)) Tj ET
+BT /F2 12 Tf 50 552.64 Td (Sprints) Tj ET
+0.9 g 50 521.14 495 26.5 re f 0 g
+BT /F2 9 Tf 52 536.64 Td (Sprint) Tj ET
+BT /F2 9 Tf 97 536.64 Td (Estado) Tj ET
+BT /F2 9 Tf 167 536.64 Td (Historias) Tj ET
+BT /F2 9 Tf 217 536.64 Td (Story) Tj ET
+BT /F2 9 Tf 217 525.39 Td (Points) Tj ET
+BT /F2 9 Tf 272 536.64 Td (Velocidad) Tj ET
+BT /F2 9 Tf 322 536.64 Td (Desviación) Tj ET
+BT /F2 9 Tf 432 536.64 Td (Defectos) Tj ET
+BT /F1 9 Tf 52 510.14 Td (Sprint 1) Tj ET
+BT /F1 9 Tf 97 510.14 Td (Finalizado) Tj ET
+BT /F1 9 Tf 167 510.14 Td (1 de 1) Tj ET
+BT /F1 9 Tf 217 510.14 Td (3 de 3) Tj ET
+BT /F1 9 Tf 272 510.14 Td (3) Tj ET
+BT /F1 9 Tf 322 510.14 Td (0,00 %) Tj ET
+BT /F1 9 Tf 432 510.14 Td (0 detectados y 0 resueltos) Tj ET
+0.8 G 0.5 w 50 505.89 m 545 505.89 l S 0 G
+BT /F1 9 Tf 52 494.89 Td (Sprint 2) Tj ET
+BT /F1 9 Tf 97 494.89 Td (Finalizado) Tj ET
+BT /F1 9 Tf 167 494.89 Td (3 de 4) Tj ET
+BT /F1 9 Tf 217 494.89 Td (10 de 18) Tj ET
+BT /F1 9 Tf 272 494.89 Td (10) Tj ET
+BT /F1 9 Tf 322 494.89 Td (+6,25 % \(cálculo parcial\)) Tj ET
+BT /F1 9 Tf 432 494.89 Td (2 detectados y 1 resuelto) Tj ET
+0.8 G 0.5 w 50 490.64 m 545 490.64 l S 0 G
+BT /F1 9 Tf 52 479.64 Td (Sprint 3) Tj ET
+BT /F1 9 Tf 97 479.64 Td (En curso: se) Tj ET
+BT /F1 9 Tf 97 468.39 Td (calcula al cerrar) Tj ET
+BT /F1 9 Tf 97 457.14 Td (el Sprint) Tj ET
+BT /F1 9 Tf 167 479.64 Td (—) Tj ET
+BT /F1 9 Tf 217 479.64 Td (—) Tj ET
+BT /F1 9 Tf 272 479.64 Td (—) Tj ET
+BT /F1 9 Tf 322 479.64 Td (—) Tj ET
+BT /F1 9 Tf 432 479.64 Td (—) Tj ET
+0.8 G 0.5 w 50 452.89 m 545 452.89 l S 0 G
+BT /F1 10 Tf 50 438.89 Td (Velocidad acumulada: 13 Story Points) Tj ET
+BT /F1 10 Tf 50 426.39 Td (Promedio: 6,50 Story Points por Sprint) Tj ET
+BT /F2 12 Tf 50 401.89 Td (Esfuerzo registrado) Tj ET
+BT /F1 10 Tf 50 386.89 Td (38 horas estimadas en total \(2 historias sin horas estimadas\)) Tj ET
+BT /F1 10 Tf 50 374.39 Td (30 horas registradas en total) Tj ET
+BT /F1 10 Tf 50 361.89 Td (Ana \(demo HU-09\): 23 h) Tj ET
+BT /F1 10 Tf 50 349.39 Td (Beto \(demo HU-09\): 7 h) Tj ET
+BT /F2 12 Tf 50 324.89 Td (Defectos) Tj ET
+BT /F1 10 Tf 50 309.89 Td (3 defectos registrados: 2 abiertos y 1 resuelto) Tj ET
+0.9 g 50 288.14 495 15.25 re f 0 g
+BT /F2 9 Tf 52 292.39 Td (Descripción) Tj ET
+BT /F2 9 Tf 252 292.39 Td (Severidad) Tj ET
+BT /F2 9 Tf 312 292.39 Td (Historia) Tj ET
+BT /F2 9 Tf 452 292.39 Td (Detectado en) Tj ET
+BT /F1 9 Tf 52 277.14 Td (La foto de perfil no se guarda) Tj ET
+BT /F1 9 Tf 252 277.14 Td (Media) Tj ET
+BT /F1 9 Tf 312 277.14 Td (Perfil) Tj ET
+BT /F1 9 Tf 452 277.14 Td (Sprint 2) Tj ET
+0.8 G 0.5 w 50 272.89 m 545 272.89 l S 0 G
+BT /F1 9 Tf 52 261.89 Td (El PDF sale en blanco) Tj ET
+BT /F1 9 Tf 252 261.89 Td (Crítica) Tj ET
+BT /F1 9 Tf 312 261.89 Td (Exportar) Tj ET
+BT /F1 9 Tf 452 261.89 Td (Sprint 3) Tj ET
+0.8 G 0.5 w 50 257.64 m 545 257.64 l S 0 G
+BT /F1 9 Tf 269.87 30 Td (Página 1 de 1) Tj ET
+
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000462 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+4545
+%%EOF

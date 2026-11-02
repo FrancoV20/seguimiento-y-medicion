@@ -390,23 +390,23 @@ el puerto, el servicio y la advertencia.
 
 ## Fase 7: Cierre
 
-- [ ] T047 REFACTOR y CI:
+- [x] T047 REFACTOR y CI:
   - revisar duplicación entre los dos reportes (textos, tablas, manejo de la advertencia y de los encabezados) y
     extraer funciones locales sin cambiar el comportamiento;
   - comprobar que ningún archivo de HU-03, HU-07, HU-08, HU-10, HU-12 ni HU-25 cambió y que no hay migraciones ni
     dependencias nuevas: `git diff --stat main` lista solo archivos nuevos y `main.go`, y `go.mod` no cambió;
   - `gofmt -l` sobre los archivos creados y `main.go` sin salida, `go vet ./...` limpio y `go test ./... -p 1 -race`
     en verde.
-- [ ] T048 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
+- [x] T048 Guardar `evidencia-pruebas.txt` con `go test -count=1 -p 1 -v ./...` completo en verde, y `cobertura.txt`
   con `go test -count=1 -p 1 -cover ./...`, verificando al menos 80% en `src/pdf` y en `src/report`.
-- [ ] T049 Verificación manual (`quickstart.md`): con la aplicación en ejecución, armar «Alfa» y «Beta», descargar los
+- [x] T049 Verificación manual (`quickstart.md`): con la aplicación en ejecución, armar «Alfa» y «Beta», descargar los
   PDF de los Sprints 1, 2 y 3 y los del proyecto («Alfa» con advertencia y «Beta» sin ella), y abrir cada uno en dos
   lectores distintos (Edge y Adobe Acrobat Reader): sin avisos de archivo dañado, acentos y "ñ" correctos, columnas
   sin textos superpuestos, saltos de página y "Página X de Y" correctos. Probar también las dos advertencias,
   "Cancelar", el 404 y el 503 con la base detenida. Guardar `specs/009-pdf-report/ejemplo-reporte-sprint.pdf` (Sprint
   2) y `specs/009-pdf-report/ejemplo-reporte-proyecto.pdf` («Alfa») y anotar en `evidencia-pruebas.txt` las versiones
   de los dos lectores.
-- [ ] T050 Cierre de la historia:
+- [x] T050 Cierre de la historia:
   - actualizar la tabla de trazabilidad de `spec.md` con los nombres reales de las pruebas y el manual breve de
     usuario con la sección "Reportes" (los dos reportes);
   - avisar a HU-08, HU-10, HU-12 y HU-25 que no se tocaron sus archivos, al equipo que `src/pdf` queda disponible y

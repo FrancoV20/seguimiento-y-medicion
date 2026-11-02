@@ -463,3 +463,56 @@ Los gráficos no necesitan JavaScript, y cada uno tiene al lado una tabla con lo
 todavía no tiene historias ni Sprints, la pantalla muestra solo **Aún no hay datos suficientes para calcular
 métricas**; si no hay Sprints finalizados, ese mensaje aparece en el bloque de velocidad y desviación y el resto se ve
 igual. Si hay un problema al leer los datos, se muestra la página de error de la aplicación, sin números parciales.
+
+## Reportes
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí **Reportes** en el menú (`http://localhost:8080/reportes`). Desde
+ahí se descargan dos reportes en PDF: el de un Sprint y el del proyecto. Los dos se arman en el momento con los datos y
+las métricas de la aplicación (no se guardan) y tienen "Página X de Y" al pie de cada página.
+
+### Reporte de un Sprint
+
+La lista muestra primero el Sprint en curso y después los finalizados, del más reciente al más antiguo, con su
+objetivo y su estado. Presioná **Exportar PDF** en el Sprint que quieras: se descarga `reporte-sprint-N.pdf` con:
+
+1. **Encabezado**: proyecto, Sprint, objetivo, fechas, estado y fecha y hora de generación.
+2. **Historias**: cada historia con su estado al cerrar el Sprint, Story Points, horas estimadas y horas reales; las
+   que no se terminaron dicen **volvió al Backlog**. Debajo, "X de Y historias completadas (P %)".
+3. **Estimaciones**: Story Points planificados y completados y el total de horas estimadas, con el aviso de las
+   historias sin horas estimadas.
+4. **Esfuerzo registrado**: horas registradas en total y por integrante.
+5. **Métricas**: velocidad y desviación de esfuerzo (las mismas de **Métricas del Sprint**), con el aviso de cálculo
+   parcial si corresponde.
+6. **Defectos**: los detectados en el Sprint, con severidad, estado, historia y Sprint de resolución, y el resumen de
+   detectados y resueltos.
+
+Si el Sprint **sigue en curso**, aparece una advertencia: **Cancelar** vuelve a la lista sin descargar nada y
+**Generar igual** descarga un reporte marcado como **Reporte parcial: Sprint en curso**, con las historias en su
+estado actual y las métricas como "Se calculan al cerrar el Sprint".
+
+### Reporte del proyecto
+
+El botón **Exportar reporte del proyecto** está siempre, aunque el proyecto no tenga Sprints. Descarga
+`reporte-proyecto-N.pdf` con:
+
+1. **Encabezado**: nombre, fechas, estado (No iniciado, En curso o Finalizado), integrantes y fecha de generación.
+2. **Avance**: historias por estado (Pendiente, En Sprint, En progreso y Hecho) y "X de Y historias completadas".
+3. **Sprints**: una fila por Sprint con historias y Story Points completados, velocidad, desviación y defectos; el
+   Sprint en curso dice "En curso: se calcula al cerrar el Sprint". Debajo, la velocidad acumulada y el promedio por
+   Sprint.
+4. **Esfuerzo registrado**: horas estimadas y registradas en total y por integrante.
+5. **Defectos**: el resumen de abiertos y resueltos y la lista de los abiertos con su Sprint de detección.
+
+Si hay un Sprint en curso, primero se muestra la advertencia con **Generar igual** y **Cancelar**, igual que en el
+reporte de un Sprint, y el PDF sale marcado como **Reporte parcial: hay un Sprint en curso**.
+
+### Mensajes
+
+| Mensaje | Qué significa |
+|---|---|
+| `Aún no hay Sprints para exportar` | El proyecto no tiene Sprints. El reporte del proyecto se puede exportar igual. |
+| `El Sprint N sigue en curso: el reporte puede estar incompleto` | El Sprint no se cerró: elegí **Generar igual** o **Cancelar**. |
+| `El proyecto tiene un Sprint en curso (Sprint N): el reporte puede estar incompleto` | Igual que el anterior, para el reporte del proyecto. |
+| Página 404 | El Sprint no existe o es de otro proyecto. No se descarga nada. |
+| `Para entrar a esta sección primero elegí un proyecto.` | La aplicación te lleva a elegir el proyecto y después vuelve a esta pantalla. |
+| `El servicio no está disponible temporalmente` | La base de datos no responde. No se descarga ningún archivo a medias. |

@@ -1,0 +1,90 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 2635 >>
+stream
+BT /F2 16 Tf 50 775.89 Td (Reporte del Sprint) Tj ET
+BT /F1 10 Tf 50 761.89 Td (Proyecto: Alfa HU-09) Tj ET
+BT /F1 10 Tf 50 749.39 Td (Sprint 3) Tj ET
+BT /F1 10 Tf 50 736.89 Td (Objetivo: Exportar e informar) Tj ET
+BT /F1 10 Tf 50 724.39 Td (Fechas: 15/09/2026 al 28/09/2026) Tj ET
+BT /F1 10 Tf 50 711.89 Td (Estado: Finalizado) Tj ET
+BT /F1 10 Tf 50 699.39 Td (Generado: 01/11/2026 20:42) Tj ET
+BT /F2 12 Tf 50 674.89 Td (Historias) Tj ET
+0.9 g 50 643.39 495 26.5 re f 0 g
+BT /F2 9 Tf 52 658.89 Td (Historia) Tj ET
+BT /F2 9 Tf 217 658.89 Td (Estado) Tj ET
+BT /F2 9 Tf 352 658.89 Td (Story) Tj ET
+BT /F2 9 Tf 352 647.64 Td (Points) Tj ET
+BT /F2 9 Tf 407 658.89 Td (Horas) Tj ET
+BT /F2 9 Tf 407 647.64 Td (estimadas) Tj ET
+BT /F2 9 Tf 477 658.89 Td (Horas reales) Tj ET
+BT /F1 9 Tf 52 632.39 Td (Exportar) Tj ET
+BT /F1 9 Tf 217 632.39 Td (En progreso – volvió al Backlog) Tj ET
+BT /F1 9 Tf 352 632.39 Td (5) Tj ET
+BT /F1 9 Tf 407 632.39 Td (6) Tj ET
+BT /F1 9 Tf 477 632.39 Td (2) Tj ET
+0.8 G 0.5 w 50 628.14 m 545 628.14 l S 0 G
+BT /F1 9 Tf 52 617.14 Td (Ayuda) Tj ET
+BT /F1 9 Tf 217 617.14 Td (En Sprint – volvió al Backlog) Tj ET
+BT /F1 9 Tf 352 617.14 Td (Sin estimar) Tj ET
+BT /F1 9 Tf 407 617.14 Td (Sin estimar) Tj ET
+BT /F1 9 Tf 477 617.14 Td (0) Tj ET
+0.8 G 0.5 w 50 612.89 m 545 612.89 l S 0 G
+BT /F1 10 Tf 50 598.89 Td (0 de 2 historias completadas \(0,00 %\)) Tj ET
+BT /F2 12 Tf 50 574.39 Td (Estimaciones) Tj ET
+BT /F1 10 Tf 50 559.39 Td (5 Story Points planificados y 0 completados) Tj ET
+BT /F1 10 Tf 50 546.89 Td (6 horas estimadas en total \(1 historia sin horas estimadas\)) Tj ET
+BT /F2 12 Tf 50 522.39 Td (Esfuerzo registrado) Tj ET
+BT /F1 10 Tf 50 507.39 Td (2 horas registradas en total) Tj ET
+BT /F1 10 Tf 50 494.89 Td (Ana \(demo HU-09\): 2 h) Tj ET
+BT /F2 12 Tf 50 470.39 Td (Métricas) Tj ET
+BT /F1 10 Tf 50 455.39 Td (Velocidad: 0 Story Points) Tj ET
+BT /F1 10 Tf 50 442.89 Td (Desviación de esfuerzo: No disponible) Tj ET
+BT /F2 12 Tf 50 418.39 Td (Defectos) Tj ET
+0.9 g 50 398.14 495 15.25 re f 0 g
+BT /F2 9 Tf 52 402.39 Td (Descripción) Tj ET
+BT /F2 9 Tf 222 402.39 Td (Severidad) Tj ET
+BT /F2 9 Tf 282 402.39 Td (Estado) Tj ET
+BT /F2 9 Tf 342 402.39 Td (Historia) Tj ET
+BT /F2 9 Tf 462 402.39 Td (Resuelto en) Tj ET
+BT /F1 9 Tf 52 387.14 Td (El PDF sale en blanco) Tj ET
+BT /F1 9 Tf 222 387.14 Td (Crítica) Tj ET
+BT /F1 9 Tf 282 387.14 Td (Abierto) Tj ET
+BT /F1 9 Tf 342 387.14 Td (Exportar) Tj ET
+BT /F1 9 Tf 462 387.14 Td (—) Tj ET
+0.8 G 0.5 w 50 382.89 m 545 382.89 l S 0 G
+BT /F1 10 Tf 50 368.89 Td (1 defecto detectado y 0 resueltos en este Sprint) Tj ET
+BT /F1 9 Tf 269.87 30 Td (Página 1 de 1) Tj ET
+
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000462 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3149
+%%EOF
