@@ -207,13 +207,13 @@ Bloque E; no subir la rama entre T024 y T032.
 
 ### Implementación (GREEN)
 
-- [ ] T027 Implementar `src/cmd/set-role/main.go` según `data-model.md`:
+- [x] T027 Implementar `src/cmd/set-role/main.go` según `data-model.md`:
   - `run(ctx, args, stdout, getenv)`, con `flag.NewFlagSet` en `ContinueOnError` y salida descartada;
   - el rol se valida con `role.ParseRole` antes de conectarse;
   - la base se abre con `web.LoadConfig` y `sql.Open("pgx", …)` con `PingContext`;
   - `assignRole(ctx, store, projectID, memberID, r, stdout)` consulta `ProjectName` y después `SetMemberRole`;
   - textos y códigos 0, 1 y 2.
-- [ ] T028 Ejecutar T025 en verde.
+- [x] T028 Ejecutar T025 en verde.
 
 ## Fase 6: Bloque E – Actualización de pruebas existentes
 
