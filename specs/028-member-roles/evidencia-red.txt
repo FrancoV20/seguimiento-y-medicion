@@ -81,3 +81,216 @@ FAIL
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.137s
 FAIL
 
+== Envoltorio y rutas (T018-T020): src/web y test no compilan porque no existen RequireScrumMaster, RequireScrumMasterOfPathProject ni los textos TitleScrumMasterOnly, MsgScrumMasterOnly, MsgNoScrumMaster y MsgScrumMasterOtherProject ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-016 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "ScrumMaster|HU28" ./src/web/... ./test/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src/web/scrum_master_routes_test.go:251:74: undefined: MsgScrumMasterOnly
+src/web/scrum_master_routes_test.go:252:74: undefined: MsgScrumMasterOnly
+src/web/scrum_master_routes_test.go:261:74: undefined: MsgNoScrumMaster
+src/web/scrum_master_routes_test.go:262:95: undefined: MsgNoScrumMaster
+src/web/scrum_master_routes_test.go:271:73: undefined: TitleScrumMasterOnly
+src/web/scrum_master_routes_test.go:297:73: undefined: TitleScrumMasterOnly
+src/web/scrum_master_routes_test.go:309:65: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:68:29: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:69:71: undefined: TitleScrumMasterOnly
+src/web/scrum_master_test.go:89:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:99:33: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:107:30: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:108:29: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:113:29: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:114:29: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:120:30: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:121:29: undefined: MsgNoScrumMaster
+src/web/scrum_master_test.go:122:41: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:140:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:157:31: srv.RequireScrumMaster undefined (type *Server has no field or method RequireScrumMaster)
+src/web/scrum_master_test.go:176:27: srv.RequireScrumMasterOfPathProject undefined (type *Server has no field or method RequireScrumMasterOfPathProject)
+src/web/scrum_master_test.go:185:31: undefined: MsgScrumMasterOtherProject
+src/web/scrum_master_test.go:195:57: undefined: MsgScrumMasterOnly
+src/web/scrum_master_test.go:197:64: undefined: MsgNoScrumMaster
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test/web_member_roles_bdd_test.go:329:53: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:349:52: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:351:55: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:353:53: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:386:55: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:403:55: undefined: web.MsgScrumMasterOtherProject
+test/web_member_roles_bdd_test.go:417:65: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:419:67: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:434:58: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:436:70: undefined: web.MsgScrumMasterOnly
+test/web_member_roles_bdd_test.go:510:64: undefined: web.MsgNoScrumMaster
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL
+
+-- Control de comportamiento (copia temporal, no se entrega): con los cuatro textos definidos y un RequireScrumMaster/RequireScrumMasterOfPathProject que deja pasar todo (como hoy), fallan porque un Integrante, un proyecto sin Scrum Master, un envío sin identificarse y un {id} de otro proyecto todavía llegan a la acción y cambian los datos. Pasan, como corresponde: TestRequireScrumMaster_ScrumMasterPasa, TestScrumMasterRoutes_AccionesLibres, TestHU28_RolVisible (Bloque B), TestHU28_ScrumMasterCierraSprint, TestHU28_IntegranteVotaYTrabaja y TestHU28_ErrorAlVerificarRol (el 503 ya lo da el middleware de HU-20b; la prueba confirma que la lectura del rol sigue ese camino). --
+$ go test -count=1 -p 1 -v -run "ScrumMaster|HU28" ./src/web/... ./test/...
+    scrum_master_routes_test.go:252: Beto: estado 422; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 422; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 3 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 3 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 409; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 409; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 500; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 500; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 422; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 2 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 422; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 2 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+    scrum_master_routes_test.go:252: Beto: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_routes_test.go:255: Beto: la sección recibió 1 llamadas; el rechazo debía ser antes del handler
+    scrum_master_routes_test.go:262: «Beta» sin Scrum Master: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_routes_test.go:265: «Beta» sin Scrum Master: la sección recibió 1 llamadas
+--- FAIL: TestScrumMasterRoutes_Protegidas (0.08s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-11_modificar_proyecto (0.01s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_crear_Sprint (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_agregar_historias (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-23_quitar_historia (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-15_cerrar_Sprint (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-05a_abrir_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-05b_cerrar_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-18_nueva_ronda (0.00s)
+    --- FAIL: TestScrumMasterRoutes_Protegidas/HU-18_estimación_acordada (0.00s)
+--- PASS: TestScrumMasterRoutes_AccionesLibres (0.03s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-05a_votar (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-14_cambiar_estado_en_el_Tablero (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-24_registrar_esfuerzo (0.00s)
+    --- PASS: TestScrumMasterRoutes_AccionesLibres/HU-21_crear_proyecto (0.00s)
+--- PASS: TestRequireScrumMaster_ScrumMasterPasa (0.00s)
+    scrum_master_test.go:108: estado = 204; se esperaba 403
+    scrum_master_test.go:108: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:108: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:108: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:114: estado = 204; se esperaba 403
+    scrum_master_test.go:114: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:114: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:114: la acción se llamó 2 veces; en un rechazo no debía llamarse
+--- FAIL: TestRequireScrumMaster_IntegranteRechazado (0.00s)
+    scrum_master_test.go:121: estado = 204; se esperaba 403
+    scrum_master_test.go:121: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_test.go:121: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:121: la acción se llamó 1 veces; en un rechazo no debía llamarse
+--- FAIL: TestRequireScrumMaster_SinScrumMaster (0.00s)
+    scrum_master_test.go:142: POST /cierre sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fcierre"
+    scrum_master_test.go:145: POST /cierre sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /cierre sin identificarse llamó a la acción
+    scrum_master_test.go:142: POST /sprints/historias/quitar sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fsprints"
+    scrum_master_test.go:145: POST /sprints/historias/quitar sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /sprints/historias/quitar sin identificarse llamó a la acción
+    scrum_master_test.go:142: POST /planning-poker/estimacion sin identificarse = 204 a ""; se esperaba 303 a "/contexto/integrante?volver_a=%2Fplanning-poker"
+    scrum_master_test.go:145: POST /planning-poker/estimacion sin identificarse: se esperaba el mensaje de HU-20b para identificarse
+    scrum_master_test.go:148: POST /planning-poker/estimacion sin identificarse llamó a la acción
+--- FAIL: TestRequireScrumMaster_SinIdentificacion (0.00s)
+    scrum_master_test.go:159: POST /cierre sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:162: sin proyecto: se esperaba el mensaje de HU-20b para elegir proyecto
+    scrum_master_test.go:165: sin proyecto se llamó a la acción
+    scrum_master_test.go:159: POST /cierre sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:162: sin proyecto: se esperaba el mensaje de HU-20b para elegir proyecto
+    scrum_master_test.go:165: sin proyecto se llamó a la acción
+--- FAIL: TestRequireScrumMaster_SinProyecto (0.00s)
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:185: estado = 204; se esperaba 403
+    scrum_master_test.go:185: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    scrum_master_test.go:185: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:185: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:195: estado = 204; se esperaba 403
+    scrum_master_test.go:195: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    scrum_master_test.go:195: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:195: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:197: estado = 204; se esperaba 403
+    scrum_master_test.go:197: la página 403 debía tener el título "Acción reservada al Scrum Master" y el texto "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    scrum_master_test.go:197: la página 403 debía usar la estructura común con un enlace al inicio
+    scrum_master_test.go:197: la acción se llamó 1 veces; en un rechazo no debía llamarse
+    scrum_master_test.go:204: sin proyecto = 204 a ""; se esperaba 303 a elegir proyecto
+    scrum_master_test.go:210: sin identificarse = 204 a ""; se esperaba 303 a identificarse
+    scrum_master_test.go:213: sin proyecto o sin identificarse se llamó a la acción
+--- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/otro_proyecto,_inválido_o_inexistente (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/el_proyecto_activo_sigue_las_reglas_normales (0.00s)
+    --- FAIL: TestRequireScrumMasterOfPathProject_OtroProyecto/primero_el_proyecto_y_la_identificación (0.00s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web	0.116s
+--- PASS: TestHU28_RolVisible (0.04s)
+--- PASS: TestHU28_ScrumMasterCierraSprint (0.04s)
+    web_member_roles_bdd_test.go:329: cerrar el Sprint: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:331: Sprint 2 = "Finalizado"; se esperaba que siguiera Activo
+    web_member_roles_bdd_test.go:334: «Login» dejó de estar en el Sprint 2
+--- FAIL: TestHU28_IntegranteNoCierraSprint (0.04s)
+    web_member_roles_bdd_test.go:349: crear un Sprint: estado 409; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:351: agregar «Perfil»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:353: quitar «Login»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:361: «Perfil» quedó asignada a un Sprint
+    web_member_roles_bdd_test.go:364: «Login» dejó de estar en el Sprint 2
+--- FAIL: TestHU28_IntegranteNoPlanificaSprint (0.04s)
+    web_member_roles_bdd_test.go:386: modificar «Alfa»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:388: nombre de «Alfa» = "Alfa renombrado"; no debía cambiar
+--- FAIL: TestHU28_IntegranteNoModificaProyecto (0.04s)
+    web_member_roles_bdd_test.go:403: modificar «Beta»: estado 303; se esperaba 403 con "Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master"
+    web_member_roles_bdd_test.go:405: nombre de «Beta» = "Beta renombrado"; no debía cambiar
+--- FAIL: TestHU28_ModificarOtroProyecto (0.05s)
+    web_member_roles_bdd_test.go:417: abrir la ronda de «Perfil»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:419: cerrar la ronda 1 de «Login»: estado 303; se esperaba 403 con "Esta acción la puede hacer solo el Scrum Master del proyecto"
+    web_member_roles_bdd_test.go:422: ronda 1 de «Login» = "Cerrada"; se esperaba que siguiera Abierta
+    web_member_roles_bdd_test.go:425: se abrió una ronda para «Perfil»
+    web_member_roles_bdd_test.go:431: Ana no pudo cerrar la ronda 1: 409
+--- FAIL: TestHU28_IntegranteNoConducePoker (0.06s)
+--- PASS: TestHU28_IntegranteVotaYTrabaja (0.05s)
+    web_member_roles_bdd_test.go:490: cerrar sin identificarse = 303 a "/cierre"; se esperaba 303 a Identificarme con volver_a=/cierre
+    web_member_roles_bdd_test.go:494: Sprint 2 = "Finalizado"; se esperaba que siguiera Activo
+--- FAIL: TestHU28_SinIdentificarse (0.04s)
+    web_member_roles_bdd_test.go:510: crear un Sprint en «Beta»: estado 303; se esperaba 403 con "Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles"
+    web_member_roles_bdd_test.go:512: «Beta» tiene 1 Sprints; no debía crearse ninguno
+    web_member_roles_bdd_test.go:515: «Reportes» = "En Sprint"; se esperaba que siguiera Pendiente
+--- FAIL: TestHU28_ProyectoSinScrumMaster (0.05s)
+    web_member_roles_bdd_test.go:526: antes de asignar el rol, Beto debía recibir 403 al cerrar; obtuvo 303
+--- FAIL: TestHU28_AsignarRol (0.05s)
+--- PASS: TestHU28_ErrorAlVerificarRol (0.05s)
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test	0.556s
+FAIL
+

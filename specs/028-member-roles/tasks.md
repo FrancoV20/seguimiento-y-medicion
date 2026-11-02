@@ -117,7 +117,7 @@ fallan hasta el Bloque E.
 
 ### Pruebas (RED)
 
-- [ ] T018 [P] [E3, E5, E8, E9, E12, E13] Escribir en `src/web/scrum_master_test.go` las pruebas del envoltorio, con un
+- [x] T018 [P] [E3, E5, E8, E9, E12, E13] Escribir en `src/web/scrum_master_test.go` las pruebas del envoltorio, con un
   `ActiveContext` armado a mano y un `h` que cuenta llamadas:
   - `TestRequireScrumMaster_ScrumMasterPasa`;
   - `TestRequireScrumMaster_IntegranteRechazado` (403, `TitleScrumMasterOnly`, `MsgScrumMasterOnly`);
@@ -131,14 +131,14 @@ fallan hasta el Bloque E.
     `MsgScrumMasterOnly`).
 
   En los rechazos `h` tiene 0 llamadas y la página no tiene detalles internos.
-- [ ] T019 [P] [E3–E7, E9] Escribir en `src/web/scrum_master_routes_test.go`:
+- [x] T019 [P] [E3–E7, E9] Escribir en `src/web/scrum_master_routes_test.go`:
   - `TestScrumMasterRoutes_Protegidas`: registra las secciones reales (`RegisterSprints`, `RegisterPlanningPoker` y
     las de HU-11 y HU-15 que estén) con dobles de las acciones que cuentan llamadas, y el `PostgreSQLContextStore`
     real con «Alfa» y «Beta». Recorre la tabla de rutas protegidas presentes (T001): Beto → 403 "solo el Scrum
     Master", Dani en «Beta» → 403 "no tiene Scrum Master", Ana → la acción se llama. 0 llamadas en los rechazos.
   - `TestScrumMasterRoutes_AccionesLibres`: Beto en `POST /planning-poker/votar`, `POST /tablero/estado` y
     `POST /esfuerzo` llega a la acción.
-- [ ] T020 [P] [E1–E10, E12, E13] Crear `test/member_role_helpers_test.go` con
+- [x] T020 [P] [E1–E10, E12, E13] Crear `test/member_role_helpers_test.go` con
   `configurarScrumMaster(t, db, proyecto, integrante)` (`configurarClave` de HU-27 más el `UPDATE`). Escribir
   `test/web_member_roles_bdd_test.go`, con el servidor armado como `main.go` (los `Register…` reales y los adaptadores
   PostgreSQL) y los datos del Issue:
@@ -160,7 +160,7 @@ fallan hasta el Bloque E.
     'Activo'.
 
   Los pasos de una historia que todavía no está en `main` se agregan cuando entre (T001, T003).
-- [ ] T021 Ejecutar T018–T020, confirmar que fallan por la razón esperada (no existe el envoltorio y un "Integrante"
+- [x] T021 Ejecutar T018–T020, confirmar que fallan por la razón esperada (no existe el envoltorio y un "Integrante"
   todavía puede hacer las acciones) y guardar la salida en `evidencia-red.txt` (sección "Envoltorio y rutas").
 
 ### Implementación (GREEN)
