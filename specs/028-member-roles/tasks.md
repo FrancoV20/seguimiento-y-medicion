@@ -244,7 +244,7 @@ cambian.
 
 ## Fase 7: Cierre
 
-- [ ] T033 Antes del PR, hacer `git pull` de `main` y reconfirmar:
+- [x] T033 Antes del PR, hacer `git pull` de `main` y reconfirmar:
   - que `<NNN>` sigue siendo la mayor migración + 1 (si no, renombrar los dos archivos y la prueba de T006);
   - que no entraron rutas POST nuevas que deban protegerse ni pruebas nuevas que se identifiquen para esas acciones;
   - que los nombres de las pruebas coinciden con la trazabilidad de `spec.md`.

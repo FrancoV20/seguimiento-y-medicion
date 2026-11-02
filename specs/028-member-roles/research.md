@@ -267,6 +267,19 @@ ese commit.
 5. **Migración**: la mayor en `db/migrations` es `015_add_member_password` (HU-27). `<NNN>` = **016**, reemplazado en
    `data-model.md` y `plan.md`.
 
+## Resultado de T033
+
+Reconfirmado antes del PR, con `main` al día (`10d1063`, sin cambios desde T001):
+
+- **Migración**: la mayor en `main` sigue siendo `015_add_member_password`; `016_add_project_member_role` no cambia
+  de número.
+- **Rutas POST**: no entraron rutas nuevas. Las 9 de la tabla "Rutas protegidas" están envueltas
+  (`RequireScrumMaster` y, para HU-11, `RequireScrumMasterOfPathProject`); las demás siguen libres.
+- **Pruebas que deban identificarse**: no entraron pruebas nuevas de esas acciones. Además de las de T001 se
+  actualizó `src/web/poker_reveal_view_test.go` (HU-05b), que cierra una ronda con un ayudante y no nombra la ruta
+  (T029).
+- **Trazabilidad**: las 32 pruebas nombradas en `spec.md` existen con esos nombres.
+
 ## Preguntas abiertas
 
 Ninguna.
