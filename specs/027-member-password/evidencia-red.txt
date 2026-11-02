@@ -1,2 +1,28 @@
 ﻿== Dominio (T005-T006): src/auth no compila porque faltan HashPassword, HashPasswordIterations, VerifyPassword, ValidateNewPassword, ErrMalformedHash, NewLockout y MaxFailedAttempts ==
 go: -race requires cgo; enable cgo by setting CGO_ENABLED=1
+
+== Almacenamiento (T011-T013): db falla porque no existe la migración 015; src/web y src/auth no compilan (faltan MemberCredential y NewPostgreSQLPasswordStore) ==
+--- FAIL: TestMigracion_PasswordHash_UpYDown (0.22s)
+    member_password_migration_integration_test.go:83: no existe la migraci├│n 015
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/db	0.629s
+# github.com/FrancoV20/seguimiento-y-medicion/src/auth [github.com/FrancoV20/seguimiento-y-medicion/src/auth.test]
+src\auth\postgres_password_store_integration_test.go:37:11: undefined: NewPostgreSQLPasswordStore
+src\auth\postgres_password_store_integration_test.go:43:59: undefined: ErrMemberNotFound
+src\auth\postgres_password_store_integration_test.go:46:66: undefined: ErrMemberNotFound
+src\auth\postgres_password_store_integration_test.go:68:10: undefined: NewPostgreSQLPasswordStore
+src\auth\postgres_password_store_integration_test.go:69:72: undefined: ErrMemberNotFound
+src\auth\postgres_password_store_integration_test.go:72:82: undefined: ErrMemberNotFound
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/auth [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\postgres_context_store_integration_test.go:276:21: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:278:36: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:279:38: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:280:52: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:281:30: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:282:48: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:283:52: undefined: MemberCredential
+src\web\postgres_context_store_integration_test.go:286:21: store.MemberCredential undefined (type *PostgreSQLContextStore has no field or method MemberCredential)
+src\web\postgres_context_store_integration_test.go:301:45: NewPostgreSQLContextStore(closed).MemberCredential undefined (type *PostgreSQLContextStore has no field or method MemberCredential)
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+FAIL

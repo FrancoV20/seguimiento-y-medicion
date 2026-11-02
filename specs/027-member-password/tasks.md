@@ -87,22 +87,22 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T011 [P] [E9] `TestMigracion_PasswordHash_UpYDown` en `db/member_password_migration_integration_test.go`, sobre
+- [x] T011 [P] [E9] `TestMigracion_PasswordHash_UpYDown` en `db/member_password_migration_integration_test.go`, sobre
   una base descartable con el mismo patrón que `TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable`:
   - aplica las `up` hasta `<NNN>` y comprueba la columna (`data_type = 'text'`, `is_nullable = 'YES'`, filas previas
     en `NULL`);
   - aplica `<NNN>…down.sql` y comprueba que no está;
   - vuelve a aplicar la `up` sin error.
-- [ ] T012 [P] [E6, E12] Pruebas de `MemberCredential` en `src/web/postgres_context_store_integration_test.go`, con
+- [x] T012 [P] [E6, E12] Pruebas de `MemberCredential` en `src/web/postgres_context_store_integration_test.go`, con
   «Alfa» (Ana con valor guardado, Caro sin valor) y «Beta» (Dani):
   - `TestPostgreSQLContextStore_MemberCredential`: los casos de la tabla de `data-model.md`, incluidos 0 y 2147483648
     sin consultar;
   - `TestPostgreSQLContextStore_MemberCredentialBaseCaida`: base cerrada → `KindUnavailable`.
-- [ ] T013 [P] [E10] `TestPostgreSQLPasswordStore` en `src/auth/postgres_password_store_integration_test.go`:
+- [x] T013 [P] [E10] `TestPostgreSQLPasswordStore` en `src/auth/postgres_password_store_integration_test.go`:
   - `MemberName` de Caro → "Caro"; de un integrante inexistente → `ErrMemberNotFound`;
   - `SetPasswordHash` guarda el valor y un integrante inexistente da `ErrMemberNotFound`;
   - base cerrada → error, distinto de `ErrMemberNotFound`.
-- [ ] T014 Ejecutar T011–T013, confirmar que fallan (falta la migración, el método y el adaptador) y guardar la salida
+- [x] T014 Ejecutar T011–T013, confirmar que fallan (falta la migración, el método y el adaptador) y guardar la salida
   en `evidencia-red.txt` (sección "Almacenamiento").
 
 ### Implementación (GREEN)
