@@ -39,3 +39,22 @@ src\cmd\set-password\main_test.go:133:13: undefined: run
 src\cmd\set-password\main_test.go:158:10: undefined: run
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password [build failed]
 FAIL
+
+== Pantalla (T023-T024): src/web y test no compilan (faltan RegisterContextWithLockout, FieldPassword, los textos de HU-27 y la ruta /contexto/salir); hoy la identificación no pide contraseña y no existe Salir ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/web [github.com/FrancoV20/seguimiento-y-medicion/src/web.test]
+src\web\member_password_handlers_test.go:103:42: undefined: RegisterContextWithLockout
+src\web\member_password_handlers_test.go:120:36: undefined: FieldPassword
+src\web\member_password_handlers_test.go:153:29: undefined: IdentifiedMessage
+src\web\member_password_handlers_test.go:164:30: undefined: MsgWrongCredentials
+src\web\member_password_handlers_test.go:165:30: undefined: MsgWrongCredentials
+src\web\member_password_handlers_test.go:185:79: undefined: MsgPasswordRequired
+src\web\member_password_handlers_test.go:198:29: undefined: NoPasswordMessage
+src\web\member_password_handlers_test.go:199:52: undefined: NoPasswordMessage
+src\web\member_password_handlers_test.go:220:29: undefined: MsgTooManyAttempts
+src\web\member_password_handlers_test.go:257:119: undefined: ButtonLogout
+src\web\member_password_handlers_test.go:257:119: too many errors
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
+# github.com/FrancoV20/seguimiento-y-medicion/test [github.com/FrancoV20/seguimiento-y-medicion/test.test]
+test\web_member_password_bdd_test.go:120:6: undefined: web.RegisterContextWithLockout
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/test [build failed]
+FAIL

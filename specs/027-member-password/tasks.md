@@ -165,7 +165,7 @@ identificación fallan hasta el Bloque E.
 
 ### Pruebas (RED)
 
-- [ ] T023 [P] [E1–E5, E7, E9, E12] Escribir las pruebas de handler.
+- [x] T023 [P] [E1–E5, E7, E9, E12] Escribir las pruebas de handler.
   - Primero, `src/web/member_password_helpers_test.go`: `testMemberPassword`, `setTestPassword(t, db, memberID)`
     (guarda `HashPasswordIterations(testMemberPassword, 1000)`) y `memberLoginValues(id)` (`integrante_id` y
     `contrasena`).
@@ -187,7 +187,7 @@ identificación fallan hasta el Bloque E.
   - `TestMemberPassword_ErrorDeLectura`: un doble que falla en `MemberCredential` da 503 sin detalles internos (lista
     de `TestContexto_ErroresNoExponenDetallesInternos`), sin cookie y sin contar; un valor guardado mal formado da
     500.
-- [ ] T024 [P] [E1–E10, E12] Escribir las pruebas BDD.
+- [x] T024 [P] [E1–E10, E12] Escribir las pruebas BDD.
   - Primero, `test/member_password_helpers_test.go`: `claveDePrueba`, `configurarClave(t, db, id, clave)` y
     `formIdentificacion(id, clave)`.
   - Después, `test/web_member_password_bdd_test.go`, con los datos del Issue y un comentario Dado/Cuando/Entonces por
@@ -203,7 +203,7 @@ identificación fallan hasta el Bloque E.
     - `TestHU27_ConfigurarContrasena`: Caro guardada con `auth.HashPassword("caro-clave-2026")` mediante
       `auth.NewPostgreSQLPasswordStore`, como lo hace el comando, y después se identifica;
     - `TestHU27_ErrorAlVerificar`: store envuelto que falla en `MemberCredential`.
-- [ ] T025 Ejecutar T023–T024, confirmar que fallan por la razón esperada (hoy se identifica sin contraseña y no
+- [x] T025 Ejecutar T023–T024, confirmar que fallan por la razón esperada (hoy se identifica sin contraseña y no
   existe "Salir") y guardar la salida en `evidencia-red.txt` (sección "Pantalla").
 
 ### Implementación (GREEN)
