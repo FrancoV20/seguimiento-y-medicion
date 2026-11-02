@@ -29,7 +29,7 @@ Formato: `[ID] [P] [E#] descripción`
   5. **Migración**: la mayor en `db/migrations`. Fijar `<NNN>` = mayor + 1 y reemplazarlo en `data-model.md` y
      `plan.md`.
 - [x] T002 Crear la rama `HU-28` desde `main` actualizado, solo si no hay cambios sin commitear.
-- [x] T003 Avisar al equipo qué archivos se tocan:
+- [ ] T003 Avisar al equipo qué archivos se tocan:
   - `context.go`, `render.go`, `postgres_context_store.go`, `context_middleware.go`, `layout.html`;
   - `sprints_handlers.go`, `poker_handlers.go`, `projects_handlers.go` y `close_handlers.go`;
   - las pruebas de T001.
@@ -46,20 +46,20 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E11] `TestParseRole` y `TestCanManage` en `src/role/role_test.go`, con las tablas de `data-model.md`
+- [x] T005 [P] [E11] `TestParseRole` y `TestCanManage` en `src/role/role_test.go`, con las tablas de `data-model.md`
   ("Scrum Master" con espacios en los bordes sí; "scrum master", "SM", "Product Owner" y `""` no).
-- [ ] T006 [P] `TestMigracion_ProjectMemberRole_UpYDown` en `db/member_role_migration_integration_test.go`, sobre una
+- [x] T006 [P] `TestMigracion_ProjectMemberRole_UpYDown` en `db/member_role_migration_integration_test.go`, sobre una
   base descartable, con el patrón de `TestMigraciones_SeAplicanEnOrdenSobreUnaBaseDescartable`:
   - las `up` hasta `<NNN>` dejan una fila previa de `project_members` con 'Integrante';
   - `INSERT` sin `role` → 'Integrante'; `UPDATE` a 'Product Owner' → error del `CHECK`;
   - la `down` quita la columna y la `up` vuelve a aplicarse.
-- [ ] T007 [P] [E10, E11] `TestPostgreSQLStore` en `src/role/postgres_store_integration_test.go`, con «Alfa» (Ana,
+- [x] T007 [P] [E10, E11] `TestPostgreSQLStore` en `src/role/postgres_store_integration_test.go`, con «Alfa» (Ana,
   Beto, Caro) y «Beta» (Dani):
   - `ProjectName` de «Alfa» y de un proyecto inexistente (`ErrProjectNotFound`);
   - `SetMemberRole` de Beto a "Scrum Master" devuelve "Beto" y cambia la fila;
   - Dani en «Alfa» y un integrante inexistente → `ErrMemberNotInProject`, sin cambios;
   - base cerrada → error distinto de los dos.
-- [ ] T008 Ejecutar T005–T007, confirmar que fallan (no existen el paquete ni la migración) y guardar la salida en
+- [x] T008 Ejecutar T005–T007, confirmar que fallan (no existen el paquete ni la migración) y guardar la salida en
   `evidencia-red.txt` (sección "Dominio y migración").
 
 ### Implementación (GREEN)

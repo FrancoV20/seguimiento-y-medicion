@@ -1,0 +1,40 @@
+== Dominio y migración (T005-T007): src/role no compila porque el paquete no existe (faltan Role, RoleScrumMaster, RoleMember, ErrInvalidRole, ParseRole, CanManage, Store, NewPostgreSQLStore, ErrProjectNotFound y ErrMemberNotInProject); db falla porque no existe la migración 016 ==
+Entorno: Go 1.27.1 linux/amd64, PostgreSQL 16 con las migraciones 001-015 aplicadas, DATABASE_URL definida.
+$ go test -count=1 -p 1 -gcflags=-e -run "TestParseRole|TestCanManage|TestPostgreSQLStore|TestMigracion_ProjectMemberRole_UpYDown" ./src/role/... ./db/...
+# github.com/FrancoV20/seguimiento-y-medicion/src/role [github.com/FrancoV20/seguimiento-y-medicion/src/role.test]
+src/role/postgres_store_integration_test.go:126:12: undefined: Store
+src/role/postgres_store_integration_test.go:126:20: undefined: NewPostgreSQLStore
+src/role/postgres_store_integration_test.go:133:61: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:141:57: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:155:56: undefined: RoleMember
+src/role/postgres_store_integration_test.go:167:54: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:168:23: undefined: ErrMemberNotInProject
+src/role/postgres_store_integration_test.go:183:11: undefined: NewPostgreSQLStore
+src/role/postgres_store_integration_test.go:184:76: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:184:114: undefined: ErrMemberNotInProject
+src/role/postgres_store_integration_test.go:187:56: undefined: RoleScrumMaster
+src/role/postgres_store_integration_test.go:188:19: undefined: ErrProjectNotFound
+src/role/postgres_store_integration_test.go:188:57: undefined: ErrMemberNotInProject
+src/role/role_test.go:13:8: undefined: Role
+src/role/role_test.go:15:20: undefined: RoleScrumMaster
+src/role/role_test.go:16:23: undefined: RoleScrumMaster
+src/role/role_test.go:17:18: undefined: RoleMember
+src/role/role_test.go:18:22: undefined: RoleMember
+src/role/role_test.go:21:15: undefined: ParseRole
+src/role/role_test.go:28:15: undefined: ParseRole
+src/role/role_test.go:29:22: undefined: ErrInvalidRole
+src/role/role_test.go:40:8: undefined: Role
+src/role/role_test.go:43:4: undefined: RoleScrumMaster
+src/role/role_test.go:44:4: undefined: RoleMember
+src/role/role_test.go:49:13: undefined: CanManage
+src/role/role_test.go:53:5: undefined: RoleScrumMaster
+src/role/role_test.go:53:42: undefined: RoleMember
+src/role/role_test.go:54:92: undefined: RoleScrumMaster
+src/role/role_test.go:54:109: undefined: RoleMember
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/role [build failed]
+--- FAIL: TestMigracion_ProjectMemberRole_UpYDown (0.13s)
+    member_role_migration_integration_test.go:106: no existe la migración 016
+FAIL
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/db	0.132s
+FAIL
+
