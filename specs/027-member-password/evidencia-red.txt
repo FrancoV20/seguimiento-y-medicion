@@ -26,3 +26,16 @@ src\web\postgres_context_store_integration_test.go:286:21: store.MemberCredentia
 src\web\postgres_context_store_integration_test.go:301:45: NewPostgreSQLContextStore(closed).MemberCredential undefined (type *PostgreSQLContextStore has no field or method MemberCredential)
 FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/web [build failed]
 FAIL
+
+== Comando (T019): src/cmd/set-password no compila porque el comando no existe (faltan run y setPassword) ==
+# github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password [github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password.test]
+src\cmd\set-password\main_test.go:53:10: undefined: setPassword
+src\cmd\set-password\main_test.go:77:11: undefined: setPassword
+src\cmd\set-password\main_test.go:91:10: undefined: setPassword
+src\cmd\set-password\main_test.go:106:11: undefined: setPassword
+src\cmd\set-password\main_test.go:119:14: undefined: run
+src\cmd\set-password\main_test.go:126:13: undefined: run
+src\cmd\set-password\main_test.go:133:13: undefined: run
+src\cmd\set-password\main_test.go:158:10: undefined: run
+FAIL	github.com/FrancoV20/seguimiento-y-medicion/src/cmd/set-password [build failed]
+FAIL

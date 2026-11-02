@@ -128,7 +128,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T019 [E10, E11] Escribir `src/cmd/set-password/main_test.go`:
+- [x] T019 [E10, E11] Escribir `src/cmd/set-password/main_test.go`:
   - `TestSetPassword_Configura`: con un doble de `auth.PasswordStore` y "caro-clave-2026\r\ncaro-clave-2026\n" →
     código 0, "Contraseña configurada para Caro", un valor guardado que verifica, y la contraseña no aparece en la
     salida;
@@ -142,7 +142,7 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestRun_ConfiguraContrasena` (integración; se omite sin `DATABASE_URL`): crea a Caro, corre `run` con
     "caro-clave-2026" dos veces y comprueba en la base que `password_hash` empieza con `pbkdf2-sha256$600000$` y
     verifica.
-- [ ] T020 Ejecutar T019, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
+- [x] T020 Ejecutar T019, confirmar que falla porque el comando no existe y guardar la salida en `evidencia-red.txt`
   (sección "Comando").
 
 ### Implementación (GREEN)
