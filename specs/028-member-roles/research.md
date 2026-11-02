@@ -58,7 +58,7 @@ Verificados con `git grep -n`.
 - `POST /contexto/integrante` exige `contrasena`;
 - `RegisterContextWithLockout`;
 - `ContextStore.MemberCredential`;
-- la migración `<NNN>_add_member_password` (`members.password_hash`);
+- la migración `015_add_member_password` (`members.password_hash`; confirmada en T001);
 - el comando `src/cmd/set-password`;
 - los ayudantes de prueba: `setTestPassword(t, db, memberID)`, `memberLoginValues(id)` y `testMemberPassword` en
   `src/web`; `configurarClave(t, db, id, clave)`, `formIdentificacion(id, clave)` y `claveDePrueba` en `test/`;
@@ -206,6 +206,66 @@ dirección, sin POST.
 - Las pruebas que hacen POST a esas rutas, incluidas las de HU-11, HU-15, HU-05b y HU-18.
 - Los dobles que implementan `ContextStore` y los nombres reales de los ayudantes de HU-27.
 - La mayor migración en `main`.
+
+## Resultado de T001
+
+Verificado con `git grep -n` sobre `main` (`10d1063`, merge del PR #70 de HU-27, 02/11/2026). La rama `HU-28` sale de
+ese commit.
+
+1. **HU-27 está en la rama base.**
+   - `RegisterContextWithLockout` en `src/web/context_handlers.go`;
+   - `db/migrations/015_add_member_password.up.sql` y `.down.sql` (`members.password_hash`);
+   - `setTestPassword`, `memberLoginValues`, `loginAs` y `testMemberPassword` en
+     `src/web/member_password_helpers_test.go`;
+   - `configurarClave`, `formIdentificacion`, `identificacionDePrueba` y `claveDePrueba` en
+     `test/member_password_helpers_test.go`.
+2. **Rutas: las 9 de la tabla "Rutas protegidas" están en `main`.** HU-11, HU-15, HU-05b y HU-18 ya se integraron, así
+   que se protegen todas en esta rama y no queda ninguna para después.
+
+   | Historia | Ruta | Registro | Handler | Sección |
+   |---|---|---|---|---|
+   | HU-11 | `POST /proyectos/{id}/modificar` | `RegisterProjects` (`src/web/projects_handlers.go`) | `handlers.update` | `Proyectos`, sin requisitos |
+   | HU-23 | `POST /sprints` | `RegisterSprints` (`src/web/sprints_handlers.go`) | `h.create` | `RequiresProject` |
+   | HU-23 | `POST /sprints/historias` | `RegisterSprints` | `h.assignStories` | `RequiresProject` |
+   | HU-23 | `POST /sprints/historias/quitar` | `RegisterSprints` | `h.removeStory` | `RequiresProject` |
+   | HU-15 | `POST /cierre` | `RegisterClose` (`src/web/close_handlers.go`) | `handler.post` | `RequiresProject` |
+   | HU-05a | `POST /planning-poker/abrir` | `RegisterPlanningPoker` (`src/web/poker_handlers.go`) | `h.open` | `RequiresProject` y `RequiresMember` |
+   | HU-05b | `POST /planning-poker/cerrar` | `RegisterPlanningPoker` | `h.close` | igual |
+   | HU-18 | `POST /planning-poker/nueva-ronda` | `RegisterPlanningPoker` | `h.nextRound` | igual |
+   | HU-18 | `POST /planning-poker/estimacion` | `RegisterPlanningPoker` | `h.agree` | igual |
+
+   - El valor de ruta de HU-11 se llama `id`.
+   - La sección `Proyectos` no exige proyecto activo: en `POST /proyectos/{id}/modificar` el paso 1 (elegir proyecto)
+     lo hace el envoltorio.
+   - Siguen libres, sin cambios: `POST /planning-poker/votar`, `POST /tablero/estado`, `POST /esfuerzo`,
+     `POST /backlog`, `POST /backlog/{id}/editar`, `POST /proyectos`, `POST /estimaciones` (HU-17), las de
+     `/defectos`, las de `/contexto/…` y todas las `GET`.
+3. **Pruebas que hacen POST a esas rutas** (`git grep` de cada ruta en `*_test.go`). Son más que las 5 previstas,
+   porque ya están las pruebas de HU-11, HU-15, HU-05b y HU-18. La lista definitiva sale de la corrida de T029.
+
+   | Archivo | Historia |
+   |---|---|
+   | `src/web/sprints_handlers_test.go` | HU-23 |
+   | `src/web/projects_update_handlers_test.go` | HU-11 |
+   | `src/web/close_handlers_test.go` | HU-15 |
+   | `src/web/poker_handlers_test.go`, `src/web/poker_view_test.go` | HU-05a |
+   | `src/web/poker_close_handlers_test.go` | HU-05b |
+   | `src/web/poker_consensus_handlers_test.go`, `src/web/poker_consensus_fixtures_test.go` | HU-18 |
+   | `test/web_sprints_bdd_test.go` | HU-23 |
+   | `test/web_project_update_bdd_test.go` | HU-11 |
+   | `test/web_close_bdd_test.go` | HU-15 |
+   | `test/web_poker_bdd_test.go` | HU-05a |
+   | `test/web_poker_reveal_bdd_test.go` | HU-05b |
+   | `test/web_poker_consensus_bdd_test.go` | HU-18 |
+
+   `src/web/return_to_test.go`, `sections_test.go` y `test/web_base_bdd_test.go` nombran "/sprints" solo como
+   dirección, y `src/web/close_form_test.go` solo hace `GET /cierre`. `src/web/estimates_handlers_test.go` y `test/web_estimates_bdd_test.go` usan `/estimaciones` (HU-17,
+   libre).
+4. **Dobles que implementan `ContextStore` completo**: `sprintHandlerContextStore` (`src/web/sprints_handlers_test.go`)
+   y `sprintBDDContextStore` (`test/web_sprints_bdd_test.go`). El resto de las pruebas usa el `PostgreSQLContextStore`
+   real.
+5. **Migración**: la mayor en `db/migrations` es `015_add_member_password` (HU-27). `<NNN>` = **016**, reemplazado en
+   `data-model.md` y `plan.md`.
 
 ## Preguntas abiertas
 

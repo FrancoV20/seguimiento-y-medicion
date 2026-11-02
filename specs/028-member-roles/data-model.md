@@ -2,8 +2,8 @@
 
 ## Cambio de esquema
 
-Migración nueva `db/migrations/<NNN>_add_project_member_role.up.sql` y `.down.sql`. `<NNN>` es la mayor versión en
-`main` más 1, después de la de HU-27 (T001: HU-27). Lo fija T001 y lo reconfirma T033.
+Migración nueva `db/migrations/016_add_project_member_role.up.sql` y `.down.sql`. `016` es la mayor versión en
+`main` más 1, después de la `015` de HU-27 (T001: HU-27). La fijó T001 y la reconfirma T033.
 
 ```sql
 -- up

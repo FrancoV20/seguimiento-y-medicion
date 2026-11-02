@@ -15,7 +15,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Hacer `git pull` de `main` y confirmar nombres y rutas. Anotar el resultado en `research.md` ("Resultado de
+- [x] T001 Hacer `git pull` de `main` y confirmar nombres y rutas. Anotar el resultado en `research.md` ("Resultado de
   T001").
   1. **HU-27**: comprobar que está en la rama base
      (`git grep -n "RegisterContextWithLockout\|password_hash\|setTestPassword\|configurarClave"`). Si no está,
@@ -28,15 +28,15 @@ Formato: `[ID] [P] [E#] descripción`
   4. **Dobles**: los que implementan `ContextStore` completo.
   5. **Migración**: la mayor en `db/migrations`. Fijar `<NNN>` = mayor + 1 y reemplazarlo en `data-model.md` y
      `plan.md`.
-- [ ] T002 Crear la rama `HU-28` desde `main` actualizado, solo si no hay cambios sin commitear.
-- [ ] T003 Avisar al equipo qué archivos se tocan:
+- [x] T002 Crear la rama `HU-28` desde `main` actualizado, solo si no hay cambios sin commitear.
+- [x] T003 Avisar al equipo qué archivos se tocan:
   - `context.go`, `render.go`, `postgres_context_store.go`, `context_middleware.go`, `layout.html`;
   - `sprints_handlers.go`, `poker_handlers.go`, `projects_handlers.go` y `close_handlers.go`;
   - las pruebas de T001.
 
   A las historias que falten en T001, pedirles que envuelvan su ruta con `RequireScrumMaster` al integrarse
   después.
-- [ ] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
+- [x] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
 
 ## Fase 2: Bloque A – Dominio y migración (`src/role`, `project_members.role`)
 
