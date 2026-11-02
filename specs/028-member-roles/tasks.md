@@ -225,7 +225,7 @@ cambian.
 - [x] T029 Ejecutar `go test -count=1 -p 1 ./...` después de los Bloques C y D. Confirmar que fallan solo las pruebas de
   los archivos de T001, con 403 o redirección a identificarse. Guardar la salida en `evidencia-red.txt` (sección
   "Pruebas existentes"). Si falla otra, anotarla y revisarla antes de seguir.
-- [ ] T030 [P] Actualizar las pruebas de `src/web`:
+- [x] T030 [P] Actualizar las pruebas de `src/web`:
   - `sprints_handlers_test.go`: el doble `sprintHandlerContextStore` devuelve un integrante de prueba como Scrum
     Master (`MemberBelongs`, `MemberName`, `MemberRole: role.RoleScrumMaster`, `HasScrumMaster: true`), y el cliente
     lleva su cookie con `SignedContextValue(CookieMember, id)`; la prueba con `PostgreSQLContextStore` real usa
@@ -234,13 +234,13 @@ cambian.
   - las pruebas de handler de HU-11, HU-15, HU-05b y HU-18 que liste T001.
 
   Las demás expectativas no cambian.
-- [ ] T031 [P] Actualizar las pruebas de `test/`:
+- [x] T031 [P] Actualizar las pruebas de `test/`:
   - `web_sprints_bdd_test.go`: el doble `sprintBDDContextStore` y la parte con base real;
   - `web_poker_bdd_test.go`;
   - las BDD de HU-11, HU-15, HU-05b y HU-18 que liste T001.
 
   Usar `configurarScrumMaster` o el doble con un Scrum Master; las demás expectativas no cambian.
-- [ ] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
+- [x] T032 Ejecutar `go test -count=1 -p 1 ./...` completo en verde.
 
 ## Fase 7: Cierre
 

@@ -152,11 +152,21 @@ func newHU11Server(t *testing.T, opts ...hu11Option) *hu11App {
 	}
 	app := &hu11App{ts: httptest.NewServer(srv.Handler()), fx: fx}
 	t.Cleanup(app.ts.Close)
+	// HU-28: modificar el proyecto es del Scrum Master del proyecto activo; Ana lo es en «Alfa».
+	setTestScrumMaster(t, db, fx.alfa, fx.ana)
 	return app
 }
 
+// client devuelve un navegador con «Alfa» como proyecto activo y Ana identificada como su Scrum
+// Master (HU-28), con las cookies firmadas de HU-26.
 func (a *hu11App) client() *http.Client {
 	jar, _ := cookiejar.New(nil)
+	if u, err := url.Parse(a.ts.URL); err == nil {
+		jar.SetCookies(u, []*http.Cookie{
+			{Name: CookieProject, Value: SignedContextValue(CookieProject, a.fx.alfa), Path: "/"},
+			{Name: CookieMember, Value: SignedContextValue(CookieMember, a.fx.ana), Path: "/"},
+		})
+	}
 	return &http.Client{Jar: jar, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 }
 
@@ -492,8 +502,10 @@ func TestHU11_ProyectoInexistente(t *testing.T) {
 		resp, body := a.get(t, a.client(), path)
 		assertStatus(t, resp, http.StatusNotFound)
 		assertContains(t, body, TitleNotFound)
-		resp, _ = a.post(t, a.client(), path, a.form("Otro", "2026-03-01", "2026-06-30", a.fx.ana))
-		assertStatus(t, resp, http.StatusNotFound)
+		// HU-28 (FR-016): un {id} que no es el proyecto activo se rechaza antes de llegar a HU-11.
+		resp, body = a.post(t, a.client(), path, a.form("Otro", "2026-03-01", "2026-06-30", a.fx.ana))
+		assertStatus(t, resp, http.StatusForbidden)
+		assertContains(t, body, MsgScrumMasterOtherProject)
 	}
 	a.fx.assertUnchanged(t, before)
 }
@@ -501,7 +513,7 @@ func TestHU11_ProyectoInexistente(t *testing.T) {
 func TestHU11_404AntesQue422(t *testing.T) {
 	a := newHU11Server(t)
 	resp, _ := a.post(t, a.client(), "/proyectos/999999/modificar", a.form("", "", "", 0))
-	assertStatus(t, resp, http.StatusNotFound)
+	assertStatus(t, resp, http.StatusForbidden) // HU-28 (FR-016): otro proyecto, antes que el 404 y el 422 de HU-11
 }
 
 // T072

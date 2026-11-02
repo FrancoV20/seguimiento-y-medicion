@@ -14,6 +14,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrancoV20/seguimiento-y-medicion/src/role"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/sprint"
 	"github.com/FrancoV20/seguimiento-y-medicion/src/web"
 )
@@ -34,9 +35,17 @@ func (s sprintBDDContextStore) ListMembers(context.Context, int64) ([]web.Member
 	return nil, nil
 }
 
-func (s sprintBDDContextStore) ResolveContext(_ context.Context, projectID, _ int64) (web.ResolvedContext, error) {
+// sprintBDDScrumMasterID es el integrante de prueba que el doble resuelve como Scrum Master
+// (HU-28): las acciones de Sprints están reservadas al Scrum Master.
+const sprintBDDScrumMasterID = 900
+
+func (s sprintBDDContextStore) ResolveContext(_ context.Context, projectID, memberID int64) (web.ResolvedContext, error) {
 	name, exists := s.projects[projectID]
-	return web.ResolvedContext{ProjectExists: exists, ProjectName: name}, nil
+	rc := web.ResolvedContext{ProjectExists: exists, ProjectName: name, HasScrumMaster: exists}
+	if exists && memberID == sprintBDDScrumMasterID {
+		rc.MemberBelongs, rc.MemberName, rc.MemberRole = true, "Scrum Master de prueba", role.RoleScrumMaster
+	}
+	return rc, nil
 }
 
 // MemberCredential completa el ContextStore ampliado por HU-27 (T016).
@@ -170,6 +179,14 @@ func (a *sprintBDDApp) chooseProject(t *testing.T, projectID int64) {
 	if response.StatusCode != http.StatusSeeOther {
 		t.Fatalf("se esperaba 303 al elegir proyecto, se obtuvo %d", response.StatusCode)
 	}
+	// HU-28: se identifica como el Scrum Master de prueba con su cookie firmada (el doble no pide
+	// contraseña).
+	u, err := url.Parse(a.server.URL)
+	if err != nil {
+		t.Fatalf("no se pudo analizar la URL de prueba: %v", err)
+	}
+	a.client.Jar.SetCookies(u, []*http.Cookie{{Name: web.CookieMember,
+		Value: web.SignedContextValue(web.CookieMember, sprintBDDScrumMasterID), Path: "/"}})
 }
 
 func (a *sprintBDDApp) postCreate(t *testing.T, values url.Values) (*http.Response, string) {
@@ -572,6 +589,16 @@ func newSprintAssignmentBDDApp(t *testing.T) *sprintAssignmentBDDApp {
 	response.Body.Close()
 	if response.StatusCode != http.StatusSeeOther {
 		t.Fatalf("seleccionar proyecto: se esperaba 303, se obtuvo %d", response.StatusCode)
+	}
+	// HU-28: se identifica como Scrum Master del proyecto, con la contraseña de prueba de HU-27.
+	configurarScrumMaster(t, fixture.db, fixture.proyectoA, fixture.integranteA)
+	response, err = client.PostForm(ts.URL+"/contexto/integrante", formIdentificacion(idTexto(fixture.integranteA), claveDePrueba))
+	if err != nil {
+		t.Fatalf("no se pudo identificar al Scrum Master de prueba: %v", err)
+	}
+	response.Body.Close()
+	if response.StatusCode != http.StatusSeeOther {
+		t.Fatalf("identificarse: se esperaba 303, se obtuvo %d", response.StatusCode)
 	}
 	return &sprintAssignmentBDDApp{
 		fixture: fixture,

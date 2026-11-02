@@ -50,6 +50,7 @@ func TestHU18_AccionesSoloEnLaUltimaRonda(t *testing.T) {
 // T019 (E1)
 func TestHU18_NuevaRonda(t *testing.T) {
 	a, f := newConsensusApp(t)
+	setTestScrumMaster(t, f.db, f.alfa, f.beto) // HU-28: quien abre la nueva ronda es Scrum Master
 	beto := a.as(t, f.alfa, f.beto)
 	resp, _ := a.nextRound(t, beto, id64(f.rounds["Login"]), "integrante", id64(f.ana))
 	pokerAssertRedirect(t, resp)

@@ -19,7 +19,10 @@ const pokerWarningAlert = `<div class="alert alert-warning" role="status"><stron
 func newAlfaApp(t *testing.T, opts ...pokerOption) (*pokerApp, *alfaWebFixture) {
 	t.Helper()
 	a := newPokerApp(t, opts...)
-	return a, newAlfaWebFixture(t, a.fx.db)
+	f := newAlfaWebFixture(t, a.fx.db)
+	// HU-28: cerrar las rondas es del Scrum Master; Ana lo es en «Alfa».
+	setTestScrumMaster(t, a.fx.db, f.alfa, f.ana)
+	return a, f
 }
 
 // page devuelve la pantalla de Planning Poker del integrante, sin mensajes pendientes.

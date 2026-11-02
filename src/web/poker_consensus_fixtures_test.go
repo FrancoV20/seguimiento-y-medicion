@@ -222,7 +222,10 @@ func newConsensusApp(t *testing.T, opts ...pokerOption) (*pokerApp, *consensusWe
 	}
 	a := &pokerApp{ts: httptest.NewServer(srv.Handler()), fx: &pokerWebFixture{db: db}}
 	t.Cleanup(a.ts.Close)
-	return a, newConsensusWebFixture(t, db)
+	f := newConsensusWebFixture(t, db)
+	// HU-28: conducir las rondas es del Scrum Master; Ana lo es en «Alfa».
+	setTestScrumMaster(t, db, f.alfa, f.ana)
+	return a, f
 }
 
 // consensusPage devuelve la pantalla de Planning Poker del integrante, sin mensajes pendientes.

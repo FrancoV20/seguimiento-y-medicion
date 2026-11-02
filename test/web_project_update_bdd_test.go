@@ -130,12 +130,22 @@ func (m *modMundo) laAplicacion(t *testing.T, guardadoFalla bool) *modApp {
 	}
 	app := &modApp{servidor: httptest.NewServer(srv.Handler()), m: m}
 	t.Cleanup(app.servidor.Close)
+	// HU-28: modificar el proyecto es del Scrum Master del proyecto activo; Ana lo es en «Alfa».
+	configurarScrumMaster(t, m.db, m.alfa, m.ana)
 	return app
 }
 
 // navegador sigue las redirecciones, como un navegador real.
 func (a *modApp) navegador() *http.Client {
 	jar, _ := cookiejar.New(nil)
+	// HU-28: «Alfa» como proyecto activo y Ana identificada como su Scrum Master, con las cookies
+	// firmadas de HU-26.
+	if u, err := url.Parse(a.servidor.URL); err == nil {
+		jar.SetCookies(u, []*http.Cookie{
+			{Name: web.CookieProject, Value: web.SignedContextValue(web.CookieProject, a.m.alfa), Path: "/"},
+			{Name: web.CookieMember, Value: web.SignedContextValue(web.CookieMember, a.m.ana), Path: "/"},
+		})
+	}
 	return &http.Client{Jar: jar}
 }
 
