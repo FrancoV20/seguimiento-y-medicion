@@ -256,7 +256,7 @@ contraseña" de HU-20b.
 
 ## Fase 7: Cierre
 
-- [ ] T033 Revisión de seguridad.
+- [x] T033 Revisión de seguridad.
   - Con `git grep -n -i "contrasena\|password" src test`, comprobar que la contraseña:
     - no se registra con `slog`;
     - no entra en `FormView.Values`;
@@ -267,19 +267,31 @@ contraseña" de HU-20b.
     - la plantilla no tiene `value` en el campo;
     - `POST /contexto/salir` pasa por el `CrossOriginGuard`.
   - Anotar el resultado en esta tarea.
-- [ ] T034 [P] Formatear con `gofmt` solo los archivos nuevos, sin `gofmt -w` sobre archivos existentes (CRLF);
+
+  Resultado (2026-11-01):
+  - la contraseña no se registra: `context_handlers.go`, `src/auth` y el comando no llaman a `slog`, y los errores
+    que llegan al registro (`ErrMalformedHash` o la falla de la base) no la incluyen;
+  - no entra en `FormView.Values`: `selectMember` la lee con `PostFormValue` y los rechazos usan un `FormView`
+    nuevo, solo con el error del campo;
+  - ningún mensaje ni error la incluye, y el comando nunca imprime lo que lee (`TestSetPassword_Configura`);
+  - la comparación usa `subtle.ConstantTimeCompare` (`src/auth/password.go`);
+  - el campo de `select_member.html` no tiene `value`;
+  - `POST /contexto/salir` pasa por el `CrossOriginGuard` global (`main.go`, línea 58);
+  - `TestMemberPassword_NuncaMuestraLaContrasena` y `TestHU27_ContrasenaProtegida` lo comprueban en las
+    respuestas, las cabeceras, la base y el registro del servidor.
+- [x] T034 [P] Formatear con `gofmt` solo los archivos nuevos, sin `gofmt -w` sobre archivos existentes (CRLF);
   `go vet ./...` limpio; `go test ./... -p 1 -race` en verde; pipeline de GitHub Actions en verde.
-- [ ] T035 [P] Documentar en `README.md`, junto a la migración:
+- [x] T035 [P] Documentar en `README.md`, junto a la migración:
   - configurar contraseñas con `go run ./src/cmd/set-password -integrante N` después de migrar (nota 7);
   - las limitaciones: bloqueo en memoria, contraseña visible al escribirla en el comando y sin cambio ni
     recuperación por web.
 
   En `docs/hu-20b-deuda-tecnica.md`, marcar la decisión 1 ("Sin contraseña") como resuelta por HU-27.
-- [ ] T036 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
+- [x] T036 Guardar `evidencia-pruebas.txt` (`go test -count=1 -p 1 -v ./...`) y `cobertura.txt`
   (`go test -count=1 -p 1 -cover ./...`).
 - [ ] T037 Verificar a mano los 12 escenarios con la aplicación en ejecución (`quickstart.md`), incluido el tiempo de
   identificación menor a 1 segundo (SC-004).
-- [ ] T038 Antes del PR, hacer `git pull` de `main` y reconfirmar que `<NNN>` sigue siendo la mayor migración + 1 (si
+- [x] T038 Antes del PR, hacer `git pull` de `main` y reconfirmar que `<NNN>` sigue siendo la mayor migración + 1 (si
   otra historia lo tomó, renombrar los dos archivos y la prueba de T011). Reconfirmar también que los nombres de las
   pruebas coinciden con la trazabilidad de `spec.md`.
 - [ ] T039 Abrir el Pull Request desde `HU-27` citando HU-27, con:
