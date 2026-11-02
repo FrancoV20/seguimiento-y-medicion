@@ -367,17 +367,123 @@ informe de métricas y cobertura y la demostración de trazabilidad listos para 
 | Historia | SP | Responsable | Compromiso |
 |---|---|---|---|
 | HU-13 Consulta y Edición del Product Backlog | 8 | Alejandro | Comprometida (integrada el 01/11, #67) |
-| HU-09 Exportación de Reportes en PDF | 8 | (asignar) | Comprometida |
+| HU-09 Exportación de Reportes en PDF | 8 | Franco | Comprometida |
 | MEJORA-01 Diseño visual consistente | 3 | Ignacio | Comprometida |
-| HU-27 Identificación con Contraseña | 5 | Adriel | Objetivo extra (Could have) |
-| HU-28 Roles del Proyecto (mínimos) | 8 | (asignar) | Objetivo extra (Could have) |
+| HU-27 Identificación con Contraseña | 5 | Alejandro | Objetivo extra (Could have) |
+| HU-28 Roles del Proyecto (mínimos) | 8 | Adriel | Objetivo extra (Could have) |
 
 - Comprometido: 19 SP (HU-13, HU-09 y MEJORA-01). Objetivo extra: 13 SP (HU-27 y HU-28).
-- Orden de merge: HU-09 → MEJORA-01 (cambios de `layout.html`) → HU-27 → HU-28. HU-27 cambia la
-  identificación que usan las pruebas de las demás historias, así que va última. HU-28 depende de
-  ella.
+- Orden de merge planificado: HU-09 → MEJORA-01 (cambios de `layout.html`) → HU-27 → HU-28.
+  HU-27 cambia la identificación que usan las pruebas de las demás historias, así que va última.
+  HU-28 depende de ella.
 - Si HU-27 o HU-28 no llegan a la hora límite, vuelven al Product Backlog con el motivo
   registrado, como pide el DoD del Sprint.
 
 **Entregables del DoD final:** reporte PDF del proyecto (HU-09), informe de métricas y cobertura
 (≥ 80 %), documentación técnica y manual de usuario completos, y demostración de trazabilidad.
+
+**Fecha de cierre:** 2 de noviembre de 2026 (al integrar MEJORA-01, antes de la presentación).
+
+### Seguimiento
+
+El avance se reconstruye desde las integraciones a `main` (hora de Argentina):
+
+| Fecha y hora | Integrado a `main` |
+|---|---|
+| 01/11, 18:45 | HU-13 (#67) |
+| 01/11, 22:31 | HU-09 (#69) |
+| 02/11, 00:29 | HU-27 (#70) |
+| 02/11, 11:42 | HU-28 (#71) |
+| 02/11, 14:05 | MEJORA-01 (#72) |
+
+El orden real fue HU-09 → HU-27 → HU-28 → MEJORA-01: MEJORA-01 quedó última y trajo `main` dos
+veces (con HU-27 y con HU-28) para integrar el diseño sobre la identificación y los roles ya
+terminados. La documentación final (informe de métricas, README técnico, manual y esta acta) se
+actualizó después del último merge.
+
+---
+
+### Sprint Review
+
+- **Fecha:** 2 de noviembre de 2026 (presentación final ante el Product Architect).
+- **Historias completadas:**
+
+  | Historia | SP | Responsable | PR |
+  |---|---|---|---|
+  | HU-13 Consulta y Edición del Product Backlog | 8 | Alejandro | #67 |
+  | HU-09 Exportación de Reportes en PDF | 8 | Franco | #69 |
+  | HU-27 Identificación con Contraseña | 5 | Alejandro | #70 |
+  | HU-28 Roles del Proyecto (mínimos) | 8 | Adriel | #71 |
+  | MEJORA-01 Diseño visual consistente | 3 | Ignacio | #72 |
+
+  - Total: **32 SP completados**: los 19 comprometidos y los 13 del objetivo extra (5 de 5
+    historias, 100,00 %).
+  - Velocidad: **32 SP** en un Sprint de dos días (Sprint 1: 24; Sprint 2: 44; Sprint 3: 57).
+    Acumulada: 157 SP; promedio: 39,25 SP por Sprint.
+- **Historias no completadas (y por qué):** ninguna.
+- **Defectos:** no se registraron defectos en el Sprint. El problema de los PDF de evidencia de
+  HU-09 (finales de línea convertidos por Git en Windows) se detectó en la revisión del PR y se
+  corrigió con `.gitattributes` antes del merge.
+- **Calidad del incremento:**
+  - El pipeline de CI quedó en verde en los 5 merges del Sprint (36 de 36 runs verdes en `main`
+    en todo el proyecto).
+  - La cobertura total subió en cada merge: 85,8 % → 86,7 % → 86,9 % → 87,2 %.
+  - Paquetes nuevos: `src/report` 90,9 %, `src/pdf` 90,3 %, `src/auth` 94,9 % y `src/role`
+    100 %. Los 11 paquetes de reglas de negocio y cálculos superan el 80 % del DoD (mínimo:
+    `sprint`, 83,3 %).
+- **Resultado frente al Sprint Goal:** cumplido. Se puede editar el Product Backlog (HU-13),
+  exportar en PDF el reporte de un Sprint y el del proyecto (HU-09) y recorrer todas las pantallas
+  con un diseño consistente y una pantalla de Inicio nueva (MEJORA-01). Además entraron la
+  identificación con contraseña (HU-27) y los roles del proyecto (HU-28). El informe de métricas y
+  cobertura, la documentación técnica (README) y el manual de usuario quedaron actualizados.
+- **Requisitos de la cátedra:** con este incremento quedan cubiertos los 9 requerimientos mínimos
+  del enunciado, incluido el reporte en PDF que la cátedra fija para el Sprint 4.
+- **Demostración de trazabilidad:** HU-10 (Historia → spec → criterios → escenarios BDD → tests →
+  código Go), con el recorrido documentado en el README ("Trazabilidad").
+- **Feedback del Product Architect:** (completar luego de la presentación)
+
+---
+
+### Retrospectiva
+
+- **Fecha:** 2 de noviembre de 2026
+- **Acciones de la retro anterior:**
+
+  | # | Acción | Estado |
+  |---|---|---|
+  | 1 | Todo PR se aprueba con "Approve" en GitHub antes del merge | Parcial: solo #71 tiene "Approve". Los 5 PR los mergeó alguien distinto del autor |
+  | 2 | Cerrar #45, milestone "Sprint 4" y responsables de HU-09 y HU-28 | Cumplida en lo principal: #45 cerrado, las 5 historias con milestone y responsable. Quedó abierto #63 (MEJORA-01) después del merge |
+  | 3 | Subir el acta y actualizar `docs/informe-metricas.md` | Cumplida |
+  | 4 | Hora límite de merge antes de la presentación | (confirmar la hora fijada): el último merge entró a las 14:05 del 02/11 |
+  | 5 | Preparar la demostración de trazabilidad con HU-10 | Recorrido documentado en el README (sección "Trazabilidad"); (confirmar quién la presenta) |
+  | 6 | Registrar como deuda las acciones no cumplidas del Sprint 2 | Cumplida (ver la retro del Sprint 3) |
+
+- **Qué funcionó bien:**
+  - Se completó todo lo comprometido y también el objetivo extra: 32 SP en dos días.
+  - El equipo cubrió los 9 requerimientos mínimos del enunciado y terminó con 157 SP completados
+    sobre 157 planificados en los cuatro Sprints, sin historias devueltas al Backlog.
+  - HU-27 cambió la forma de identificarse que usaban las pruebas de todas las demás historias y
+    se integró sin romper el CI: actualizar esas pruebas estaba planificado como tareas propias.
+  - MEJORA-01 se adaptó al cambio de orden: integró `main` después de HU-27 y de HU-28 y
+    actualizó su evidencia, en lugar de forzar el orden planificado.
+  - La cobertura total subió en todos los merges del Sprint y ningún PR lo mergeó su propio autor.
+  - La revisión del PR de HU-09 encontró un problema real (PDF dañados por los finales de línea)
+    antes de que llegara a `main`.
+- **Qué no funcionó / mejorar:**
+  - La aprobación formal de los PR siguió sin quedar registrada (1 de 5), aunque era la primera
+    acción de la retro anterior.
+  - Tres de los cinco merges entraron el mismo día de la presentación, y la documentación final se
+    actualizó después del último merge, con poco margen para revisarla.
+  - La plantilla de las specs cambió durante el proyecto: las de los Sprints 1 y 2 usan
+    "Intención / Alcance / Contratos", y las últimas tienen las secciones que pide la cátedra
+    (Entradas, Salidas, Reglas de negocio, Restricciones, Casos límite y Condiciones de error).
+  - El equipo no registró sus propias horas en la aplicación, así que no hay una desviación de
+    esfuerzo real del proyecto para mostrar.
+  - Quedaron abiertos el Issue #63 y los milestones "Sprint 3" y "Sprint 4" después de los merges.
+- **Lecciones para un próximo proyecto** (este es el último Sprint):
+  1. Fijar la plantilla de SDD con las secciones de la cátedra desde el Sprint 1 y no cambiarla.
+  2. Configurar en GitHub que `main` exija una aprobación antes del merge, en lugar de depender de
+     acordarse.
+  3. Usar la propia herramienta para registrar las horas del equipo desde el primer Sprint.
+  4. Cerrar Issues y milestones en el momento del merge (con "Closes #N" en la descripción del PR).
+  5. Dejar la documentación de cada Sprint como tarea del DoD de cada historia, no para el final.

@@ -1,5 +1,77 @@
 # Manual breve de usuario
 
+Este manual explica cómo usar cada pantalla de **Software Metrics & Estimation**. Los ejemplos usan
+`http://localhost:8080`; si el servidor se levantó con otra dirección (`ADDR`), cambiá el puerto. Cómo instalar y
+levantar la aplicación está en el [README](../README.md).
+
+## Primeros pasos
+
+### Inicio
+
+Al abrir `http://localhost:8080` aparece **Inicio**, con tres bloques:
+
+1. **Bienvenida**: con **Elegir proyecto** (o **Cambiar proyecto**, si ya elegiste uno) y **Crear un proyecto**.
+2. **Cómo se trabaja**: los cinco pasos del ciclo (Proyecto, Backlog, Sprint, Trabajo diario y Cierre y
+   métricas).
+3. **Secciones**: todas las pantallas agrupadas en **Planificar** (antes del Sprint), **Ejecutar** (durante el
+   Sprint) y **Medir** (al cerrar y en la Review), cada una con su ícono y una descripción corta.
+
+El menú de arriba lleva a las mismas secciones desde cualquier pantalla.
+
+### Elegir el proyecto de trabajo
+
+Casi todas las secciones trabajan sobre un **proyecto activo**. Elegilo con **Elegir proyecto** (arriba, debajo del
+menú, o en Inicio) y queda guardado en tu navegador hasta que lo cambies con **Cambiar proyecto**. Si entrás a una
+sección sin proyecto, la aplicación muestra **Para entrar a esta sección primero elegí un proyecto.**, te lleva a
+elegirlo y después vuelve a la sección.
+
+### Identificarme con contraseña
+
+Para votar en Planning Poker, registrar esfuerzo y hacer las acciones del Scrum Master tenés que identificarte como
+integrante del proyecto activo:
+
+1. Presioná **Identificarme**, arriba, junto al nombre del proyecto activo.
+2. Elegí tu nombre en la lista **Integrantes**, escribí tu **Contraseña** y presioná **Identificarme**.
+3. Aparece **Te identificaste como [nombre]** y arriba se ve, por ejemplo, **Integrante: Ana (Scrum Master)**.
+
+Tus acciones quedan a tu nombre hasta que presiones **Salir** (aparece **Cerraste tu identificación**). Con
+**Cambiar integrante** te identificás como otra persona. La contraseña la configura el Scrum Master con un comando
+(ver el README); desde la web no se puede cambiar ni recuperar.
+
+| Mensaje | Qué hacer |
+|---|---|
+| `Para esta acción primero tenés que identificarte como integrante del proyecto.` | Identificate; después la aplicación vuelve a la sección. |
+| `Ingresá tu contraseña` | Escribí la contraseña antes de presionar **Identificarme**. |
+| `Integrante o contraseña incorrectos` | Revisá el nombre elegido y la contraseña. |
+| `Demasiados intentos fallidos. Esperá un minuto y volvé a intentar` | Después de 5 intentos fallidos seguidos, ese integrante queda bloqueado un minuto. |
+| `[nombre] todavía no tiene contraseña configurada. Pedile al Scrum Master que la configure` | Ese integrante no puede identificarse hasta que se le configure la contraseña. |
+| `Tu identificación ya no es válida: el integrante no pertenece al proyecto activo. Elegí otro.` | Te quitaron del proyecto o cambiaste de proyecto; identificate de nuevo. |
+| `Este proyecto no tiene integrantes` | Agregá integrantes al proyecto desde **Proyectos** → **Modificar**. |
+
+### Roles: Scrum Master e Integrante
+
+Cada integrante tiene un rol en cada proyecto: **Scrum Master** o **Integrante**. Al crear un proyecto todos son
+**Integrante**; el rol de Scrum Master se asigna con el comando de roles (ver el README). Un proyecto puede tener más
+de un Scrum Master.
+
+| Acción | Quién puede hacerla |
+|---|---|
+| Crear Sprints y agregar o quitar sus historias (**Sprints**) | Solo el Scrum Master |
+| Cerrar el Sprint (**Cierre de Sprint**) | Solo el Scrum Master |
+| Modificar el proyecto (**Proyectos** → **Modificar**) | Solo el Scrum Master de ese proyecto, con el proyecto como activo |
+| Abrir y cerrar rondas, abrir una nueva ronda y registrar la estimación acordada (**Planning Poker**) | Solo el Scrum Master |
+| Votar en Planning Poker y registrar esfuerzo | Cualquier integrante identificado |
+| Mover historias en el **Tablero**, crear proyectos, crear y editar historias, cargar horas estimadas, registrar defectos y consultar todas las pantallas | Cualquiera, con el proyecto elegido |
+
+Los botones se ven para todos; el control lo hace el servidor. Si un integrante sin el rol intenta una acción del
+Scrum Master, no se guarda nada y aparece una página **403** con uno de estos mensajes:
+
+| Mensaje | Qué significa |
+|---|---|
+| `Esta acción la puede hacer solo el Scrum Master del proyecto` | Pedile la acción a quien tenga el rol. |
+| `Este proyecto no tiene Scrum Master asignado. Pedí que se configure con el comando de roles` | Nadie tiene el rol todavía; hay que asignarlo con el comando. |
+| `Para modificar este proyecto, elegilo como proyecto activo e identificate como su Scrum Master` | Querés modificar un proyecto que no es el activo. |
+
 ## Gestión de Proyectos
 
 Abrí `http://localhost:8080/proyectos` para ver los proyectos existentes y crear uno nuevo. La
@@ -40,6 +112,7 @@ no permite enviar el formulario.
 
 ### Modificar un proyecto
 
+Solo el **Scrum Master** del proyecto puede modificarlo, con ese proyecto elegido como activo (ver "Roles").
 En la lista de **Gestión de Proyectos**, presioná **Modificar** en la fila del proyecto. El
 formulario se abre con el nombre, las fechas y los integrantes actuales.
 
@@ -100,6 +173,73 @@ editan.
 | `La historia pertenece a un Sprint finalizado; no se puede editar` | La historia ya forma parte de un Sprint cerrado y sus datos quedan como se midieron. |
 | Página 404 | La historia no existe o es de otro proyecto. |
 | `La operación no pudo completarse` | Falló el guardado; no se aplicó ningún cambio. Intentá de nuevo. |
+
+## Sprints
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/sprints`, o la sección **Sprints** del
+menú. Las acciones de esta pantalla las hace el **Scrum Master** identificado (ver "Roles").
+
+### Crear un Sprint
+
+Si el proyecto no tiene un Sprint activo, la pantalla muestra el formulario:
+
+1. Escribí el **Sprint Goal** (obligatorio).
+2. Elegí la **Fecha de inicio** y la **Fecha de fin**. La de fin tiene que ser posterior a la de inicio.
+3. Marcá las **Historias del Backlog** que entran al Sprint. Solo se pueden elegir las historias **Pendiente**; las
+   demás aparecen deshabilitadas con su motivo (**No está pendiente** o **Ya está asignada al Sprint N**). También
+   podés crear el Sprint sin historias y agregarlas después.
+4. Presioná **Crear Sprint**. Aparece **Sprint creado correctamente**. Los Sprints se numeran solos (Sprint 1,
+   Sprint 2, …) y las historias asignadas pasan a **En Sprint**.
+
+Un proyecto tiene un solo Sprint activo a la vez: para crear el siguiente, primero cerrá el actual en **Cierre de
+Sprint**.
+
+### Agregar o quitar historias del Sprint activo
+
+Con un Sprint activo, la pantalla muestra su objetivo, sus fechas y la tabla de historias:
+
+- **Agregar historias**: marcá historias **Pendiente** del Backlog y presioná **Agregar historias**.
+- **Quitar**: devuelve la historia al Backlog como **Pendiente**. No se puede quitar una historia que ya está en
+  progreso, que ya está hecha o que tiene horas registradas: el botón aparece deshabilitado con el motivo (**Ya está
+  en progreso**, **Ya está hecha** o **Tiene horas registradas**).
+
+### Mensajes
+
+| Mensaje | Qué hacer |
+|---|---|
+| `el Sprint Goal es obligatorio` | Escribí el objetivo del Sprint. |
+| `el período del Sprint no es válido` | Falta una fecha o la de fin no es posterior a la de inicio. |
+| `Ya hay un Sprint activo (Sprint N)` | Cerrá el Sprint activo antes de crear otro. |
+| `Elija al menos una historia` | Marcá al menos una historia antes de presionar **Agregar historias**. |
+| `La historia N ya está asignada al Sprint M` | Otra persona la asignó mientras elegías; recargá la pantalla. |
+| `El Backlog no tiene historias.` | Creá historias en **Backlog** antes de armar el Sprint. |
+| `La operación no pudo completarse` | No se guardó nada; volvé a intentarlo. |
+
+## Tablero
+
+Elegí el proyecto desde **Cambiar proyecto** y abrí `http://localhost:8080/tablero`, o la sección **Tablero** del
+menú. Arriba se ven el Sprint activo, su objetivo y los **Story Points completados: X de Y**. Debajo, las historias
+del Sprint en tres columnas: **En Sprint**, **En progreso** y **Hecho**, con sus Story Points.
+
+Cada tarjeta tiene un botón para moverla:
+
+| Botón | Mueve la historia de… a… | Mensaje |
+|---|---|---|
+| **Comenzar** | En Sprint → En progreso | `La historia pasó a En progreso` |
+| **Completar** | En progreso → Hecho | `La historia pasó a Hecho` |
+| **Reabrir** | Hecho → En progreso | `La historia volvió a En progreso` |
+
+Si completás una historia que no tiene horas registradas, se mueve igual y aparece la advertencia **La historia pasó
+a Hecho. Advertencia: no tiene horas reales registradas**: cargalas en **Registro de esfuerzo** para que las
+métricas de esfuerzo la tengan en cuenta. Las historias **Hecho** cuentan como completadas al cerrar el Sprint.
+
+| Mensaje | Qué significa |
+|---|---|
+| `No hay un Sprint activo` | Creá un Sprint en **Sprints**. |
+| `El Sprint no tiene historias asignadas` | Agregá historias al Sprint en **Sprints**. |
+| `La historia ya está en [estado]` | Otra persona la movió antes; recargá la pantalla. |
+| `El estado de la historia cambió; revise el estado actual y vuelva a intentarlo` | La pantalla estaba desactualizada; recargala. |
+| `La historia no está asignada a un Sprint activo` | La historia salió del Sprint o el Sprint se cerró. |
 
 ## Registro y trazabilidad de defectos
 
@@ -278,7 +418,8 @@ el Sprint activo, las historias **Hecho** que permanecerán en el Sprint y las h
 **En progreso** que volverán al Backlog en estado **Pendiente**. También muestra los Story Points
 completados sobre los planificados.
 
-Antes de confirmar, revisá el resumen: el cierre no se puede deshacer. Al presionar **Cerrar Sprint**,
+Solo el **Scrum Master** identificado puede cerrar el Sprint (ver "Roles"). Antes de confirmar, revisá el
+resumen: el cierre no se puede deshacer. Al presionar **Cerrar Sprint**,
 las historias incompletas pierden su asignación y quedan disponibles para un Sprint posterior; las
 historias **Hecho** conservan su estado y su asignación al Sprint finalizado. El sistema guarda además
 una foto de los estados y Story Points para las métricas históricas.
@@ -440,7 +581,9 @@ se pueden cambiar.
 | `La ronda no existe` | La ronda no pertenece al proyecto elegido; recargá la pantalla. |
 | `La operación no pudo completarse` | No se guardó nada; volvé a intentarlo más tarde. |
 
-Si no te identificaste, la aplicación te pide elegir un integrante y después vuelve a Planning Poker.
+Para entrar a Planning Poker tenés que estar identificado con tu contraseña; si no lo estás, la aplicación te lo
+pide y después vuelve a la pantalla. Abrir y cerrar rondas, abrir una nueva ronda y registrar la estimación acordada
+lo hace solo el **Scrum Master**; votar lo puede hacer cualquier integrante (ver "Roles").
 
 ## Dashboard
 

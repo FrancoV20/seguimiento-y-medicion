@@ -42,12 +42,135 @@ con reportes exportables.
 El proyecto se organiza en Sprints (Sprint 0 a Sprint 4), gestionados mediante GitHub Projects, 
 con roles Scrum adaptados a la cátedra:
 
+- **Product Architect**: los profesores de la cátedra.
+- **Agile Enabler** (Scrum Master): un integrante del equipo.
+- **Product Builders**: los integrantes que construyen el producto.
+
+Las actas de Sprint Review y retrospectiva están en [`docs/retros.md`](docs/retros.md), el
+informe de métricas y cobertura en [`docs/informe-metricas.md`](docs/informe-metricas.md) y el
+manual de usuario en [`docs/manual-usuario.md`](docs/manual-usuario.md).
+
 ### INTEGRANTES:
-- Franco Valentin Velazco - Scrum Master
+- Franco Valentin Velazco - Agile Enabler (Scrum Master)
 - Adriel Alonso Gonzalez - Product Builder
 - Alejandro Ruiz Andreola - Product Builder
 - Giuliana Bettiol Rivadeo - Product Builder
 - Juan Ignacio Sanchez - Product Builder
+
+## Arquitectura y documentación técnica
+
+### Vista general
+
+Es una aplicación web en Go que se renderiza en el servidor (sin JavaScript) y guarda los datos en
+PostgreSQL. Las reglas de negocio viven en paquetes de dominio que no saben nada de HTTP ni de la
+base de datos; la web y PostgreSQL se conectan a ellos a través de interfaces (puertos y
+adaptadores).
+
+```mermaid
+flowchart LR
+    N[Navegador] -->|HTTP| W["src/web<br/>handlers, middleware,<br/>plantillas html/template"]
+    W --> S["Servicios de dominio<br/>src/project, backlog, sprint,<br/>poker, effort, defect, metrics,<br/>report, auth, role"]
+    S -->|interfaz Store| A["Adaptadores PostgreSQL<br/>postgres_*_store.go"]
+    A --> DB[(PostgreSQL 16)]
+    W -->|interfaz Catalog| C["Catálogos de lectura<br/>postgres_*_catalog.go"]
+    C --> DB
+    S -->|src/report usa| P["src/pdf<br/>generador de PDF propio"]
+    CMD["src/cmd/set-password<br/>src/cmd/set-role"] --> S
+```
+
+### Paquetes
+
+| Paquete | Responsabilidad | Historias |
+|---|---|---|
+| `src/project` | Proyectos, integrantes, fechas y estado del proyecto | HU-01, HU-11, HU-12 |
+| `src/backlog` | Historias del Product Backlog, Story Points, horas estimadas y edición | HU-02, HU-13, HU-17 |
+| `src/sprint` | Sprints, Sprint Goal, asignación de historias, estados del Tablero y cierre | HU-04, HU-14, HU-15 |
+| `src/poker` | Planning Poker: votos ocultos, revelación, divergencia, rondas y consenso | HU-05a, HU-05b, HU-18 |
+| `src/effort` | Registro de horas trabajadas por integrante, fecha y actividad | HU-03 |
+| `src/defect` | Defectos: alta, severidad, estado, resolución y reapertura | HU-06, HU-19 |
+| `src/metrics` | Velocidad, desviación de esfuerzo, calidad y avance | HU-07, HU-10 |
+| `src/report` | Contenido de los reportes de Sprint y de proyecto | HU-09 |
+| `src/pdf` | Generador de PDF propio (sin dependencias externas) | HU-09 |
+| `src/auth` | Contraseñas (PBKDF2-SHA256) y bloqueo por intentos fallidos | HU-27 |
+| `src/role` | Roles del proyecto: Scrum Master e Integrante | HU-28 |
+| `src/web` | Servidor HTTP, pantallas, formularios, contexto de trabajo, permisos y errores | HU-20a, HU-20b, HU-21 a HU-26, HU-08, HU-16, MEJORA-01 |
+| `src/cmd/server` | Arranque: configuración, conexión, verificación del esquema y registro de las rutas | HU-20a |
+| `src/cmd/set-password`, `src/cmd/set-role` | Comandos de administración para contraseñas y roles | HU-27, HU-28 |
+| `db` | Migraciones SQL (`db/migrations`, embebidas en el binario) | todas |
+| `test` | Escenarios BDD de punta a punta (Given/When/Then contra el servidor HTTP) | todas |
+
+### Decisiones de diseño
+
+- **Puertos y adaptadores.** Cada paquete de dominio define su interfaz `Store` y un servicio que
+  la usa (`NewService(store)`). La implementación real es `NewPostgreSQL…Store`; para las pruebas
+  unitarias hay dobles en memoria (`test_store.go`), así las reglas se prueban con TDD sin base de
+  datos. `src/cmd/server/main.go` es el único lugar donde se conectan las piezas.
+- **Lectura separada de la escritura en la web.** Las pantallas leen con "catálogos"
+  (`*_catalog.go`) y escriben a través de los servicios de dominio, que aplican las validaciones.
+- **Manejo de errores.** El dominio devuelve errores con nombre (`ErrGoalRequired`,
+  `ErrActiveSprintExists`, …). La web los traduce a un mensaje para el usuario y a un código HTTP:
+  422 para datos inválidos, 409 para conflictos, 404 si no existe, 403 sin permiso, 503 si la base
+  no responde y 500 en otro caso, siempre con una página de error sin detalles internos. Los
+  detalles se registran en el log con `log/slog`, sin la clave de la base.
+- **Interfaz sin JavaScript.** Plantillas `html/template` (escapan el HTML) y CSS propio en
+  `src/web/static/app.css`, ambos embebidos con `go:embed`. Los gráficos del Dashboard son SVG
+  generados en el servidor, con una tabla equivalente al lado.
+- **Seguridad.** Protección contra envíos de otro origen en todos los POST (HU-20b), cookies de
+  contexto firmadas con HMAC (HU-26, clave `COOKIE_SECRET`), contraseñas con sal y PBKDF2 y
+  verificación en tiempo constante (HU-27) y control del rol Scrum Master en el servidor para las
+  acciones de planificación (HU-28).
+- **Base de datos.** Migraciones versionadas con `golang-migrate` (`up` y `down`). Al arrancar, el
+  servidor compara la versión del esquema con la última migración: si falta aplicar alguna, no
+  arranca y muestra el comando para aplicarlas. Los reportes PDF leen todo en una sola transacción `REPEATABLE READ` de solo lectura,
+  para que los números sean coherentes entre sí.
+- **Dependencias mínimas.** Go 1.27.1, la biblioteca estándar y un solo módulo externo: el driver
+  `pgx` para PostgreSQL. El PDF se genera con código propio (`src/pdf`).
+
+### Estructura del repositorio
+
+```text
+src/                código Go: dominio, web y comandos
+db/migrations/      migraciones SQL numeradas (up y down)
+test/               escenarios BDD automatizados
+specs/NNN-nombre/   SDD de cada historia: spec.md, plan.md, tasks.md, quickstart.md y evidencias
+docs/               actas, informe de métricas, manual de usuario y deuda técnica
+.github/workflows/  CI: gofmt, go vet, migraciones, pruebas con -race y cobertura
+```
+
+### Pruebas
+
+- **Unitarias** (`*_test.go` junto al código): reglas de negocio, cálculos y validaciones con
+  dobles en memoria.
+- **De integración** (`*_integration_test.go`): adaptadores contra PostgreSQL real. Se omiten si
+  `DATABASE_URL` no está definida.
+- **BDD** (`test/*_bdd_test.go`): cada escenario Given/When/Then de las specs, de punta a punta
+  contra el servidor HTTP.
+
+```powershell
+docker compose up -d
+go test ./... -count=1 -p 1
+```
+
+`-p 1` evita que los paquetes que usan la misma base corran en paralelo. Los números de cobertura
+están en [`docs/informe-metricas.md`](docs/informe-metricas.md).
+
+### Trazabilidad
+
+Cada historia se puede recorrer de punta a punta. Ejemplo con HU-10 (Cálculo de Métricas de
+Calidad y Avance):
+
+| Paso | Dónde |
+|---|---|
+| Historia de usuario | Issue #12 y `specs/010-quality-metrics/spec.md` ("Historia de usuario") |
+| Especificación SDD | `specs/010-quality-metrics/spec.md` y `plan.md` |
+| Criterios de aceptación | `specs/010-quality-metrics/spec.md` ("Escenarios BDD" y "Criterios de éxito") |
+| Escenarios BDD | `test/web_quality_bdd_test.go` |
+| Pruebas unitarias (TDD) | `src/metrics/quality_test.go`, `src/metrics/quality_service_test.go`, `src/web/quality_*_test.go` |
+| Evidencia RED y GREEN | `specs/010-quality-metrics/evidencia-red.txt` y `evidencia-pruebas.txt` |
+| Código Go | `src/metrics/quality.go`, `src/metrics/quality_service.go`, `src/web/quality_handlers.go` |
+
+Las specs más recientes (por ejemplo HU-09, HU-13, HU-27 y HU-28) tienen además una sección
+"Trazabilidad" que lista cada escenario con su prueba.
 
 ## Guía para comenzar el Sprint
 
@@ -324,8 +447,14 @@ migrate -path db/migrations -database $env:DATABASE_URL up
 - No subas a ningún archivo del repositorio (README, specs, `docker-compose.yml`) tu clave
   personal. Va solo en tu `docker-compose.override.yml`, que está en el `.gitignore`.
 
-# LEVANTAR EL SERVIDOR WEB
-$env:ADDR = ":8081"
+## Levantar el servidor web
+
+Con la base levantada y las migraciones aplicadas:
+
+```powershell
+$env:ADDR = ":8081"   # opcional: por defecto usa :8080
 go run ./src/cmd/server
-# En web
-http://localhost:8081
+```
+
+Después abrí `http://localhost:8081` (o `http://localhost:8080` si no definiste `ADDR`) en el
+navegador. El uso de cada pantalla está en el [manual de usuario](docs/manual-usuario.md).
