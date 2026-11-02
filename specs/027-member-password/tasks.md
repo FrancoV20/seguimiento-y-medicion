@@ -66,16 +66,16 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Implementación (GREEN)
 
-- [ ] T008 Implementar `src/auth/password.go` según `data-model.md`:
+- [x] T008 Implementar `src/auth/password.go` según `data-model.md`:
   - constantes, `HashPassword`, `HashPasswordIterations` (iteraciones < 1 → error) y `VerifyPassword`;
   - `VerifyPassword` usa `subtle.ConstantTimeCompare`, base64 `RawStdEncoding`, iteraciones del valor guardado de 1
     a 10.000.000 y `ErrMalformedHash`;
   - `ValidateNewPassword` (largo en runas con `utf8.RuneCountInString`, sin recortar);
   - los errores con el texto exacto.
-- [ ] T009 Implementar `src/auth/lockout.go`: `Lockout` con `sync.Mutex`, `NewLockout(now)` (`nil` → `time.Now`),
+- [x] T009 Implementar `src/auth/lockout.go`: `Lockout` con `sync.Mutex`, `NewLockout(now)` (`nil` → `time.Now`),
   `Locked` (borra la entrada vencida), `RecordFailure` (al 5.º, `lockedUntil = now + LockDuration`) y `RecordSuccess`
   (borra la entrada).
-- [ ] T010 Ejecutar `go test -count=1 -race ./src/auth/...`: T005–T006 en verde.
+- [x] T010 Ejecutar `go test -count=1 -race ./src/auth/...`: T005–T006 en verde.
 
 **Punto de control**: las reglas funcionan solas, sin tocar otras historias.
 
