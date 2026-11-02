@@ -14,7 +14,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ## Fase 1: Preparación
 
-- [ ] T001 Hacer `git pull` de `main` y reconfirmar los "Datos a reconfirmar en T001" de `research.md`. Anotar el
+- [x] T001 Hacer `git pull` de `main` y reconfirmar los "Datos a reconfirmar en T001" de `research.md`. Anotar el
   resultado en `research.md` ("Resultado de T001"):
   - la mayor migración en `db/migrations`; fijar `<NNN>` = mayor + 1 y reemplazarlo en `data-model.md` y `plan.md`;
   - la lista de pruebas que se identifican por `/contexto/integrante`
@@ -24,14 +24,14 @@ Formato: `[ID] [P] [E#] descripción`
   - las pruebas que buscan que no haya `<form` o `type="password"` en una página;
   - que `go doc crypto/pbkdf2.Key` siga disponible con la versión de `go.mod`. Si no lo está, **detenerse y avisar**
     antes de seguir.
-- [ ] T002 Crear la rama `HU-27` desde `main` actualizado, solo si no hay cambios sin commitear.
-- [ ] T003 Avisar al equipo que HU-27 se integra al final y que toca:
+- [x] T002 Crear la rama `HU-27` desde `main` actualizado, solo si no hay cambios sin commitear.
+- [x] T003 Avisar al equipo que HU-27 se integra al final y que toca:
   - de HU-20a: `layout.html` y `app.css`;
   - de HU-20b: `context_store.go`, `postgres_context_store.go`, `context_handlers.go` y `select_member.html`;
   - las 8 pruebas de T001 y los 2 dobles de HU-23.
 
   Pedir que nadie los edite mientras dure la rama.
-- [ ] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
+- [x] T004 Línea base: `go test -count=1 -p 1 ./...` en verde antes de empezar.
 
 ## Fase 2: Bloque A – Dominio de contraseñas y bloqueo (`src/auth`)
 
@@ -41,7 +41,7 @@ Formato: `[ID] [P] [E#] descripción`
 
 ### Pruebas (RED)
 
-- [ ] T005 [P] [E1, E9, E11, E12] Escribir las pruebas de contraseñas en `src/auth/password_test.go`. Las tablas
+- [x] T005 [P] [E1, E9, E11, E12] Escribir las pruebas de contraseñas en `src/auth/password_test.go`. Las tablas
   están en `data-model.md`.
   - `TestHashPassword_FormatoYSalDistinta`: dos valores de "ana-clave-2026" son distintos; los dos tienen 4 partes,
     esquema `pbkdf2-sha256`, sal de 16 bytes y hash de 32, y verifican; ninguno contiene la contraseña.
@@ -54,14 +54,14 @@ Formato: `[ID] [P] [E#] descripción`
   - `TestValidateNewPassword`: la tabla de largo (8 y 128 sí; 7 y 129 no; "ñandú-12" cuenta 8 runas; los espacios
     cuentan), "no coinciden", y que el largo se informa antes que la coincidencia. Cada error tiene el texto exacto
     del Issue.
-- [ ] T006 [P] [E5] Escribir las pruebas del bloqueo, con reloj simulado, en `src/auth/lockout_test.go`.
+- [x] T006 [P] [E5] Escribir las pruebas del bloqueo, con reloj simulado, en `src/auth/lockout_test.go`.
   - `TestLockout_CincoFallosBloqueanUnMinuto`: 4 fallos, no bloqueado; el 5.º bloquea; a los 59 s del 5.º sigue; a
     los 60 s, libre; un fallo nuevo no bloquea (el contador volvió a cero).
   - `TestLockout_AciertoReiniciaElContador`: 4 fallos, un acierto y 4 fallos: no bloqueado.
   - `TestLockout_PorIntegrante`: con Ana bloqueada, Beto está libre.
   - `TestLockout_UsoConcurrente`: goroutines que llaman a `Locked`, `RecordFailure` y `RecordSuccess` sobre varios
     integrantes, sin carreras con `-race`.
-- [ ] T007 Ejecutar T005–T006, confirmar que fallan porque el paquete no existe y guardar la salida en
+- [x] T007 Ejecutar T005–T006, confirmar que fallan porque el paquete no existe y guardar la salida en
   `evidencia-red.txt` (sección "Dominio").
 
 ### Implementación (GREEN)

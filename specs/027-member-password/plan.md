@@ -111,8 +111,8 @@ src/auth/lockout_test.go
 src/auth/password_store.go                    PasswordStore, ErrMemberNotFound
 src/auth/postgres_password_store.go           PostgreSQLPasswordStore
 src/auth/postgres_password_store_integration_test.go
-db/migrations/<NNN>_add_member_password.up.sql
-db/migrations/<NNN>_add_member_password.down.sql
+db/migrations/015_add_member_password.up.sql
+db/migrations/015_add_member_password.down.sql
 db/member_password_migration_integration_test.go
 src/cmd/set-password/main.go                  main, run, setPassword
 src/cmd/set-password/main_test.go
